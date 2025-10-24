@@ -1,0 +1,27 @@
+# === LaTeX privremeni fajlovi ===
+*.aux
+*.log
+*.toc
+*.out
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+
+# PDF output
+*.pdf
+
+# === Backup fajlovi ===
+*~
+*.bak
+
+# === Editor-specific ===
+.vscode/
+.idea/
+.DS_Store

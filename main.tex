@@ -1,0 +1,41 @@
+% Install:
+% wget https://raw.githubusercontent.com/blang/latex-docker/master/latexdockercmd.sh
+
+% Compile:
+% sudo ./latexdockercmd.sh pdflatex main.tex; sudo ./latexdockercmd.sh bibtex main; sudo ./latexdockercmd.sh pdflatex main.tex; sudo ./latexdockercmd.sh pdflatex main.tex
+
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[serbian]{babel}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\usepackage{graphicx}
+\usepackage{subfig}
+
+%\usepackage{refcheck}
+
+\graphicspath{
+    {./chapters/chapter1/}
+    {./chapters/chapter2/}
+}
+
+\newcommand{\ALINE}{\State\hspace{0.6em}}
+
+% \includeonly{chapters/chapter1}
+% \includeonly{chapters/chapter2}
+
+\begin{document}
+
+\tableofcontents
+
+\include{chapters/chapter1/chapter1}
+\include{chapters/chapter2/chapter2}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
