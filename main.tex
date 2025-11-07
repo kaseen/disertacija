@@ -1,10 +1,9 @@
-% Install:
-% wget https://raw.githubusercontent.com/blang/latex-docker/master/latexdockercmd.sh
-
 % Compile:
 % sudo ./latexdockercmd.sh pdflatex main.tex; sudo ./latexdockercmd.sh bibtex main; sudo ./latexdockercmd.sh pdflatex main.tex; sudo ./latexdockercmd.sh pdflatex main.tex
 
-\documentclass[12pt,a4paper]{report}
+\documentclass{book}
+
+\usepackage[a4paper, total={6in, 9in}]{geometry}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -16,24 +15,29 @@
 \usepackage{graphicx}
 \usepackage{subfig}
 
-%\usepackage{refcheck}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
 
 \graphicspath{
-    {./chapters/chapter1/}
+    {./chapters/uvod/}
     {./chapters/chapter2/}
 }
 
 \newcommand{\ALINE}{\State\hspace{0.6em}}
+\newcommand{\eng}[1]{(eng. \textit{#1})}
 
-% \includeonly{chapters/chapter1}
+%\usepackage{refcheck}
+
+
+%\includeonly{chapters/uvod}
 % \includeonly{chapters/chapter2}
 
 \begin{document}
 
 \tableofcontents
 
-\include{chapters/chapter1/chapter1}
-\include{chapters/chapter2/chapter2}
+\include{chapters/uvod/uvod}
+%\include{chapters/chapter2/chapter2}
 
 \bibliographystyle{plain}
 \bibliography{references}
