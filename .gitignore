@@ -14,9 +14,6 @@
 *.snm
 *.vrb
 
-# PDF output
-*.pdf
-
 # === Backup fajlovi ===
 *~
 *.bak
