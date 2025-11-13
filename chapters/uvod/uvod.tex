@@ -1,6 +1,6 @@
 \chapter{Uvod}
 
-\section{Informacioni sistemi}
+\section{Radni sistem}
 \TODO{Hamurabijev zakonik, dodaj kao primere za državne i društvene procese}
 Ideja radnog sistema postoji praktično onoliko dugo koliko postoji organizovana trgovina i proizvodnja. Na primer, još u Mesopotamiji (oko 3000. p.n.e.) postoji evidencija trgovine žitom, kreditnih ugovora, kamata i dugova na glinenim tablicama. Kasnije, u vreme Vavilona, Hamurabijev zakonik (oko 1750. p.n.e.) uspostavlja formalna pravila ne samo za poslovne odnose, već i za šire državne i društvene procese, uključujući regulisanje ugovora, odgovornosti, radnih obaveza i sankcija \cite{carmona2007accounting}.
 
@@ -35,4 +35,83 @@ U zavisnosti od svrhe i konteksta, pojam \textit{vrednosti} može se interpretir
 
 Poslovni sistemi teže stvaranju ekonomske vrednosti za klijente i organizaciju, dok su javni sistemi usmereni na stvaranje društvene vrednosti kroz pružanje usluga građanima i unapređenje javnog interesa \cite{moore1997creating}. Neprofitni sistemi fokusirani su na stvaranje zajedničkog dobra bez cilja ostvarivanja profita \cite{murray1994evaluating}, dok lični radni sistemi opisuju načine na koje pojedinci koriste tehnologiju i informacije za postizanje ličnih ciljeva i produktivnosti.
 
-Bez obzira na kategoriju, svi radni sistemi dele zajednički ontološki minimum, procese i aktivnosti koje obavljaju učesnici koristeći informacije i tehnologije radi stvaranja određene vrednosti za jasno definisane korisnike. Kada se radni sistemi integrišu sa informacionim tehnologijama \cite{turban2000information}, koje obuhvataju hardver, softver, baze podataka i mreže kao primarna sredstva za procesiranje, čuvanje, razmenu i prikaz informacija neophodnih za realizaciju poslovnih procesa, tada govorimo o \textbf{Informacionim sistemima} kao posebnoj kategoriji radnih sistema. U daljem radu fokus će biti upravo na tim sistemima.
+Bez obzira na kategoriju, svi radni sistemi dele zajednički ontološki minimum, tj. procese i aktivnosti koje obavljaju učesnici koristeći informacije i tehnologije radi stvaranja određene vrednosti za jasno definisane korisnike.
+
+U daljem radu fokus će biti samo na informacionim sistemima.
+
+\section{Informactioni sistem}
+\TODO{Poslovni informactioni sistem, javni informacioni sistem itd...}
+warnings
+
+\begin{definicija}
+Informacione tehnologije (IT) obuhvataju hardver, softver, baze podataka i mreže kao primarna sredstva za procesiranje, čuvanje, razmenu i prikaz informacija neophodnih za realizaciju poslovnih procesa. \cite{turban2000information}
+\end{definicija}
+
+\begin{definicija}
+Informacion sistem se dobija kada se radni sistem integriše sa informacionim tehnologijama.
+\end{definicija}
+
+Svaki informacioni sistem, bez obzira na svoju veličinu ili korišćenu tehnologiju, sastoji se od tri osnovne funkcionalne celine: ulaza, obrade i izlaza. U savremenoj praksi, ove komponente najčešće odgovaraju: 
+\begin{enumerate}
+\item prijemu i prikazu informacija korisnicima (korisnički interfejs, frontend)
+\item obradi podataka i poslovnoj logici (backend)
+\item skladištenju i pristupu podacima (upravljanje podacima, baza podataka)
+\end{enumerate}
+Ova podela predstavlja minimalnu organizacionu strukturu informacionog sistema, koja se u literaturi često označava kao logička ili konceptualna arhitektura.
+
+\subsection{Arhitektonska organizacija (klasifikacija) informacionih sistema}
+\TODO{Formalna definicija procesa (servis)}
+\TODO{Napravi slike za svaku od ovih}
+U zavisnosti od načina na koji je organizovana struktura informacionog sistema, razlikujemo sledeće arhitekture:
+
+\begin{description}
+
+\item \textbf{Monolitna arhitektura:}
+Glavna prednost monolitne arhitekture jeste njena jednostavnost, jer su monolitne aplikacije znatno lakše za testiranje, implementaciju, otklanjanje grešaka i nadgledanje. U okviru monolitnog pristupa, svi delovi sistema, korisnički interfejs (ulaz/izlaz), poslovna logika (obrada) i upravljanje podacima (baza), objedinjeni su u jednom izvršnom paketu i pokreću se kao \textbf{jedan proces}.
+
+Svi podaci se čuvaju u jednoj bazi, bez potrebe za sinhronizacijom, dok se sva interna komunikacija odvija unutar tog procesa, što omogućava visoke performanse i eliminiše probleme karakteristične za međuprocesnu komunikaciju (IPC). Aplikacija funkcioniše kao jedinstvena celina, gde se sva logika obrade zahteva izvršava u jednom kontekstu izvršavanja. U praksi, taj proces možemo posmatrati kao \textit{serversku instancu aplikacije}, jedinstveni program koji preuzima zahteve, obrađuje ih i vraća odgovore korisnicima.
+
+Međutim, sa rastom obima i složenosti aplikacije javljaju se poteškoće u održavanju: promene u kodu postaju rizične i nepredvidive, jer izmene u jednom modulu često utiču na druge. Velika veličina sistema usporava njegovo pokretanje, što otežava razvoj i sprečava brzu i čestu isporuku novih verzija. Vremenom se gubi modularnost i preglednost, dok povećanje broja programera dovodi do neravnomerne raspodele posla i pada ukupne produktivnosti tima.
+
+\item \textbf{Klijent-server arhitektura \cite{berson1992client}:} 
+Prednost klijent-server arhitekture je njena jasna podela odgovornosti između klijenta (ulaz/izlaz) i servera (obrada/baza). Arhitektura se zasniva na odnosu između servera, koji obezbeđuje resurse i usluge, i klijenta, koji te usluge zahteva putem mrežne komunikacije.
+
+Sistem je podeljen na dva osnovna dela:\\
+(1) \textit{Klijentski sloj} - korisnički interfejs koji prikazuje podatke i omogućava interakciju sa korisnikom,\\
+(2) \textit{Serverski sloj} - koji sadrži poslovnu logiku i upravlja bazom podataka.\\
+Zbog takve podele, ovaj pristup se često naziva i dvoslojna arhitektura.
+
+U ovoj arhitekturi sistem funkcioniše kroz \textbf{dva procesa}: jedan proces se izvršava na strani klijenta (npr. web pregledač ili desktop aplikacija), drugi na strani servera (npr. aplikacioni server).
+
+Glavna mana klijent-server modela je ograničena skalabilnost i mogućnost preopterećenja servera, jer se svi zahtevi centralizuju na jednoj tački, što može smanjiti performanse i otpornost sistema na greške.
+
+\item \textbf{Troslojna arhitektura \cite{helal2001three}:} 
+Troslojna arhitektura donosi bolju organizaciju i fleksibilnost sistema u odnosu na dvoslojni model, jer uvodi poseban sloj za poslovnu logiku, čime se postiže veća nezavisnost između korisničkog interfejsa i baze podataka. Sistem je podeljen na tri dela:\\
+(1) \textit{Prezentacioni sloj} - korisnički interfejs koji omogućava komunikaciju korisnika sa sistemom,\\
+(2) \textit{Aplikacioni sloj} - sloj koji sadrži poslovnu logiku i pravila rada sistema,\\
+(3) \textit{Sloj podataka} - baza podataka ili drugi mehanizam za skladištenje i pristup podacima.
+
+U praksi, svaki sloj može raditi kao poseban proces, pa imamo \textbf{tri procesa}: frontend (klijent) se izvršava kao jedan proces, aplikacioni server kao drugi, sistem za upravljanje bazom podataka kao treći.
+
+Prednost ove strukture je lakše održavanje, nezavisno testiranje i razvoj slojeva. Međutim, kompleksnost sistema raste, pa je neophodno pažljivo definisati granice između slojeva da bi se izbegla redundancija i usporavanje komunikacije.
+
+\item \textbf{Četvoroslojna (ili višeslojna) arhitektura \cite{cao2013research}:}  
+Četvoroslojna arhitektura predstavlja proširenje troslojnog modela sa ciljem da se sistem otvori ka spoljnim servisima i aplikacijama. Uvođenjem dodatnog sloja, najčešće nazvanog sloj prenosa podataka \eng{data service} ili API sloj \eng{Application Programming Interface}, omogućava se komunikacija između više sistema i timova putem standardizovanih API-ja. Ovaj sloj enkapsulira poslovnu logiku i izlaže je ka spolja na kontrolisan način, nezavisno od prezentacionog sloja.
+
+Funkcionalno, arhitektura obuhvata:\\
+(1) \textit{Prezentacioni sloj (ulaz/izlaz)} - korisnički interfejs,\\
+(2) \textit{Aplikacioni sloj (obrada)} - poslovna logika,\\
+(2) \textit{API sloj (međusloj komunikacije)} - interfejs prema spoljašnjim servisima,\\
+(3) \textit{Sloj podataka (baza)} - skladištenje i pristup podacima.
+
+U ovoj organizaciji, svaki sloj može funkcionisati kao samostalan proces, pa sistem može imati \textbf{četiri ili više procesa}, u zavisnosti od toga da li se API servis pokreće odvojeno.
+
+Prednost ovog pristupa je mogućnost integracije sa eksternim sistemima, ponovna upotreba servisa i lakša skalabilnost. Ipak, dodatni sloj povećava složenost infrastrukture i zahteva dodatne mehanizme za bezbednost, kontrolu pristupa i održavanje API-ja.
+
+\item \textbf{Mikroservisna arhitektura \cite{alshuqayran2016systematic}:}
+Mikroservisna arhitektura se zasniva na principu da svaka komponenta sistema ima jednu, jasno definisanu odgovornost \eng{single responsibility}. Sistem je sastavljen od više malih, samostalnih servisa, od kojih svaki obuhvata kompletan mini-sistem sa sopstvenim: ulazom/izlazom (API interfejsom), obradom (poslovnom logikom) i često sopstvenom bazom podataka (lokalno skladište). Svaki mikroservis je nezavisno implementiran, poseduje sve neophodne zavisnosti i u potpunosti je odgovoran za izvršavanje svog poslovnog procesa.
+
+Zbog toga se mikroservisi mogu zasebno razvijati, testirati, skalirati i ažurirati bez uticaja na ostatak sistema. U ovoj arhitekturi, svaki mikroservis se izvršava kao poseban proces, pa sistem u celini može obuhvatati \textbf{desetine ili stotine procesa}.
+
+Mikroservisi funkcionišu kao prvoklasni entiteti sistema, izlažu svoje funkcionalnosti putem javnih API-ja, dok su detalji njihove implementacije potpuno sakriveni. Ovaj pristup povećava fleksibilnost, mogućnost monetizacije pojedinih servisa i jednostavnije integrisanje sa drugim aplikacijama, ali ujedno donosi izazove u pogledu orkestracije, bezbednosti i praćenja distribuiranih komponenti.
+\end{description}
