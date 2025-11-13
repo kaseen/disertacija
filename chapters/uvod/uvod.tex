@@ -41,7 +41,6 @@ U daljem radu fokus će biti samo na informacionim sistemima.
 
 \section{Informactioni sistem}
 \TODO{Poslovni informactioni sistem, javni informacioni sistem itd...}
-warnings
 
 \begin{definicija}
 Informacione tehnologije (IT) obuhvataju hardver, softver, baze podataka i mreže kao primarna sredstva za procesiranje, čuvanje, razmenu i prikaz informacija neophodnih za realizaciju poslovnih procesa. \cite{turban2000information}
@@ -60,16 +59,33 @@ Svaki informacioni sistem, bez obzira na svoju veličinu ili korišćenu tehnolo
 Ova podela predstavlja minimalnu organizacionu strukturu informacionog sistema, koja se u literaturi često označava kao logička ili konceptualna arhitektura.
 
 \subsection{Arhitektonska organizacija (klasifikacija) informacionih sistema}
-\TODO{Formalna definicija procesa (servis)}
 \TODO{Napravi slike za svaku od ovih}
-U zavisnosti od načina na koji je organizovana struktura informacionog sistema, razlikujemo sledeće arhitekture:
+
+Program predstavlja statički, fizički zapis koda na uređaju (hardveru) koji sam po sebi ne izvršava nikakvu aktivnost. Kada se pokrene njegova instanca, tj. kada se aplikacija učita u radnu memoriju računara, nastaje proces. Po završetku izvršavanja, proces se uklanja iz radne memorije i time prestaje da postoji.
+
+Najčešće se softver izvršava na uređajima koji poseduju operativni sistem \cite{tanenbaum2015modern} čija je uloga da omogući istovremeno izvršavanje i upravljanje više procesa na istom uređaju: planiranje njihovog izvršavanja, dodelu resursa, sinhronizaciju i međuprocesnu komunikaciju \eng{Inter-Process Communication (IPC)}. U zavisnosti od fizičke strukture procesora može se u istom trenutku izvršavati jedan ili više procesa, pri čemu operativni sistem ,,naizmenično'' dodeljuje procesor procesima tako što pauzira, čuva i vraća njihov kontekst izvršavanja.
+
+Proces tokom izvršavanja može pokrenuti dodatne podređene komponente koje omogućavaju konkurentno izvršavanje zadataka:
+\begin{enumerate}
+\item \textbf{Podređeni procesi} \eng{child processes} - predstavljaju nezavisne izvršne jedinice koje se pokreću iz glavnog procesa i imaju sopstveni memorijski prostor. Koriste se kada je potrebno izvršavanje izolovanih zadataka koji ne treba da dele memoriju sa glavnim procesom. Na primer, izvođenje sistemske komande može se realizovati kao podređeni proces. U ovu kategoriju spadaju i \textit{vremenski zakazani procesi} \eng{cron jobs}, koji se pokreću periodično u definisanim vremenskim intervalima (npr. svakog dana u ponoć).
+    
+\item \textbf{Niti} \eng{threads} - predstavljaju lakše izvršne jedinice koje dele isti memorijski prostor unutar procesa. Koriste se za paralelno izvršavanje više zadataka u okviru istog procesa. Na primer, jedna nit može slušati dolazne mrežne zahteve, druga obrađivati podatke, treća upisivati rezultate u bazu podataka, dok \textit{radne niti} \eng{worker threads} omogućavaju da se pojedini poslovi obavljaju u pozadini bez blokiranja glavnog toka programa.
+\end{enumerate}
+
+Međutim, softver se može izvršavati i na uređajima bez klasičnog operativnog sistema, u tzv. \textit{bare-metal} okruženju, gde postoji samo jedan proces koji direktno radi na hardveru. Višestruki procesi i niti mogu postojati ukoliko je razvijeno posebno programsko okruženje koje to omogućava.
+
+\begin{definicija}
+Proces je instanca aplikacije koja ima sopstveni memorijski prostor i kontekst izvršavanja.
+\end{definicija}
+
+Na osnovu broja i međusobne zavisnosti procesa u sistemu, moguće je razlikovati različite arhitekture informacionih sistema:
 
 \begin{description}
 
 \item \textbf{Monolitna arhitektura:}
 Glavna prednost monolitne arhitekture jeste njena jednostavnost, jer su monolitne aplikacije znatno lakše za testiranje, implementaciju, otklanjanje grešaka i nadgledanje. U okviru monolitnog pristupa, svi delovi sistema, korisnički interfejs (ulaz/izlaz), poslovna logika (obrada) i upravljanje podacima (baza), objedinjeni su u jednom izvršnom paketu i pokreću se kao \textbf{jedan proces}.
 
-Svi podaci se čuvaju u jednoj bazi, bez potrebe za sinhronizacijom, dok se sva interna komunikacija odvija unutar tog procesa, što omogućava visoke performanse i eliminiše probleme karakteristične za međuprocesnu komunikaciju (IPC). Aplikacija funkcioniše kao jedinstvena celina, gde se sva logika obrade zahteva izvršava u jednom kontekstu izvršavanja. U praksi, taj proces možemo posmatrati kao \textit{serversku instancu aplikacije}, jedinstveni program koji preuzima zahteve, obrađuje ih i vraća odgovore korisnicima.
+Svi podaci se čuvaju u jednoj bazi, bez potrebe za sinhronizacijom, dok se sva interna komunikacija odvija unutar tog procesa, što omogućava visoke performanse i eliminiše probleme karakteristične za međuprocesnu komunikaciju. Aplikacija funkcioniše kao jedinstvena celina, gde se sva logika obrade zahteva izvršava u jednom kontekstu izvršavanja. U praksi, taj proces možemo posmatrati kao \textit{serversku instancu aplikacije}, jedinstveni program koji preuzima zahteve, obrađuje ih i vraća odgovore korisnicima.
 
 Međutim, sa rastom obima i složenosti aplikacije javljaju se poteškoće u održavanju: promene u kodu postaju rizične i nepredvidive, jer izmene u jednom modulu često utiču na druge. Velika veličina sistema usporava njegovo pokretanje, što otežava razvoj i sprečava brzu i čestu isporuku novih verzija. Vremenom se gubi modularnost i preglednost, dok povećanje broja programera dovodi do neravnomerne raspodele posla i pada ukupne produktivnosti tima.
 
