@@ -1,6 +1,6 @@
 \chapter{Uvod}
 
-\section{Radni sistem}
+\section{Radni sistem}\label{sec:radni-sistem}
 \TODO{Hamurabijev zakonik, dodaj kao primere za državne i društvene procese}
 
 Ideja radnog sistema postoji praktično onoliko dugo koliko postoji organizovana trgovina i proizvodnja. Na primer, još u Mesopotamiji (oko 3000. p.n.e.) postoji evidencija trgovine žitom, kreditnih ugovora, kamata i dugova na glinenim tablicama. Kasnije, u vreme Vavilona, Hamurabijev zakonik (oko 1750. p.n.e.) uspostavlja formalna pravila ne samo za poslovne odnose, već i za šire državne i društvene procese, uključujući regulisanje ugovora, odgovornosti, radnih obaveza i sankcija \cite{carmona2007accounting}.
@@ -42,12 +42,10 @@ Bez obzira na kategoriju, svi radni sistemi dele zajednički ontološki minimum,
 U daljem radu fokus će biti samo na informacionim sistemima.
 
 \section{Informactioni sistem}
-\TODO{Poslovni informactioni sistem, javni informacioni sistem itd...}
-
 \TODO{Centralizovanost gde dodati?}
 
 \begin{definicija}
-Informacione tehnologije (IT) obuhvataju hardver, softver, baze podataka i mreže kao primarna sredstva za procesiranje, čuvanje, razmenu i prikaz informacija neophodnih za realizaciju poslovnih procesa \cite{turban2000information}.
+Informacione tehnologije (IT) obuhvataju hardver, softver, baze podataka i mreže kao primarna sredstva za procesiranje, čuvanje, razmenu i prikaz informacija neophodnih za realizaciju poslovnih procesa \cite{laudon2004management}.
 \end{definicija}
 
 \begin{definicija}
@@ -61,6 +59,18 @@ Svaki informacioni sistem, bez obzira na svoju veličinu ili primenjenu tehnolog
 \item skladištenje i upravljanje podacima (baza podataka, sistemi za upravljanje podacima).
 \end{enumerate}
 Ovakva podela predstavlja minimalnu logičku, odnosno konceptualnu arhitekturu informacionog sistema.
+
+\subsection{Tipovi informacionih sistema}
+Informacioni sistemi mogu se posmatrati kao tehnološke implementacije radnih sistema različitih namena. U literaturi se klasifikuju prema organizacionom nivou, funkcionalnoj oblasti i domenu primene \cite{laudon2004management, bourgeois2019information}. Ove podele mogu se prirodno ugraditi u posmatranje radnih sistema kroz četiri kategorije definisane na kraju poglavlja \ref{sec:radni-sistem}, čime se dobija okvir za klasifikaciju informacionih sistema:
+
+\begin{description}
+\item \textbf{Poslovni informacioni sistemi.} Većina klasičnih informacionih sistema pripada poslovnom kontekstu. Sistemi za procesiranje transakcija (TPS), menadžerski informacioni sistemi (MIS), sistemi za podršku odlučivanju (DSS) i izvršni informacioni sistemi (ESS/EIS) omogućavaju operativnu i menadžersku podršku poslovnim procesima. Pored toga, funkcionalni informacioni sistemi, poput finansijskih, računovodstvenih, marketinških, proizvodnih i HR sistema, kao i integrisani sistemi (ERP, CRM, SCM), predstavljaju tipične implementacije poslovnih radnih sistema.
+\item \textbf{Javni informacioni sistemi.} Informacioni sistemi u javnom sektoru obuhvataju sisteme e-uprave, zdravstvene i obrazovne informacione sisteme u državnim institucijama, kao i specijalizovane MIS i DSS sisteme za potrebe upravljanja javnim politikama. Ovi sistemi primarno stvaraju društvenu vrednost, u skladu sa ciljevima javnih radnih sistema.
+\item \textbf{Neprofitni informacioni sistemi.} U neprofitnim organizacijama informacioni sistemi podržavaju upravljanje donacijama, rad volontera, finansijsko izveštavanje, komunikaciju sa zajednicom i realizaciju projekata od javnog interesa. Iako manje standardizovani od poslovnih i javnih informacionih sistema, ovi sistemi predstavljaju tehnološku podršku stvaranju zajedničkog dobra.
+\item \textbf{Lični informacioni sistemi.} Lični informacioni sistemi odnose se na alate i aplikacije koje pojedinci koriste radi organizacije ličnih aktivnosti, upravljanja informacijama i povećanja produktivnosti. U ovu kategoriju spadaju i sistemi koje koriste slobodni radnici \eng{freelancer}, uključujući alate za upravljanje projektima, praćenje vremena, finansijsko praćenje i komunikaciju sa klijentima.
+\end{description}
+
+Ovakva integracija pokazuje da se različite akademske klasifikacije informacionih sistema mogu dosledno mapirati na četiri osnovne kategorije radnih sistema, pri čemu se svaki informacioni sistem posmatra u funkciji vrednosti koju konkretan radni sistem nastoji da proizvede.
 
 \subsection{Arhitektonska organizacija informacionih sistema}
 \TODO{Napravi slike za svaku od ovih}
@@ -142,7 +152,7 @@ Zbog toga se mikroservisi mogu zasebno razvijati, testirati, skalirati i ažurir
 Mikroservisi funkcionišu kao prvoklasni entiteti sistema, izlažu svoje funkcionalnosti putem javnih API-ja, dok su detalji njihove implementacije potpuno sakriveni. Ovaj pristup povećava fleksibilnost, mogućnost monetizacije pojedinih servisa i jednostavnije integrisanje sa drugim aplikacijama, ali ujedno donosi izazove u pogledu orkestracije, bezbednosti i praćenja distribuiranih komponenti.
 \end{description}
 
-\subsection{Skaliranje}
+\subsection{Skaliranje informacionih sistema}
 \begin{definicija}
 Skaliranje predstavlja sposobnost sistema da proporcionalno poveća svoje performanse dodavanjem resursa \cite{bondi2000characteristics}.
 \end{definicija}
