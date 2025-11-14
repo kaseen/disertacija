@@ -2,9 +2,11 @@
 
 \section{Radni sistem}
 \TODO{Hamurabijev zakonik, dodaj kao primere za državne i društvene procese}
+
 Ideja radnog sistema postoji praktično onoliko dugo koliko postoji organizovana trgovina i proizvodnja. Na primer, još u Mesopotamiji (oko 3000. p.n.e.) postoji evidencija trgovine žitom, kreditnih ugovora, kamata i dugova na glinenim tablicama. Kasnije, u vreme Vavilona, Hamurabijev zakonik (oko 1750. p.n.e.) uspostavlja formalna pravila ne samo za poslovne odnose, već i za šire državne i društvene procese, uključujući regulisanje ugovora, odgovornosti, radnih obaveza i sankcija \cite{carmona2007accounting}.
 
 \TODO{General System Theory/System Theory/Socio-technical Systems, svako definiše svoj ontološki minimum} 
+
 \textbf{Radni sistem} \eng{Work system} se, prema Alteru \cite{alter2013work}, definiše kao organizovani sociotehnički sistem u kojem ljudi i/ili mašine obavljaju \textbf{procese} i \textbf{aktivnosti} koristeći informacije, tehnologiju i druge resurse kako bi proizveli određene proizvode ili usluge za jasno definisane interne ili eksterne korisnike. Osnovna ideja ovog pristupa jeste da radni sistem prikazuje \textbf{kako se posao u organizaciji zaista odvija u praksi}, nezavisno od stepena automatizacije ili nivoa tehnološke podrške.
  
 Dalje, Alter u svom radu predstavlja osnovne elemente najopštijeg oblika radnog sistema. Istih devet elemenata primenjuju se na različite podtipove kao što su informacioni sistemi, projekti, lanci snabdevanja ili elektronska trgovina, dok udaljeniji tipovi sistema mogu, u zavisnosti od konteksta, dodavati ili izostavljati pojedine elemente:
@@ -42,24 +44,28 @@ U daljem radu fokus će biti samo na informacionim sistemima.
 \section{Informactioni sistem}
 \TODO{Poslovni informactioni sistem, javni informacioni sistem itd...}
 
+\TODO{Centralizovanost gde dodati?}
+
 \begin{definicija}
-Informacione tehnologije (IT) obuhvataju hardver, softver, baze podataka i mreže kao primarna sredstva za procesiranje, čuvanje, razmenu i prikaz informacija neophodnih za realizaciju poslovnih procesa. \cite{turban2000information}
+Informacione tehnologije (IT) obuhvataju hardver, softver, baze podataka i mreže kao primarna sredstva za procesiranje, čuvanje, razmenu i prikaz informacija neophodnih za realizaciju poslovnih procesa \cite{turban2000information}.
 \end{definicija}
 
 \begin{definicija}
 Informacion sistem se dobija kada se radni sistem integriše sa informacionim tehnologijama.
 \end{definicija}
 
-Svaki informacioni sistem, bez obzira na svoju veličinu ili korišćenu tehnologiju, sastoji se od tri osnovne funkcionalne celine: ulaza, obrade i izlaza. U savremenoj praksi, ove komponente najčešće odgovaraju: 
+Svaki informacioni sistem, bez obzira na svoju veličinu ili primenjenu tehnologiju, obuhvata tri osnovne funkcionalne celine: ulaz, obradu i izlaz. U savremenim softverskim rešenjima te celine se najčešće realizuju kao:
 \begin{enumerate}
-\item prijemu i prikazu informacija korisnicima (korisnički interfejs, frontend)
-\item obradi podataka i poslovnoj logici (backend)
-\item skladištenju i pristupu podacima (upravljanje podacima, baza podataka)
+\item prijem i prikaz informacija korisniku (korisnički interfejs, frontend),
+\item obrada podataka i primena poslovne logike (backend),
+\item skladištenje i upravljanje podacima (baza podataka, sistemi za upravljanje podacima).
 \end{enumerate}
-Ova podela predstavlja minimalnu organizacionu strukturu informacionog sistema, koja se u literaturi često označava kao logička ili konceptualna arhitektura.
+Ovakva podela predstavlja minimalnu logičku, odnosno konceptualnu arhitekturu informacionog sistema.
 
-\subsection{Arhitektonska organizacija (klasifikacija) informacionih sistema}
+\subsection{Arhitektonska organizacija informacionih sistema}
 \TODO{Napravi slike za svaku od ovih}
+
+\TODO{Cloud computing}
 
 Program predstavlja statički, fizički zapis koda na uređaju (hardveru) koji sam po sebi ne izvršava nikakvu aktivnost. Kada se pokrene njegova instanca, tj. kada se aplikacija učita u radnu memoriju računara, nastaje proces. Po završetku izvršavanja, proces se uklanja iz radne memorije i time prestaje da postoji.
 
@@ -76,6 +82,10 @@ Međutim, softver se može izvršavati i na uređajima bez klasičnog operativno
 
 \begin{definicija}
 Proces je instanca aplikacije koja ima sopstveni memorijski prostor i kontekst izvršavanja.
+\end{definicija}
+
+\begin{definicija}
+Instanca informacionog sistema je skup pokrenutih procesa koji rade u koordinaciji kako bi obezbedili punu funkcionalnost aplikacije.
 \end{definicija}
 
 Na osnovu broja i međusobne zavisnosti procesa u sistemu, moguće je razlikovati različite arhitekture informacionih sistema:
@@ -131,3 +141,20 @@ Zbog toga se mikroservisi mogu zasebno razvijati, testirati, skalirati i ažurir
 
 Mikroservisi funkcionišu kao prvoklasni entiteti sistema, izlažu svoje funkcionalnosti putem javnih API-ja, dok su detalji njihove implementacije potpuno sakriveni. Ovaj pristup povećava fleksibilnost, mogućnost monetizacije pojedinih servisa i jednostavnije integrisanje sa drugim aplikacijama, ali ujedno donosi izazove u pogledu orkestracije, bezbednosti i praćenja distribuiranih komponenti.
 \end{description}
+
+\subsection{Skaliranje}
+\begin{definicija}
+Skaliranje predstavlja sposobnost sistema da proporcionalno poveća svoje performanse dodavanjem resursa \cite{bondi2000characteristics}.
+\end{definicija}
+
+U praksi se razlikuju tri osnovna pristupa skaliranju:
+
+\begin{enumerate}
+\item \textbf{Vertikalno skaliranje \eng{scale-up}} – povećavanje resursa jedne instance aplikacije (CPU, memorija, disk).
+\item \textbf{Horizontalno skaliranje \eng{scale-out}} – dodavanje novih instanci informacionog sistema, što najčešće zahteva upotrebu mehanizama za balansiranje opterećenja \eng{load balancing}.
+\item \textbf{Dijagonalno skaliranje} – kombinacija prethodna dva pristupa.
+\end{enumerate}
+
+Kako horizontalno skaliranje (a time i dijagonalno) podrazumeva pokretanje više instanci istog informacionog sistema, pokretanjem svake dodatne instance povećava se ukupan broj aktivnih procesa koji obavljaju funkcije sistema. Svaka instanca može predstavljati jedan proces ili skup međusobno povezanih procesa.
+
+Ukoliko se sve instance izvršavaju na istom uređaju, sistem zadržava centralizovanu prirodu. Nasuprot tome, sistem postaje distribuiran u trenutku kada se dve ili više instanci izvršavaju na različitim uređajima i zajednički realizuju iste ili različite delove poslovne logike, što zahteva međusobnu koordinaciju stanja i sinhronizaciju podataka.
