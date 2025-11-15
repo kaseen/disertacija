@@ -1,18 +1,15 @@
-\chapter{Metodologija}
-Ovo je drugi chapter.
+\chapter{Analitički okvir za evaluaciju informacionih sistema}
+U poglavlju \ref{sec:uvod} informacioni sistemi su analizirani kroz arhitektonsku organizaciju, modele skaliranja i savremene pristupe izvođenju u oblaku. Bez obzira na to da li sistem funkcioniše kao monolit, troslojna aplikacija ili kao skup instanci raspoređenih u cloud okruženju, takvi sistemi i dalje predstavljaju \textit{logički centralizovane informacione sisteme} u kojima postoji jedinstveni skup komponenti koje zajednički realizuju poslovnu logiku \cite{van2017distributed}. Čak i kada se više instanci izvršava na različitim uređajima, sistem se ponaša kao jedna integrisana celina sa jedinstvenim stanjem i kontrolom.
 
-\section{Opis metoda}
-Ovde ide opis metoda...
+Za sistematsku analizu prednosti i ograničenja ovakvih informacionih sistema potrebno je fokusirati se isključivo na njihove \textbf{tehničke atribute infrastrukture}, nezavisno od menadžerskih, organizacionih i ekonomskih aspekata. Ovi aspekti biće samo ukratko pomenuti radi potpunosti, ali ne predstavljaju predmet dublje razrade u ovoj disertaciji.
 
-\section{Rezultati eksperimenta}
-Ovde ide deo o rezultatima...
+U oblasti softverskog inženjerstva kvalitativne karakteristike informacionih i softverskih arhitektura formalizuju se kroz tzv. \textbf{atribute kvaliteta} \cite{bass2021software}, koji predstavljaju standardni analitički okvir za ocenu tehničkog ponašanja i sposobnosti sistema. Među najznačajnijim atributima za evaluaciju informacionih sistema izdvajaju se:
+\begin{enumerate}
+\item performanse i efikasnost,
+\item skalabilnost,
+\item dostupnost i otpornost na greške,
+\item bezbednost i integritet,
+\item kompleksnost implementacije, održavanja i upravljanja.
+\end{enumerate}
 
-\begin{figure}[htp]
-\centering
-\includegraphics[width=4cm]{test2.png}
-\caption{An image of a galaxy}
-\label{fig:galaxy}
-\end{figure}
-
-\newpage
-I ovde možeš dodati više sadržaja.
+Ovi atributi obezbeđuju tehnički konzistentan i teorijski utemeljen okvir za procenu kvaliteta savremenih informacionih sistema. Njihovim posmatranjem moguće je jasno razlikovati \textbf{tehnička svojstva sistema}, koja predstavljaju primarni predmet istraživanja u ovoj disertaciji, od šireg menadžerskog, organizacionog i ekonomskog konteksta, koji se ovde samo dopunski navodi.
