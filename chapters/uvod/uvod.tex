@@ -7,6 +7,8 @@ Ideja radnog sistema postoji praktično onoliko dugo koliko postoji organizovana
 
 \TODO{General System Theory/System Theory/Socio-technical Systems, svako definiše svoj ontološki minimum} 
 
+\TODO{Malo bolje objasni sociotehnički sistem}
+
 \textbf{Radni sistem} \eng{Work system} se, prema Alteru \cite{alter2013work}, definiše kao organizovani sociotehnički sistem u kojem ljudi i/ili mašine obavljaju \textbf{procese} i \textbf{aktivnosti} koristeći informacije, tehnologiju i druge resurse kako bi proizveli određene proizvode ili usluge za jasno definisane interne ili eksterne korisnike. Osnovna ideja ovog pristupa jeste da radni sistem prikazuje \textbf{kako se posao u organizaciji zaista odvija u praksi}, nezavisno od stepena automatizacije ili nivoa tehnološke podrške.
  
 Dalje, Alter u svom radu predstavlja osnovne elemente najopštijeg oblika radnog sistema. Istih devet elemenata primenjuju se na različite podtipove kao što su informacioni sistemi, projekti, lanci snabdevanja ili elektronska trgovina, dok udaljeniji tipovi sistema mogu, u zavisnosti od konteksta, dodavati ili izostavljati pojedine elemente:
@@ -44,12 +46,20 @@ U daljem radu fokus će biti samo na informacionim sistemima.
 \section{Informactioni sistem}
 \TODO{Centralizovanost gde dodati?}
 
+Da bi se precizno definisao informacioni sistem, neophodno je najpre razjasniti pojam informacionih tehnologija, koje počivaju na skupu osnovnih tehničkih komponenti \cite{laudon2004management}. Te komponente obezbeđuju tehnološku osnovu rada informacionog sistema i obuhvataju:
+\begin{enumerate}
+\item \textbf{Hardver}, koji obezbeđuje fizičku infrastrukturu za izvršavanje softverskih komponenti,
+\item \textbf{Softver}, koji predstavlja logički sloj sistema i određuje njegove funkcionalnosti i stepen automatizacije poslovnih procesa,
+\item \textbf{Bazu podataka}, koja istovremeno pruža fizički mehanizam trajnog čuvanja podataka i logički sloj za njihovo strukturisano čitanje, pisanje i upravljanje,
+\item \textbf{Mrežu}, kao infrastrukturni element koji omogućava komunikaciju i koordinaciju između različitih delova sistema.
+\end{enumerate}
+
 \begin{definicija}
-Informacione tehnologije (IT) obuhvataju hardver, softver, baze podataka i mreže kao primarna sredstva za procesiranje, čuvanje, razmenu i prikaz informacija neophodnih za realizaciju poslovnih procesa \cite{laudon2004management}.
+Informacione tehnologije (IT) obuhvataju hardver, softver, baze podataka i mreže kao primarna sredstva za procesiranje, čuvanje, razmenu i prikaz informacija neophodnih za realizaciju poslovnih procesa.
 \end{definicija}
 
 \begin{definicija}
-Informacion sistem se dobija kada se radni sistem integriše sa informacionim tehnologijama.
+Informacion sistem predstavlja sociotehnički sistem nastao integracijom radnog sistema sa informacionim tehnologijama.
 \end{definicija}
 
 Svaki informacioni sistem, bez obzira na svoju veličinu ili primenjenu tehnologiju, obuhvata tri osnovne funkcionalne celine: ulaz, obradu i izlaz. U savremenim softverskim rešenjima te celine se najčešće realizuju kao:
@@ -72,10 +82,8 @@ Informacioni sistemi mogu se posmatrati kao tehnološke implementacije radnih si
 
 Ovakva integracija pokazuje da se različite akademske klasifikacije informacionih sistema mogu dosledno mapirati na četiri osnovne kategorije radnih sistema, pri čemu se svaki informacioni sistem posmatra u funkciji vrednosti koju konkretan radni sistem nastoji da proizvede.
 
-\subsection{Arhitektonska organizacija informacionih sistema}
+\subsection{Arhitektonska organizacija informacionih sistema}\label{sec:arhitektonska-organizacija}
 \TODO{Napravi slike za svaku od ovih}
-
-\TODO{Cloud computing}
 
 Program predstavlja statički, fizički zapis koda na uređaju (hardveru) koji sam po sebi ne izvršava nikakvu aktivnost. Kada se pokrene njegova instanca, tj. kada se aplikacija učita u radnu memoriju računara, nastaje proces. Po završetku izvršavanja, proces se uklanja iz radne memorije i time prestaje da postoji.
 
@@ -160,11 +168,22 @@ Skaliranje predstavlja sposobnost sistema da proporcionalno poveća svoje perfor
 U praksi se razlikuju tri osnovna pristupa skaliranju:
 
 \begin{enumerate}
-\item \textbf{Vertikalno skaliranje \eng{scale-up}} – povećavanje resursa jedne instance aplikacije (CPU, memorija, disk).
-\item \textbf{Horizontalno skaliranje \eng{scale-out}} – dodavanje novih instanci informacionog sistema, što najčešće zahteva upotrebu mehanizama za balansiranje opterećenja \eng{load balancing}.
-\item \textbf{Dijagonalno skaliranje} – kombinacija prethodna dva pristupa.
+\item \textbf{Vertikalno skaliranje \eng{scale-up}} - povećavanje resursa jedne instance aplikacije (CPU, memorija, disk),
+\item \textbf{Horizontalno skaliranje \eng{scale-out}} - dodavanje novih instanci informacionog sistema, što najčešće zahteva upotrebu mehanizama za balansiranje opterećenja \eng{load balancing},
+\item \textbf{Dijagonalno skaliranje} - kombinacija prethodna dva pristupa.
 \end{enumerate}
 
 Kako horizontalno skaliranje (a time i dijagonalno) podrazumeva pokretanje više instanci istog informacionog sistema, pokretanjem svake dodatne instance povećava se ukupan broj aktivnih procesa koji obavljaju funkcije sistema. Svaka instanca može predstavljati jedan proces ili skup međusobno povezanih procesa.
 
 Ukoliko se sve instance izvršavaju na istom uređaju, sistem zadržava centralizovanu prirodu. Nasuprot tome, sistem postaje distribuiran u trenutku kada se dve ili više instanci izvršavaju na različitim uređajima i zajednički realizuju iste ili različite delove poslovne logike, što zahteva međusobnu koordinaciju stanja i sinhronizaciju podataka.
+
+\subsection{Računarstvo u oblaku i elastično skaliranje informacionih sistema}
+Razvoj informacionih sistema tradicionalno je zahtevao nabavku sopstvene fizičke infrastrukture (servera, mrežne opreme, skladišta podataka) i angažovanje stručnog osoblja za njeno održavanje. Takav pristup nosi visoke početne troškove, zahteva složeno planiranje kapaciteta i otežava brzo prilagođavanje promenama u obimu posla.
+
+Savremene organizacije sve češće usvajaju model računarstva u oblaku \eng{cloud computing} \cite{mell2011nist}, u kome se infrastruktura, platforme i softverske usluge iznajmljuju od eksternog provajdera. Umesto sopstvene opreme koriste se virtuelni resursi koji se dinamički dodeljuju prema potrebi, čime se omogućava elastično skaliranje instanci informacionog sistema, smanjuju troškovi infrastrukture i održavanja, umanjuje potreba za internim sistemskim osobljem i ubrzava postavljanje razvojnih i produkcionih okruženja.
+
+Okruženja u oblaku tipično se realizuju kao javna, privatna ili hibridna, dok se isporuka servisa organizuje kroz standardne modele: \textit{IaaS} (infrastruktura kao usluga), \textit{PaaS} (platforma kao usluga) i \textit{SaaS} (softver kao usluga). Ovi modeli određuju nivo kontrole koji zadržava korisnik i nivo odgovornosti koji preuzima provajder usluge.
+
+Kontejnerizacija predstavlja dominantan tehnološki pristup za raspoređivanje softverskih komponenti u oblaku. Kontejneri (npr. \textit{Docker}) omogućavaju izolovano, prenosivo i konzistentno pokretanje aplikacionih instanci, dok platforme za orkestraciju (npr. \textit{Kubernetes}) automatizuju njihovo raspoređivanje, oporavak i horizontalno skaliranje u dinamičkim okruženjima.
+
+Zahvaljujući ovim tehnologijama, arhitektonske organizacije informacionih sistema opisane u poglavlju \ref{sec:arhitektonska-organizacija} mogu se efikasno distribuirati, skalirati i održavati u cloud infrastrukturi, uz značajno smanjenje tehničke složenosti i operativnih troškova u odnosu na tradicionalne modele upravljanja resursima.
