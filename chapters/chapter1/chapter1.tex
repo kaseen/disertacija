@@ -175,17 +175,8 @@ Kako horizontalno skaliranje (a time i dijagonalno) podrazumeva pokretanje više
 Ako se sve instance izvršavaju na jednom uređaju, sistem zadržava \textbf{centralizovanu} prirodu. Međutim, kada se više instanci izvršava na različitim fizičkim uređajima i međusobno koordiniše stanje, sistem prelazi u kategoriju \textbf{distribuiranih sistema}.
 
 \begin{definicija}
-Distribuiran sistem predstavlja kolekciju nezavisnih računarskih uređaja koji međusobnom koordinacijom preko poruka deluju kao jedinstven, koherentan sistem \cite{van2017distributed}.
+Distribuiran sistem predstavlja skup nezavisnih računarskih uređaja (čvorova) koji nemaju zajedničku memoriju i komuniciraju isključivo razmenom poruka, a svoj rad koordinišu tako da prema korisniku deluju kao jedinstven, koherentan sistem \cite{van2017distributed}.
 \end{definicija}
-
-Distribuirani sistemi mogu se klasifikovati prema načinu na koji dele i obrađuju podatke:
-\begin{enumerate}
-\item \textbf{Replikacija podataka} - više kopija iste baze podataka ili objekata čuva se na različitim serverima radi povećanja dostupnosti, otpornosti i performansi,
-\item \textbf{Particionisanje \eng{sharding}} - podaci se razdvajaju na logičke ili geografske celine koje se čuvaju na različitim serverima radi smanjenja opterećenja i postizanja horizontalne skalabilnosti,
-\item \textbf{Hibridni modeli} - kombinacije replikacije i particionisanja, tipične za sisteme velikih razmera.
-\end{enumerate}
-
-Replikacija podataka predstavlja dominantan obrazac u savremenoj industrijskoj praksi. Globalne platforme, poput društvenih mreža i \textit{streaming} servisa, čuvaju replike podataka u više geografski udaljenih centara podataka. Korisnik se povezuje na fizički najbližu repliku čime se smanjuje latencija pristupa, povećava otpornost na greške i omogućava kontinuitet rada čak i u slučaju prekida veze između različitih regiona.
 
 \subsection{Računarstvo u oblaku i elastično skaliranje informacionih sistema}
 Razvoj informacionih sistema tradicionalno je zahtevao nabavku sopstvene fizičke infrastrukture (servera, mrežne opreme, skladišta podataka) i angažovanje stručnog osoblja za njeno održavanje. Takav pristup nosi visoke početne troškove, zahteva složeno planiranje kapaciteta i otežava brzo prilagođavanje promenama u obimu posla.
@@ -197,3 +188,28 @@ Okruženja u oblaku tipično se realizuju kao javna, privatna ili hibridna, dok 
 Kontejnerizacija predstavlja dominantan tehnološki pristup za raspoređivanje softverskih komponenti u oblaku. Kontejneri (npr. \textit{Docker}) omogućavaju izolovano, prenosivo i konzistentno pokretanje aplikacionih instanci, dok platforme za orkestraciju (npr. \textit{Kubernetes}) automatizuju njihovo raspoređivanje, oporavak i horizontalno skaliranje u dinamičkim okruženjima.
 
 Zahvaljujući ovim tehnologijama, arhitektonske organizacije informacionih sistema opisane u poglavlju \ref{sec:arhitektonska-organizacija} mogu se efikasno distribuirati, skalirati i održavati u cloud infrastrukturi, uz značajno smanjenje tehničke složenosti i operativnih troškova u odnosu na tradicionalne modele upravljanja resursima.
+
+\section{Logička centralizacija u distribuiranim informacionim sistemima}
+U najvećem broju savremenih industrijskih primena distribuirani sistemi ostaju \textbf{logički centralizovani}, jer svi čvorovi pripadaju jednoj organizaciji, koriste jedinstven model upravljanja podacima i oslanjaju se na zajedničku tačku poverenja. Takvi sistemi funkcionišu kao jedna koherentna računarska celina sa jedinstvenim stanjem i jedinstvenim operativnim autoritetom, bez obzira na broj ili geografski raspored čvorova.
+
+Sistem može biti distribuiran u arhitektonskom smislu (višestruke instance, više servera, geografska replikacija), a istovremeno ostati centralizovan u pogledu kontrole, upravljanja stanjem i donošenja odluka. Iz ovoga sledi sledeća definicija:
+\begin{definicija}
+Fizička distribuiranost čvorova ne implicira decentralizaciju u logičkom smislu.
+\end{definicija}
+
+Tipičan primer logički centralizovanog, ali fizički distribuiranog sistema predstavljaju globalne internet platforme (Facebook, Google, Amazon), koje upravljaju hiljadama servera raspoređenih u više geografskih regiona, ali i dalje zadržavaju potpunu centralnu kontrolu nad autorizacijom, koherencijom podataka i celokupnim operativnim upravljanjem infrastrukturom.
+
+Da bi sistem bio decentralizovan, nije dovoljno da se izvršava na velikom broju uređaja. Neophodno je da čvorovi budu \textbf{nezavisni akteri} koji, kroz svoj programski kod, implementiraju mehanizme kolektivnog odlučivanja, verifikacije i održavanja stanja bez oslanjanja na centralnu tačku poverenja.
+
+Prema standardnoj klasifikaciji decentralizacije \cite{buterin2017meaning}, razlikuju se tri nezavisne dimenzije:
+\begin{enumerate}
+\item \textbf{Arhitektonska decentralizacija} - geografska i infrastrukturna raspodela čvorova,
+\item \textbf{Kontrolna decentralizacija} - odsustvo jedinstvenog entiteta koji upravlja sistemom,
+\item \textbf{Logička decentralizacija} - način na koji se donose odluke o stanju sistema (konsenzus).
+\end{enumerate}
+
+\begin{definicija}
+Decentralizovan sistem karakteriše odsustvo privilegovanog čvora, a konzistentnost i napredovanje sistema obezbeđuju distribuirani algoritmi koji funkcionišu i u prisustvu nepouzdanih ili potencijalno malicioznih čvorova.
+\end{definicija}
+
+Većina modernih distribuiranih informacionih sistema ostvaruje samo prvu dimenziju (arhitektonsku), dok kontrolna i logička dimenzija ostaju centralizovane.

@@ -39,3 +39,15 @@ Particionisanje može nastati u više oblika, uključujući, ali ne ograničavaj
 \item Preopterećen čvor ili mrežni link - čvor je živ, ali ne uspeva da na vreme šalje ili prima poruke. Ostali čvorovi ga tretiraju kao nedostupan, što efektivno formira particiju iako čvor nije „pokvaren”,
 \item Greške u mrežnoj konfiguraciji - mogu dovesti do toga da podmreže ili grupe čvorova ne vide jedni druge, iako svi rade ispravno,
 \end{enumerate}
+
+
+
+% TODO
+Distribuirani sistemi mogu se klasifikovati prema načinu na koji dele i obrađuju podatke:
+\begin{enumerate}
+\item \textbf{Replikacija podataka} - više kopija iste baze podataka ili objekata čuva se na različitim serverima radi povećanja dostupnosti, otpornosti i performansi,
+\item \textbf{Particionisanje \eng{sharding}} - podaci se razdvajaju na logičke ili geografske celine koje se čuvaju na različitim serverima radi smanjenja opterećenja i postizanja horizontalne skalabilnosti,
+\item \textbf{Hibridni modeli} - kombinacije replikacije i particionisanja, tipične za sisteme velikih razmera.
+\end{enumerate}
+
+Replikacija podataka predstavlja dominantan obrazac u savremenoj industrijskoj praksi. Globalne platforme, poput društvenih mreža i \textit{streaming} servisa, čuvaju replike podataka u više geografski udaljenih centara podataka. Korisnik se povezuje na fizički najbližu repliku čime se smanjuje latencija pristupa, povećava otpornost na greške i omogućava kontinuitet rada čak i u slučaju prekida veze između različitih regiona.
