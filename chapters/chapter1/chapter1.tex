@@ -44,8 +44,6 @@ Bez obzira na kategoriju, svi radni sistemi dele zajednički ontološki minimum,
 U daljem radu fokus će biti samo na informacionim sistemima.
 
 \section{Informactioni sistem}
-\TODO{Centralizovanost gde dodati?}
-
 Da bi se precizno definisao informacioni sistem, neophodno je najpre razjasniti pojam informacionih tehnologija, koje počivaju na skupu osnovnih tehničkih komponenti \cite{laudon2004management}. Te komponente obezbeđuju tehnološku osnovu rada informacionog sistema i obuhvataju:
 \begin{enumerate}
 \item \textbf{Hardver}, koji obezbeđuje fizičku infrastrukturu za izvršavanje softverskih komponenti,
@@ -166,16 +164,28 @@ Skaliranje predstavlja sposobnost sistema da proporcionalno poveća svoje perfor
 \end{definicija}
 
 U praksi se razlikuju tri osnovna pristupa skaliranju:
-
 \begin{enumerate}
-\item \textbf{Vertikalno skaliranje \eng{scale-up}} - povećavanje resursa jedne instance aplikacije (CPU, memorija, disk),
-\item \textbf{Horizontalno skaliranje \eng{scale-out}} - dodavanje novih instanci informacionog sistema, što najčešće zahteva upotrebu mehanizama za balansiranje opterećenja \eng{load balancing},
-\item \textbf{Dijagonalno skaliranje} - kombinacija prethodna dva pristupa.
+\item \textbf{Vertikalno skaliranje \eng{scale-up}} - povećavanje resursnih kapaciteta jedne instance aplikacije (CPU, memorija, skladište),
+\item \textbf{Horizontalno skaliranje \eng{scale-out}} - dodavanje novih instanci informacionog sistema, što tipično zahteva upotrebu mehanizama za balansiranje opterećenja \eng{load balancing},
+\item \textbf{Dijagonalno skaliranje} - kombinovanje vertikalnog i horizontalnog pristupa.
 \end{enumerate}
 
 Kako horizontalno skaliranje (a time i dijagonalno) podrazumeva pokretanje više instanci istog informacionog sistema, pokretanjem svake dodatne instance povećava se ukupan broj aktivnih procesa koji obavljaju funkcije sistema. Svaka instanca može predstavljati jedan proces ili skup međusobno povezanih procesa.
 
-Ukoliko se sve instance izvršavaju na istom uređaju, sistem zadržava centralizovanu prirodu. Nasuprot tome, sistem postaje distribuiran u trenutku kada se dve ili više instanci izvršavaju na različitim uređajima i zajednički realizuju iste ili različite delove poslovne logike, što zahteva međusobnu koordinaciju stanja i sinhronizaciju podataka.
+Ako se sve instance izvršavaju na jednom uređaju, sistem zadržava \textbf{centralizovanu} prirodu. Međutim, kada se više instanci izvršava na različitim fizičkim uređajima i međusobno koordiniše stanje, sistem prelazi u kategoriju \textbf{distribuiranih sistema}.
+
+\begin{definicija}
+Distribuiran sistem predstavlja kolekciju nezavisnih računarskih uređaja koji međusobnom koordinacijom deluju kao jedinstven, koherentan sistem \cite{van2017distributed}.
+\end{definicija}
+
+Distribuirani sistemi mogu se klasifikovati prema načinu na koji dele i obrađuju podatke:
+\begin{enumerate}
+\item \textbf{Replikacija podataka} - više kopija iste baze podataka ili objekata čuva se na različitim serverima radi povećanja dostupnosti, otpornosti i performansi,
+\item \textbf{Particionisanje \eng{sharding}} - podaci se razdvajaju na logičke ili geografske celine koje se čuvaju na različitim serverima radi smanjenja opterećenja i postizanja horizontalne skalabilnosti,
+\item \textbf{Hibridni modeli} - kombinacije replikacije i particionisanja, tipične za sisteme velikih razmera.
+\end{enumerate}
+
+Replikacija podataka predstavlja dominantan obrazac u savremenoj industrijskoj praksi. Globalne platforme, poput društvenih mreža i \textit{streaming} servisa, čuvaju replike podataka u više geografski udaljenih centara podataka. Korisnik se povezuje na fizički najbližu repliku čime se smanjuje latencija pristupa, povećava otpornost na greške i omogućava kontinuitet rada čak i u slučaju prekida veze između različitih regiona.
 
 \subsection{Računarstvo u oblaku i elastično skaliranje informacionih sistema}
 Razvoj informacionih sistema tradicionalno je zahtevao nabavku sopstvene fizičke infrastrukture (servera, mrežne opreme, skladišta podataka) i angažovanje stručnog osoblja za njeno održavanje. Takav pristup nosi visoke početne troškove, zahteva složeno planiranje kapaciteta i otežava brzo prilagođavanje promenama u obimu posla.

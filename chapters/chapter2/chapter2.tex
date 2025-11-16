@@ -13,3 +13,13 @@ U oblasti softverskog inženjerstva kvalitativne karakteristike informacionih i 
 \end{enumerate}
 
 Ovi atributi obezbeđuju tehnički konzistentan i teorijski utemeljen okvir za procenu kvaliteta savremenih informacionih sistema. Njihovim posmatranjem moguće je jasno razlikovati \textbf{tehnička svojstva sistema}, koja predstavljaju primarni predmet istraživanja u ovoj disertaciji, od šireg menadžerskog, organizacionog i ekonomskog konteksta, koji se ovde samo dopunski navodi.
+
+\section{CAP teorema}
+Analiza tehničkih atributa kvaliteta informacionih sistema ne može biti potpuna bez razmatranja fundamentalnih ograničenja distribuiranih sistema. Jedno od najznačajnijih formalnih ograničenja u ovoj oblasti predstavlja CAP teorema, koju je prvi formulisao Eric Brewer \cite{brewer2000towards}, a kasnije formalno dokazali Gilbert i Lynch \cite{gilbert2002brewer}. Ova teorema definiše osnovni kompromis sa kojim se suočavaju svi distribuirani informacioni sistemi koji upravljaju deljenim stanjem.
+
+\begin{teorema}
+U distribuiranom sistemu koji čuva podatke nemoguće je istovremeno garantovati sve tri sledeće osobine: \\
+(1) \textbf{konzistentnost (C)} - svaki čvor u svakom trenutku vidi iste podatke; operacija čitanja vraća poslednju potvrđenu upisanu vrednost, \\
+(2) \textbf{dostupnost (A)} - sistem garantuje da će svaka klijentska operacija dobiti odgovor (bez obzira na to da li je uspešna), \\
+(3) \textbf{toleranciju particionisanja (P)} - sistem nastavlja da radi čak i ako se poruke između čvorova gube ili imaju arbitrarnu latencu, tj. u slučaju mrežnih particija.
+\end{teorema}
