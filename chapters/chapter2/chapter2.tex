@@ -18,8 +18,24 @@ Ovi atributi obezbeđuju tehnički konzistentan i teorijski utemeljen okvir za p
 Analiza tehničkih atributa kvaliteta informacionih sistema ne može biti potpuna bez razmatranja fundamentalnih ograničenja distribuiranih sistema. Jedno od najznačajnijih formalnih ograničenja u ovoj oblasti predstavlja CAP teorema, koju je prvi formulisao Eric Brewer \cite{brewer2000towards}, a kasnije formalno dokazali Gilbert i Lynch \cite{gilbert2002brewer}. Ova teorema definiše osnovni kompromis sa kojim se suočavaju svi distribuirani informacioni sistemi koji upravljaju deljenim stanjem.
 
 \begin{teorema}
-U distribuiranom sistemu koji čuva podatke nemoguće je istovremeno garantovati sve tri sledeće osobine: \\
-(1) \textbf{konzistentnost (C)} - svaki čvor u svakom trenutku vidi iste podatke; operacija čitanja vraća poslednju potvrđenu upisanu vrednost, \\
-(2) \textbf{dostupnost (A)} - sistem garantuje da će svaka klijentska operacija dobiti odgovor (bez obzira na to da li je uspešna), \\
-(3) \textbf{toleranciju particionisanja (P)} - sistem nastavlja da radi čak i ako se poruke između čvorova gube ili imaju arbitrarnu latencu, tj. u slučaju mrežnih particija.
+U distribuiranom sistemu koji čuva podatke moguće je istovremeno garantovati najviše dve od sledeće tri osobine:\\
+(1) \textbf{konzistentnost (C)} - svaki čvor vidi isto stanje sistema, tj. operacija čitanja uvek vraća poslednju potvrđenu upisanu vrednost,\\
+(2) \textbf{dostupnost (A)} - sistem garantuje odgovor na svaki zahtev u konačnom vremenu,\\
+(3) \textbf{toleranciju na particije (P)} - sistem nastavlja da radi i u slučaju mrežnih particija (poruke se mogu izgubiti ili stići nakon arbitrarnog kašnjenja).
 \end{teorema}
+
+% TODO: Sinhroni distribuirani sistemi
+
+U okviru CAP teoreme važno je naglasiti da se \textbf{particionisanje (P)} ne odnosi na kvar čvora, već na kvar komunikacije između čvorova koji i dalje ispravno rade. Mrežne particije su \textit{neizbežan} deo asinhronih distribuiranih sistema, one nisu pitanje ,,da li'', već ,,kada'' će se dogoditi.
+
+\begin{posledica}
+Kada dođe do mrežne particije, distribuiran sistem ne može istovremeno garantovati punu konzistentnost i punu dostupnost. Stoga je prinuđen da da prioritet ili \textbf{konzistentnosti} (CP sistemi) ili \textbf{dostupnosti} (AP sistemi).
+\end{posledica}
+
+Particionisanje može nastati u više oblika, uključujući, ali ne ograničavajući se na sledeće scenarije:
+\begin{enumerate}
+\item Prekid mrežne povezanosti - kada dođe do fizičkog prekida veze (npr. optičkog linka) između geografski udaljenih data-centara. Čvorovi u oba regiona nastavljaju da rade, ali postaju komunikaciono izolovani,
+\item Ekstremno povećanje latencije - kada latencija poraste preko granice koju sistem smatra normalnom ili prihvatljivom (npr. skok sa 50ms na nekoliko minuta),
+\item Preopterećen čvor ili mrežni link - čvor je živ, ali ne uspeva da na vreme šalje ili prima poruke. Ostali čvorovi ga tretiraju kao nedostupan, što efektivno formira particiju iako čvor nije „pokvaren”,
+\item Greške u mrežnoj konfiguraciji - mogu dovesti do toga da podmreže ili grupe čvorova ne vide jedni druge, iako svi rade ispravno,
+\end{enumerate}
