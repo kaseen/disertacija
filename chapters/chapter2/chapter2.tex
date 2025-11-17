@@ -1,9 +1,7 @@
 \chapter{Analitički okvir za evaluaciju informacionih sistema}
-U poglavlju \ref{sec:uvod} informacioni sistemi su analizirani kroz arhitektonsku organizaciju, modele skaliranja i savremene pristupe izvođenju u oblaku. Bez obzira na to da li sistem funkcioniše kao monolit, troslojna aplikacija ili kao skup instanci raspoređenih u cloud okruženju, takvi sistemi i dalje predstavljaju \textit{logički centralizovane informacione sisteme} u kojima postoji jedinstveni skup komponenti koje zajednički realizuju poslovnu logiku \cite{van2017distributed}. Čak i kada se više instanci izvršava na različitim uređajima, sistem se ponaša kao jedna integrisana celina sa jedinstvenim stanjem i kontrolom.
+Cilj ovog poglavlja jeste da uspostavi metodologiju za analizu tehničkih prednosti i ograničenja informacionih sistema, nezavisno od toga da li su oni centralizovani, distribuirani ili decentralizovani. Fokus je isključivo na njihovim \textbf{tehničkim atributima infrastrukture}, dok se menadžerski, organizacioni i ekonomski faktori pominju samo okvirno, jer ne predstavljaju predmet detaljne analize ove disertacije.
 
-Za sistematsku analizu prednosti i ograničenja ovakvih informacionih sistema potrebno je fokusirati se isključivo na njihove \textbf{tehničke atribute infrastrukture}, nezavisno od menadžerskih, organizacionih i ekonomskih aspekata. Ovi aspekti biće samo ukratko pomenuti radi potpunosti, ali ne predstavljaju predmet dublje razrade u ovoj disertaciji.
-
-U oblasti softverskog inženjerstva kvalitativne karakteristike informacionih i softverskih arhitektura formalizuju se kroz tzv. \textbf{atribute kvaliteta} \cite{bass2021software}, koji predstavljaju standardni analitički okvir za ocenu tehničkog ponašanja i sposobnosti sistema. Među najznačajnijim atributima za evaluaciju informacionih sistema izdvajaju se:
+Da bi se obezbedio standardizovan okvir za evaluaciju, u oblasti softverskog inženjerstva kvalitativne karakteristike informacionih i softverskih arhitektura formalizuju se kroz \textbf{atribute kvaliteta} \cite{bass2021software}. Za potrebe ove disertacije izdvajaju se sledeći atributi od najvećeg značaja:
 \begin{enumerate}
 \item performanse i efikasnost,
 \item skalabilnost,
@@ -12,10 +10,14 @@ U oblasti softverskog inženjerstva kvalitativne karakteristike informacionih i 
 \item kompleksnost implementacije, održavanja i upravljanja.
 \end{enumerate}
 
-Ovi atributi obezbeđuju tehnički konzistentan i teorijski utemeljen okvir za procenu kvaliteta savremenih informacionih sistema. Njihovim posmatranjem moguće je jasno razlikovati \textbf{tehnička svojstva sistema}, koja predstavljaju primarni predmet istraživanja u ovoj disertaciji, od šireg menadžerskog, organizacionog i ekonomskog konteksta, koji se ovde samo dopunski navodi.
+Ovi atributi omogućavaju konzistentno i teorijski utemeljeno poređenje informacionih sistema na tehničkom nivou. Njihovo razmatranje jasno odvaja \textbf{tehnička svojstva} sistema, koja su primarni predmet istraživanja u ovoj disertaciji, od šireg organizacionog i poslovnog konteksta.
+
+U nastavku ovog poglavlja analiziraćemo \textbf{prednosti i ograničenja kontrolno centralizovanih informacionih sistema}, pri čemu će se svaki tehnički atribut posmatrati u dva scenarija: (1) kada se sistem izvršava na jednoj fizičkoj instanci i (2) kada se izvršava na više fizičkih instanci. Ovakav pristup omogućava precizno razgraničavanje fundamentalnih tehničkih svojstava centralizovanih arhitektura.
+
+Međutim, pre takve analize neophodno je razmotriti \textbf{fundamentalna ograničenja distribuiranih sistema}. Ovo ograničenje je najjasnije formalizovano kroz CAP teoremu, koja predstavlja osnovni okvir za razumevanje kompromisa između konzistentnosti, dostupnosti i tolerancije na mrežne particije.
 
 \section{CAP teorema}
-Analiza tehničkih atributa kvaliteta informacionih sistema ne može biti potpuna bez razmatranja fundamentalnih ograničenja distribuiranih sistema. Jedno od najznačajnijih formalnih ograničenja u ovoj oblasti predstavlja CAP teorema, koju je prvi formulisao Eric Brewer \cite{brewer2000towards}, a kasnije formalno dokazali Gilbert i Lynch \cite{gilbert2002brewer}. Ova teorema definiše osnovni kompromis sa kojim se suočavaju svi distribuirani informacioni sistemi koji upravljaju deljenim stanjem.
+Jedno od najznačajnijih formalnih ograničenja u ovoj oblasti distribuiranih sistema predstavlja CAP teorema, koju je prvi formulisao Eric Brewer \cite{brewer2000towards}, a kasnije formalno dokazali Gilbert i Lynch \cite{gilbert2002brewer}. Ova teorema definiše osnovni kompromis sa kojim se suočavaju svi distribuirani informacioni sistemi koji upravljaju deljenim stanjem.
 
 \begin{teorema}
 U distribuiranom sistemu koji čuva podatke moguće je istovremeno garantovati najviše dve od sledeće tri osobine:\\

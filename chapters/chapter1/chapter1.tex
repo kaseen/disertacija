@@ -80,7 +80,7 @@ Informacioni sistemi mogu se posmatrati kao tehnološke implementacije radnih si
 
 Ovakva integracija pokazuje da se različite akademske klasifikacije informacionih sistema mogu dosledno mapirati na četiri osnovne kategorije radnih sistema, pri čemu se svaki informacioni sistem posmatra u funkciji vrednosti koju konkretan radni sistem nastoji da proizvede.
 
-\subsection{Arhitektonska organizacija informacionih sistema}\label{sec:arhitektonska-organizacija}
+\section{Arhitektonska organizacija informacionih sistema}\label{sec:arhitektonska-organizacija}
 \TODO{Napravi slike za svaku od ovih}
 
 Program predstavlja statički, fizički zapis koda na uređaju (hardveru) koji sam po sebi ne izvršava nikakvu aktivnost. Kada se pokrene njegova instanca, tj. kada se aplikacija učita u radnu memoriju računara, nastaje proces. Po završetku izvršavanja, proces se uklanja iz radne memorije i time prestaje da postoji.
@@ -158,7 +158,7 @@ Zbog toga se mikroservisi mogu zasebno razvijati, testirati, skalirati i ažurir
 Mikroservisi funkcionišu kao prvoklasni entiteti sistema, izlažu svoje funkcionalnosti putem javnih API-ja, dok su detalji njihove implementacije potpuno sakriveni. Ovaj pristup povećava fleksibilnost, mogućnost monetizacije pojedinih servisa i jednostavnije integrisanje sa drugim aplikacijama, ali ujedno donosi izazove u pogledu orkestracije, bezbednosti i praćenja distribuiranih komponenti.
 \end{description}
 
-\subsection{Skaliranje informacionih sistema}
+\section{Skaliranje informacionih sistema}
 \begin{definicija}
 Skaliranje predstavlja sposobnost sistema da proporcionalno poveća svoje performanse dodavanjem resursa \cite{bondi2000characteristics}.
 \end{definicija}
@@ -175,10 +175,10 @@ Kako horizontalno skaliranje (a time i dijagonalno) podrazumeva pokretanje više
 Ako se sve instance izvršavaju na jednom uređaju, sistem zadržava \textbf{centralizovanu} prirodu. Međutim, kada se više instanci izvršava na različitim fizičkim uređajima i međusobno koordiniše stanje, sistem prelazi u kategoriju \textbf{distribuiranih sistema}.
 
 \begin{definicija}
-Distribuiran sistem predstavlja skup nezavisnih računarskih uređaja (čvorova) koji nemaju zajedničku memoriju i komuniciraju isključivo razmenom poruka, a svoj rad koordinišu tako da prema korisniku deluju kao jedinstven, koherentan sistem \cite{van2017distributed}.
+Distribuiran informacioni sistem predstavlja skup nezavisnih računarskih uređaja (čvorova) koji nemaju zajedničku memoriju i komuniciraju isključivo razmenom poruka, a svoj rad koordinišu tako da prema korisniku deluju kao jedinstven, koherentan sistem \cite{van2017distributed}.
 \end{definicija}
 
-\subsection{Računarstvo u oblaku i elastično skaliranje informacionih sistema}
+\section{Računarstvo u oblaku i elastično skaliranje informacionih sistema}
 Razvoj informacionih sistema tradicionalno je zahtevao nabavku sopstvene fizičke infrastrukture (servera, mrežne opreme, skladišta podataka) i angažovanje stručnog osoblja za njeno održavanje. Takav pristup nosi visoke početne troškove, zahteva složeno planiranje kapaciteta i otežava brzo prilagođavanje promenama u obimu posla.
 
 Savremene organizacije sve češće usvajaju model računarstva u oblaku \eng{cloud computing} \cite{mell2011nist}, u kome se infrastruktura, platforme i softverske usluge iznajmljuju od eksternog provajdera. Umesto sopstvene opreme koriste se virtuelni resursi koji se dinamički dodeljuju prema potrebi, čime se omogućava elastično skaliranje instanci informacionog sistema, smanjuju troškovi infrastrukture i održavanja, umanjuje potreba za internim sistemskim osobljem i ubrzava postavljanje razvojnih i produkcionih okruženja.
@@ -216,3 +216,5 @@ Decentralizovan informacioni sistem je sistem u kojem nijedan čvor nema privile
 Ovakvo tumačenje omogućava da se decentralizacija posmatra kao proširenje sociotehničke perspektive radnih sistema, primenjeno na domene distribuiranih algoritama, konsenzusa i upravljanja stanjem bez centralnog autoriteta.
 
 Od tri vrste decentralizacije, kontrolna decentralizacija obično ima najveću intuitivnu težinu. Kada neko kaže da je sistem ,,decentralizovan'', on najčešće misli da korisnici nisu podređeni jednom centralnom autoritetu i da nijedan subjekt nema moć da samostalno upravlja sistemom. Zbog toga sistem može biti arhitektonski ili logički centralizovan, a i dalje smatran decentralizovanim ukoliko je kontrola raspodeljena. Skoro svi moderni distribuirani informacioni sistemi ostaju kontrolno centralizovani.
+
+%U nastavku rada, termin ,,sistem'' se koristi kao skraćenica za ,,informacioni sistem'', osim kada se izričito navodi drugačije.
