@@ -189,27 +189,30 @@ Kontejnerizacija predstavlja dominantan tehnološki pristup za raspoređivanje s
 
 Zahvaljujući ovim tehnologijama, arhitektonske organizacije informacionih sistema opisane u poglavlju \ref{sec:arhitektonska-organizacija} mogu se efikasno distribuirati, skalirati i održavati u cloud infrastrukturi, uz značajno smanjenje tehničke složenosti i operativnih troškova u odnosu na tradicionalne modele upravljanja resursima.
 
-\section{Logička centralizacija u distribuiranim informacionim sistemima}
-U najvećem broju savremenih industrijskih primena distribuirani sistemi ostaju \textbf{logički centralizovani}, jer svi čvorovi pripadaju jednoj organizaciji, koriste jedinstven model upravljanja podacima i oslanjaju se na zajedničku tačku poverenja. Takvi sistemi funkcionišu kao jedna koherentna računarska celina sa jedinstvenim stanjem i jedinstvenim operativnim autoritetom, bez obzira na broj ili geografski raspored čvorova.
+\section{Centralizacija u distribuiranim informacionim sistemima}
+Iako se savremeni distribuirani informacioni sistemi izvršavaju na više fizičkih čvorova, oni dele jedinstven model podataka, jedinstvenu poslovnu logiku i oslanjaju se na centralnu instancu upravljanja i poverenja. Takvi sistemi se, uprkos fizičkoj raspodeli, ponašaju kao jedna koherentna računarska celina sa jednim stanjem i jednim operativnim autoritetom. Iz toga proističe sledeća formulacija:
 
-Sistem može biti distribuiran u arhitektonskom smislu (višestruke instance, više servera, geografska replikacija), a istovremeno ostati centralizovan u pogledu kontrole, upravljanja stanjem i donošenja odluka. Iz ovoga sledi sledeća definicija:
 \begin{definicija}
-Fizička distribuiranost čvorova ne implicira decentralizaciju u logičkom smislu.
+Fizička distribuiranost čvorova ne implicira decentralizaciju.
 \end{definicija}
 
-Tipičan primer logički centralizovanog, ali fizički distribuiranog sistema predstavljaju globalne internet platforme (Facebook, Google, Amazon), koje upravljaju hiljadama servera raspoređenih u više geografskih regiona, ali i dalje zadržavaju potpunu centralnu kontrolu nad autorizacijom, koherencijom podataka i celokupnim operativnim upravljanjem infrastrukturom.
+Tipičan primer predstavljaju globalne internet platforme (Facebook, Google, Amazon), koje upravljaju hiljadama servera u mnogim geografskim regionima, ali i dalje zadržavaju centralnu kontrolu nad autorizacijom, ažuriranjem stanja i operativnim upravljanjem infrastrukturom. Ovi sistemi jasno ilustruju da \textbf{distribuiranost nije isto što i decentralizacija}.
 
-Da bi sistem bio decentralizovan, nije dovoljno da se izvršava na velikom broju uređaja. Neophodno je da čvorovi budu \textbf{nezavisni akteri} koji, kroz svoj programski kod, implementiraju mehanizme kolektivnog odlučivanja, verifikacije i održavanja stanja bez oslanjanja na centralnu tačku poverenja.
+Da bi se informacioni sistem smatrao decentralizovanim, nije dovoljno da se izvršava na velikom broju uređaja. Neophodno je da ti uređaji budu \textit{nezavisni akteri} koji kroz programski kod kolektivno verifikuju stanje, donose odluke i održavaju napredovanje sistema bez centralne tačke poverenja.
 
-Prema standardnoj klasifikaciji decentralizacije \cite{buterin2017meaning}, razlikuju se tri nezavisne dimenzije:
+Prema standardnoj klasifikaciji \cite{buterin2017meaning} razlikuju se tri nezavisne dimenzije decentralizacije:
 \begin{enumerate}
-\item \textbf{Arhitektonska decentralizacija} - geografska i infrastrukturna raspodela čvorova,
-\item \textbf{Kontrolna decentralizacija} - odsustvo jedinstvenog entiteta koji upravlja sistemom,
-\item \textbf{Logička decentralizacija} - način na koji se donose odluke o stanju sistema (konsenzus).
+\item \textbf{Arhitektonska decentralizacija} - fizička i geografska raspodela čvorova,
+\item \textbf{Kontrolna (politička) decentralizacija} - raspodela moći odlučivanja među različitim akterima,
+\item \textbf{Logička decentralizacija} - struktura softverskog stanja i način na koji sistem konceptualno funkcioniše.
 \end{enumerate}
 
+Arhitektonska decentralizacija odnosi se na \textbf{hardverski sloj}, kontrolna decentralizacija na \textbf{ljudski i organizacioni sloj}, dok logička decentralizacija pripada \textbf{softverskom sloju}. 
+
 \begin{definicija}
-Decentralizovan sistem karakteriše odsustvo privilegovanog čvora, a konzistentnost i napredovanje sistema obezbeđuju distribuirani algoritmi koji funkcionišu i u prisustvu nepouzdanih ili potencijalno malicioznih čvorova.
+Decentralizovan informacioni sistem je sistem u kojem nijedan čvor nema privilegovanu kontrolu nad stanjem, već konzistentnost i napredovanje sistema obezbeđuju distribuirani protokoli koji funkcionišu čak i u prisustvu nepouzdanih ili potencijalno malicioznih aktera.
 \end{definicija}
 
-Većina modernih distribuiranih informacionih sistema ostvaruje samo prvu dimenziju (arhitektonsku), dok kontrolna i logička dimenzija ostaju centralizovane.
+Ovakvo tumačenje omogućava da se decentralizacija posmatra kao proširenje sociotehničke perspektive radnih sistema, primenjeno na domene distribuiranih algoritama, konsenzusa i upravljanja stanjem bez centralnog autoriteta.
+
+Od tri vrste decentralizacije, kontrolna decentralizacija obično ima najveću intuitivnu težinu. Kada neko kaže da je sistem ,,decentralizovan'', on najčešće misli da korisnici nisu podređeni jednom centralnom autoritetu i da nijedan subjekt nema moć da samostalno upravlja sistemom. Zbog toga sistem može biti arhitektonski ili logički centralizovan, a i dalje smatran decentralizovanim ukoliko je kontrola raspodeljena. Skoro svi moderni distribuirani informacioni sistemi ostaju kontrolno centralizovani.
