@@ -1,55 +1,118 @@
 \chapter{Analitički okvir za evaluaciju informacionih sistema}
 Cilj ovog poglavlja jeste da uspostavi metodologiju za analizu tehničkih prednosti i ograničenja informacionih sistema, nezavisno od toga da li su oni centralizovani, distribuirani ili decentralizovani. Fokus je isključivo na njihovim \textbf{tehničkim atributima infrastrukture}, dok se menadžerski, organizacioni i ekonomski faktori pominju samo okvirno, jer ne predstavljaju predmet detaljne analize ove disertacije.
 
-Da bi se obezbedio standardizovan okvir za evaluaciju, u oblasti softverskog inženjerstva kvalitativne karakteristike informacionih i softverskih arhitektura formalizuju se kroz \textbf{atribute kvaliteta} \cite{bass2021software}. Za potrebe ove disertacije izdvajaju se sledeći atributi od najvećeg značaja:
+Da bi se obezbedio standardizovan okvir evaluacije, kvalitativne karakteristike informacionih i softverskih arhitektura formalizuju se kroz \textbf{atribute kvaliteta} prema IEEE i ISO standardima \cite{bass2021software} \cite{2013ISOI}. Za potrebe ove disertacije atributi kvaliteta biće grupisani u sledeće kategorije:
 \begin{enumerate}
-\item performanse i efikasnost,
-\item skalabilnost,
-\item dostupnost i otpornost na greške,
-\item bezbednost i integritet,
-\item kompleksnost implementacije, održavanja i upravljanja.
+\item \textbf{Performanse i efikasnost:} performanse, skalabilnost, efikasnost korišćenja resursa, troškovna efikasnost, operativno održavanje, fleksibilnost, energetska efikasnost.
+\item \textbf{Operativna svojstva:} dostupnost, integritet, sigurnost, pouzdanost, otpornost na greške, konzistentnost podataka.
+\item \textbf{Upotrebljivost:} korisničko iskustvo, lakoća učenja (\textit{learnability}), operabilnost, pristupačnost.
+\item \textbf{Funkcionalna ispravnost:} ispravnost funkcionalnih zahteva, potpunost funkcija, preciznost izvodenja funkcija, usklađenost sa specifikacijom.
+\end{enumerate}
+Poslednje dve kategorije ne pripadaju tehničkim atributima infrastrukture u užem smislu, te će radi jasnoće opsega istraživanja biti isključene iz daljeg razmatranja.
+
+Ovakva klasifikacija omogućava konzistentno i teorijski utemeljeno poređenje informacionih sistema na tehničkom nivou. Razmatranje ovih atributa jasno odvaja \textbf{tehnička svojstva sistema}, koja su primarni predmet istraživanja u ovoj disertaciji, od šireg organizacionog i poslovnog konteksta.
+
+U nastavku ovog poglavlja analiziraće se \textbf{prednosti i ograničenja kontrolno centralizovanih informacionih sistema}, pri čemu se tehnički atributi razmatraju nezavisno od toga da li se sistem izvršava na jednoj fizičkoj instanci ili na više fizičkih instanci.
+
+\section{Performanse i efikasnost}
+\TODO{\cite{scalability2009}}
+
+% TODO: Teoretsko računarstvo
+U informacionim sistemima \textit{procesi i aktivnosti radnog sistema} proizvode \textbf{zahteve} koji se upućuju informacionom sistemu radi izvršenja određene funkcije.
+
+\begin{definicija}
+Zahtev predstavlja elementarnu operaciju koju informacioni sistem treba da obradi.
+\end{definicija}
+
+Zahtev može da inicira:
+\begin{enumerate}
+\item krajnji korisnik,
+\item operater,
+\item drugi informacioni sistem,
+\item servis unutar istog sistema,
+\item automatizovani proces.
 \end{enumerate}
 
-Ovi atributi omogućavaju konzistentno i teorijski utemeljeno poređenje informacionih sistema na tehničkom nivou. Njihovo razmatranje jasno odvaja \textbf{tehnička svojstva} sistema, koja su primarni predmet istraživanja u ovoj disertaciji, od šireg organizacionog i poslovnog konteksta.
+Primeri zahteva uključuju: upis podatka u bazu, izvršavanje određene funkcionalnosti sistema, dohvat i obradu informacija, ili transakciju koja menja stanje sistema. Finalizacija zahteva predstavlja trenutak kada sistem završi kompletnu obradu zahteva i vrati rezultat inicijatoru ili ga trajno zabeleži kao izvršenog.
 
-U nastavku ovog poglavlja analiziraćemo \textbf{prednosti i ograničenja kontrolno centralizovanih informacionih sistema}, pri čemu će se svaki tehnički atribut posmatrati u dva scenarija: (1) kada se sistem izvršava na jednoj fizičkoj instanci i (2) kada se izvršava na više fizičkih instanci. Ovakav pristup omogućava precizno razgraničavanje fundamentalnih tehničkih svojstava centralizovanih arhitektura.
+\begin{definicija}
+Performanse predstavljaju sposobnost informacionog sistema da efikasno obrađuje zahteve.
+\end{definicija}
 
-Međutim, pre takve analize neophodno je razmotriti \textbf{fundamentalna ograničenja distribuiranih sistema}. Ovo ograničenje je najjasnije formalizovano kroz CAP teoremu, koja predstavlja osnovni okvir za razumevanje kompromisa između konzistentnosti, dostupnosti i tolerancije na mrežne particije.
+Kako je performansa apstraktan termin koji se kvantitativno izražava različitim metrikama, pri čemu različiti akteri mogu imati različite prioritete kada procenjuju ,,efikasnost'' sistema (npr. organizacije prvenstveno optimizuju troškove, dok krajnji korisnici vrednuju brzinu i cenu usluge), u daljem radu biće razmatrane sledeće ključne performansne metrike:
+\begin{enumerate}
+\item \textbf{vreme odaziva (latency)} - vreme koje protekne od slanja zahteva do dobijanja odgovora,
+\item \textbf{propusnost (throughput)} - broj zahteva koje sistem može da obradi u jedinici vremena,
+\item \textbf{cena obrade (cost)} - trošak izvršavanja pojedinačnog zahteva.
+\end{enumerate}
 
-\section{CAP teorema}
-Jedno od najznačajnijih formalnih ograničenja u ovoj oblasti distribuiranih sistema predstavlja CAP teorema, koju je prvi formulisao Eric Brewer \cite{brewer2000towards}, a kasnije formalno dokazali Gilbert i Lynch \cite{gilbert2002brewer}. Ova teorema definiše osnovni kompromis sa kojim se suočavaju svi distribuirani informacioni sistemi koji upravljaju deljenim stanjem.
+Zajedničko za sve navedene metrike jeste da na njih direktno utiču tri fundamentalna \textbf{resursa} informacionog sistema: hardver (procesor, memorija, I/O podsistem), softver (algoritmi, implementacija, organizacija baze podataka) i mreža (latencija, širina opsega, pouzdanost i stabilnost veze).
+
+\begin{definicija}
+Kapacitet \eng{capacity} predstavlja maksimalnu dugoročno održivu stopu obrade zahteva koju informacioni sistem može da postigne u stabilnom režimu rada \cite{jain1991art}.
+\end{definicija}
+
+Međutim, kada hardver, softver i/ili mrežni sloj ne mogu da obrade broj pristiglih zahteva, informacioni sistem izlazi iz stabilnog režima rada i ulazi u stanje \textbf{zagušenja}.
+
+\begin{definicija}
+Zagušenje \eng{congestion} predstavlja stanje informacionog sistema u kojem je stopa pristiglih zahteva veća od kapaciteta.
+\end{definicija}
+
+U stanju zagušenja, zahtevi se akumuliraju brže nego što ih sistem može obraditi, redovi čekanja rastu, latencija postaje nepredvidiva, a pojedine operacije postaju neizvodljive u datim vremenskim ograničenjima.
+
+Primena fundamentalnih rezultata teorije čekanja \cite{adan2002queueing} omogućava formalno razumevanje ponašanja sistema kada dolazna stopa zahteva premaši njegov kapacitet, što se direktno preslikava na posmatrane performansne metrike. Time dobijamo:
 
 \begin{teorema}
-U distribuiranom sistemu koji čuva podatke moguće je istovremeno garantovati najviše dve od sledeće tri osobine:\\
-(1) \textbf{konzistentnost (C)} - svaki čvor vidi isto stanje sistema, tj. operacija čitanja uvek vraća poslednju potvrđenu upisanu vrednost,\\
-(2) \textbf{dostupnost (A)} - sistem garantuje odgovor na svaki zahtev u konačnom vremenu,\\
-(3) \textbf{toleranciju na particije (P)} - sistem nastavlja da radi i u slučaju mrežnih particija (poruke se mogu izgubiti ili stići nakon arbitrarnog kašnjenja).
+Kada dolazna stopa zahteva premaši kapacitet sistema, propusnost dostiže svoj maksimum, latencija teži beskonačnosti, a cena obrade svakog zahteva eksponencijalno raste usled akumulacije redova čekanja i pojačane konkurencije za resurse.
 \end{teorema}
 
-% TODO: Sinhroni distribuirani sistemi
+Pošto stvarni informacioni sistemi često moraju da obrade rastući obim zahteva, od ključnog je značaja da se analizira kako se kapacitet menja kada se sistemu dodaju dodatni resursi (računarska snaga, memorija, mrežni kapacitet, dodatni čvorovi itd.).
 
-U okviru CAP teoreme važno je naglasiti da se \textbf{particionisanje (P)} ne odnosi na kvar čvora, već na kvar komunikacije između čvorova koji i dalje ispravno rade. Mrežne particije su \textit{neizbežan} deo asinhronih distribuiranih sistema, one nisu pitanje ,,da li'', već ,,kada'' će se dogoditi.
+\TODO{SKALABILNOST}
 
-\begin{posledica}
-Kada dođe do mrežne particije, distribuiran sistem ne može istovremeno garantovati punu konzistentnost i punu dostupnost. Stoga je prinuđen da da prioritet ili \textbf{konzistentnosti} (CP sistemi) ili \textbf{dostupnosti} (AP sistemi).
-\end{posledica}
+%
+% ==================================================================
+% ==================================================================
 
-Particionisanje može nastati u više oblika, uključujući, ali ne ograničavajući se na sledeće scenarije:
-\begin{enumerate}
-\item Prekid mrežne povezanosti - kada dođe do fizičkog prekida veze (npr. optičkog linka) između geografski udaljenih data-centara. Čvorovi u oba regiona nastavljaju da rade, ali postaju komunikaciono izolovani,
-\item Ekstremno povećanje latencije - kada latencija poraste preko granice koju sistem smatra normalnom ili prihvatljivom (npr. skok sa 50ms na nekoliko minuta),
-\item Preopterećen čvor ili mrežni link - čvor je živ, ali ne uspeva da na vreme šalje ili prima poruke. Ostali čvorovi ga tretiraju kao nedostupan, što efektivno formira particiju iako čvor nije „pokvaren”,
-\item Greške u mrežnoj konfiguraciji - mogu dovesti do toga da podmreže ili grupe čvorova ne vide jedni druge, iako svi rade ispravno,
-\end{enumerate}
+% Međutim, pre takve analize neophodno je razmotriti \textbf{fundamentalna ograničenja distribuiranih sistema}. Ovo ograničenje je najjasnije formalizovano kroz CAP teoremu, koja predstavlja osnovni okvir za razumevanje kompromisa između konzistentnosti, dostupnosti i tolerancije na mrežne particije.
+
+% \section{CAP teorema}
+% Jedno od najznačajnijih formalnih ograničenja u ovoj oblasti distribuiranih sistema predstavlja CAP teorema, koju je prvi formulisao Eric Brewer \cite{brewer2000towards}, a kasnije formalno dokazali Gilbert i Lynch \cite{gilbert2002brewer}. Ova teorema definiše osnovni kompromis sa kojim se suočavaju svi distribuirani informacioni sistemi koji upravljaju deljenim stanjem.
+
+% \begin{teorema}
+% U distribuiranom sistemu koji čuva podatke moguće je istovremeno garantovati najviše dve od sledeće tri osobine:\\
+% (1) \textbf{konzistentnost (C)} - svaki čvor vidi isto stanje sistema, tj. operacija čitanja uvek vraća poslednju potvrđenu upisanu vrednost,\\
+% (2) \textbf{dostupnost (A)} - sistem garantuje odgovor na svaki zahtev u konačnom vremenu,\\
+% (3) \textbf{toleranciju na particije (P)} - sistem nastavlja da radi i u slučaju mrežnih particija (poruke se mogu izgubiti ili stići nakon arbitrarnog kašnjenja).
+% \end{teorema}
+
+% % TODO Sta su asinhrone distribuirani sistemi
+% U okviru CAP teoreme važno je naglasiti da se \textbf{particionisanje (P)} ne odnosi na kvar čvora, već na kvar komunikacije između čvorova koji i dalje ispravno rade. Mrežne particije su \textit{neizbežan} deo asinhronih distribuiranih sistema, one nisu pitanje ,,da li'', već ,,kada'' će se dogoditi.
+
+% \begin{posledica}
+% Kada dođe do mrežne particije, distribuiran sistem ne može istovremeno garantovati punu konzistentnost i punu dostupnost. Stoga je prinuđen da da prioritet ili \textbf{konzistentnosti} (CP sistemi) ili \textbf{dostupnosti} (AP sistemi).
+% \end{posledica}
 
 
 
-% TODO
-Distribuirani sistemi mogu se klasifikovati prema načinu na koji dele i obrađuju podatke:
-\begin{enumerate}
-\item \textbf{Replikacija podataka} - više kopija iste baze podataka ili objekata čuva se na različitim serverima radi povećanja dostupnosti, otpornosti i performansi,
-\item \textbf{Particionisanje \eng{sharding}} - podaci se razdvajaju na logičke ili geografske celine koje se čuvaju na različitim serverima radi smanjenja opterećenja i postizanja horizontalne skalabilnosti,
-\item \textbf{Hibridni modeli} - kombinacije replikacije i particionisanja, tipične za sisteme velikih razmera.
-\end{enumerate}
 
-Replikacija podataka predstavlja dominantan obrazac u savremenoj industrijskoj praksi. Globalne platforme, poput društvenih mreža i \textit{streaming} servisa, čuvaju replike podataka u više geografski udaljenih centara podataka. Korisnik se povezuje na fizički najbližu repliku čime se smanjuje latencija pristupa, povećava otpornost na greške i omogućava kontinuitet rada čak i u slučaju prekida veze između različitih regiona.
+
+% Particionisanje može nastati u više oblika, uključujući, ali ne ograničavajući se na sledeće scenarije:
+% \begin{enumerate}
+% \item Prekid mrežne povezanosti - kada dođe do fizičkog prekida veze (npr. optičkog linka) između geografski udaljenih data-centara. Čvorovi u oba regiona nastavljaju da rade, ali postaju komunikaciono izolovani,
+% \item Ekstremno povećanje latencije - kada latencija poraste preko granice koju sistem smatra normalnom ili prihvatljivom (npr. skok sa 50ms na nekoliko minuta),
+% \item Preopterećen čvor ili mrežni link - čvor je živ, ali ne uspeva da na vreme šalje ili prima poruke. Ostali čvorovi ga tretiraju kao nedostupan, što efektivno formira particiju iako čvor nije „pokvaren”,
+% \item Greške u mrežnoj konfiguraciji - mogu dovesti do toga da podmreže ili grupe čvorova ne vide jedni druge, iako svi rade ispravno,
+% \end{enumerate}
+
+
+% % TODO
+% Distribuirani sistemi mogu se klasifikovati prema načinu na koji dele i obrađuju podatke:
+% \begin{enumerate}
+% \item \textbf{Replikacija podataka} - više kopija iste baze podataka ili objekata čuva se na različitim serverima radi povećanja dostupnosti, otpornosti i performansi,
+% \item \textbf{Particionisanje \eng{sharding}} - podaci se razdvajaju na logičke ili geografske celine koje se čuvaju na različitim serverima radi smanjenja opterećenja i postizanja horizontalne skalabilnosti,
+% \item \textbf{Hibridni modeli} - kombinacije replikacije i particionisanja, tipične za sisteme velikih razmera.
+% \end{enumerate}
+
+% Replikacija podataka predstavlja dominantan obrazac u savremenoj industrijskoj praksi. Globalne platforme, poput društvenih mreža i \textit{streaming} servisa, čuvaju replike podataka u više geografski udaljenih centara podataka. Korisnik se povezuje na fizički najbližu repliku čime se smanjuje latencija pristupa, povećava otpornost na greške i omogućava kontinuitet rada čak i u slučaju prekida veze između različitih regiona.
+
