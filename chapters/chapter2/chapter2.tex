@@ -17,11 +17,19 @@ U nastavku ovog poglavlja analiziraće se \textbf{prednosti i ograničenja kontr
 \section{Performanse i efikasnost}
 \TODO{\cite{scalability2009}}
 
-% TODO: Teoretsko računarstvo
-U informacionim sistemima \textit{procesi i aktivnosti radnog sistema} proizvode \textbf{zahteve} koji se upućuju informacionom sistemu radi izvršenja određene funkcije.
+% TODO: Teoretsko računarstvo MLUR recenice
+U radnim sistemima različitih tipova (poslovnim, javnim, neprofitnim i ličnim) \textit{procesi i aktivnosti} sastoje se od niza elementarnih procesnih jedinica, koje predstavljaju najmanje nedeljive korake rada unutar sistema. Svaka takva jedinica stvara potrebu za izvršenjem određene funkcije nad informacijama, čime nastaje \textbf{zahtev} koji se upućuje informacionom sistemu.
+
+Da bi se precizno razlikovala perspektiva radnog sistema od perspektive informacionog sistema, uvodi se razlika između:
+\begin{enumerate}
+\item \textbf{elementarnih procesnih jedinica} - najmanjih jedinica rada u okviru radnog sistema, i
+\item \textbf{elementarnih operacija informacionog sistema} - osnovnih računskih, logičkih ili ulazno-izlaznih operacija koje softverska infrastruktura izvršava radi obrade zahteva.
+\end{enumerate}
+
+Procesna jedinica generiše zahtev, dok informacioni sistem realizuje taj zahtev kroz skup tehničkih operacija.
 
 \begin{definicija}
-Zahtev predstavlja elementarnu operaciju koju informacioni sistem treba da obradi.
+Zahtev predstavlja elementarnu funkcionalnu operaciju koju informacioni sistem treba da obradi. Finalizacija zahteva označava trenutak kada informacioni sistem završi kompletnu obradu zahteva.
 \end{definicija}
 
 Zahtev može da inicira:
@@ -33,13 +41,15 @@ Zahtev može da inicira:
 \item automatizovani proces.
 \end{enumerate}
 
-Primeri zahteva uključuju: upis podatka u bazu, izvršavanje određene funkcionalnosti sistema, dohvat i obradu informacija, ili transakciju koja menja stanje sistema. Finalizacija zahteva predstavlja trenutak kada sistem završi kompletnu obradu zahteva i vrati rezultat inicijatoru ili ga trajno zabeleži kao izvršenog.
+Tipični primeri zahteva uključuju upis podatka u bazu, izvršavanje funkcionalnosti sistema, dohvat ili transformaciju informacija, i transakcije koje menjaju stanje sistema. Finalizacija zahteva može da podrazumeva vraćanje rezultata inicijatoru ili trajno beleženje izvršene operacije.
+
+U skladu sa savremenim pristupima modeliranju procesa i \textit{end-to-end} analizi radnih tokova \cite{sedova2023development}, \textbf{zahtev se ne posmatra kao izolovana jedinica}, već kao deo šireg procesa čija se vrednost i funkcionalna uloga ispoljava tek u interakciji sa ostalim procesima i komponentama arhitekture informacionog sistema.
 
 \begin{definicija}
 Performanse predstavljaju sposobnost informacionog sistema da efikasno obrađuje zahteve.
 \end{definicija}
 
-Kako je performansa apstraktan termin koji se kvantitativno izražava različitim metrikama, pri čemu različiti akteri mogu imati različite prioritete kada procenjuju ,,efikasnost'' sistema (npr. organizacije prvenstveno optimizuju troškove, dok krajnji korisnici vrednuju brzinu i cenu usluge), u daljem radu biće razmatrane sledeće ključne performansne metrike:
+Kako su performanse apstraktan pojam koji se kvantitativno izražava različitim metrikama, a pri tom različiti akteri mogu imati različite kriterijume ,,efikasnost'' sistema (npr. organizacije prvenstveno optimizuju troškove, dok krajnji korisnici vrednuju brzinu i cenu usluge), u daljem radu razmatraju se sledeće ključne performansne metrike:
 \begin{enumerate}
 \item \textbf{vreme odaziva (latency)} - vreme koje protekne od slanja zahteva do dobijanja odgovora,
 \item \textbf{propusnost (throughput)} - broj zahteva koje sistem može da obradi u jedinici vremena,
@@ -49,13 +59,13 @@ Kako je performansa apstraktan termin koji se kvantitativno izražava različiti
 Zajedničko za sve navedene metrike jeste da na njih direktno utiču tri fundamentalna \textbf{resursa} informacionog sistema: hardver (procesor, memorija, I/O podsistem), softver (algoritmi, implementacija, organizacija baze podataka) i mreža (latencija, širina opsega, pouzdanost i stabilnost veze).
 
 \begin{definicija}
-Kapacitet \eng{capacity} predstavlja maksimalnu dugoročno održivu stopu obrade zahteva koju informacioni sistem može da postigne u stabilnom režimu rada \cite{jain1991art}.
+Kapacitet predstavlja maksimalnu dugoročno održivu stopu obrade zahteva koju informacioni sistem može da postigne u stabilnom režimu rada \cite{jain1991art}.
 \end{definicija}
 
 Međutim, kada hardver, softver i/ili mrežni sloj ne mogu da obrade broj pristiglih zahteva, informacioni sistem izlazi iz stabilnog režima rada i ulazi u stanje \textbf{zagušenja}.
 
 \begin{definicija}
-Zagušenje \eng{congestion} predstavlja stanje informacionog sistema u kojem je stopa pristiglih zahteva veća od kapaciteta.
+Zagušenje predstavlja stanje informacionog sistema u kojem je stopa pristiglih zahteva veća od kapaciteta.
 \end{definicija}
 
 U stanju zagušenja, zahtevi se akumuliraju brže nego što ih sistem može obraditi, redovi čekanja rastu, latencija postaje nepredvidiva, a pojedine operacije postaju neizvodljive u datim vremenskim ograničenjima.
@@ -66,9 +76,18 @@ Primena fundamentalnih rezultata teorije čekanja \cite{adan2002queueing} omogu�
 Kada dolazna stopa zahteva premaši kapacitet sistema, propusnost dostiže svoj maksimum, latencija teži beskonačnosti, a cena obrade svakog zahteva eksponencijalno raste usled akumulacije redova čekanja i pojačane konkurencije za resurse.
 \end{teorema}
 
-Pošto stvarni informacioni sistemi često moraju da obrade rastući obim zahteva, od ključnog je značaja da se analizira kako se kapacitet menja kada se sistemu dodaju dodatni resursi (računarska snaga, memorija, mrežni kapacitet, dodatni čvorovi itd.).
+U stvarnim informacionim sistemima, obim pristiglih zahteva često raste tokom vremena, pa je od suštinskog značaja razumeti kako se kapacitet sistema menja prilikom dodavanja dodatnih resursa (računske snage, memorije, mrežnog kapaciteta, dodatnih čvorova itd.). U tom kontekstu definišemo sledeće svojstvo:
 
-\TODO{SKALABILNOST}
+\begin{definicija}
+Skalabilnost predstavlja sposobnost informacionog sistema da povećava svoj kapacitet obrade zahteva proporcionalno dostupnim resursima.
+\end{definicija}
+
+
+% Sa svim daljim atributima posmatraćemo prvo sisteme koji se izvršavaju na jednom fizičkom računaru (serveru), bez obzira da li imaju bez obrzir na njihovu internt arhitekturu. Sistem je fizički i arhitektonski centralizovan. Svi delovi sistema su koalocirani tj. CPU, RAM, disk, keš dele isti fizički prostor. 
+
+% Sistemi na jednoj instanci imaju minimalnu latencija izvršavanja i stabilo vreme odaziva. Kako se svi delovi sistema nalaze na istom uređaju, vreme izvršavanja operacije zavisi isključivo od brzine lokalnog hardvera, pa samim tim se izbegavaju koordinacioni troškovi. Sve čitanja i pisanja se obavljaju lokalno što maksimizuje ekfikasnost pristupa podacima. 
+
+% Međutim sistem se može samo vertikalno skalirati i to vrlo brzo pokupljuje, postoji fizički limit a povećavanje performanski ne ide linearno. 
 
 %
 % ==================================================================
