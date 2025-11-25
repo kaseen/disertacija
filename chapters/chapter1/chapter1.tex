@@ -158,45 +158,29 @@ Zbog toga se mikroservisi mogu zasebno razvijati, testirati, skalirati i ažurir
 Mikroservisi funkcionišu kao prvoklasni entiteti sistema, izlažu svoje funkcionalnosti putem javnih API-ja, dok su detalji njihove implementacije potpuno sakriveni. Ovaj pristup povećava fleksibilnost, mogućnost monetizacije pojedinih servisa i jednostavnije integrisanje sa drugim aplikacijama, ali ujedno donosi izazove u pogledu orkestracije, bezbednosti i praćenja distribuiranih komponenti.
 \end{description}
 
-\section{Skaliranje informacionih sistema}
-\TODO{Jel spadaju mikroservisi, serverless u skaliranje?}
-
-\begin{definicija}
-Skaliranje predstavlja sposobnost sistema da proporcionalno poveća svoje performanse dodavanjem resursa \cite{bondi2000characteristics}.
-\end{definicija}
-
-U praksi se razlikuju tri osnovna pristupa skaliranju:
-\begin{enumerate}
-\item \textbf{Vertikalno skaliranje \eng{scale-up}} - povećavanje resursnih kapaciteta jedne instance aplikacije (CPU, memorija, skladište),
-\item \textbf{Horizontalno skaliranje \eng{scale-out}} - dodavanje novih instanci informacionog sistema, što tipično zahteva upotrebu mehanizama za balansiranje opterećenja \eng{load balancing},
-\item \textbf{Dijagonalno skaliranje} - kombinovanje vertikalnog i horizontalnog pristupa.
-\end{enumerate}
-
-Kako horizontalno skaliranje (a time i dijagonalno) podrazumeva pokretanje više instanci istog informacionog sistema, pokretanjem svake dodatne instance povećava se ukupan broj aktivnih procesa koji obavljaju funkcije sistema. Svaka instanca može predstavljati jedan proces ili skup međusobno povezanih procesa.
-
-Ako se sve instance izvršavaju na jednom uređaju, sistem zadržava \textbf{centralizovanu} prirodu. Međutim, kada se više instanci izvršava na različitim fizičkim uređajima i međusobno koordiniše stanje, sistem prelazi u kategoriju \textbf{distribuiranih sistema}.
+Kao što vidimo svaka instanca može predstavljati jedan proces ili skup međusobno povezanih procesa. Ako se svi procesi izvršavaju na jednom uređaju, sistem zadržava \textbf{centralizovanu} prirodu. Međutim, kada se više procesa izvršava na različitim fizičkim uređajima i međusobno koordiniše stanje, sistem prelazi u kategoriju \textbf{distribuiranih sistema}.
 
 \begin{definicija}
 Distribuiran informacioni sistem predstavlja skup nezavisnih računarskih uređaja (čvorova) koji nemaju zajedničku memoriju i komuniciraju isključivo razmenom poruka, a svoj rad koordinišu tako da prema korisniku deluju kao jedinstven, koherentan sistem \cite{van2017distributed}.
 \end{definicija}
 
 \section{Računarstvo u oblaku i elastično skaliranje informacionih sistema}
-Razvoj informacionih sistema tradicionalno je zahtevao nabavku sopstvene fizičke infrastrukture (servera, mrežne opreme, skladišta podataka) i angažovanje stručnog osoblja za njeno održavanje. Takav pristup nosi visoke početne troškove, zahteva složeno planiranje kapaciteta i otežava brzo prilagođavanje promenama u obimu posla.
+Razvoj informacionih sistema tradicionalno je zahtevao nabavku sopstvene fizičke infrastrukture (servera, mrežne opreme, skladišta podataka) i angažovanje stručnog osoblja za njeno održavanje. Takav pristup nosi visoke početne troškove, zahteva složeno planiranje i otežava brzo prilagođavanje promenama u obimu posla.
 
-Savremene organizacije sve češće usvajaju model računarstva u oblaku \eng{cloud computing} \cite{mell2011nist}, u kome se infrastruktura, platforme i softverske usluge iznajmljuju od eksternog provajdera. Umesto sopstvene opreme koriste se virtuelni resursi koji se dinamički dodeljuju prema potrebi, čime se omogućava elastično skaliranje instanci informacionog sistema, smanjuju troškovi infrastrukture i održavanja, umanjuje potreba za internim sistemskim osobljem i ubrzava postavljanje razvojnih i produkcionih okruženja.
+Savremene organizacije sve češće usvajaju model računarstva u oblaku \eng{cloud computing} \cite{mell2011nist}, u kome se infrastruktura, platforme i/ili softverske usluge iznajmljuju od eksternog provajdera. Umesto sopstvene opreme koriste se virtuelni resursi koji se dinamički dodeljuju prema potrebi, čime se omogućava \textbf{elastično skaliranje instanci informacionog sistema}, smanjuju troškovi infrastrukture i održavanja, umanjuje potreba za internim sistemskim osobljem i ubrzava postavljanje razvojnih i produkcionih okruženja.
 
 Okruženja u oblaku tipično se realizuju kao javna, privatna ili hibridna, dok se isporuka servisa organizuje kroz standardne modele: \textit{IaaS} (infrastruktura kao usluga), \textit{PaaS} (platforma kao usluga) i \textit{SaaS} (softver kao usluga). Ovi modeli određuju nivo kontrole koji zadržava korisnik i nivo odgovornosti koji preuzima provajder usluge.
 
 Kontejnerizacija predstavlja dominantan tehnološki pristup za raspoređivanje softverskih komponenti u oblaku. Kontejneri (npr. \textit{Docker}) omogućavaju izolovano, prenosivo i konzistentno pokretanje aplikacionih instanci, dok platforme za orkestraciju (npr. \textit{Kubernetes}) automatizuju njihovo raspoređivanje, oporavak i horizontalno skaliranje u dinamičkim okruženjima.
 
-Zahvaljujući ovim tehnologijama, arhitektonske organizacije informacionih sistema opisane u poglavlju \ref{sec:arhitektonska-organizacija} mogu se efikasno distribuirati, skalirati i održavati u cloud infrastrukturi, uz značajno smanjenje tehničke složenosti i operativnih troškova u odnosu na tradicionalne modele upravljanja resursima.
+Zahvaljujući ovim tehnologijama, arhitektonske organizacije informacionih sistema opisane u poglavlju \ref{sec:arhitektonska-organizacija} mogu se efikasno distribuirati i održavati u cloud infrastrukturi, uz značajno smanjenje tehničke složenosti i operativnih troškova u odnosu na tradicionalne modele upravljanja resursima.
 
 \section{Centralizacija u distribuiranim informacionim sistemima}
 Iako se savremeni distribuirani informacioni sistemi izvršavaju na više fizičkih čvorova, oni dele jedinstven model podataka, jedinstvenu poslovnu logiku i oslanjaju se na centralnu instancu upravljanja i poverenja. Takvi sistemi se, uprkos fizičkoj raspodeli, ponašaju kao jedna koherentna računarska celina sa jednim stanjem i jednim operativnim autoritetom. Iz toga proističe sledeća formulacija:
 
-\begin{definicija}
+\begin{teorema}
 Fizička distribuiranost čvorova ne implicira decentralizaciju.
-\end{definicija}
+\end{teorema}
 
 Tipičan primer predstavljaju globalne internet platforme (Facebook, Google, Amazon), koje upravljaju hiljadama servera u mnogim geografskim regionima, ali i dalje zadržavaju centralnu kontrolu nad autorizacijom, ažuriranjem stanja i operativnim upravljanjem infrastrukturom. Ovi sistemi jasno ilustruju da \textbf{distribuiranost nije isto što i decentralizacija}.
 

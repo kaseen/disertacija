@@ -76,11 +76,47 @@ Primena fundamentalnih rezultata teorije čekanja \cite{adan2002queueing} omogu�
 Kada dolazna stopa zahteva premaši kapacitet sistema, propusnost dostiže svoj maksimum, latencija teži beskonačnosti, a cena obrade svakog zahteva eksponencijalno raste usled akumulacije redova čekanja i pojačane konkurencije za resurse.
 \end{teorema}
 
-U stvarnim informacionim sistemima, obim pristiglih zahteva često raste tokom vremena, pa je od suštinskog značaja razumeti kako se kapacitet sistema menja prilikom dodavanja dodatnih resursa (računske snage, memorije, mrežnog kapaciteta, dodatnih čvorova itd.). U tom kontekstu definišemo sledeće svojstvo:
+U stvarnim informacionim sistemima obim pristiglih zahteva može u određenim trenucima da premaši raspoloživi kapacitet sistema. Zato je od suštinskog značaja razumeti kako se kapacitet može povećavati dodavanjem dodatnih resursa (računske snage, memorije, mrežnog kapaciteta, dodatnih čvorova itd.). U tom kontekstu definiše se sledeće svojstvo:
 
 \begin{definicija}
-Skalabilnost predstavlja sposobnost informacionog sistema da povećava svoj kapacitet obrade zahteva proporcionalno dostupnim resursima.
+Skalabilnost predstavlja sposobnost informacionog sistema da proporcionalno povećava svoj kapacitet obrade zahteva u odnosu na povećanje dostupnih resursa \cite{bondi2000characteristics}.
 \end{definicija}
+
+U praksi se razlikuju dva osnovna pristupa skaliranju:
+\begin{enumerate}
+\item \textbf{Vertikalno skaliranje (scale-up)} — povećavanje resursnih kapaciteta jedne instance aplikacije (CPU, memorija, skladište),
+\item \textbf{Horizontalno skaliranje (scale-out)} — dodavanje novih instanci informacionog sistema, što obično zahteva upotrebu mehanizama za balansiranje opterećenja \eng{load balancing}.
+\end{enumerate}
+
+\TODO{mikroservisi, serverless}
+
+Horizontalno skaliranje podrazumeva pokretanje više instanci (ili procesa) istog informacionog sistema, čime se povećava ukupan broj aktivnih izvršnih jedinica. \textbf{Dijagonalno skaliranje} predstavlja kombinovanje vertikalnog i horizontalnog pristupa.
+
+\subsection{CAP teorema}
+Pre dalje analize informacionih sistema, neophodno je razmotriti njihova \textbf{fundamentalna ograničenja distribuiranih sistema}. Jedno od najvažnijih potiče iz činjenice da su \textbf{mrežne particije} neizbežan događaj: pitanje nije ,,da li'' će se dogoditi, već ,,kada''. Ova realnost je najjasnije formalizovana kroz \textit{CAP teoremu}, koja opisuje osnovne kompromise u dizajnu distribuiranih sistema.
+
+Mrežna particija može nastati u različitim situacijama, uključujući:
+\begin{enumerate}
+\item \textit{prekid mrežne povezanosti} - fizički prekid veze između udaljenih data-centara tj. čvorovi nastavljaju da rade, ali više ne mogu da komuniciraju,
+\item \textit{ekstremno povećanje latencije} - vreme odaziva čitavog sistema prelazi prag koji je prihvatljiv (npr. skok sa 50 ms na nekoliko minuta),
+\item \textit{preopterećen čvor} - čvor je operativan, ali njegov odgovor nije u predviđenom vremenu, pa ga ostatak sistema tretira kao nedostupan,
+\item \textit{greške u mrežnoj konfiguraciji} - ispravni čvorovi ne vide jedni druge zbog pogrešne konfiguracije.
+\end{enumerate}
+
+Ponašanje sistema u ovakvim uslovima najpreciznije je opisano CAP teoremom, koju je prvi formulisao Eric Brewer \cite{brewer2000towards}, a formalno dokazali Gilbert i Lynch \cite{gilbert2002brewer}. Teorema definiše osnovni kompromis sa kojim se suočavaju svi distribuirani sistemi koji upravljaju deljenim stanjem.
+
+\begin{teorema}
+U distribuiranom sistemu koji čuva podatke moguće je istovremeno garantovati najviše dve od sledeće tri osobine:\\
+(1) \textbf{konzistentnost (C)} - svaki čvor vidi isto stanje sistema, tj. operacija čitanja uvek vraća poslednju potvrđenu upisanu vrednost,\\
+(2) \textbf{dostupnost (A)} - sistem garantuje odgovor na svaki zahtev u konačnom vremenu,\\
+(3) \textbf{toleranciju na particije (P)} - sistem nastavlja da radi i u slučaju mrežnih particija (poruke se mogu izgubiti ili stići nakon arbitrarnog kašnjenja).
+\end{teorema}
+
+\begin{posledica}
+Kada dođe do mrežne particije, distribuiran sistem ne može istovremeno garantovati punu konzistentnost i punu dostupnost. Stoga je prinuđen da da prioritet ili \textbf{konzistentnosti} (CP sistemi) ili \textbf{dostupnosti} (AP sistemi).
+\end{posledica}
+
+
 
 
 % Sa svim daljim atributima posmatraćemo prvo sisteme koji se izvršavaju na jednom fizičkom računaru (serveru), bez obzira da li imaju bez obrzir na njihovu internt arhitekturu. Sistem je fizički i arhitektonski centralizovan. Svi delovi sistema su koalocirani tj. CPU, RAM, disk, keš dele isti fizički prostor. 
@@ -89,40 +125,6 @@ Skalabilnost predstavlja sposobnost informacionog sistema da povećava svoj kapa
 
 % Međutim sistem se može samo vertikalno skalirati i to vrlo brzo pokupljuje, postoji fizički limit a povećavanje performanski ne ide linearno. 
 
-%
-% ==================================================================
-% ==================================================================
-
-% Međutim, pre takve analize neophodno je razmotriti \textbf{fundamentalna ograničenja distribuiranih sistema}. Ovo ograničenje je najjasnije formalizovano kroz CAP teoremu, koja predstavlja osnovni okvir za razumevanje kompromisa između konzistentnosti, dostupnosti i tolerancije na mrežne particije.
-
-% \section{CAP teorema}
-% Jedno od najznačajnijih formalnih ograničenja u ovoj oblasti distribuiranih sistema predstavlja CAP teorema, koju je prvi formulisao Eric Brewer \cite{brewer2000towards}, a kasnije formalno dokazali Gilbert i Lynch \cite{gilbert2002brewer}. Ova teorema definiše osnovni kompromis sa kojim se suočavaju svi distribuirani informacioni sistemi koji upravljaju deljenim stanjem.
-
-% \begin{teorema}
-% U distribuiranom sistemu koji čuva podatke moguće je istovremeno garantovati najviše dve od sledeće tri osobine:\\
-% (1) \textbf{konzistentnost (C)} - svaki čvor vidi isto stanje sistema, tj. operacija čitanja uvek vraća poslednju potvrđenu upisanu vrednost,\\
-% (2) \textbf{dostupnost (A)} - sistem garantuje odgovor na svaki zahtev u konačnom vremenu,\\
-% (3) \textbf{toleranciju na particije (P)} - sistem nastavlja da radi i u slučaju mrežnih particija (poruke se mogu izgubiti ili stići nakon arbitrarnog kašnjenja).
-% \end{teorema}
-
-% % TODO Sta su asinhrone distribuirani sistemi
-% U okviru CAP teoreme važno je naglasiti da se \textbf{particionisanje (P)} ne odnosi na kvar čvora, već na kvar komunikacije između čvorova koji i dalje ispravno rade. Mrežne particije su \textit{neizbežan} deo asinhronih distribuiranih sistema, one nisu pitanje ,,da li'', već ,,kada'' će se dogoditi.
-
-% \begin{posledica}
-% Kada dođe do mrežne particije, distribuiran sistem ne može istovremeno garantovati punu konzistentnost i punu dostupnost. Stoga je prinuđen da da prioritet ili \textbf{konzistentnosti} (CP sistemi) ili \textbf{dostupnosti} (AP sistemi).
-% \end{posledica}
-
-
-
-
-
-% Particionisanje može nastati u više oblika, uključujući, ali ne ograničavajući se na sledeće scenarije:
-% \begin{enumerate}
-% \item Prekid mrežne povezanosti - kada dođe do fizičkog prekida veze (npr. optičkog linka) između geografski udaljenih data-centara. Čvorovi u oba regiona nastavljaju da rade, ali postaju komunikaciono izolovani,
-% \item Ekstremno povećanje latencije - kada latencija poraste preko granice koju sistem smatra normalnom ili prihvatljivom (npr. skok sa 50ms na nekoliko minuta),
-% \item Preopterećen čvor ili mrežni link - čvor je živ, ali ne uspeva da na vreme šalje ili prima poruke. Ostali čvorovi ga tretiraju kao nedostupan, što efektivno formira particiju iako čvor nije „pokvaren”,
-% \item Greške u mrežnoj konfiguraciji - mogu dovesti do toga da podmreže ili grupe čvorova ne vide jedni druge, iako svi rade ispravno,
-% \end{enumerate}
 
 
 % % TODO
