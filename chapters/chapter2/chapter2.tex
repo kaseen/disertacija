@@ -84,8 +84,8 @@ Skalabilnost predstavlja sposobnost informacionog sistema da proporcionalno pove
 
 U praksi se razlikuju dva osnovna pristupa skaliranju:
 \begin{enumerate}
-\item \textbf{Vertikalno skaliranje (scale-up)} — povećavanje resursnih kapaciteta jedne instance aplikacije (CPU, memorija, skladište),
-\item \textbf{Horizontalno skaliranje (scale-out)} — dodavanje novih instanci informacionog sistema, što obično zahteva upotrebu mehanizama za balansiranje opterećenja \eng{load balancing}.
+\item \textbf{Vertikalno skaliranje (scale-up)} - povećavanje resursnih kapaciteta jedne instance aplikacije (CPU, memorija, skladište),
+\item \textbf{Horizontalno skaliranje (scale-out)} - dodavanje novih instanci informacionog sistema, što obično zahteva upotrebu mehanizama za balansiranje opterećenja \eng{load balancing}.
 \end{enumerate}
 
 \TODO{mikroservisi, serverless}
@@ -115,6 +115,22 @@ U distribuiranom sistemu koji čuva podatke moguće je istovremeno garantovati n
 \begin{posledica}
 Kada dođe do mrežne particije, distribuiran sistem ne može istovremeno garantovati punu konzistentnost i punu dostupnost. Stoga je prinuđen da da prioritet ili \textbf{konzistentnosti} (CP sistemi) ili \textbf{dostupnosti} (AP sistemi).
 \end{posledica}
+
+\subsection{Vertikalno skaliranje}
+Vertikalno skaliranje podrazumeva povećavanje resursnih kapaciteta, tj. procesora, memorije, I/O podsistema ili skladišta jedne fizičke ili virtuelne instance informacionog sistema. Time se jedna izvršna jedinica osposobljava da obradi veći broj zahteva u jedinici vremena.
+
+Prednost ovakvog skaliranja je to što je idealno za jednostavnije sisteme (npr. lične informacione sisteme): svi procesi ostaju u jednoj instanci, što olakšava praćenje logova u slučaju greške (svi logovi su na istom mestu).
+
+Međutim, postoje ozbiljna ograničenja:
+\begin{enumerate}
+\item \textbf{Hardverski limit} - svaka mašina ima gornju granicu: maksimalan broj CPU jezgara, količinu RAM-a, maksimalnu brzinu I/O-a i skladišta. Jednom kada se taj limit dostigne, više nije moguće dodatno skalirati,
+\item \textbf{Ekonomijska neefikasnost na visokom nivou} - kako se prelazi na jače servere, cena raste brzo, često nelinearno u odnosu na dobijene performanse,
+\item \textbf{Jedna tačka otkaza \eng{single point of failure}} - ceo sistem zavisi od jedne mašine, pad ili otkaz te mašine znači da kompletan sistem prestaje sa radom,
+\item \textbf{Zagušenje} - kada sistem dođe do zagušenja i resursi budu iscrpljeni, performanse mogu naglo da opadnu, uz značajan porast latencije, kašnjenja ili čak potpuni pad servisa. Kada se dostigne hardverski limit, ne postoji način daljeg skaliranja bez arhitekturalne promene.
+\end{enumerate}
+
+Da bi se makar delimično ublažile poslednje dve mane, jedno od poznatih rešenja jeste korišćenje rezerve \eng{hot standby}. To znači da postoji rezervna instanca spremna za aktivaciju u slučaju da glavna mašina zakaže ili postane neupotrebljiva. Ovo omogućava preuzimanje rada bez (ili uz minimalan) prekid za korisnike. Ipak, i ta rezerva nasleđuje sve prethodno navedene mane.
+
 
 
 
