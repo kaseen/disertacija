@@ -124,13 +124,19 @@ Prednost ovakvog skaliranja je to što je idealno za jednostavnije sisteme (npr.
 Međutim, postoje ozbiljna ograničenja:
 \begin{enumerate}
 \item \textbf{Hardverski limit} - svaka mašina ima gornju granicu: maksimalan broj CPU jezgara, količinu RAM-a, maksimalnu brzinu I/O-a i skladišta. Jednom kada se taj limit dostigne, više nije moguće dodatno skalirati,
-\item \textbf{Ekonomijska neefikasnost na visokom nivou} - kako se prelazi na jače servere, cena raste brzo, često nelinearno u odnosu na dobijene performanse,
+\item \textbf{Ekonomska neefikasnost na visokom nivou} - kako se prelazi na jače servere, cena raste brzo, često nelinearno u odnosu na dobijene performanse,
 \item \textbf{Jedna tačka otkaza \eng{single point of failure}} - ceo sistem zavisi od jedne mašine, pad ili otkaz te mašine znači da kompletan sistem prestaje sa radom,
 \item \textbf{Zagušenje} - kada sistem dođe do zagušenja i resursi budu iscrpljeni, performanse mogu naglo da opadnu, uz značajan porast latencije, kašnjenja ili čak potpuni pad servisa. Kada se dostigne hardverski limit, ne postoji način daljeg skaliranja bez arhitekturalne promene.
 \end{enumerate}
 
 Da bi se makar delimično ublažile poslednje dve mane, jedno od poznatih rešenja jeste korišćenje rezerve \eng{hot standby}. To znači da postoji rezervna instanca spremna za aktivaciju u slučaju da glavna mašina zakaže ili postane neupotrebljiva. Ovo omogućava preuzimanje rada bez (ili uz minimalan) prekid za korisnike. Ipak, i ta rezerva nasleđuje sve prethodno navedene mane.
 
+\subsection{Lokacijski zasnovano adresiranje}
+Kontrolno centralizovani informacioni sistemi omogućavaju jednostavnu komunikaciju između geografski raspoređenih klijenata i instance informacionog sistema, jer se ta komunikacija zasniva na modelu \textbf{lokacijski zasnovanog adresiranja} \eng{location-based addressing} \cite{ding2011location}. U ovom modelu svaki zahtev se eksplicitno upućuje na unapred poznatu lokaciju servera, tj. IP adresu, pri čemu se koristi DNS servis koji prevodi domen u adresu. Na taj način se celokupan radni tok obrade zahteva usmerava ka jednoj fizičkoj lokaciji.
+
+Ovakav model adresiranja jednostavan je za implementaciju i predstavlja dominantnu paradigmu tradicionalnih internet servisa. Međutim, on ima ključna ograničenja u pogledu performansi kada se klijenti i server nalaze na različitim geografskim lokacijama. Brojna merenja globalne internet latencije pokazuju da pristup serverima lociranim na drugim kontinentima tipično uvodi latenciju od \textbf{80-150 ms} \cite{kufel2015network} po jednom zahtevu, što značajno utiče na \textit{korisničko iskustvo} kod aplikacija osetljivih na kašnjenje, kao što su interaktivne web aplikacije, sistemi za finansijsko trgovanje, igre u realnom vremenu i streaming servisi.
+
+Usled ovih ograničenja, vertikalno skalirani centralizovani sistemi ne mogu da kompenzuju geografska kašnjenja, nezavisno od raspoloživog hardvera. Ovaj problem se prevazilazi primenom geografski distribuiranih instanci, čime se zahtevi rutiraju ka najbližem dostupnom čvoru i smanjuje ukupna \textit{end-to-end} latencija.
 
 
 
