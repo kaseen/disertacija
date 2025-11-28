@@ -82,10 +82,14 @@ U stvarnim informacionim sistemima obim pristiglih zahteva može u određenim tr
 Skalabilnost predstavlja sposobnost informacionog sistema da proporcionalno povećava svoj kapacitet obrade zahteva u odnosu na povećanje dostupnih resursa \cite{bondi2000characteristics}.
 \end{definicija}
 
-U praksi se razlikuju dva osnovna pristupa skaliranju:
+\begin{definicija}
+Optimizacija predstavlja proces unapređenja softverskog sistema sa ciljem da za isti funkcionalni zahtev ostvari bolje performanse, najčešće kroz smanjenje upotrebe tehničkih resursa poput vremena izvršavanja, memorije, mrežnog protoka ili energije, pri čemu se zadržava nepromenjeno spoljašnje ponašanje sistema.
+\end{definicija}
+
+Skaliranje se odnosi na način proširenja hardverskih resursa i optimizacije softverskih aplikacija, te uključuje i hardverske i softverske aspekte sistema. U praksi se, nakon sprovedene softverske optimizacije, razlikuju dva osnovna pristupa skaliranju hardvera:
 \begin{enumerate}
 \item \textbf{Vertikalno skaliranje (scale-up)} - povećavanje resursnih kapaciteta jedne instance aplikacije (CPU, memorija, skladište),
-\item \textbf{Horizontalno skaliranje (scale-out)} - dodavanje novih instanci informacionog sistema, što obično zahteva upotrebu mehanizama za balansiranje opterećenja \eng{load balancing}.
+\item \textbf{Horizontalno skaliranje (scale-out)} - dodavanje novih instanci informacionog sistema.
 \end{enumerate}
 
 \TODO{mikroservisi, serverless}
@@ -117,16 +121,22 @@ Kada dođe do mrežne particije, distribuiran sistem ne može istovremeno garant
 \end{posledica}
 
 \subsection{Vertikalno skaliranje}
-Vertikalno skaliranje podrazumeva povećavanje resursnih kapaciteta, tj. procesora, memorije, I/O podsistema ili skladišta jedne fizičke ili virtuelne instance informacionog sistema. Time se jedna izvršna jedinica osposobljava da obradi veći broj zahteva u jedinici vremena.
+Vertikalno skaliranje podrazumeva povećavanje resursnih kapaciteta, tj. procesora, memorije, I/O podsistema ili skladišta jedne fizičke ili virtuelne instance informacionog sistema. Time se jedna izvršna jedinica osposobljava da obradi veći broj zahteva u jedinici vremena. Ovakvo skaliranje je idealno za jednostavnije sisteme, kao što su lični informacioni sistemi.
 
-Prednost ovakvog skaliranja je to što je idealno za jednostavnije sisteme (npr. lične informacione sisteme): svi procesi ostaju u jednoj instanci, što olakšava praćenje logova u slučaju greške (svi logovi su na istom mestu).
+Prednosti vertikalnog skaliranja obuhvataju:
+\begin{enumerate}
+\item \textbf{Jednostavnija arhitektura} - kompletan informacioni sistem izvršava se na jednoj fizičkoj ili virtuelnoj instanci, što smanjuje arhitektonsku složenost,
+\item \textbf{Konzistentnost} - sve operacije čitanja i pisanja odvijaju se lokalno čime se obezbeđuje stabilna i deterministička konzistentnost,
+\item \textbf{Niska operativna složenost} - sistem je jednostavniji za praćenje, održavanje, otklanjanje grešaka i nadgledanje performansi,
+\item \textbf{Minimalne promene u softveru} - aplikacija najčešće može da koristi jače resurse bez potrebe za promenom arhitekture, algoritama ili načina obrade podataka.
+\end{enumerate}
 
 Međutim, postoje ozbiljna ograničenja:
 \begin{enumerate}
 \item \textbf{Hardverski limit} - svaka mašina ima gornju granicu: maksimalan broj CPU jezgara, količinu RAM-a, maksimalnu brzinu I/O-a i skladišta. Jednom kada se taj limit dostigne, više nije moguće dodatno skalirati,
-\item \textbf{Ekonomska neefikasnost na visokom nivou} - kako se prelazi na jače servere, cena raste brzo, često nelinearno u odnosu na dobijene performanse,
+\item \textbf{Ekonomska neefikasnost na visokom nivou} - cena raste brzo i nelinearno u odnosu na dobijene performanse. Na primer, povećanje broja jezgara ne donosi linearnu dobit (\textit{Amdahlov zakon}) \cite{amdahl1967validity},
 \item \textbf{Jedna tačka otkaza \eng{single point of failure}} - ceo sistem zavisi od jedne mašine, pad ili otkaz te mašine znači da kompletan sistem prestaje sa radom,
-\item \textbf{Zagušenje} - kada sistem dođe do zagušenja i resursi budu iscrpljeni, performanse mogu naglo da opadnu, uz značajan porast latencije, kašnjenja ili čak potpuni pad servisa. Kada se dostigne hardverski limit, ne postoji način daljeg skaliranja bez arhitekturalne promene.
+\item \textbf{Zagušenje} - kada sistem dođe do zagušenja i resursi budu iscrpljeni, performanse mogu naglo da opadnu, uz značajan porast latencije, kašnjenja ili čak potpuni pad servisa. Kada se dostigne hardverski limit, ne postoji način daljeg skaliranja bez arhitekturne promene, a period oporavka može biti dug.
 \end{enumerate}
 
 Da bi se makar delimično ublažile poslednje dve mane, jedno od poznatih rešenja jeste korišćenje rezerve \eng{hot standby}. To znači da postoji rezervna instanca spremna za aktivaciju u slučaju da glavna mašina zakaže ili postane neupotrebljiva. Ovo omogućava preuzimanje rada bez (ili uz minimalan) prekid za korisnike. Ipak, i ta rezerva nasleđuje sve prethodno navedene mane.
@@ -138,7 +148,8 @@ Ovakav model adresiranja jednostavan je za implementaciju i predstavlja dominant
 
 Usled ovih ograničenja, vertikalno skalirani centralizovani sistemi ne mogu da kompenzuju geografska kašnjenja, nezavisno od raspoloživog hardvera. Ovaj problem se prevazilazi primenom geografski distribuiranih instanci, čime se zahtevi rutiraju ka najbližem dostupnom čvoru i smanjuje ukupna \textit{end-to-end} latencija.
 
-
+\subsection{Horizontalno skaliranje}
+Dodavanje novih instanci informacionog sistema obično zahteva upotrebu softverskog mehanizama za balansiranje opterećenja \eng{load balancing}
 
 
 % Sa svim daljim atributima posmatraćemo prvo sisteme koji se izvršavaju na jednom fizičkom računaru (serveru), bez obzira da li imaju bez obrzir na njihovu internt arhitekturu. Sistem je fizički i arhitektonski centralizovan. Svi delovi sistema su koalocirani tj. CPU, RAM, disk, keš dele isti fizički prostor. 
