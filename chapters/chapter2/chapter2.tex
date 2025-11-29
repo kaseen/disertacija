@@ -133,7 +133,7 @@ Prednosti vertikalnog skaliranja obuhvataju:
 
 Međutim, postoje ozbiljna ograničenja:
 \begin{enumerate}
-\item \textbf{Hardverski limit} - svaka mašina ima gornju granicu: maksimalan broj CPU jezgara, količinu RAM-a, maksimalnu brzinu I/O-a i skladišta. Jednom kada se taj limit dostigne, više nije moguće dodatno skalirati,
+\item \textbf{Hardverski limit} - svaka mašina ima gornju granicu kapaciteta: maksimalan broj CPU jezgara, količinu RAM-a, maksimalnu brzinu I/O-a i skladišta. Jednom kada se taj limit dostigne, više nije moguće dodatno skalirati,
 \item \textbf{Ekonomska neefikasnost na visokom nivou} - cena raste brzo i nelinearno u odnosu na dobijene performanse. Na primer, povećanje broja jezgara ne donosi linearnu dobit (\textit{Amdahlov zakon}) \cite{amdahl1967validity},
 \item \textbf{Jedna tačka otkaza \eng{single point of failure}} - ceo sistem zavisi od jedne mašine, pad ili otkaz te mašine znači da kompletan sistem prestaje sa radom,
 \item \textbf{Zagušenje} - kada sistem dođe do zagušenja i resursi budu iscrpljeni, performanse mogu naglo da opadnu, uz značajan porast latencije, kašnjenja ili čak potpuni pad servisa. Kada se dostigne hardverski limit, ne postoji način daljeg skaliranja bez arhitekturne promene, a period oporavka može biti dug.
@@ -149,14 +149,31 @@ Ovakav model adresiranja jednostavan je za implementaciju i predstavlja dominant
 Usled ovih ograničenja, vertikalno skalirani centralizovani sistemi ne mogu da kompenzuju geografska kašnjenja, nezavisno od raspoloživog hardvera. Ovaj problem se prevazilazi primenom geografski distribuiranih instanci, čime se zahtevi rutiraju ka najbližem dostupnom čvoru i smanjuje ukupna \textit{end-to-end} latencija.
 
 \subsection{Horizontalno skaliranje}
-Dodavanje novih instanci informacionog sistema obično zahteva upotrebu softverskog mehanizama za balansiranje opterećenja \eng{load balancing}
+Horizontalno skaliranje podrazumeva dodavanje novih instanci aplikacije (procesa, kontejnera ili servera), pri čemu se svaki pristigli zahtev može obraditi na bilo kojoj dostupnoj instanci. Na taj način povećava se ukupan kapacitet obrade čitavog informacionog sistema. Međutim, uspostavljanje i održavanje većeg broja instanci tipično zahteva primenu složenih softverskih mehanizama za distribuiranu koordinaciju između čvorova.
+
+Iako u teoriji distribuiranih sistema ne postoji jedinstveno formalizovano pravilo koje eksplicitno definiše \textit{„minimalni skup“} mehanizama neophodnih za stabilnu, efikasnu i na greške otpornu koordinaciju između čvorova, u savremenoj inženjerskoj praksi i relevantnoj literaturi \cite{kleppmann2017designing} jasno je uočljivo da opšti distribuirani sistemi uobičajeno zahtevaju sledeće osnovne funkcionalne komponente:
+\begin{enumerate}
+\item Mehanizam za raspodelu opterećenja,
+\item Mehanizam za deljenje globalnog stanja između instanci,
+\item Mehanizam za detekciju dostupnosti instanci,
+\item Mehanizam za rešavanje konkurentnog pristupa deljenim resursima
+\end{enumerate}
+
+U horizontalnom skaliranju mnoge mane vertikalnog skaliranja postaju njegove prednosti, dok se istovremeno prednosti vertikalnog pristupa transformišu u izazove karakteristične za distribuirane sisteme:
+\begin{enumerate}
+\item \textbf{Teoretski neogračen kapacitet} - ne postoji jedinstveni hardverski limit, jer se kapacitet povećava dodavanjem novih instanci,
+\item \textbf{Otpornost na greške} - ne postoji jedna tačka otkaza, kvar pojedinačne instance ne dovodi do prekida rada celog sistema,
+\item \textbf{Ekonomska efikasnost} - dodavanje novih instanci obično prati približno linearni rast troškova u odnosu na dobijeni kapacitet, što omogućava postepeno i predvidivo skaliranje,
+\item \textbf{Geografska distrbucija} - instance se mogu rasporediti na različite lokacije, bliže krajnjim korisnicima, čime se značajno smanjuje latencija i prevazilazi problem interkontinentalnog pristupa serveru pri lokacijski zasnovanom adresiranju.
+\end{enumerate}
+
+\subsection{Ograničenja horizontalnog skaliranja}
 
 
-% Sa svim daljim atributima posmatraćemo prvo sisteme koji se izvršavaju na jednom fizičkom računaru (serveru), bez obzira da li imaju bez obrzir na njihovu internt arhitekturu. Sistem je fizički i arhitektonski centralizovan. Svi delovi sistema su koalocirani tj. CPU, RAM, disk, keš dele isti fizički prostor. 
+% consensus (getting several nodes to agree on a value)
+
 
 % Sistemi na jednoj instanci imaju minimalnu latencija izvršavanja i stabilo vreme odaziva. Kako se svi delovi sistema nalaze na istom uređaju, vreme izvršavanja operacije zavisi isključivo od brzine lokalnog hardvera, pa samim tim se izbegavaju koordinacioni troškovi. Sve čitanja i pisanja se obavljaju lokalno što maksimizuje ekfikasnost pristupa podacima. 
-
-% Međutim sistem se može samo vertikalno skalirati i to vrlo brzo pokupljuje, postoji fizički limit a povećavanje performanski ne ide linearno. 
 
 
 
