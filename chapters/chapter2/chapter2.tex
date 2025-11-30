@@ -135,7 +135,7 @@ Međutim, postoje ozbiljna ograničenja:
 \begin{enumerate}
 \item \textbf{Hardverski limit} - svaka mašina ima gornju granicu kapaciteta: maksimalan broj CPU jezgara, količinu RAM-a, maksimalnu brzinu I/O-a i skladišta. Jednom kada se taj limit dostigne, više nije moguće dodatno skalirati,
 \item \textbf{Ekonomska neefikasnost na visokom nivou} - cena raste brzo i nelinearno u odnosu na dobijene performanse. Na primer, povećanje broja jezgara ne donosi linearnu dobit performansi \cite{hill2008amdahl},
-\item \textbf{Zagušenje} - kada sistem dođe do zagušenja i resursi budu iscrpljeni, performanse mogu naglo da opadnu, uz značajan porast latencije, kašnjenja ili čak potpuni pad servisa. Kada se dostigne hardverski limit, ne postoji način daljeg skaliranja bez arhitekturne promene, a period oporavka može biti dug,
+\item \textbf{Opterećenje} - kada sistem dođe do zagušenja i resursi budu iscrpljeni, performanse mogu naglo da opadnu, uz značajan porast latencije, kašnjenja ili čak potpuni pad servisa. Kada se dostigne hardverski limit, ne postoji način daljeg skaliranja bez arhitekturne promene, a period oporavka može biti dug,
 \item \textbf{Jedna tačka otkaza \eng{single point of failure}} - ceo sistem zavisi od jedne mašine, pad ili otkaz te mašine znači da kompletan sistem prestaje sa radom.
 \end{enumerate}
 
@@ -149,37 +149,63 @@ Ovakav model adresiranja jednostavan je za implementaciju i predstavlja dominant
 Usled ovih ograničenja, vertikalno skalirani centralizovani sistemi ne mogu da kompenzuju geografska kašnjenja, nezavisno od raspoloživog hardvera. Ovaj problem se prevazilazi primenom geografski distribuiranih instanci, čime se zahtevi rutiraju ka najbližem dostupnom čvoru i smanjuje ukupna \textit{end-to-end} latencija.
 
 \subsection{Horizontalno skaliranje}
-Horizontalno skaliranje podrazumeva dodavanje novih instanci aplikacije (procesa, kontejnera ili servera), pri čemu se svaki pristigli zahtev može obraditi na bilo kojoj dostupnoj instanci. Na taj način povećava se ukupan kapacitet obrade čitavog informacionog sistema. Međutim, uspostavljanje i održavanje većeg broja instanci tipično zahteva primenu složenih softverskih mehanizama za distribuiranu koordinaciju između čvorova.
+Horizontalno skaliranje podrazumeva povećanje kapaciteta informacionog sistema dodavanjem dodatnih instanci aplikacije (procesa, kontejnera ili servera), pri čemu se svaki novi zahtev može obraditi na bilo kojoj od dostupnih instanci. Na taj način ukupan kapacitet sistema raste, budući da se opterećenje raspodeljuje na veći broj izvršnih jedinica.
 
-Iako u teoriji distribuiranih sistema ne postoji jedinstveno formalizovano pravilo koje eksplicitno definiše \textit{,,minimalni skup''} mehanizama neophodnih za stabilnu, efikasnu i na greške otpornu koordinaciju između čvorova, u savremenoj inženjerskoj praksi i relevantnoj literaturi \cite{kleppmann2017designing} jasno je uočljivo da opšti distribuirani sistemi uobičajeno zahtevaju sledeće osnovne funkcionalne komponente:
+Prednosti horizontalnog skaliranja obično se klasifikuju na sledeći način:
 \begin{enumerate}
-\item Mehanizme za deljenje stanja i koordinaciju,
-\item Mehanizme kontrole konkurentnog pristupa,
-\item Mehanizme raspodele opterećenja,
-\item Mehanizme detekcije dostupnosti instanci.
+\item \textbf{Teoretski neogračen kapacitet} - budući da se kapacitet može povećavati dodavanjem novih instanci, sistem nije vezan za jedinstveno hardversko ograničenje,
+\item \textbf{Ekonomska efikasnost} - troškovi skaliranja rastu približno linearno u odnosu na povećanje kapaciteta, što omogućava postepeno, predvidivo i finansijski održivo proširenje,
+\item \textbf{Geografska distrbucija} - instance se mogu rasporediti na različite fizičke lokacije, bliže krajnjim korisnicima, čime se smanjuje latencija i ublažava problem pristupa udaljenim serverima kod lokacijski zavisnog adresiranja,
+\item \textbf{Otpornost na greške} - izostanak jedne tačke otkaza omogućava da kvar pojedinačne instance ne utiče na dostupnost celog sistema.
 \end{enumerate}
 
-U horizontalnom skaliranju mnoge mane vertikalnog skaliranja postaju njegove prednosti, dok se istovremeno prednosti vertikalnog pristupa transformišu u izazove karakteristične za distribuirane sisteme. Uzimajući navedeno u obzir, ključne prednosti horizontalnog skaliranja mogu se sistematizovati na sledeći način:
-\begin{enumerate}
-\item \textbf{Teoretski neogračen kapacitet} - ne postoji jedinstveni hardverski limit, jer se kapacitet povećava dodavanjem novih instanci,
-\item \textbf{Ekonomska efikasnost} - dodavanje novih instanci obično prati približno linearni rast troškova u odnosu na dobijeni kapacitet, što omogućava postepeno i predvidivo skaliranje,
-\item \textbf{Geografska distrbucija} - instance se mogu rasporediti na različite lokacije, bliže krajnjim korisnicima, čime se značajno smanjuje latencija i prevazilazi problem interkontinentalnog pristupa serveru pri lokacijski zasnovanom adresiranju,
-\item \textbf{Otpornost na greške} - ne postoji jedna tačka otkaza, kvar pojedinačne instance ne dovodi do prekida rada celog sistema.
-\end{enumerate}
+Uočavamo da se mnoge slabosti vertikalnog skaliranja u horizontalnom pristupu transformišu u njegove prednosti. Međutim, istovremeno se prednosti vertikalnog pristupa pretvaraju u izazove svojstvene distribuiranim sistemima. Ovo je posledica činjenice da održavanje većeg broja instanci nužno zahteva uvođenje složenijih softverskih mehanizama za distribuiranu koordinaciju.
 
-Iako horizontalno skaliranje omogućava povećanje ukupnog kapaciteta informacionog sistema raspodelom opterećenja na više izvršnih instanci, ovaj pristup uvodi niz dodatnih mehanizama koordinacije između čvorova koji troše deo raspoloživih resursa. Zbog ovih dodatnih procesa, isti hardverski resurs raspoređen na više instanci ostvaruje niže efektivne performanse u poređenju sa ekvivalentnom konfiguracijom u kojoj je isti resurs koncentrisan u jednoj instanci. Ovaj fenomen dovodi do pojave dodatnih troškova koje uvodi sama distribucija sistema.
+Zbog ovih dodatnih mehanizama, isti skup hardverskih resursa raspoređen na veći broj instanci ostvaruje nižu efektivnu performansu u poređenju sa konfiguracijom u kojoj se ti resursi nalaze u jednoj monolitnoj instanci. Ovaj efekat dovodi do pojave dodatnih troškova koje uvodi sama distribucija sistema.
 
 \begin{definicija}
-Režijsko opterećenje \eng{overhead} predstavlja potrošnju resursa koju distribuirani informacioni sistem mora da izvrši radi održavanja zajedničke koordinacije, usklađivanja i upravljanja svojim instancama, a koja ne pripada primarnoj obradi korisničkog zahteva.
+Režijsko opterećenje \eng{overhead} predstavlja potrošnju resursa koju distribuirani informacioni sistem mora da izvrši radi održavanja zajedničke koordinacije, sinhronizacije i upravljanja svojim instancama, a koja nije direktno deo primarne obrade korisničkog zahteva.
 \end{definicija}
 
-Režijsko opterećenje ima kumulativan negativan uticaj na ukupne performanse sistema, jer svaki dodatni mehanizam koordinacije povećava trajanje obrade pojedinačnog zahteva i smanjuje količinu raspoloživih resursa koji mogu biti posvećeni primarnim korisničkim operacijama. Kao posledica toga, vreme odaziva raste, dok efektivna propusnost sistema opada.
+Režijsko opterećenje ima kumulativno negativan uticaj na performanse: svaki novi mehanizam koordinacije povećava vreme obrade pojedinačnog zahteva i umanjuje deo sistema koji može biti posvećen korisničkim operacijama. Kao posledica toga, raste vreme odaziva, dok se efektivna propusnost sistema smanjuje.
 
-Pored ovih praktičnih posledica, distribuirani sistemi podležu i fundamentalnim teorijskim ograničenjima skalabilnosti. Prema \textit{Univerzalnom zakonu skalabilnosti} \cite{gunther1993simple, hamann2021scalability}, kako broj instanci u sistemu raste, troškovi međusobne koordinacije, ,,takmičenje'' nad deljenim resursima i održavanja koherentnosti stanja mogu dovesti do sublinearnog povećanja kapaciteta, stagnacije ili čak degradacije performansi. Drugim rečima, svaki novi čvor ne doprinosi samo dodatnoj procesnoj snazi već i povećava međusobna ometanja, takmičenje za zajedničke resurse i potrebu za sinhronizacijom, što uvećava režijsko opterećenje brže nego što raste korisni kapacitet.
+\begin{definicija}
+Trošak sinhronizacije \eng{synchronization penalty} predstavlja deo režijskog opterećenja koji nastaje kada čvorovi moraju da razmenjuju svoje trenutno stanje, usklađuju podatke ili čekaju jedni na druge.
+\end{definicija}
 
-U nastavku poglavlja biće analiziran uticaj svakog od ovih mehanizama na performanse sistema, počevši od onih koji imaju najveći efekat, a zatim prelazeći na mehanizme čiji je relativni uticaj manji.
+\begin{definicija}
+Kontencija \eng{contention penalty} predstavlja deo režijskog opterećenja nastao usled međusobnog takmičenja čvorova za pristup istom resursu.
+\end{definicija}
 
-\subsection{Mehanizmi za deljenje stanja i koordinaciju}
+Ovi fenomeni su formalno obuhvaćeni \textit{Univerzalnom zakonu skalabilnosti} \cite{gunther1993simple, gunther2008general}, koji opisuje kako režijsko opterećenje utiče na promenu \textbf{propusnosti} sistema pri povećanju broja instanci.
+
+\begin{teorema}
+Gunterov univerzalni zakon skalabilnosti ima sledeću standardnu formu:
+$$C(N) = \frac{N}{1 + \alpha (N-1) + \beta N(N-1)} $$
+pri čemu:\\
+C(N) - relativna propusnost pri N čvorova,\\
+N - broj instanci (čvorova),\\
+$\alpha$ - parametar sinhronizacije,\\
+$\beta$ - parametar kontencije.
+\end{teorema}
+
+\begin{posledica}
+Kontencija predstavlja dominantni oblik režijskog opterećenja jer raste kvadratno sa brojem instanci, dok trošak sinhronizacije raste linearno.
+\end{posledica}
+
+Kako broj instanci raste, sistem može ispoljiti sublinearno povećanje kapaciteta, stagnaciju ili degradaciju performansi \cite{hamann2021scalability}. Svaki novi čvor, osim što doprinosi procesnoj snazi, istovremeno uvodi dodatne konflikte u pristupu zajedničkim resursima i zahteva dodatnu koordinaciju, što može rasti brže od korisnog kapaciteta.
+
+Iako u teoriji distribuiranih sistema ne postoji jedinstveno formalizovano pravilo koje eksplicitno definiše \textit{,,minimalni skup''} mehanizama neophodnih za stabilnu, efikasnu i na greške otpornu koordinaciju između čvorova, u savremenoj inženjerskoj praksi i relevantnoj literaturi \cite{kleppmann2017designing} najčešće su prisutne sledeće funkcionalnosti:
+\begin{enumerate}
+\item Mehanizmi deljenja stanja i koordinacije,
+\item Mehanizmi kontrole konkurentnog pristupa,
+\item Mehanizmi raspodele opterećenja,
+\item Mehanizmi detekcije dostupnosti instanci.
+\end{enumerate}
+
+U nastavku biće analiziran uticaj ovih mehanizama na performanse sistema, počevši od onih koji imaju najveći efekat, a zatim prelazeći na mehanizme čiji je relativni uticaj manji.
+
+\subsection{Mehanizmi deljenja stanja i koordinacije}
 
 
 
