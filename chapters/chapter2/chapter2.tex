@@ -134,7 +134,7 @@ Prednosti vertikalnog skaliranja obuhvataju:
 Međutim, postoje ozbiljna ograničenja:
 \begin{enumerate}
 \item \textbf{Hardverski limit} - svaka mašina ima gornju granicu kapaciteta: maksimalan broj CPU jezgara, količinu RAM-a, maksimalnu brzinu I/O-a i skladišta. Jednom kada se taj limit dostigne, više nije moguće dodatno skalirati,
-\item \textbf{Ekonomska neefikasnost na visokom nivou} - cena raste brzo i nelinearno u odnosu na dobijene performanse. Na primer, povećanje broja jezgara ne donosi linearnu dobit (\textit{Amdahlov zakon}) \cite{amdahl1967validity},
+\item \textbf{Ekonomska neefikasnost na visokom nivou} - cena raste brzo i nelinearno u odnosu na dobijene performanse. Na primer, povećanje broja jezgara ne donosi linearnu dobit performansi \cite{hill2008amdahl},
 \item \textbf{Zagušenje} - kada sistem dođe do zagušenja i resursi budu iscrpljeni, performanse mogu naglo da opadnu, uz značajan porast latencije, kašnjenja ili čak potpuni pad servisa. Kada se dostigne hardverski limit, ne postoji način daljeg skaliranja bez arhitekturne promene, a period oporavka može biti dug,
 \item \textbf{Jedna tačka otkaza \eng{single point of failure}} - ceo sistem zavisi od jedne mašine, pad ili otkaz te mašine znači da kompletan sistem prestaje sa radom.
 \end{enumerate}
@@ -173,7 +173,11 @@ Iako horizontalno skaliranje omogućava povećanje ukupnog kapaciteta informacio
 Režijsko opterećenje \eng{overhead} predstavlja potrošnju resursa koju distribuirani informacioni sistem mora da izvrši radi održavanja zajedničke koordinacije, usklađivanja i upravljanja svojim instancama, a koja ne pripada primarnoj obradi korisničkog zahteva.
 \end{definicija}
 
-U nastavku, biće analiziran uticaj ovih mehanizama na performanse sistema, počevši od mehanizama sa najvećim uticajem ka onima čiji je efekat manji.
+Režijsko opterećenje ima kumulativan negativan uticaj na ukupne performanse sistema, jer svaki dodatni mehanizam koordinacije povećava trajanje obrade pojedinačnog zahteva i smanjuje količinu raspoloživih resursa koji mogu biti posvećeni primarnim korisničkim operacijama. Kao posledica toga, vreme odaziva raste, dok efektivna propusnost sistema opada.
+
+Pored ovih praktičnih posledica, distribuirani sistemi podležu i fundamentalnim teorijskim ograničenjima skalabilnosti. Prema \textit{Univerzalnom zakonu skalabilnosti} \cite{gunther1993simple, hamann2021scalability}, kako broj instanci u sistemu raste, troškovi međusobne koordinacije, ,,takmičenje'' nad deljenim resursima i održavanja koherentnosti stanja mogu dovesti do sublinearnog povećanja kapaciteta, stagnacije ili čak degradacije performansi. Drugim rečima, svaki novi čvor ne doprinosi samo dodatnoj procesnoj snazi već i povećava međusobna ometanja, takmičenje za zajedničke resurse i potrebu za sinhronizacijom, što uvećava režijsko opterećenje brže nego što raste korisni kapacitet.
+
+U nastavku poglavlja biće analiziran uticaj svakog od ovih mehanizama na performanse sistema, počevši od onih koji imaju najveći efekat, a zatim prelazeći na mehanizme čiji je relativni uticaj manji.
 
 \subsection{Mehanizmi za deljenje stanja i koordinaciju}
 
