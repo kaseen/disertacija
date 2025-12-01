@@ -46,7 +46,7 @@ Tipični primeri zahteva uključuju upis podatka u bazu, izvršavanje funkcional
 U skladu sa savremenim pristupima modeliranju procesa i \textit{end-to-end} analizi radnih tokova \cite{sedova2023development}, \textbf{zahtev se ne posmatra kao izolovana jedinica}, već kao deo šireg procesa čija se vrednost i funkcionalna uloga ispoljava tek u interakciji sa ostalim procesima i komponentama arhitekture informacionog sistema.
 
 \begin{definicija}
-Performanse predstavljaju sposobnost informacionog sistema da efikasno obrađuje zahteve.
+Performanse predstavljaju sposobnost informacionog sistema da efikasno obrađuje zahteve. U analizi informacionih arhitektura performanse se posmatraju kao kvalitativni atribut.
 \end{definicija}
 
 Kako su performanse apstraktan pojam koji se kvantitativno izražava različitim metrikama, a pri tom različiti akteri mogu imati različite kriterijume ,,efikasnost'' sistema (npr. organizacije prvenstveno optimizuju troškove, dok krajnji korisnici vrednuju brzinu i cenu usluge), u daljem radu razmatraju se sledeće ključne performansne metrike:
@@ -97,7 +97,11 @@ Skaliranje se odnosi na način proširenja hardverskih resursa i optimizacije so
 Horizontalno skaliranje podrazumeva pokretanje više instanci (ili procesa) istog informacionog sistema, čime se povećava ukupan broj aktivnih izvršnih jedinica. \textbf{Dijagonalno skaliranje} predstavlja kombinovanje vertikalnog i horizontalnog pristupa.
 
 \subsection{CAP teorema}
-Pre dalje analize informacionih sistema, neophodno je razmotriti njihova \textbf{fundamentalna ograničenja distribuiranih sistema}. Jedno od najvažnijih potiče iz činjenice da su \textbf{mrežne particije} neizbežan događaj: pitanje nije ,,da li'' će se dogoditi, već ,,kada''. Ova realnost je najjasnije formalizovana kroz \textit{CAP teoremu}, koja opisuje osnovne kompromise u dizajnu distribuiranih sistema.
+\begin{definicija}
+Kvalitativna analiza arhitektonskih ograničenja obuhvata identifikaciju i razumevanje fundamentalnih ograničenja distribuiranih sistema. 
+\end{definicija}
+
+Jedno od najznačajnijih ograničenja proizilazi iz činjenice da su \textbf{mrežne particije} neizbežan događaj: pitanje nije ,,da li'' će se dogoditi, već ,,kada''. Ova činjenica je najjasnije formalizovana kroz \textit{CAP teoremu}, koja definiše osnovni skup arhitektonskih kompromisa u dizajnu distribuiranih sistema.
 
 Mrežna particija može nastati u različitim situacijama, uključujući:
 \begin{enumerate}
@@ -206,26 +210,46 @@ Iako u teoriji distribuiranih sistema ne postoji jedinstveno formalizovano pravi
 U nastavku biće analiziran uticaj ovih mehanizama na performanse sistema, počevši od onih koji imaju najveći efekat, a zatim prelazeći na mehanizme čiji je relativni uticaj manji.
 
 \subsection{Mehanizmi deljenja stanja i koordinacije}
+\subsubsection{Protokoli za konzistentnost kopija stanja}
+U distribuiranim informacionim sistemima ne postoji jedinstvena globalna memorija kojoj bi svi čvorovi imali istovremeni pristup. Umesto toga, podaci se fizički čuvaju na više računarskih čvorova kako bi se povećale skalabilnost, dostupnost i tolerancija na greške. Budući da više čvorova upravlja različitim lokalnim kopijama podataka, neophodno je primeniti mehanizme koji obezbeđuju međusobnu usaglašenost tih kopija i očuvanje iluzije jedinstvenog logičkog stanja sistema.
 
+\begin{definicija}
+Replikacija predstavlja proces održavanja više kopija (replika) istih podataka na različitim čvorovima distribuiranog sistema radi povećanja dostupnosti, performansi i tolerancije na greške.
+\end{definicija}
 
+Važno je naglasiti da pojam ,,iste logičke baze podataka'' ne implicira da sve replike u svakom trenutku sadrže identičan sadržaj. Distribuirani sistemi dozvoljavaju privremena odstupanja između lokalnih verzija replika, pod uslovom da mehanizmi konzistentnosti obezbeđuju konačnu ili trenutnu usaglašenost u skladu sa zadatim modelom konzistentnosti. Sa stanovišta aplikacije, sistem se i dalje ponaša kao da postoji jedinstveni logički skup podataka.
+
+Pored replikacije, distribuirani sistemi često primenjuju i razdeljivanje podataka \eng{sharding}, pri čemu se celokupni logički prostor podataka deli na više disjunktnih particija (delova). Svaki particija smešta se i obrađuje na zasebnom čvoru ili grupi čvorova. Razdeljivanje omogućava horizontalno skaliranje kapaciteta obrade, jer svaki čvor upravlja samo podskupom ukupnog stanja, čime se smanjuje konkurencija nad zajedničkim resursima i povećava paralelizam.
+
+U savremenim arhitekturama preovlađuju hibridni pristupi u kojima se svaka particija dodatno replicira. Na taj način sistem istovremeno ostvaruje prednosti particionisanja (skalabilnost i raspodela tereta) i replikacije (otpornost na greške i dostupnost), kombinujući ih u jedinstveni distribuirani skladišni model.
+
+Ovakva arhitektura zahteva protokole konzistentnosti koji definišu pravila usaglašavanja između replika i određuju koje operacije i u kom redosledu moraju biti izvršene da bi sistem iz fizičke distribucije podataka proizveo logički konzistentno ponašanje. Replikacija ujedno predstavlja i osnovu za prevazilaženje ograničenja lokacijski vezanog pristupa podacima, jer se replike smeštaju u više geografski udaljenih data-centara, omogućavajući korisnicima da pristupe najbližem čvoru i time smanje latenciju.
+
+\begin{definicija}
+Potvrda \eng{acknowledgment} predstavlja poruku kojom replika signalizira inicijatoru da je uspešno primila i trajno zabeležila operaciju upisa.
+\end{definicija}
+
+\begin{definicija}
+Uređenje \eng{ordering} predstavlja mehanizam koji obezbeđuje da sve replike primaju i primenjuju operacije upisa u identičnom, determinističkom redosledu.
+\end{definicija}
+
+CAP perspektiva:
+\begin{enumerate}
+\item \textbf{CP sistemi} obezbeđuju da sve replike budu međusobno usaglašene pre nego što se upis smatra završenim. To znači da je sistem privremeno nedostupan tokom propagacije upisa, ali se garantuje da svako čitanje odmah vidi poslednju potvrđenu vrednost. Takav pristup je tipičan za finansijske aplikacije, gde tačnost i konzistentnost imaju prioritet nad dostupnošću.
+
+\item \textbf{AP sistemi} garantuju dostupnost čak i u prisustvu mrežnih particija, ali ne garantuju trenutnu usaglašenost replika. U odsustvu novih upisa, sve replike će konvergirati ka istom stanju. Ovakav model je pogodan za aplikacije kod kojih je prihvatljivo da različiti korisnici privremeno vide različite verzije podataka, kao što su društvene mreže.
+\end{enumerate}
+
+USL perspektiva:
+\begin{enumerate}
+\item \textbf{Parametar $\boldsymbol{\alpha}$} u CP sistemima je posebno visok jer operacije upisa zahtevaju koordinaciju između replika, uključujući globalno uređenje, potvrđivanje većine i potencijalno blokirajuće sinhronizacione mehanizme. U AP sistemima parametar je značajno niži, budući da se upisi mogu izvršavati lokalno bez obavezne globalne koordinacije, dok se propagacija izmena može odložiti i obaviti asinhrono.
+
+\item \textbf{Parametar $\boldsymbol{\beta}$} u CP sistemima poprima umerene do visoke vrednosti, jer svaka replika mora primiti i primeniti sve operacije u determinističkom redosledu, što povećava troškove održavanja koherencije posebno kada više čvorova deluje nad istim logičkim entitetima ili kada postoji ,,glavni čvor'' čije opterećenje postaje usko grlo. U AP sistemima parametar je niži jer propagacija izmene među replikama može biti asinhrona, bez stroge potrebe za globalnim uređenjem ili centralizovanim koordinacionim tačkama.
+\end{enumerate}
 
 
 
 
 % consensus (getting several nodes to agree on a value)
 
-
-% Sistemi na jednoj instanci imaju minimalnu latencija izvršavanja i stabilo vreme odaziva. Kako se svi delovi sistema nalaze na istom uređaju, vreme izvršavanja operacije zavisi isključivo od brzine lokalnog hardvera, pa samim tim se izbegavaju koordinacioni troškovi. Sve čitanja i pisanja se obavljaju lokalno što maksimizuje ekfikasnost pristupa podacima. 
-
-
-
-% % TODO
-% Distribuirani sistemi mogu se klasifikovati prema načinu na koji dele i obrađuju podatke:
-% \begin{enumerate}
-% \item \textbf{Replikacija podataka} - više kopija iste baze podataka ili objekata čuva se na različitim serverima radi povećanja dostupnosti, otpornosti i performansi,
-% \item \textbf{Particionisanje \eng{sharding}} - podaci se razdvajaju na logičke ili geografske celine koje se čuvaju na različitim serverima radi smanjenja opterećenja i postizanja horizontalne skalabilnosti,
-% \item \textbf{Hibridni modeli} - kombinacije replikacije i particionisanja, tipične za sisteme velikih razmera.
-% \end{enumerate}
-
-% Replikacija podataka predstavlja dominantan obrazac u savremenoj industrijskoj praksi. Globalne platforme, poput društvenih mreža i \textit{streaming} servisa, čuvaju replike podataka u više geografski udaljenih centara podataka. Korisnik se povezuje na fizički najbližu repliku čime se smanjuje latencija pristupa, povećava otpornost na greške i omogućava kontinuitet rada čak i u slučaju prekida veze između različitih regiona.
 
