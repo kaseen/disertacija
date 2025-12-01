@@ -211,27 +211,35 @@ U nastavku biće analiziran uticaj ovih mehanizama na performanse sistema, poče
 
 \subsection{Mehanizmi deljenja stanja i koordinacije}
 \subsubsection{Protokoli za konzistentnost kopija stanja}
-U distribuiranim informacionim sistemima ne postoji jedinstvena globalna memorija kojoj bi svi čvorovi imali istovremeni pristup. Umesto toga, podaci se fizički čuvaju na više računarskih čvorova kako bi se povećale skalabilnost, dostupnost i tolerancija na greške. Budući da više čvorova upravlja različitim lokalnim kopijama podataka, neophodno je primeniti mehanizme koji obezbeđuju međusobnu usaglašenost tih kopija i očuvanje iluzije jedinstvenog logičkog stanja sistema.
+U distribuiranim informacionim sistemima ne postoji jedinstvena globalna memorija kojoj bi svi čvorovi imali istovremeni pristup. Umesto toga, podaci se fizički čuvaju na više računarskih čvorova radi povećanja skalabilnosti, dostupnosti i tolerancije na greške. Pošto više čvorova održava različite lokalne kopije istog logičkog stanja, neophodno je primeniti mehanizme koji obezbeđuju njihovu međusobnu usaglašenost.
 
 \begin{definicija}
-Replikacija predstavlja proces održavanja više kopija (replika) istih podataka na različitim čvorovima distribuiranog sistema radi povećanja dostupnosti, performansi i tolerancije na greške.
+Replikacija predstavlja proces održavanja više kopija (replika) istih podataka na različitim čvorovima distribuiranog sistema radi povećanja dostupnosti i tolerancije na greške \cite{gray1996dangers}.
 \end{definicija}
 
-Važno je naglasiti da pojam ,,iste logičke baze podataka'' ne implicira da sve replike u svakom trenutku sadrže identičan sadržaj. Distribuirani sistemi dozvoljavaju privremena odstupanja između lokalnih verzija replika, pod uslovom da mehanizmi konzistentnosti obezbeđuju konačnu ili trenutnu usaglašenost u skladu sa zadatim modelom konzistentnosti. Sa stanovišta aplikacije, sistem se i dalje ponaša kao da postoji jedinstveni logički skup podataka.
-
-Pored replikacije, distribuirani sistemi često primenjuju i razdeljivanje podataka \eng{sharding}, pri čemu se celokupni logički prostor podataka deli na više disjunktnih particija (delova). Svaki particija smešta se i obrađuje na zasebnom čvoru ili grupi čvorova. Razdeljivanje omogućava horizontalno skaliranje kapaciteta obrade, jer svaki čvor upravlja samo podskupom ukupnog stanja, čime se smanjuje konkurencija nad zajedničkim resursima i povećava paralelizam.
-
-U savremenim arhitekturama preovlađuju hibridni pristupi u kojima se svaka particija dodatno replicira. Na taj način sistem istovremeno ostvaruje prednosti particionisanja (skalabilnost i raspodela tereta) i replikacije (otpornost na greške i dostupnost), kombinujući ih u jedinstveni distribuirani skladišni model.
-
-Ovakva arhitektura zahteva protokole konzistentnosti koji definišu pravila usaglašavanja između replika i određuju koje operacije i u kom redosledu moraju biti izvršene da bi sistem iz fizičke distribucije podataka proizveo logički konzistentno ponašanje. Replikacija ujedno predstavlja i osnovu za prevazilaženje ograničenja lokacijski vezanog pristupa podacima, jer se replike smeštaju u više geografski udaljenih data-centara, omogućavajući korisnicima da pristupe najbližem čvoru i time smanje latenciju.
+Ovakva arhitektura zahteva protokole konzistentnosti koji definišu pravila usaglašavanja replika i određuju redosled kojim se operacije moraju primeniti da bi distribuirani sistem očuvao logički konzistentno ponašanje.
 
 \begin{definicija}
 Potvrda \eng{acknowledgment} predstavlja poruku kojom replika signalizira inicijatoru da je uspešno primila i trajno zabeležila operaciju upisa.
 \end{definicija}
 
 \begin{definicija}
-Uređenje \eng{ordering} predstavlja mehanizam koji obezbeđuje da sve replike primaju i primenjuju operacije upisa u identičnom, determinističkom redosledu.
+Uređenje \eng{ordering} predstavlja mehanizam koji obezbeđuje da sve replike primaju i primenjuju operacije upisa u identičnom, determinističkom redosledu \cite{lamport2019part}.
 \end{definicija}
+
+Važno je napomenuti da replikacija, posmatrana izolovano, povećava prvenstveno dostupnost i otpornost na greške, dok sama po sebi ne povećava kapacitet obrade. Da bi se postiglo skaliranje kapaciteta, neophodno je logičko stanje podeliti na više nezavisnih celina.
+
+\begin{definicija}
+Razdeljivanje podataka \eng{sharding} predstavlja tehniku u kojoj se logički skup podataka deli na više disjunktnih particija, pri čemu je svaki čvor odgovoran za obradu samo svog podskupa podataka, čime se povećava paralelizam i kapacitet obrade sistema \cite{curino2010schism}.
+\end{definicija}
+
+U slučaju particionisanja, potvrde se razmenjuju isključivo između replika unutar iste particije, budući da samo one dele isti podskup podataka. Mehanizmi uređenja se ne primenjuju među različitim particijama, jer particije čuvaju disjunktne delove stanja.
+
+U savremenim arhitekturama najčešće se primenjuju hibridni modeli u kojima se svaka particija dodatno replicira. Time se kombinuju prednosti replikacije (dostupnost i tolerancija na greške) i particionisanja (horizontalno skaliranje i smanjenje konkurencije nad podacima), što omogućava skalabilan, efikasan i otporan na greške distribuiran informacioni sistem.
+
+Replikacija i particionisanje takođe omogućavaju raspoređivanje podataka u više geografski udaljenih data-centara, čime se korisnicima omogućava pristup najbližoj replici i time smanjuje latencija. Sa stanovišta aplikacije, sistem i dalje pruža apstrakciju jedinstvenog logičkog skupa podataka, uprkos fizičkoj fragmentaciji stanja.
+
+Polazeći od prethodno definisanih mehanizama replikacije i usaglašavanja stanja, protokoli konzistentnosti se dalje razmatraju kroz dva analitička okvira:
 
 CAP perspektiva:
 \begin{enumerate}
@@ -242,9 +250,13 @@ CAP perspektiva:
 
 USL perspektiva:
 \begin{enumerate}
-\item \textbf{Parametar $\boldsymbol{\alpha}$} u CP sistemima je posebno visok jer operacije upisa zahtevaju koordinaciju između replika, uključujući globalno uređenje, potvrđivanje većine i potencijalno blokirajuće sinhronizacione mehanizme. U AP sistemima parametar je značajno niži, budući da se upisi mogu izvršavati lokalno bez obavezne globalne koordinacije, dok se propagacija izmena može odložiti i obaviti asinhrono.
+\item \textbf{Parametar $\boldsymbol{\alpha}$}
+u CP sistemima je \textbf{posebno visok} jer sinhrona replikacija zahteva koordinaciju između replika, uključujući globalno uređenje, potvrđivanje većine i potencijalno blokirajuće sinhronizacione mehanizme \cite{bernstein1981concurrency}.
+U AP sistemima ovaj parametar je \textbf{umeren}, jer asinhrona replikacija omogućava da se upisi izvršavaju lokalno, bez obavezne globalne koordinacije, dok se propagacija izmena može odložiti i obaviti u pozadini.
 
-\item \textbf{Parametar $\boldsymbol{\beta}$} u CP sistemima poprima umerene do visoke vrednosti, jer svaka replika mora primiti i primeniti sve operacije u determinističkom redosledu, što povećava troškove održavanja koherencije posebno kada više čvorova deluje nad istim logičkim entitetima ili kada postoji ,,glavni čvor'' čije opterećenje postaje usko grlo. U AP sistemima parametar je niži jer propagacija izmene među replikama može biti asinhrona, bez stroge potrebe za globalnim uređenjem ili centralizovanim koordinacionim tačkama.
+\item \textbf{Parametar $\boldsymbol{\beta}$}
+u CP sistemima poprima \textbf{umerene do visoke vrednosti}, jer svaka replika mora da primi i primeni sve operacije u determinističkom redosledu, što povećava troškove održavanja koherencije, posebno kada više čvorova deluje nad istim logičkim entitetima ili kada postoji centralna tačka koordinacije koja može postati usko grlo.
+U AP sistemima ovaj parametar je \textbf{umeren}, budući da propagacija izmena može biti asinhrona, bez stroge potrebe za globalnim uređenjem ili centralizovanim koordinacionim tačkama.
 \end{enumerate}
 
 
