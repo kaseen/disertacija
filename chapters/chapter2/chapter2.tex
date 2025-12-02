@@ -210,58 +210,95 @@ Iako u teoriji distribuiranih sistema ne postoji jedinstveno formalizovano pravi
 U nastavku biće analiziran uticaj ovih mehanizama na performanse sistema, počevši od onih koji imaju najveći efekat, a zatim prelazeći na mehanizme čiji je relativni uticaj manji.
 
 \subsection{Mehanizmi deljenja stanja i koordinacije}
-\subsubsection{Protokoli za konzistentnost kopija stanja}
-U distribuiranim informacionim sistemima ne postoji jedinstvena globalna memorija kojoj bi svi čvorovi imali istovremeni pristup. Umesto toga, podaci se fizički čuvaju na više računarskih čvorova radi povećanja skalabilnosti, dostupnosti i tolerancije na greške. Pošto više čvorova održava različite lokalne kopije istog logičkog stanja, neophodno je primeniti mehanizme koji obezbeđuju njihovu međusobnu usaglašenost.
+U distribuiranim informacionim sistemima ne postoji jedinstvena globalna memorija kojoj bi svi čvorovi imali istovremeni i potpuno konzistentan pristup. Umesto toga, podaci se fizički čuvaju na više računarskih čvorova koji istovremeno obrađuju korisničke zahteve. Ovakva arhitektura povećava dostupnost i skalabilnost, ali uvodi potrebu da se lokalne promene podataka na jednom čvoru usaglase sa ostalim čvorovima. Bez dodatnih mehanizama, svaki čvor bi mogao da evoluira nezavisno, što bi dovelo do divergentnih verzija podataka.
 
 \begin{definicija}
-Replikacija predstavlja proces održavanja više kopija (replika) istih podataka na različitim čvorovima distribuiranog sistema radi povećanja dostupnosti i tolerancije na greške \cite{gray1996dangers}.
+Koordinacija obuhvata sve mehanizme pomoću kojih više distribuiranih čvorova usklađuje svoje delovanje kako bi sistem funkcionisao kao jedna logička celina.
 \end{definicija}
 
-Ovakva arhitektura zahteva protokole konzistentnosti koji definišu pravila usaglašavanja replika i određuju redosled kojim se operacije moraju primeniti da bi distribuirani sistem očuvao logički konzistentno ponašanje.
+Koordinacija je potrebna svaki put kada lokalna izmena na jednom čvoru treba da bude reflektovana u celom sistemu. Ovaj proces zahteva komunikaciju da su svi čvorovi blagovremeno dobili informaciju o lokalnim promenama. Mehanizam koji omogućava dostavljanje informacija o izmenama svim drugim čvorovima naziva se propagacija.
 
 \begin{definicija}
-Potvrda \eng{acknowledgment} predstavlja poruku kojom replika signalizira inicijatoru da je uspešno primila i trajno zabeležila operaciju upisa.
+Propagacija predstavlja proces distribuiranja informacija o promenama sa jednog čvora ka drugim čvorovima u mreži, radi njihovog usaglašavanja.
 \end{definicija}
+
+Nakon što čvor primi poruku o promeni i uspešno je primeni na svoju lokalnu kopiju podataka, potrebno je potvrditi \textbf{inicijatoru} da je operacija zabeležena. Ovaj korak omogućava nadogradnju pouzdanosti i sprečava gubitak ažuriranja.
 
 \begin{definicija}
-Uređenje \eng{ordering} predstavlja mehanizam koji obezbeđuje da sve replike primaju i primenjuju operacije upisa u identičnom, determinističkom redosledu \cite{lamport2019part}.
+Potvrda \eng{acknowledgment} predstavlja poruku kojom čvor signalizira inicijatoru da je uspešno primio, obradio i trajno sačuvao operaciju upisa.
 \end{definicija}
 
-Važno je napomenuti da replikacija, posmatrana izolovano, povećava prvenstveno dostupnost i otpornost na greške, dok sama po sebi ne povećava kapacitet obrade. Da bi se postiglo skaliranje kapaciteta, neophodno je logičko stanje podeliti na više nezavisnih celina.
+Propagacija i potvrde čine osnovu šireg mehanizma. Replikacija je fundamentalni koncept koji obezbeđuje da sistem ima više kopija istih podataka na različitim lokacijama i da te kopije ostaju međusobno usaglašene.
 
 \begin{definicija}
-Razdeljivanje podataka \eng{sharding} predstavlja tehniku u kojoj se logički skup podataka deli na više disjunktnih particija, pri čemu je svaki čvor odgovoran za obradu samo svog podskupa podataka, čime se povećava paralelizam i kapacitet obrade sistema \cite{curino2010schism}.
+Replikacija predstavlja proces održavanja više kopija (replika) istih podataka na različitim čvorovima distribuiranog sistema, u cilju povećanja dostupnosti i otpornosti na greške.
 \end{definicija}
 
-U slučaju particionisanja, potvrde se razmenjuju isključivo između replika unutar iste particije, budući da samo one dele isti podskup podataka. Mehanizmi uređenja se ne primenjuju među različitim particijama, jer particije čuvaju disjunktne delove stanja.
+Replikacija omogućava da svaki čvor nezavisno obrađuje korisničke zahteve, dok koordinacioni mehanizmi obezbeđuju da sve replike ostanu međusobno usaglašene u meri koju propisuje primenjeni model konzistentnosti.
 
-U savremenim arhitekturama najčešće se primenjuju hibridni modeli u kojima se svaka particija dodatno replicira. Time se kombinuju prednosti replikacije (dostupnost i tolerancija na greške) i particionisanja (horizontalno skaliranje i smanjenje konkurencije nad podacima), što omogućava skalabilan, efikasan i otporan na greške distribuiran informacioni sistem.
+Ipak, kako distribuirani sistemi mogu obuhvatati proizvoljno veliki broj čvorova, poruke o izmenama podataka mogu pristizati iz različitih izvora, nepredvidivim redosledom i sa različitim kašnjenjima. Da bi replike pravilno primenile sve operacije i očuvale konzistentnost, neophodno je uvesti mehanizme koji određuju njihov redosled primene.
 
-Replikacija i particionisanje takođe omogućavaju raspoređivanje podataka u više geografski udaljenih data-centara, čime se korisnicima omogućava pristup najbližoj replici i time smanjuje latencija. Sa stanovišta aplikacije, sistem i dalje pruža apstrakciju jedinstvenog logičkog skupa podataka, uprkos fizičkoj fragmentaciji stanja.
+\begin{definicija}
+Uređenje \eng{ordering} predstavlja mehanizam kojim se operacijama dodeljuje precizan položaj u redosledu izvršavanja, bilo na svim čvorovima sistema ili na njihovom podskupu.
+\end{definicija}
 
-Polazeći od prethodno definisanih mehanizama replikacije i usaglašavanja stanja, protokoli konzistentnosti se dalje razmatraju kroz dva analitička okvira:
+Uređenje operacija može se obezbediti različitim tehnikama (logičkim časovnicima, kauzalnim praćenjem, total-order multicast protokolima). Ipak, \textbf{najviši stepen koordinacije} postiže se primenom \textbf{konsenzusnih protokola}, jer oni omogućavaju snažnu konzistentnost i globalno determinističko uređenje upisa, čak i u prisustvu mrežnih kašnjenja, otkaza čvorova i particija mreže.
 
-CAP perspektiva:
-\begin{enumerate}
-\item \textbf{CP sistemi} obezbeđuju da sve replike budu međusobno usaglašene pre nego što se upis smatra završenim. To znači da je sistem privremeno nedostupan tokom propagacije upisa, ali se garantuje da svako čitanje odmah vidi poslednju potvrđenu vrednost. Takav pristup je tipičan za finansijske aplikacije, gde tačnost i konzistentnost imaju prioritet nad dostupnošću.
+\begin{definicija}
+Konsenzus rešava fundamentalni problem koordinacije u distribuiranim sistemima, u kojem skup čvorova mora da se usaglasi oko jedne zajedničke vrednosti, pri čemu moraju biti zadovoljeni sledeći uslovi:\\
+Sporazum \eng{agreement} - svi ispravni čvorovi moraju doneti identičnu odluku,\\
+Validnost \eng{validity} - odlučena vrednost mora poticati od neke predložene vrednosti,\\
+Okončanje \eng{terminaltion} - svaki ispravan čvor mora eventualno doneti odluku.
+\end{definicija}
 
-\item \textbf{AP sistemi} garantuju dostupnost čak i u prisustvu mrežnih particija, ali ne garantuju trenutnu usaglašenost replika. U odsustvu novih upisa, sve replike će konvergirati ka istom stanju. Ovakav model je pogodan za aplikacije kod kojih je prihvatljivo da različiti korisnici privremeno vide različite verzije podataka, kao što su društvene mreže.
-\end{enumerate}
-
-USL perspektiva:
-\begin{enumerate}
-\item \textbf{Parametar $\boldsymbol{\alpha}$}
-u CP sistemima je \textbf{posebno visok} jer sinhrona replikacija zahteva koordinaciju između replika, uključujući globalno uređenje, potvrđivanje većine i potencijalno blokirajuće sinhronizacione mehanizme \cite{bernstein1981concurrency}.
-U AP sistemima ovaj parametar je \textbf{umeren}, jer asinhrona replikacija omogućava da se upisi izvršavaju lokalno, bez obavezne globalne koordinacije, dok se propagacija izmena može odložiti i obaviti u pozadini.
-
-\item \textbf{Parametar $\boldsymbol{\beta}$}
-u CP sistemima poprima \textbf{umerene do visoke vrednosti}, jer svaka replika mora da primi i primeni sve operacije u determinističkom redosledu, što povećava troškove održavanja koherencije, posebno kada više čvorova deluje nad istim logičkim entitetima ili kada postoji centralna tačka koordinacije koja može postati usko grlo.
-U AP sistemima ovaj parametar je \textbf{umeren}, budući da propagacija izmena može biti asinhrona, bez stroge potrebe za globalnim uređenjem ili centralizovanim koordinacionim tačkama.
-\end{enumerate}
+Sporazum obezbeđuje determinističnost upisa, validnost garantuje bezbednost time što se prihvata isključivo stvarna predložena vrednost, dok okončanje omogućava napredovanje sistema. U distribuiranim sistemima konsenzus ne mora postojati, a kada postoji, odluka se donosi nad jednom vrednošću, a ne nužno nad celim redosledom operacija.
 
 
+% \subsubsection{Protokoli za konzistentnost kopija stanja}
+% U distribuiranim informacionim sistemima ne postoji jedinstvena globalna memorija kojoj bi svi čvorovi imali istovremeni pristup. Umesto toga, podaci se fizički čuvaju na više računarskih čvorova radi povećanja skalabilnosti, dostupnosti i tolerancije na greške. Pošto više čvorova održava različite lokalne kopije istog logičkog stanja, neophodno je primeniti mehanizme koji obezbeđuju njihovu međusobnu usaglašenost.
 
+% \begin{definicija}
+% Replikacija predstavlja proces održavanja više kopija (replika) istih podataka na različitim čvorovima distribuiranog sistema radi povećanja dostupnosti i tolerancije na greške \cite{gray1996dangers}.
+% \end{definicija}
 
-% consensus (getting several nodes to agree on a value)
+% Ovakva arhitektura zahteva protokole konzistentnosti koji definišu pravila usaglašavanja replika i određuju redosled kojim se operacije moraju primeniti da bi distribuirani sistem očuvao logički konzistentno ponašanje.
 
+% \begin{definicija}
+% Potvrda \eng{acknowledgment} predstavlja poruku kojom replika signalizira inicijatoru da je uspešno primila i trajno zabeležila operaciju upisa.
+% \end{definicija}
 
+% \begin{definicija}
+% Uređenje \eng{ordering} predstavlja mehanizam koji obezbeđuje da sve replike primaju i primenjuju operacije upisa u identičnom, determinističkom redosledu \cite{lamport2019part}.
+% \end{definicija}
+
+% Važno je napomenuti da replikacija, posmatrana izolovano, povećava prvenstveno dostupnost i otpornost na greške, dok sama po sebi ne povećava kapacitet obrade. Da bi se postiglo skaliranje kapaciteta, neophodno je logičko stanje podeliti na više nezavisnih celina.
+
+% \begin{definicija}
+% Razdeljivanje podataka \eng{sharding} predstavlja tehniku u kojoj se logički skup podataka deli na više disjunktnih particija, pri čemu je svaki čvor odgovoran za obradu samo svog podskupa podataka, čime se povećava paralelizam i kapacitet obrade sistema \cite{curino2010schism}.
+% \end{definicija}
+
+% U slučaju particionisanja, potvrde se razmenjuju isključivo između replika unutar iste particije, budući da samo one dele isti podskup podataka. Mehanizmi uređenja se ne primenjuju među različitim particijama, jer particije čuvaju disjunktne delove stanja.
+
+% U savremenim arhitekturama najčešće se primenjuju hibridni modeli u kojima se svaka particija dodatno replicira. Time se kombinuju prednosti replikacije (dostupnost i tolerancija na greške) i particionisanja (horizontalno skaliranje i smanjenje konkurencije nad podacima), što omogućava skalabilan, efikasan i otporan na greške distribuiran informacioni sistem.
+
+% Replikacija i particionisanje takođe omogućavaju raspoređivanje podataka u više geografski udaljenih data-centara, čime se korisnicima omogućava pristup najbližoj replici i time smanjuje latencija. Sa stanovišta aplikacije, sistem i dalje pruža apstrakciju jedinstvenog logičkog skupa podataka, uprkos fizičkoj fragmentaciji stanja.
+
+% Polazeći od prethodno definisanih mehanizama replikacije i usaglašavanja stanja, protokoli konzistentnosti se dalje razmatraju kroz dva analitička okvira:
+
+% CAP perspektiva:
+% \begin{enumerate}
+% \item \textbf{CP sistemi} obezbeđuju da sve replike budu međusobno usaglašene pre nego što se upis smatra završenim. To znači da je sistem privremeno nedostupan tokom propagacije upisa, ali se garantuje da svako čitanje odmah vidi poslednju potvrđenu vrednost. Takav pristup je tipičan za finansijske aplikacije, gde tačnost i konzistentnost imaju prioritet nad dostupnošću.
+
+% \item \textbf{AP sistemi} garantuju dostupnost čak i u prisustvu mrežnih particija, ali ne garantuju trenutnu usaglašenost replika. U odsustvu novih upisa, sve replike će konvergirati ka istom stanju. Ovakav model je pogodan za aplikacije kod kojih je prihvatljivo da različiti korisnici privremeno vide različite verzije podataka, kao što su društvene mreže.
+% \end{enumerate}
+
+% USL perspektiva:
+% \begin{enumerate}
+% \item \textbf{Parametar $\boldsymbol{\alpha}$}
+% u CP sistemima je \textbf{posebno visok} jer sinhrona replikacija zahteva koordinaciju između replika, uključujući globalno uređenje, potvrđivanje većine i potencijalno blokirajuće sinhronizacione mehanizme \cite{bernstein1981concurrency}.
+% U AP sistemima ovaj parametar je \textbf{umeren}, jer asinhrona replikacija omogućava da se upisi izvršavaju lokalno, bez obavezne globalne koordinacije, dok se propagacija izmena može odložiti i obaviti u pozadini.
+
+% \item \textbf{Parametar $\boldsymbol{\beta}$}
+% u CP sistemima poprima \textbf{umerene do visoke vrednosti}, jer svaka replika mora da primi i primeni sve operacije u determinističkom redosledu, što povećava troškove održavanja koherencije, posebno kada više čvorova deluje nad istim logičkim entitetima ili kada postoji centralna tačka koordinacije koja može postati usko grlo.
+% U AP sistemima ovaj parametar je \textbf{umeren}, budući da propagacija izmena može biti asinhrona, bez stroge potrebe za globalnim uređenjem ili centralizovanim koordinacionim tačkama.
+% \end{enumerate}
