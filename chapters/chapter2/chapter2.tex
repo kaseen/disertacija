@@ -248,8 +248,14 @@ Uređenje operacija može se obezbediti različitim tehnikama (logičkim časovn
 Konsenzus rešava fundamentalni problem koordinacije u distribuiranim sistemima, u kojem skup čvorova mora da se usaglasi oko jedne zajedničke vrednosti, pri čemu moraju biti zadovoljeni sledeći uslovi:\\
 Sporazum \eng{agreement} - svi ispravni čvorovi moraju doneti identičnu odluku,\\
 Validnost \eng{validity} - odlučena vrednost mora poticati od neke predložene vrednosti,\\
-Okončanje \eng{terminaltion} - svaki ispravan čvor mora eventualno doneti odluku.
+Okončanje \eng{termination} - svaki ispravan čvor mora eventualno doneti odluku.
 \end{definicija}
+
+U proces konsenzusa ne moraju biti uključeni svi čvorovi u sistemu, već samo određeni podskup čvorova koji čine kvorum \eng{quorum}. Mehanizam formiranja kvoruma predstavlja \textbf{ključno mesto kontrolne decentralizacije}, jer stepen raspodele odlučivanja direktno zavisi od kriterijuma po kojima se određuje koji čvorovi mogu učestvovati u donošenju odluke.
+
+Konsenzusni protokoli mogu biti organizovani sa glavnim čvorom \eng{leader-based} ili bez glavnog čvora \eng{leaderless}, u zavisnosti od arhitektonske strukture algoritma. Kada je glavni čvor formalno deo konsenzusnog procesa, sistem više nije u potpunosti kontrolno decentralizovan, budući da taj čvor preuzima ulogu centralne tačke koordinacije i serijalizacije predloga operacija. 
+
+Odlučivanje o pravilnom redosledu i razrešavanje mogućih neslaganja među replikama i dalje obezbeđuje sam konsenzusni protokol, dok glavni čvor služi isključivo kao mehanizam za predlaganje kandidata za narednu odluku. Na taj način glavni čvor pruža stabilan izvor predloga, dok protokol konsenzusa garantuje da sve ispravne replike usvoje isti, jedinstveni rezultat.
 
 Važno je istaći da distribuirani sistemi ne moraju posedovati konsenzus. Kada konsenzus postoji, on se primenjuje nad jednom vrednošću (npr. nad jednom operacijom, predlogom ili log-zapisom), a ne nužno nad celokupnim redosledom svih operacija.
 
@@ -258,8 +264,6 @@ Totalno uređen prenos poruka ekvivalentan je problemu konsenzusa \cite{chandra1
 \end{teorema}
 
 Iz teoreme sledi da totalno uređen prenos ostvaruje deterministički globalni redosled isporuke poruka. CP sistemi mogu koristiti konsenzus kako bi obezbedili \textbf{determinističko totalno uređenje} za sve operacije koje prođu kroz konsenzus i budu potvrđene \eng{committed}. Istovremeno, ovi sistemi mogu podržavati i operacije koje ne zahtevaju globalni redosled (npr. lokalna čitanja), pa stoga ne mora svaka operacija biti deo jedinstvenog totalnog uređenja.
-
-Konsenzus može biti organizovan sa glavnim čvorom \eng{leader-based} ili bez glavnog čvora \eng{leaderless}, zavisno od arhitekturalnog pristupa. Kada je glavni čvor formalno deo protokola konsenzusa, on predstavlja centralnu tačku serijalizacije operacija. Ipak, rešavanje međusobnih neslaganja među čvorovima obezbeđuje sam protokol konsenzusa, dok glavni čvor samo predlaže redosled operacija. Glavni čvor time obezbeđuje jasan izvor odluke, dok konsenzus garantuje da sve ispravne replike prihvataju isti konačni rezultat.
 
 \textbf{CP sistemi sa konsenzusom i glavnim čvorom} su u praksi jednostavniji za implementaciju, jer svaki čvor šalje operacije glavnom čvoru umesto čitavoj mreži. Ovakva arhitektura omogućava bržu serijalizaciju operacija, ali uvodi centralizovano usko grlo i povećan nivo kontencije pri većem broju čvorova.
 \begin{itemize}
@@ -287,29 +291,23 @@ Gubitak glavnog čvora ne narušava konzistentnost, jer protokol konsenzusa omog
 \item Kontencija: veoma visoka.
 \end{itemize}
 
-U pravim AP sistemima deterministički distribuirani konsenzus ne može biti ostvaren jer takvi sistemi, u prisustvu mrežnih particija, prioritizuju dostupnost nad konzistentnošću.
+AP sistemi u prisustvu mrežnih particija prioritizuju dostupnost nad konzistentnošću, što znači da prihvataju operacije i u uslovima kada je komunikacija sa drugim čvorovima onemogućena. Budući da deterministički konsenzus zahteva pouzdanu i potpunu komunikaciju među čvorovima dok svi ne donesu identičnu odluku, ovaj zahtev je u potpunoj suprotnosti sa principima AP sistema, odakle sledi:
+
+\begin{teorema}
+U AP sistemima deterministički konsenzus se ne može ostvariti.
+\end{teorema}
+
+Ipak, AP sistemi mogu koristiti verovatnosni konsenzus \eng{probabilistic consensus}, u kojem čvorovi u svakoj iteraciji nasumično biraju podskup od $k$ drugih čvorova, čitaju njihove trenutne vrednosti i ažuriraju sopstvenu vrednost prema verovatnosnom pravilu (najčešće većini u uzorku). Verovatnoća neusaglašene ili pogrešne odluke opada, tipično eksponencijalno, sa brojem iteracija.
+
+\begin{definicija}
+Verovatnosni konsenzus je nedeterministički mehanizam postizanja dogovora u distribuiranim sistemima koji koristi slučajne procese i verovatosne procene kako bi čvorovi usaglasili zajedničku vrednost, pri čemu uslovi sporazuma, validnosti i okončanja konvergiraju u verovatnoći ka 1.
+\end{definicija}
+
+CP sistemi zahtevaju determinističke garancije konzistentnosti, dok verovatnosni konsenzus obezbeđuje samo garancije u verovatnoći, što ostavlja mogućnost, makar i izuzetno malu, pojave neusaglašenosti. Zbog toga verovatnosni konsenzus ne može zadovoljiti formalne zahteve CP modela, naročito u pogledu determinističke sigurnosti.
 
 
 
 
-% \subsubsection{Protokoli za konzistentnost kopija stanja}
-% U distribuiranim informacionim sistemima ne postoji jedinstvena globalna memorija kojoj bi svi čvorovi imali istovremeni pristup. Umesto toga, podaci se fizički čuvaju na više računarskih čvorova radi povećanja skalabilnosti, dostupnosti i tolerancije na greške. Pošto više čvorova održava različite lokalne kopije istog logičkog stanja, neophodno je primeniti mehanizme koji obezbeđuju njihovu međusobnu usaglašenost.
-
-% \begin{definicija}
-% Replikacija predstavlja proces održavanja više kopija (replika) istih podataka na različitim čvorovima distribuiranog sistema radi povećanja dostupnosti i tolerancije na greške \cite{gray1996dangers}.
-% \end{definicija}
-
-% Ovakva arhitektura zahteva protokole konzistentnosti koji definišu pravila usaglašavanja replika i određuju redosled kojim se operacije moraju primeniti da bi distribuirani sistem očuvao logički konzistentno ponašanje.
-
-% \begin{definicija}
-% Potvrda \eng{acknowledgment} predstavlja poruku kojom replika signalizira inicijatoru da je uspešno primila i trajno zabeležila operaciju upisa.
-% \end{definicija}
-
-% \begin{definicija}
-% Uređenje \eng{ordering} predstavlja mehanizam koji obezbeđuje da sve replike primaju i primenjuju operacije upisa u identičnom, determinističkom redosledu \cite{lamport2019part}.
-% \end{definicija}
-
-% Važno je napomenuti da replikacija, posmatrana izolovano, povećava prvenstveno dostupnost i otpornost na greške, dok sama po sebi ne povećava kapacitet obrade. Da bi se postiglo skaliranje kapaciteta, neophodno je logičko stanje podeliti na više nezavisnih celina.
 
 % \begin{definicija}
 % Razdeljivanje podataka \eng{sharding} predstavlja tehniku u kojoj se logički skup podataka deli na više disjunktnih particija, pri čemu je svaki čvor odgovoran za obradu samo svog podskupa podataka, čime se povećava paralelizam i kapacitet obrade sistema \cite{curino2010schism}.
