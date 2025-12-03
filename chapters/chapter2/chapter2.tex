@@ -251,7 +251,45 @@ Validnost \eng{validity} - odlučena vrednost mora poticati od neke predložene 
 Okončanje \eng{terminaltion} - svaki ispravan čvor mora eventualno doneti odluku.
 \end{definicija}
 
-Sporazum obezbeđuje determinističnost upisa, validnost garantuje bezbednost time što se prihvata isključivo stvarna predložena vrednost, dok okončanje omogućava napredovanje sistema. U distribuiranim sistemima konsenzus ne mora postojati, a kada postoji, odluka se donosi nad jednom vrednošću, a ne nužno nad celim redosledom operacija.
+Važno je istaći da distribuirani sistemi ne moraju posedovati konsenzus. Kada konsenzus postoji, on se primenjuje nad jednom vrednošću (npr. nad jednom operacijom, predlogom ili log-zapisom), a ne nužno nad celokupnim redosledom svih operacija.
+
+\begin{teorema}
+Totalno uređen prenos poruka ekvivalentan je problemu konsenzusa \cite{chandra1996unreliable}.
+\end{teorema}
+
+Iz teoreme sledi da totalno uređen prenos ostvaruje deterministički globalni redosled isporuke poruka. CP sistemi mogu koristiti konsenzus kako bi obezbedili \textbf{determinističko totalno uređenje} za sve operacije koje prođu kroz konsenzus i budu potvrđene \eng{committed}. Istovremeno, ovi sistemi mogu podržavati i operacije koje ne zahtevaju globalni redosled (npr. lokalna čitanja), pa stoga ne mora svaka operacija biti deo jedinstvenog totalnog uređenja.
+
+Konsenzus može biti organizovan sa glavnim čvorom \eng{leader-based} ili bez glavnog čvora \eng{leaderless}, zavisno od arhitekturalnog pristupa. Kada je glavni čvor formalno deo protokola konsenzusa, on predstavlja centralnu tačku serijalizacije operacija. Ipak, rešavanje međusobnih neslaganja među čvorovima obezbeđuje sam protokol konsenzusa, dok glavni čvor samo predlaže redosled operacija. Glavni čvor time obezbeđuje jasan izvor odluke, dok konsenzus garantuje da sve ispravne replike prihvataju isti konačni rezultat.
+
+\textbf{CP sistemi sa konsenzusom i glavnim čvorom} su u praksi jednostavniji za implementaciju, jer svaki čvor šalje operacije glavnom čvoru umesto čitavoj mreži. Ovakva arhitektura omogućava bržu serijalizaciju operacija, ali uvodi centralizovano usko grlo i povećan nivo kontencije pri većem broju čvorova.
+\begin{itemize}
+\item Sinhronizacija: visoka,
+\item Kontencija: veoma visoka.
+\end{itemize}
+
+Gubitak glavnog čvora ne narušava konzistentnost, jer protokol konsenzusa omogućava izbor novog glavnog čvora.
+
+\textbf{CP sistemi sa konsenzusom i bez glavnog čvora} determinističko totalno uređenje ostvaruje se protokolima u kojima svi čvorovi ravnopravno učestvuju u donošenju odluka. Ovi sistemi nemaju usko grlo, pa je kontencija značajno manja, ali je cena sinhronizacije veća zbog većeg broja poruka i kompleksnosti algoritma.
+\begin{itemize}
+\item Sinhronizacija: veoma visoka,
+\item Kontencija: umerena.
+\end{itemize}
+
+\textbf{CP sistemi bez konsenzusa i glavnim čvorom} ne obezbeđuju garancije o jedinstvenom redosledu operacija, te stoga ne mogu implementirati deterministički totalni redosled. Ako postoji glavni čvor, on služi za serijalizaciju i omogućava jednostavniju implementaciju i bržu lokalnu sinhronizaciju. Međutim, glavni čvor postaje usko grlo i jedina tačka napredovanja sistema. Gubitak glavnog čvora dovodi do zastoja sistema.
+\begin{itemize}
+\item Sinhronizacija: umerena,
+\item Kontencija: visoka.
+\end{itemize}
+
+\textbf{CP sistemi bez konsenzusa i bez glavnog čvora} se retko koriste zbog izostanka uređenja operacija i visokih troškova kontencije i sinhronizacije.
+\begin{itemize}
+\item Sinhronizacija: veoma visoka,
+\item Kontencija: veoma visoka.
+\end{itemize}
+
+U pravim AP sistemima deterministički distribuirani konsenzus ne može biti ostvaren jer takvi sistemi, u prisustvu mrežnih particija, prioritizuju dostupnost nad konzistentnošću.
+
+
 
 
 % \subsubsection{Protokoli za konzistentnost kopija stanja}
