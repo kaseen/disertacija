@@ -255,12 +255,31 @@ Kako distribuirani sistemi mogu obuhvatati proizvoljno veliki broj čvorova, por
 Sat u distribuiranim sistemima predstavlja mehanizam za merenje ili poređenje vremena događaja.
 \end{definicija}
 
-Distribuirani sistemi ne mogu pretpostaviti postojanje globalnog, savršeno sinhronizovanog sata. Zbog toga se u praksi koriste različite vrste satova, pri čemu svaki od njih pruža specifičan model opažanja i poređenja događaja. Time različiti satovi obezbeđuju različit kontekst u kome se definiše i ostvaruje uređenje operacija.
+Distribuirani sistemi ne mogu pretpostaviti postojanje globalnog, savršeno sinhronizovanog sata. Zbog toga se u praksi primenjuju različite vrste satova, od kojih svaki obezbeđuje specifičan model opažanja i poređenja događaja. Na taj način različiti satovi uvode različit \textbf{logički model vremenske sinhronizacije}, unutar kojeg se definiše i ostvaruje uređenje operacija.
 
 \begin{definicija}
 Uređenje \eng{ordering} predstavlja mehanizam kojim se operacijama dodeljuje precizan položaj u redosledu izvršavanja, bilo na svim čvorovima sistema ili na njihovom podskupu.
 \end{definicija}
 
+Samo postojanje uređenja nije dovoljno da sistem funkcioniše ispravno, jer ono određuje isključivo redosled primene operacija, ali ne eliminiše problem paralelnih pristupa nad istim podacima. Istovremeno izvršavanje više operacija nad istim entitetima može dovesti do anomalija, gubitka ažuriranja ili narušavanja logičke konzistentnosti.
+
+\begin{definicija}
+Konflikt predstavlja situaciju u kojoj dve ili više operacija nad istim podacima ne mogu biti istovremeno primenjene bez narušavanja konzistentnosti sistema.
+\end{definicija}
+
+Zbog toga je neophodno uvesti dodatni mehanizam koji reguliše istovremene pristupe deljenom stanju.
+
+\begin{definicija}
+Kontrola konkurentnog pristupa \eng{concurrency control} predstavlja skup algoritama i tehnika koji obezbeđuju ispravno izvršavanje paralelnih operacija nad deljenim podacima, sprečavajući pojavu konflikata i obezbeđujući konzistentan rezultat.
+\end{definicija}
+
+U praksi se primenjuju dva osnovna pristupa kontroli konkurentnog pristupa:
+\begin{enumerate}
+\item \textbf{Pesimistička kontrola} - sprečava konflikte unapred tako što privremeno zaključava podatke pre izvršavanja operacije.
+\item \textbf{Optimistička kontrola} - dozvoljava paralelne upise, a konflikte otkriva i razrešava prilikom verifikacije ili potvrđivanja \eng{commit} rezultata.
+\end{enumerate}
+
+\subsubsection{Konsenzus}
 Najviši stepen koordinacije postiže se primenom konsenzusnih protokola, jer oni omogućavaju snažnu konzistentnost i globalno determinističko uređenje upisa, čak i u prisustvu mrežnih kašnjenja, otkaza čvorova i particija mreže.
 
 \begin{definicija}
@@ -289,7 +308,8 @@ Važno je istaći da distribuirani sistemi ne moraju posedovati konsenzus. Kada 
 Totalno uređen prenos poruka ekvivalentan je problemu konsenzusa \cite{chandra1996unreliable}.
 \end{teorema}
 
-Iz teoreme sledi da totalno uređen prenos ostvaruje deterministički globalni redosled isporuke poruka. CP sistemi mogu koristiti konsenzus kako bi obezbedili \textbf{determinističko totalno uređenje} za sve operacije koje prođu kroz konsenzus i budu potvrđene \eng{committed}. Istovremeno, ovi sistemi mogu podržavati i operacije koje ne zahtevaju globalni redosled (npr. lokalna čitanja), pa stoga ne mora svaka operacija biti deo jedinstvenog totalnog uređenja.
+\subsubsection{CP sistemi}
+Iz teoreme sledi da totalno uređen prenos ostvaruje deterministički globalni redosled isporuke poruka. CP sistemi mogu koristiti konsenzus kako bi obezbedili \textbf{determinističko totalno uređenje} za sve operacije koje prođu kroz konsenzus i budu potvrđene. Istovremeno, ovi sistemi mogu podržavati i operacije koje ne zahtevaju globalni redosled (npr. lokalna čitanja), pa stoga ne mora svaka operacija biti deo jedinstvenog totalnog uređenja.
 
 \textbf{CP sistemi sa konsenzusom i glavnim čvorom} su u praksi jednostavniji za implementaciju, jer svaki čvor šalje operacije glavnom čvoru umesto čitavoj mreži. Ovakva arhitektura omogućava bržu serijalizaciju operacija, ali uvodi centralizovano usko grlo i povećan nivo kontencije pri većem broju čvorova.
 \begin{itemize}
@@ -317,7 +337,8 @@ Gubitak glavnog čvora ne narušava konzistentnost, jer protokol konsenzusa omog
 \item Kontencija: veoma visoka.
 \end{itemize}
 
-AP sistemi u prisustvu mrežnih particija prioritizuju dostupnost nad konzistentnošću, što znači da prihvataju operacije i u uslovima kada je komunikacija sa drugim čvorovima onemogućena. Budući da deterministički konsenzus zahteva pouzdanu i potpunu komunikaciju među čvorovima dok svi ne donesu identičnu odluku, ovaj zahtev je u potpunoj suprotnosti sa principima AP sistema, odakle sledi:
+\subsubsection{AP sistemi}
+AP sistemi u prisustvu mrežnih particija prioritizuju dostupnost nad konzistentnošću, što znači da prihvataju operacije i u uslovima kada je komunikacija sa drugim čvorovima onemogućena. Budući da deterministički konsenzus zahteva pouzdanu i potpunu komunikaciju među čvorovima dok svi ne donesu identičnu odluku, ovaj zahtev je u suprotnosti sa principima AP sistema, odakle sledi:
 
 \begin{teorema}
 U AP sistemima deterministički konsenzus se ne može ostvariti.
@@ -330,8 +351,6 @@ Verovatnosni konsenzus je nedeterministički mehanizam postizanja dogovora u dis
 \end{definicija}
 
 CP sistemi zahtevaju determinističke garancije konzistentnosti, dok verovatnosni konsenzus obezbeđuje samo garancije u verovatnoći, što ostavlja mogućnost, makar i izuzetno malu, pojave neusaglašenosti. Zbog toga verovatnosni konsenzus ne može zadovoljiti formalne zahteve CP modela, naročito u pogledu determinističke sigurnosti.
-
-
 
 
 
