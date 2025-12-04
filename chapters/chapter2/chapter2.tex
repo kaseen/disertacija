@@ -210,10 +210,17 @@ Iako u teoriji distribuiranih sistema ne postoji jedinstveno formalizovano pravi
 U nastavku biće analiziran uticaj ovih mehanizama na performanse sistema, počevši od onih koji imaju najveći efekat, a zatim prelazeći na mehanizme čiji je relativni uticaj manji.
 
 \subsection{Mehanizmi deljenja stanja i koordinacije}
-U distribuiranim informacionim sistemima ne postoji jedinstvena globalna memorija kojoj bi svi čvorovi imali istovremeni i potpuno konzistentan pristup. Umesto toga, podaci se fizički čuvaju na više računarskih čvorova koji istovremeno obrađuju korisničke zahteve. Ovakva arhitektura povećava dostupnost i skalabilnost, ali uvodi potrebu da se lokalne promene podataka na jednom čvoru usaglase sa ostalim čvorovima. Bez dodatnih mehanizama, svaki čvor bi mogao da evoluira nezavisno, što bi dovelo do divergentnih verzija podataka.
+
+U distribuiranim informacionim sistemima ne postoji jedinstvena globalna memorija kojoj bi svi čvorovi imali istovremeni i potpuno konzistentan pristup. Umesto toga, podaci su fizički raspodeljeni između više čvorova koji paralelno obrađuju korisničke zahteve. Zbog toga nastaje potreba da se lokalne izmene podataka, nastale na jednom čvoru, usaglase sa ostalim čvorovima sistema.
 
 \begin{definicija}
-Koordinacija obuhvata sve mehanizme pomoću kojih više distribuiranih čvorova usklađuje svoje delovanje kako bi sistem funkcionisao kao jedna logička celina.
+Poruka predstavlja elementarnu jedinicu komunikacije između čvorova u distribuiranom sistemu.
+\end{definicija}
+
+Bez dodatnih mehanizama, čvorovi bi razmenom poruka mogli da evoluiraju nezavisno jedni od drugih, što bi dovelo do divergentnih verzija podataka i nekonzistentnog stanja sistema.
+
+\begin{definicija}
+Koordinacija obuhvata sve mehanizme pomoću kojih distribuirani čvorovi usklađuju svoje delovanje razmenom poruka, tako da sistem funkcioniše kao jedna logička celina.
 \end{definicija}
 
 Koordinacija je potrebna svaki put kada lokalna izmena na jednom čvoru treba da bude reflektovana u celom sistemu. Ovaj proces zahteva komunikaciju da su svi čvorovi blagovremeno dobili informaciju o lokalnim promenama. Mehanizam koji omogućava dostavljanje informacija o izmenama svim drugim čvorovima naziva se propagacija.
@@ -236,13 +243,25 @@ Replikacija predstavlja proces održavanja više kopija (replika) istih podataka
 
 Replikacija omogućava da svaki čvor nezavisno obrađuje korisničke zahteve, dok koordinacioni mehanizmi obezbeđuju da sve replike ostanu međusobno usaglašene u meri koju propisuje primenjeni model konzistentnosti.
 
-Ipak, kako distribuirani sistemi mogu obuhvatati proizvoljno veliki broj čvorova, poruke o izmenama podataka mogu pristizati iz različitih izvora, nepredvidivim redosledom i sa različitim kašnjenjima. Da bi replike pravilno primenile sve operacije i očuvale konzistentnost, neophodno je uvesti mehanizme koji određuju njihov redosled primene.
+U realnim uslovima, pošiljalac ne može unapred znati da li će poruka uspešno stići do odredišnog čvora, niti da li će se odgovor vratiti nazad. Zbog toga je neophodno uvesti kvantitativnu metriku koja opisuje ukupan vremenski odziv komunikacionog procesa.
+
+\begin{definicija}
+Vreme odaziva \eng{round-trip time (RTT)} u distribuiranim mrežama predstavlja kvantitativnu meru koja označava ukupno vreme potrebno da poruka bude poslata od jednog čvora ka drugom i da se odgovor sa odredišta vrati nazad do inicijatora.
+\end{definicija}
+
+Kako distribuirani sistemi mogu obuhvatati proizvoljno veliki broj čvorova, poruke o izmenama podataka često pristižu iz različitih izvora, u nepredvidivom redosledu i sa različitim kašnjenjima. Da bi replike konzistentno primenile operacije upisa, neophodno je uspostaviti mehanizme koji određuju njihov redosled primene.
+
+\begin{definicija}
+Sat u distribuiranim sistemima predstavlja mehanizam za merenje ili poređenje vremena događaja.
+\end{definicija}
+
+Distribuirani sistemi ne mogu pretpostaviti postojanje globalnog, savršeno sinhronizovanog sata. Zbog toga se u praksi koriste različite vrste satova, pri čemu svaki od njih pruža specifičan model opažanja i poređenja događaja. Time različiti satovi obezbeđuju različit kontekst u kome se definiše i ostvaruje uređenje operacija.
 
 \begin{definicija}
 Uređenje \eng{ordering} predstavlja mehanizam kojim se operacijama dodeljuje precizan položaj u redosledu izvršavanja, bilo na svim čvorovima sistema ili na njihovom podskupu.
 \end{definicija}
 
-Uređenje operacija može se obezbediti različitim tehnikama (logičkim časovnicima, kauzalnim praćenjem, total-order multicast protokolima). Ipak, \textbf{najviši stepen koordinacije} postiže se primenom \textbf{konsenzusnih protokola}, jer oni omogućavaju snažnu konzistentnost i globalno determinističko uređenje upisa, čak i u prisustvu mrežnih kašnjenja, otkaza čvorova i particija mreže.
+Najviši stepen koordinacije postiže se primenom konsenzusnih protokola, jer oni omogućavaju snažnu konzistentnost i globalno determinističko uređenje upisa, čak i u prisustvu mrežnih kašnjenja, otkaza čvorova i particija mreže.
 
 \begin{definicija}
 Konsenzus rešava fundamentalni problem koordinacije u distribuiranim sistemima, u kojem skup čvorova mora da se usaglasi oko jedne zajedničke vrednosti, pri čemu moraju biti zadovoljeni sledeći uslovi:\\
@@ -254,6 +273,13 @@ Okončanje \eng{termination} - svaki ispravan čvor mora eventualno doneti odluk
 U proces konsenzusa ne moraju biti uključeni svi čvorovi u sistemu, već samo određeni podskup čvorova koji čine kvorum \eng{quorum}. Mehanizam formiranja kvoruma predstavlja \textbf{ključno mesto kontrolne decentralizacije}, jer stepen raspodele odlučivanja direktno zavisi od kriterijuma po kojima se određuje koji čvorovi mogu učestvovati u donošenju odluke.
 
 Konsenzusni protokoli mogu biti organizovani sa glavnim čvorom \eng{leader-based} ili bez glavnog čvora \eng{leaderless}, u zavisnosti od arhitektonske strukture algoritma. Kada je glavni čvor formalno deo konsenzusnog procesa, sistem više nije u potpunosti kontrolno decentralizovan, budući da taj čvor preuzima ulogu centralne tačke koordinacije i serijalizacije predloga operacija. 
+
+Nakon uvođenja osnovnih pojmova možemo precizirati tri fundamentalna obrasca propagacije poruka koji se javljaju u realnim distribuiranim sistemima:
+\begin{enumerate}
+\item \textbf{Jedan-ka-jedan \eng{one-to-one}} - komunikacija u kojoj jedan čvor upućuje poruku tačno jednom drugom čvoru (npr. slanje izmene glavnom čvoru ili direktna replikacija između dva čvora),
+\item \textbf{Jedan-ka-više \eng{one-to-many}} - komunikacija u kojoj jedan čvor distribuira poruku većem broju čvorova (npr. glavni čvor replicira zapis svim replikama, ili čvor šalje predlog konsenzus protokolu koji ga prosleđuje svim učesnicima),
+\item \textbf{Više-ka-više \eng{many-to-many}} - komunikacioni obrazac u kojem više čvorova paralelno razmenjuje poruke sa većim brojem drugih čvorova (npr. protokoli u kojima ne postoji glavni čvor ni konsenzus protokol, pa čvorovi međusobno razmenjuju poruke da bi postigli saglasnost).
+\end{enumerate}
 
 Odlučivanje o pravilnom redosledu i razrešavanje mogućih neslaganja među replikama i dalje obezbeđuje sam konsenzusni protokol, dok glavni čvor služi isključivo kao mehanizam za predlaganje kandidata za narednu odluku. Na taj način glavni čvor pruža stabilan izvor predloga, dok protokol konsenzusa garantuje da sve ispravne replike usvoje isti, jedinstveni rezultat.
 
