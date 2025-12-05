@@ -199,19 +199,8 @@ Kontencija predstavlja dominantni oblik režijskog opterećenja jer raste kvadra
 
 Kako broj instanci raste, sistem može ispoljiti sublinearno povećanje kapaciteta, stagnaciju ili degradaciju performansi \cite{hamann2021scalability}. Svaki novi čvor, osim što doprinosi procesnoj snazi, istovremeno uvodi dodatne konflikte u pristupu zajedničkim resursima i zahteva dodatnu koordinaciju, što može rasti brže od korisnog kapaciteta.
 
-Iako u teoriji distribuiranih sistema ne postoji jedinstveno formalizovano pravilo koje eksplicitno definiše \textit{,,minimalni skup''} mehanizama neophodnih za stabilnu, efikasnu i na greške otpornu koordinaciju između čvorova, u savremenoj inženjerskoj praksi i relevantnoj literaturi \cite{kleppmann2017designing} najčešće su prisutne sledeće funkcionalnosti:
-\begin{enumerate}
-\item Mehanizmi deljenja stanja i koordinacije,
-\item Mehanizmi kontrole konkurentnog pristupa,
-\item Mehanizmi raspodele opterećenja,
-\item Mehanizmi detekcije dostupnosti instanci.
-\end{enumerate}
-
-U nastavku biće analiziran uticaj ovih mehanizama na performanse sistema, počevši od onih koji imaju najveći efekat, a zatim prelazeći na mehanizme čiji je relativni uticaj manji.
-
-\subsection{Mehanizmi deljenja stanja i koordinacije}
-
-U distribuiranim informacionim sistemima ne postoji jedinstvena globalna memorija kojoj bi svi čvorovi imali istovremeni i potpuno konzistentan pristup. Umesto toga, podaci su fizički raspodeljeni između više čvorova koji paralelno obrađuju korisničke zahteve. Zbog toga nastaje potreba da se lokalne izmene podataka, nastale na jednom čvoru, usaglase sa ostalim čvorovima sistema.
+\subsection{Teorija distribuiranih sistema}
+U distribuiranim informacionim sistemima ne postoji jedinstvena globalna memorija kojoj bi svi čvorovi imali istovremeni i potpuno konzistentan pristup \cite{kleppmann2017designing}. Umesto toga, podaci su fizički raspodeljeni između više čvorova koji paralelno obrađuju korisničke zahteve. Zbog toga nastaje potreba da se lokalne izmene podataka, nastale na jednom čvoru, usaglase sa ostalim čvorovima sistema.
 
 \begin{definicija}
 Poruka predstavlja elementarnu jedinicu komunikacije između čvorova u distribuiranom sistemu.
@@ -241,12 +230,30 @@ Propagacija i potvrde čine osnovu šireg mehanizma. Replikacija je fundamentaln
 Replikacija predstavlja proces održavanja više kopija (replika) istih podataka na različitim čvorovima distribuiranog sistema, u cilju povećanja dostupnosti i otpornosti na greške.
 \end{definicija}
 
-Replikacija omogućava da svaki čvor nezavisno obrađuje korisničke zahteve, dok koordinacioni mehanizmi obezbeđuju da sve replike ostanu međusobno usaglašene u meri koju propisuje primenjeni model konzistentnosti.
-
-U realnim uslovima, pošiljalac ne može unapred znati da li će poruka uspešno stići do odredišnog čvora, niti da li će se odgovor vratiti nazad. Zbog toga je neophodno uvesti kvantitativnu metriku koja opisuje ukupan vremenski odziv komunikacionog procesa.
+Iako replikacija obezbeđuje da svaki čvor poseduje identičan skup podataka, u mnogim sistemima nije neophodno da svi čvorovi održavaju celu bazu. Alternativni pristup zasniva se na razdvajanju podataka na manje, međusobno nezavisne celine.
 
 \begin{definicija}
-Vreme odaziva \eng{round-trip time (RTT)} u distribuiranim mrežama predstavlja kvantitativnu meru koja označava ukupno vreme potrebno da poruka bude poslata od jednog čvora ka drugom i da se odgovor sa odredišta vrati nazad do inicijatora.
+Razdeljivanje podataka \eng{sharding} predstavlja tehniku u kojoj se logički skup podataka deli na više disjunktnih particija, pri čemu je svaki čvor odgovoran za obradu samo svog podskupa podataka, čime se povećava paralelizam i kapacitet obrade sistema \cite{curino2010schism}.
+\end{definicija}
+
+U savremenim sistemima najčešće se primenjuju hibridni modeli u kojima se svaka particija dodatno replicira. Time se kombinuju prednosti replikacije (dostupnost i tolerancija na greške) i particionisanja (horizontalno skaliranje i smanjenje konkurencije nad podacima), što omogućava skalabilan, efikasan i otporan distribuirani informacioni sistem.
+
+Kako replikacija i razdeljivanje omogućavaju da svaki čvor nezavisno obrađuje korisničke zahteve, a koordinacioni mehanizmi obezbeđuju da sve replike i particije ostanu međusobno usaglašene u meri koju propisuje primenjeni model konzistentnosti, neophodno je sprečiti preopterećenje pojedinačnih delova. U tu svrhu uvodi se sledeći mehanizam:
+
+\begin{definicija}
+Raspodela opterećenja \eng{load balancing} predstavlja mehanizam koji dodeljuje dolazne zahteve različitim čvorovima sistema radi optimalnog iskorišćenja resursa, smanjenja vremena odaziva i sprečavanja preopterećenja pojedinačnih instanci.
+\end{definicija}
+
+Međutim, u realnim uslovima pošiljalac ne može unapred znati da li će poruka uspešno stići do odredišnog čvora niti da li će odgovor biti vraćen. Da bi se izbeglo slanje poruka ka nedostupnim instancama, neophodno je pre slanja proveriti njihovu dostupnost.
+
+\begin{definicija}
+Provera ispravnosti čvora \eng{health check} predstavlja mehanizam periodičnog ispitivanja dostupnosti i funkcionalnosti čvorova u distribuiranom sistemu, radi detekcije otkaza i obezbeđivanja da se neuspešne instance blagovremeno isključe iz procesa obrade.
+\end{definicija}
+
+Iako mehanizmi raspodele opterećenja i provere ispravnosti omogućavaju izbegavanje slanja poruka ka nedostupnim ili preopterećenim čvorovima, sam proces komunikacije između čvorova i dalje ostaje podložan mrežnim kašnjenjima i neizvesnostima u prenosu poruka. Da bi se kvantitativno ocenila efikasnost komunikacije i procenila pouzdanost mreže u realnim uslovima, neophodno je uvesti metriku koja opisuje ukupan vremenski odziv komunikacionog procesa.
+
+\begin{definicija}
+Vreme odaziva \eng{round-trip time, RTT} u distribuiranim mrežama predstavlja kvantitativnu meru koja označava ukupno vreme potrebno da poruka bude poslata od jednog čvora ka drugom i da se odgovor sa odredišta vrati nazad do inicijatora.
 \end{definicija}
 
 Kako distribuirani sistemi mogu obuhvatati proizvoljno veliki broj čvorova, poruke o izmenama podataka često pristižu iz različitih izvora, u nepredvidivom redosledu i sa različitim kašnjenjima. Da bi replike konzistentno primenile operacije upisa, neophodno je uspostaviti mehanizme koji određuju njihov redosled primene.
@@ -255,10 +262,10 @@ Kako distribuirani sistemi mogu obuhvatati proizvoljno veliki broj čvorova, por
 Sat u distribuiranim sistemima predstavlja mehanizam za merenje ili poređenje vremena događaja.
 \end{definicija}
 
-Distribuirani sistemi ne mogu pretpostaviti postojanje globalnog, savršeno sinhronizovanog sata. Zbog toga se u praksi primenjuju različite vrste satova, od kojih svaki obezbeđuje specifičan model opažanja i poređenja događaja. Na taj način različiti satovi uvode različit \textbf{logički model vremenske sinhronizacije}, unutar kojeg se definiše i ostvaruje uređenje operacija.
+Distribuirani sistemi ne mogu pretpostaviti postojanje globalnog, savršeno sinhronizovanog sata. Zbog toga se u praksi primenjuju različite vrste satova, od kojih svaki obezbeđuje specifičan model opažanja i poređenja događaja. Umesto oslanjanja na fizički sat, čija se tačnost ne može garantovati usled mrežnih kašnjenja, distribuirani sistemi najčešće koriste logičke časovnike, koji redosled događaja određuju na osnovu njihovih uzročno-posledičnih odnosa i strukture razmene poruka. Iako postoje i drugi modeli merenja vremena, logički časovnici se u praksi izdvajaju kao primarni alat za određivanje redosleda događaja.
 
 \begin{definicija}
-Uređenje \eng{ordering} predstavlja mehanizam kojim se operacijama dodeljuje precizan položaj u redosledu izvršavanja, bilo na svim čvorovima sistema ili na njihovom podskupu.
+Uređenje \eng{ordering} predstavlja mehanizam kojim se operacijama dodeljuje precizan položaj u redosledu izvršavanja, bilo na svim čvorovima sistema ili na njihovom podskupu..
 \end{definicija}
 
 Samo postojanje uređenja nije dovoljno da sistem funkcioniše ispravno, jer ono određuje isključivo redosled primene operacija, ali ne eliminiše problem paralelnih pristupa nad istim podacima. Istovremeno izvršavanje više operacija nad istim entitetima može dovesti do anomalija, gubitka ažuriranja ili narušavanja logičke konzistentnosti.
@@ -275,8 +282,8 @@ Kontrola konkurentnog pristupa \eng{concurrency control} predstavlja skup algori
 
 U praksi se primenjuju dva osnovna pristupa kontroli konkurentnog pristupa:
 \begin{enumerate}
-\item \textbf{Pesimistička kontrola} - sprečava konflikte unapred tako što privremeno zaključava podatke pre izvršavanja operacije.
-\item \textbf{Optimistička kontrola} - dozvoljava paralelne upise, a konflikte otkriva i razrešava prilikom verifikacije ili potvrđivanja \eng{commit} rezultata.
+\item \textbf{Pesimistička kontrola} - sprečava konflikte unapred tako što privremeno zaključava podatke pre izvršavanja operacije,
+\item \textbf{Optimistička kontrola} - dozvoljava paralelne upise, a konflikte otkriva i razrešava prilikom verifikacije ili potvrđivanja rezultata.
 \end{enumerate}
 
 \subsubsection{Konsenzus}
@@ -295,9 +302,9 @@ Konsenzusni protokoli mogu biti organizovani sa glavnim čvorom \eng{leader-base
 
 Nakon uvođenja osnovnih pojmova možemo precizirati tri fundamentalna obrasca propagacije poruka koji se javljaju u realnim distribuiranim sistemima:
 \begin{enumerate}
-\item \textbf{Jedan-ka-jedan \eng{one-to-one}} - komunikacija u kojoj jedan čvor upućuje poruku tačno jednom drugom čvoru (npr. slanje izmene glavnom čvoru ili direktna replikacija između dva čvora),
-\item \textbf{Jedan-ka-više \eng{one-to-many}} - komunikacija u kojoj jedan čvor distribuira poruku većem broju čvorova (npr. glavni čvor replicira zapis svim replikama, ili čvor šalje predlog konsenzus protokolu koji ga prosleđuje svim učesnicima),
-\item \textbf{Više-ka-više \eng{many-to-many}} - komunikacioni obrazac u kojem više čvorova paralelno razmenjuje poruke sa većim brojem drugih čvorova (npr. protokoli u kojima ne postoji glavni čvor ni konsenzus protokol, pa čvorovi međusobno razmenjuju poruke da bi postigli saglasnost).
+\item \textbf{Jedan-ka-jedan 1-1 \eng{one-to-one}} - komunikacija u kojoj jedan čvor upućuje poruku tačno jednom drugom čvoru (npr. slanje izmene glavnom čvoru ili direktna replikacija između dva čvora),
+\item \textbf{Jedan-ka-više 1-N \eng{one-to-many}} - komunikacija u kojoj jedan čvor distribuira poruku većem broju čvorova (npr. glavni čvor replicira zapis svim replikama, ili čvor šalje predlog konsenzus protokolu koji ga prosleđuje svim učesnicima),
+\item \textbf{Više-ka-više N-N \eng{many-to-many}} - komunikacioni obrazac u kojem više čvorova paralelno razmenjuje poruke sa većim brojem drugih čvorova (npr. protokoli u kojima ne postoji glavni čvor ni konsenzus protokol, pa čvorovi međusobno razmenjuju poruke da bi postigli saglasnost).
 \end{enumerate}
 
 Odlučivanje o pravilnom redosledu i razrešavanje mogućih neslaganja među replikama i dalje obezbeđuje sam konsenzusni protokol, dok glavni čvor služi isključivo kao mehanizam za predlaganje kandidata za narednu odluku. Na taj način glavni čvor pruža stabilan izvor predloga, dok protokol konsenzusa garantuje da sve ispravne replike usvoje isti, jedinstveni rezultat.
@@ -308,78 +315,3 @@ Važno je istaći da distribuirani sistemi ne moraju posedovati konsenzus. Kada 
 Totalno uređen prenos poruka ekvivalentan je problemu konsenzusa \cite{chandra1996unreliable}.
 \end{teorema}
 
-\subsubsection{CP sistemi}
-Iz teoreme sledi da totalno uređen prenos ostvaruje deterministički globalni redosled isporuke poruka. CP sistemi mogu koristiti konsenzus kako bi obezbedili \textbf{determinističko totalno uređenje} za sve operacije koje prođu kroz konsenzus i budu potvrđene. Istovremeno, ovi sistemi mogu podržavati i operacije koje ne zahtevaju globalni redosled (npr. lokalna čitanja), pa stoga ne mora svaka operacija biti deo jedinstvenog totalnog uređenja.
-
-\textbf{CP sistemi sa konsenzusom i glavnim čvorom} su u praksi jednostavniji za implementaciju, jer svaki čvor šalje operacije glavnom čvoru umesto čitavoj mreži. Ovakva arhitektura omogućava bržu serijalizaciju operacija, ali uvodi centralizovano usko grlo i povećan nivo kontencije pri većem broju čvorova.
-\begin{itemize}
-\item Sinhronizacija: visoka,
-\item Kontencija: veoma visoka.
-\end{itemize}
-
-Gubitak glavnog čvora ne narušava konzistentnost, jer protokol konsenzusa omogućava izbor novog glavnog čvora.
-
-\textbf{CP sistemi sa konsenzusom i bez glavnog čvora} determinističko totalno uređenje ostvaruje se protokolima u kojima svi čvorovi ravnopravno učestvuju u donošenju odluka. Ovi sistemi nemaju usko grlo, pa je kontencija značajno manja, ali je cena sinhronizacije veća zbog većeg broja poruka i kompleksnosti algoritma.
-\begin{itemize}
-\item Sinhronizacija: veoma visoka,
-\item Kontencija: umerena.
-\end{itemize}
-
-\textbf{CP sistemi bez konsenzusa i glavnim čvorom} ne obezbeđuju garancije o jedinstvenom redosledu operacija, te stoga ne mogu implementirati deterministički totalni redosled. Ako postoji glavni čvor, on služi za serijalizaciju i omogućava jednostavniju implementaciju i bržu lokalnu sinhronizaciju. Međutim, glavni čvor postaje usko grlo i jedina tačka napredovanja sistema. Gubitak glavnog čvora dovodi do zastoja sistema.
-\begin{itemize}
-\item Sinhronizacija: umerena,
-\item Kontencija: visoka.
-\end{itemize}
-
-\textbf{CP sistemi bez konsenzusa i bez glavnog čvora} se retko koriste zbog izostanka uređenja operacija i visokih troškova kontencije i sinhronizacije.
-\begin{itemize}
-\item Sinhronizacija: veoma visoka,
-\item Kontencija: veoma visoka.
-\end{itemize}
-
-\subsubsection{AP sistemi}
-AP sistemi u prisustvu mrežnih particija prioritizuju dostupnost nad konzistentnošću, što znači da prihvataju operacije i u uslovima kada je komunikacija sa drugim čvorovima onemogućena. Budući da deterministički konsenzus zahteva pouzdanu i potpunu komunikaciju među čvorovima dok svi ne donesu identičnu odluku, ovaj zahtev je u suprotnosti sa principima AP sistema, odakle sledi:
-
-\begin{teorema}
-U AP sistemima deterministički konsenzus se ne može ostvariti.
-\end{teorema}
-
-Ipak, AP sistemi mogu koristiti verovatnosni konsenzus \eng{probabilistic consensus}, u kojem čvorovi u svakoj iteraciji nasumično biraju podskup od $k$ drugih čvorova, čitaju njihove trenutne vrednosti i ažuriraju sopstvenu vrednost prema verovatnosnom pravilu (najčešće većini u uzorku). Verovatnoća neusaglašene ili pogrešne odluke opada, tipično eksponencijalno, sa brojem iteracija.
-
-\begin{definicija}
-Verovatnosni konsenzus je nedeterministički mehanizam postizanja dogovora u distribuiranim sistemima koji koristi slučajne procese i verovatosne procene kako bi čvorovi usaglasili zajedničku vrednost, pri čemu uslovi sporazuma, validnosti i okončanja konvergiraju u verovatnoći ka 1.
-\end{definicija}
-
-CP sistemi zahtevaju determinističke garancije konzistentnosti, dok verovatnosni konsenzus obezbeđuje samo garancije u verovatnoći, što ostavlja mogućnost, makar i izuzetno malu, pojave neusaglašenosti. Zbog toga verovatnosni konsenzus ne može zadovoljiti formalne zahteve CP modela, naročito u pogledu determinističke sigurnosti.
-
-
-
-% \begin{definicija}
-% Razdeljivanje podataka \eng{sharding} predstavlja tehniku u kojoj se logički skup podataka deli na više disjunktnih particija, pri čemu je svaki čvor odgovoran za obradu samo svog podskupa podataka, čime se povećava paralelizam i kapacitet obrade sistema \cite{curino2010schism}.
-% \end{definicija}
-
-% U slučaju particionisanja, potvrde se razmenjuju isključivo između replika unutar iste particije, budući da samo one dele isti podskup podataka. Mehanizmi uređenja se ne primenjuju među različitim particijama, jer particije čuvaju disjunktne delove stanja.
-
-% U savremenim arhitekturama najčešće se primenjuju hibridni modeli u kojima se svaka particija dodatno replicira. Time se kombinuju prednosti replikacije (dostupnost i tolerancija na greške) i particionisanja (horizontalno skaliranje i smanjenje konkurencije nad podacima), što omogućava skalabilan, efikasan i otporan na greške distribuiran informacioni sistem.
-
-% Replikacija i particionisanje takođe omogućavaju raspoređivanje podataka u više geografski udaljenih data-centara, čime se korisnicima omogućava pristup najbližoj replici i time smanjuje latencija. Sa stanovišta aplikacije, sistem i dalje pruža apstrakciju jedinstvenog logičkog skupa podataka, uprkos fizičkoj fragmentaciji stanja.
-
-% Polazeći od prethodno definisanih mehanizama replikacije i usaglašavanja stanja, protokoli konzistentnosti se dalje razmatraju kroz dva analitička okvira:
-
-% CAP perspektiva:
-% \begin{enumerate}
-% \item \textbf{CP sistemi} obezbeđuju da sve replike budu međusobno usaglašene pre nego što se upis smatra završenim. To znači da je sistem privremeno nedostupan tokom propagacije upisa, ali se garantuje da svako čitanje odmah vidi poslednju potvrđenu vrednost. Takav pristup je tipičan za finansijske aplikacije, gde tačnost i konzistentnost imaju prioritet nad dostupnošću.
-
-% \item \textbf{AP sistemi} garantuju dostupnost čak i u prisustvu mrežnih particija, ali ne garantuju trenutnu usaglašenost replika. U odsustvu novih upisa, sve replike će konvergirati ka istom stanju. Ovakav model je pogodan za aplikacije kod kojih je prihvatljivo da različiti korisnici privremeno vide različite verzije podataka, kao što su društvene mreže.
-% \end{enumerate}
-
-% USL perspektiva:
-% \begin{enumerate}
-% \item \textbf{Parametar $\boldsymbol{\alpha}$}
-% u CP sistemima je \textbf{posebno visok} jer sinhrona replikacija zahteva koordinaciju između replika, uključujući globalno uređenje, potvrđivanje većine i potencijalno blokirajuće sinhronizacione mehanizme \cite{bernstein1981concurrency}.
-% U AP sistemima ovaj parametar je \textbf{umeren}, jer asinhrona replikacija omogućava da se upisi izvršavaju lokalno, bez obavezne globalne koordinacije, dok se propagacija izmena može odložiti i obaviti u pozadini.
-
-% \item \textbf{Parametar $\boldsymbol{\beta}$}
-% u CP sistemima poprima \textbf{umerene do visoke vrednosti}, jer svaka replika mora da primi i primeni sve operacije u determinističkom redosledu, što povećava troškove održavanja koherencije, posebno kada više čvorova deluje nad istim logičkim entitetima ili kada postoji centralna tačka koordinacije koja može postati usko grlo.
-% U AP sistemima ovaj parametar je \textbf{umeren}, budući da propagacija izmena može biti asinhrona, bez stroge potrebe za globalnim uređenjem ili centralizovanim koordinacionim tačkama.
-% \end{enumerate}
