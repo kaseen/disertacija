@@ -1,11 +1,12 @@
 \chapter{Analitički okvir za evaluaciju informacionih sistema}
 Cilj ovog poglavlja jeste da uspostavi metodologiju za analizu tehničkih prednosti i ograničenja informacionih sistema, nezavisno od toga da li su oni centralizovani, distribuirani ili decentralizovani. Fokus je isključivo na njihovim \textbf{tehničkim atributima infrastrukture}, dok se menadžerski, organizacioni i ekonomski faktori pominju samo okvirno, jer ne predstavljaju predmet detaljne analize ove disertacije.
 
-Da bi se obezbedio standardizovan okvir evaluacije, kvalitativne karakteristike informacionih i softverskih arhitektura formalizuju se kroz \textbf{atribute kvaliteta} prema IEEE i ISO standardima \cite{bass2021software} \cite{2013ISOI}. Za potrebe ove disertacije atributi kvaliteta biće grupisani u sledeće kategorije:
+Da bi se obezbedio standardizovan okvir evaluacije, kvalitativne karakteristike informacionih i softverskih arhitektura formalizuju se kroz \textbf{atribute kvaliteta} prema IEEE i ISO standardima \cite{bass2021software, 2013ISOI}. Za potrebe ove disertacije atributi kvaliteta biće grupisani u sledeće kategorije:
 \begin{enumerate}
 \item \textbf{Performanse i efikasnost:} performanse, skalabilnost, efikasnost korišćenja resursa, troškovna efikasnost, operativno održavanje, fleksibilnost, energetska efikasnost.
 \item \textbf{Operativna svojstva:} dostupnost, integritet, sigurnost, pouzdanost, otpornost na greške, konzistentnost podataka.
-\item \textbf{Upotrebljivost:} korisničko iskustvo, lakoća učenja (\textit{learnability}), operabilnost, pristupačnost.
+\item \textbf{Upotrebljivost:} korisničko iskustvo, lakoća učenja \eng{learnability}, operabilnost, pristupačnost.
+% TODO: Teoretsko računarstvo MLUR recenice
 \item \textbf{Funkcionalna ispravnost:} ispravnost funkcionalnih zahteva, potpunost funkcija, preciznost izvodenja funkcija, usklađenost sa specifikacijom.
 \end{enumerate}
 Poslednje dve kategorije ne pripadaju tehničkim atributima infrastrukture u užem smislu, te će radi jasnoće opsega istraživanja biti isključene iz daljeg razmatranja.
@@ -14,10 +15,35 @@ Ovakva klasifikacija omogućava konzistentno i teorijski utemeljeno poređenje i
 
 U nastavku ovog poglavlja analiziraće se \textbf{prednosti i ograničenja kontrolno centralizovanih informacionih sistema}, pri čemu se tehnički atributi razmatraju nezavisno od toga da li se sistem izvršava na jednoj fizičkoj instanci ili na više fizičkih instanci.
 
-\section{Performanse i efikasnost}
-\TODO{\cite{scalability2009}}
+\section{CAP teorema}
+\begin{definicija}
+Kvalitativna analiza arhitektonskih ograničenja obuhvata identifikaciju i razumevanje fundamentalnih ograničenja distribuiranih sistema. 
+\end{definicija}
 
-% TODO: Teoretsko računarstvo MLUR recenice
+Jedno od najznačajnijih ograničenja u distribuiranim sistemima proizilazi iz činjenice da su \textbf{mrežne particije} neizbežan događaj: pitanje nije ,,da li'' će se dogoditi, već ,,kada''. Ova činjenica je najjasnije formalizovana kroz \textit{CAP teoremu}, koja definiše osnovni skup arhitektonskih kompromisa u dizajnu distribuiranih sistema.
+
+Mrežna particija može nastati u različitim situacijama, uključujući:
+\begin{enumerate}
+\item \textit{prekid mrežne povezanosti} - fizički prekid veze između udaljenih data-centara tj. čvorovi nastavljaju da rade, ali više ne mogu da komuniciraju,
+\item \textit{ekstremno povećanje vremena odaziva} - vreme odaziva čitavog sistema prelazi prag koji je prihvatljiv (npr. skok sa 50 ms na nekoliko minuta),
+\item \textit{preopterećen čvor} - čvor je operativan, ali njegov odgovor nije u predviđenom vremenu, pa ga ostatak sistema tretira kao nedostupan,
+\item \textit{greške u mrežnoj konfiguraciji} - ispravni čvorovi ne vide jedni druge zbog pogrešne konfiguracije.
+\end{enumerate}
+
+Ponašanje sistema u ovakvim uslovima najpreciznije je opisano CAP teoremom, koju je prvi formulisao Eric Brewer \cite{brewer2000towards}, a formalno dokazali Gilbert i Lynch \cite{gilbert2002brewer}. Teorema definiše osnovni kompromis sa kojim se suočavaju svi distribuirani sistemi koji upravljaju deljenim stanjem.
+
+\begin{teorema}
+U distribuiranom sistemu koji čuva podatke moguće je istovremeno garantovati najviše dve od sledeće tri osobine:\\
+(1) \textbf{konzistentnost (C)} - svaki čvor vidi isto stanje sistema, tj. operacija čitanja uvek vraća poslednju potvrđenu upisanu vrednost,\\
+(2) \textbf{dostupnost (A)} - sistem garantuje odgovor na svaki zahtev u konačnom vremenu,\\
+(3) \textbf{toleranciju na particije (P)} - sistem nastavlja da radi i u slučaju mrežnih particija (poruke se mogu izgubiti ili stići nakon arbitrarnog kašnjenja).
+\end{teorema}
+
+\begin{posledica}
+Kada dođe do mrežne particije, distribuiran sistem ne može istovremeno garantovati punu konzistentnost i punu dostupnost. Stoga je prinuđen da da prioritet ili \textbf{konzistentnosti} (CP sistemi) ili \textbf{dostupnosti} (AP sistemi).
+\end{posledica}
+
+\section{Performanse i efikasnost}
 U radnim sistemima različitih tipova (poslovnim, javnim, neprofitnim i ličnim) \textit{procesi i aktivnosti} sastoje se od niza elementarnih procesnih jedinica, koje predstavljaju najmanje nedeljive korake rada unutar sistema. Svaka takva jedinica stvara potrebu za izvršenjem određene funkcije nad informacijama, čime nastaje \textbf{zahtev} koji se upućuje informacionom sistemu.
 
 Da bi se precizno razlikovala perspektiva radnog sistema od perspektive informacionog sistema, uvodi se razlika između:
@@ -95,34 +121,6 @@ Skaliranje se odnosi na način proširenja hardverskih resursa i optimizacije so
 \TODO{mikroservisi, serverless}
 
 Horizontalno skaliranje podrazumeva pokretanje više instanci (ili procesa) istog informacionog sistema, čime se povećava ukupan broj aktivnih izvršnih jedinica. \textbf{Dijagonalno skaliranje} predstavlja kombinovanje vertikalnog i horizontalnog pristupa.
-
-\subsection{CAP teorema}
-\begin{definicija}
-Kvalitativna analiza arhitektonskih ograničenja obuhvata identifikaciju i razumevanje fundamentalnih ograničenja distribuiranih sistema. 
-\end{definicija}
-
-Jedno od najznačajnijih ograničenja proizilazi iz činjenice da su \textbf{mrežne particije} neizbežan događaj: pitanje nije ,,da li'' će se dogoditi, već ,,kada''. Ova činjenica je najjasnije formalizovana kroz \textit{CAP teoremu}, koja definiše osnovni skup arhitektonskih kompromisa u dizajnu distribuiranih sistema.
-
-Mrežna particija može nastati u različitim situacijama, uključujući:
-\begin{enumerate}
-\item \textit{prekid mrežne povezanosti} - fizički prekid veze između udaljenih data-centara tj. čvorovi nastavljaju da rade, ali više ne mogu da komuniciraju,
-\item \textit{ekstremno povećanje latencije} - vreme odaziva čitavog sistema prelazi prag koji je prihvatljiv (npr. skok sa 50 ms na nekoliko minuta),
-\item \textit{preopterećen čvor} - čvor je operativan, ali njegov odgovor nije u predviđenom vremenu, pa ga ostatak sistema tretira kao nedostupan,
-\item \textit{greške u mrežnoj konfiguraciji} - ispravni čvorovi ne vide jedni druge zbog pogrešne konfiguracije.
-\end{enumerate}
-
-Ponašanje sistema u ovakvim uslovima najpreciznije je opisano CAP teoremom, koju je prvi formulisao Eric Brewer \cite{brewer2000towards}, a formalno dokazali Gilbert i Lynch \cite{gilbert2002brewer}. Teorema definiše osnovni kompromis sa kojim se suočavaju svi distribuirani sistemi koji upravljaju deljenim stanjem.
-
-\begin{teorema}
-U distribuiranom sistemu koji čuva podatke moguće je istovremeno garantovati najviše dve od sledeće tri osobine:\\
-(1) \textbf{konzistentnost (C)} - svaki čvor vidi isto stanje sistema, tj. operacija čitanja uvek vraća poslednju potvrđenu upisanu vrednost,\\
-(2) \textbf{dostupnost (A)} - sistem garantuje odgovor na svaki zahtev u konačnom vremenu,\\
-(3) \textbf{toleranciju na particije (P)} - sistem nastavlja da radi i u slučaju mrežnih particija (poruke se mogu izgubiti ili stići nakon arbitrarnog kašnjenja).
-\end{teorema}
-
-\begin{posledica}
-Kada dođe do mrežne particije, distribuiran sistem ne može istovremeno garantovati punu konzistentnost i punu dostupnost. Stoga je prinuđen da da prioritet ili \textbf{konzistentnosti} (CP sistemi) ili \textbf{dostupnosti} (AP sistemi).
-\end{posledica}
 
 \subsection{Vertikalno skaliranje}
 Vertikalno skaliranje podrazumeva povećavanje resursnih kapaciteta, tj. procesora, memorije, I/O podsistema ili skladišta jedne fizičke ili virtuelne instance informacionog sistema. Time se jedna izvršna jedinica osposobljava da obradi veći broj zahteva u jedinici vremena. Ovakvo skaliranje je idealno za jednostavnije sisteme, kao što su lični informacioni sistemi.
@@ -212,11 +210,13 @@ Bez dodatnih mehanizama, čvorovi bi razmenom poruka mogli da evoluiraju nezavis
 Koordinacija obuhvata sve mehanizme pomoću kojih distribuirani čvorovi usklađuju svoje delovanje razmenom poruka, tako da sistem funkcioniše kao jedna logička celina.
 \end{definicija}
 
-Koordinacija je potrebna svaki put kada lokalna izmena na jednom čvoru treba da bude reflektovana u celom sistemu. Ovaj proces zahteva komunikaciju da su svi čvorovi blagovremeno dobili informaciju o lokalnim promenama. Mehanizam koji omogućava dostavljanje informacija o izmenama svim drugim čvorovima naziva se propagacija.
+Koordinacija je potrebna svaki put kada lokalna izmena na jednom čvoru treba da bude reflektovana u celom sistemu. Ovaj proces zahteva komunikaciju da su svi čvorovi blagovremeno dobili informaciju o lokalnim promenama. Mehanizam koji omogućava dostavljanje informacija o izmenama svim drugim čvorovima naziva se propagacija \cite{holliday2003epidemic}.
 
 \begin{definicija}
 Propagacija predstavlja proces distribuiranja informacija o promenama sa jednog čvora ka drugim čvorovima u mreži, radi njihovog usaglašavanja.
 \end{definicija}
+
+Jedan od najrasprostranjenijih mehanizama propagacije u velikim distribuiranim sistemima jeste epidemijski algoritam poznat kao \textit{algoritam ogovaranja} \eng{gossip}. Algoritmi ogovaranja funkcionišu tako što svaki čvor periodično nasumično bira jedan ili više drugih čvorova i razmenjuje informacije o lokalnim promenama. Visoko su skalabilni, otporni na otkaze i ne zahtevaju centralizovani koordinacioni mehanizam.
 
 Nakon što čvor primi poruku o promeni i uspešno je primeni na svoju lokalnu kopiju podataka, potrebno je potvrditi \textbf{inicijatoru} da je operacija zabeležena. Ovaj korak omogućava nadogradnju pouzdanosti i sprečava gubitak ažuriranja.
 
@@ -224,7 +224,7 @@ Nakon što čvor primi poruku o promeni i uspešno je primeni na svoju lokalnu k
 Potvrda \eng{acknowledgment} predstavlja poruku kojom čvor signalizira inicijatoru da je uspešno primio, obradio i trajno sačuvao operaciju upisa.
 \end{definicija}
 
-Propagacija i potvrde čine osnovu šireg mehanizma. Replikacija je fundamentalni koncept koji obezbeđuje da sistem ima više kopija istih podataka na različitim lokacijama i da te kopije ostaju međusobno usaglašene.
+Propagacija i potvrde čine osnovu šireg mehanizma. Replikacija \cite{gray1996dangers} je fundamentalni koncept koji obezbeđuje da sistem ima više kopija istih podataka na različitim lokacijama i da te kopije ostaju međusobno usaglašene.
 
 \begin{definicija}
 Replikacija predstavlja proces održavanja više kopija (replika) istih podataka na različitim čvorovima distribuiranog sistema, u cilju povećanja dostupnosti i otpornosti na greške.
@@ -241,7 +241,7 @@ U savremenim sistemima najčešće se primenjuju hibridni modeli u kojima se sva
 Kako replikacija i razdeljivanje omogućavaju da svaki čvor nezavisno obrađuje korisničke zahteve, a koordinacioni mehanizmi obezbeđuju da sve replike i particije ostanu međusobno usaglašene u meri koju propisuje primenjeni model konzistentnosti, neophodno je sprečiti preopterećenje pojedinačnih delova. U tu svrhu uvodi se sledeći mehanizam:
 
 \begin{definicija}
-Raspodela opterećenja \eng{load balancing} predstavlja mehanizam koji dodeljuje dolazne zahteve različitim čvorovima sistema radi optimalnog iskorišćenja resursa, smanjenja vremena odaziva i sprečavanja preopterećenja pojedinačnih instanci.
+Raspodela opterećenja \eng{load balancing} predstavlja mehanizam koji dodeljuje dolazne zahteve različitim čvorovima sistema radi optimalnog iskorišćenja resursa, smanjenja vremena odaziva i sprečavanja preopterećenja pojedinačnih instanci \cite{chou2006load}.
 \end{definicija}
 
 Međutim, u realnim uslovima pošiljalac ne može unapred znati da li će poruka uspešno stići do odredišnog čvora niti da li će odgovor biti vraćen. Da bi se izbeglo slanje poruka ka nedostupnim instancama, neophodno je pre slanja proveriti njihovu dostupnost.
@@ -265,7 +265,7 @@ Sat u distribuiranim sistemima predstavlja mehanizam za merenje ili poređenje v
 Distribuirani sistemi ne mogu pretpostaviti postojanje globalnog, savršeno sinhronizovanog sata. Zbog toga se u praksi primenjuju različite vrste satova, od kojih svaki obezbeđuje specifičan model opažanja i poređenja događaja. Umesto oslanjanja na fizički sat, čija se tačnost ne može garantovati usled mrežnih kašnjenja, distribuirani sistemi najčešće koriste logičke časovnike, koji redosled događaja određuju na osnovu njihovih uzročno-posledičnih odnosa i strukture razmene poruka. Iako postoje i drugi modeli merenja vremena, logički časovnici se u praksi izdvajaju kao primarni alat za određivanje redosleda događaja.
 
 \begin{definicija}
-Uređenje \eng{ordering} predstavlja mehanizam kojim se operacijama dodeljuje precizan položaj u redosledu izvršavanja, bilo na svim čvorovima sistema ili na njihovom podskupu..
+Uređenje \eng{ordering} predstavlja mehanizam kojim se operacijama dodeljuje precizan položaj u redosledu izvršavanja, bilo na svim čvorovima sistema ili na njihovom podskupu \cite{lamport2019time}.
 \end{definicija}
 
 Samo postojanje uređenja nije dovoljno da sistem funkcioniše ispravno, jer ono određuje isključivo redosled primene operacija, ali ne eliminiše problem paralelnih pristupa nad istim podacima. Istovremeno izvršavanje više operacija nad istim entitetima može dovesti do anomalija, gubitka ažuriranja ili narušavanja logičke konzistentnosti.
@@ -277,7 +277,7 @@ Konflikt predstavlja situaciju u kojoj dve ili više operacija nad istim podacim
 Zbog toga je neophodno uvesti dodatni mehanizam koji reguliše istovremene pristupe deljenom stanju.
 
 \begin{definicija}
-Kontrola konkurentnog pristupa \eng{concurrency control} predstavlja skup algoritama i tehnika koji obezbeđuju ispravno izvršavanje paralelnih operacija nad deljenim podacima, sprečavajući pojavu konflikata i obezbeđujući konzistentan rezultat.
+Kontrola konkurentnog pristupa \eng{concurrency control} predstavlja skup algoritama i tehnika koji obezbeđuju ispravno izvršavanje paralelnih operacija nad deljenim podacima, sprečavajući pojavu konflikata i obezbeđujući konzistentan rezultat \cite{bernstein1987concurrency}.
 \end{definicija}
 
 U praksi se primenjuju dva osnovna pristupa kontroli konkurentnog pristupa:
@@ -286,8 +286,8 @@ U praksi se primenjuju dva osnovna pristupa kontroli konkurentnog pristupa:
 \item \textbf{Optimistička kontrola} - dozvoljava paralelne upise, a konflikte otkriva i razrešava prilikom verifikacije ili potvrđivanja rezultata.
 \end{enumerate}
 
-\subsubsection{Konsenzus}
-Najviši stepen koordinacije postiže se primenom konsenzusnih protokola, jer oni omogućavaju snažnu konzistentnost i globalno determinističko uređenje upisa, čak i u prisustvu mrežnih kašnjenja, otkaza čvorova i particija mreže.
+\subsection{Konsenzus}
+Najviši stepen koordinacije postiže se primenom konsenzusnih protokola \cite{nguyen2002consensus}, jer oni omogućavaju snažnu konzistentnost i globalno determinističko uređenje upisa, čak i u prisustvu mrežnih kašnjenja, otkaza čvorova i particija mreže.
 
 \begin{definicija}
 Konsenzus rešava fundamentalni problem koordinacije u distribuiranim sistemima, u kojem skup čvorova mora da se usaglasi oko jedne zajedničke vrednosti, pri čemu moraju biti zadovoljeni sledeći uslovi:\\
@@ -315,3 +315,35 @@ Važno je istaći da distribuirani sistemi ne moraju posedovati konsenzus. Kada 
 Totalno uređen prenos poruka ekvivalentan je problemu konsenzusa \cite{chandra1996unreliable}.
 \end{teorema}
 
+Iz teoreme sledi da totalno uređen prenos ostvaruje deterministički globalni redosled isporuke poruka. CP sistemi mogu koristiti konsenzus kako bi obezbedili \textbf{determinističko totalno uređenje} za sve operacije koje prođu kroz konsenzus i budu potvrđene. Istovremeno, ovi sistemi mogu podržavati i operacije koje ne zahtevaju globalni redosled (npr. lokalna čitanja), pa stoga ne mora svaka operacija biti deo jedinstvenog totalnog uređenja.
+
+AP sistemi u prisustvu mrežnih particija prioritizuju dostupnost nad konzistentnošću, što znači da prihvataju operacije i u uslovima kada je komunikacija sa drugim čvorovima onemogućena. Budući da deterministički konsenzus zahteva pouzdanu i potpunu komunikaciju među čvorovima dok svi ne donesu identičnu odluku, ovaj zahtev je u suprotnosti sa principima AP sistema, odakle sledi:
+
+\begin{teorema}
+U AP sistemima deterministički konsenzus se ne može ostvariti.
+\end{teorema}
+
+Ipak, AP sistemi mogu koristiti verovatnosni konsenzus \eng{probabilistic consensus}, u kojem čvorovi u svakoj iteraciji nasumično biraju podskup od $k$ drugih čvorova, čitaju njihove trenutne vrednosti i ažuriraju sopstvenu vrednost prema verovatnosnom pravilu (najčešće većini u uzorku). Verovatnoća neusaglašene ili pogrešne odluke opada, tipično eksponencijalno, sa brojem iteracija \cite{fagnani2008randomized}.
+
+\begin{definicija}
+Verovatnosni konsenzus je nedeterministički mehanizam postizanja dogovora u distribuiranim sistemima koji koristi slučajne procese i verovatosne procene kako bi čvorovi usaglasili zajedničku vrednost, pri čemu uslovi sporazuma, validnosti i okončanja konvergiraju u verovatnoći ka 1.
+\end{definicija}
+
+CP sistemi zahtevaju determinističke garancije konzistentnosti, dok verovatnosni konsenzus obezbeđuje samo garancije u verovatnoći, što ostavlja mogućnost, makar i izuzetno malu, pojave neusaglašenosti. Zbog toga verovatnosni konsenzus ne može zadovoljiti formalne zahteve CP modela, naročito u pogledu determinističke sigurnosti.
+
+\subsection{Analiza troškova sinhronizacije i kontencije}
+\textbf{Trošak sinhronizacije} u distribuiranim sistemima prvenstveno je određen obimom i strukturom komunikacije potrebne da bi se održalo konzistentno i usaglašeno stanje među čvorovima. Na ovaj trošak najznačajnije utiču obrasci propagacije, posebno 1-N i N-N šemi, budući da generišu veći broj međusobnih razmena i povećavaju zahtev za koordinacijom. Dodatni doprinos potiče od mehanizama potvrđivanja operacija, pri čemu broj komunikacionih rundi i njihovo trajanje direktno zavise od vremena odaziva (RTT).
+
+Vrsta replikacije takođe snažno oblikuje trošak sinhronizacije: sinhrona replikacija zahteva da sve replike prihvate operaciju pre njenog završetka, što povećava ukupno usklađivanje, dok asinhrona replikacija omogućava smanjenje ovog troška delegiranjem propagacije u pozadinu. Particionisanje generalno smanjuje sinhronizaciju jer ograničava broj čvorova koji moraju biti uključeni u usklađivanje stanja.
+
+Uređenje operacija predstavlja jedan od strukturalno najskupljih elemenata sinhronizacije, posebno kada je zahtevano totalno uređenje, budući da ono implicira globalno slaganje o redosledu izvršavanja operacija. Mehanizmi kontrole konkurentnog pristupa dodatno uvode sinhronizacione korake, bilo kroz zaključavanje (pesimistički pristup) bilo kroz verifikaciju konflikata (optimistički pristup). Provera ispravnosti čvorova i raspodela opterećenja doprinose trošku sinhronizacije u manjoj meri, ali povećavaju ukupan režijski saobraćaj sistema, odnosno pozadinsku komunikaciju koja nije deo primarne obrade korisničkih zahteva.
+
+U celini posmatrano, svaki mehanizam koji zahteva striktno uređenje, rad sa kvorumima ili usklađivanje replika proporcionalno povećava trošak sinhronizacije sa rastom broja čvorova i složenošću protokola.
+
+\textbf{Trošak kontencije} potiče iz situacija u kojima više čvorova istovremeno pokušava da pristupi istom resursu ili istoj logičkoj jedinici podataka, što izaziva konkurenciju, zagušenja i čekanje. Ovaj trošak primarno određuju mehanizmi kontrole konkurentnog pristupa: pesimističke tehnike zaključavanja stvaraju direktne konflikte i blokiranja, dok optimistički pristupi prebacuju teret kontencije na kasniju detekciju i razrešavanje konfliktnih upisa.
+
+Obrasci propagacije utiču na kontenciju uglavnom u slučajevima kada više čvorova generiše konkurentne upise nad istim entitetom, pri čemu N-N komunikacija može dodatno uvećati efektivno zagušenje. Duže trajanje zaključavanja ili konfliktne verifikacije povećava vreme odaziva, što dalje amplifikuje kontenciju. Replikacija povećava kontenciju ukoliko sve replike moraju serijalizovati iste operacije, dok particionisanje tu kontenciju smanjuje razdvajanjem domena pristupa. Mehanizmi uređenja takođe doprinose kontenciji jer totalni redosled implicitno uvodi globalnu serijalizaciju.
+
+Provera ispravnosti čvorova može privremeno smanjiti raspoloživu procesnu snagu i time pojačati pritisak na preostale čvorove, dok raspodela opterećenja ublažava kontenciju ravnomernijom distribucijom zahteva. U celini, kontenciju najviše povećavaju arhitekturalni obrasci koji uvode zajedničke kritične sekcije, globalna zaključavanja ili serijalizaciju pristupa istim podacima.
+
+\section{Operativna svojstva}

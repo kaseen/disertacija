@@ -129,19 +129,26 @@
   url={https://api.semanticscholar.org/CorpusID:19022091}
 }
 
-@InProceedings{scalability2009,
-  author="Clark, Allan
-  and Gilmore, Stephen
-  and Tribastone, Mirco",
-  editor="Chechik, Marsha
-  and Wirsing, Martin",
-  title="Scalable Analysis of Scalable Systems",
-  booktitle="Fundamental Approaches to Software Engineering",
-  year="2009",
-  publisher="Springer Berlin Heidelberg",
-  address="Berlin, Heidelberg",
-  pages="1--17",
-  isbn="978-3-642-00593-0"
+@inproceedings{brewer2000towards,
+  title={Towards robust distributed systems},
+  author={Brewer, Eric A},
+  booktitle={PODC},
+  volume={7},
+  number={10.1145},
+  pages={343--477},
+  year={2000},
+  organization={Portland, OR}
+}
+
+@article{gilbert2002brewer,
+  title={Brewer's conjecture and the feasibility of consistent, available, partition-tolerant web services},
+  author={Gilbert, Seth and Lynch, Nancy},
+  journal={Acm Sigact News},
+  volume={33},
+  number={2},
+  pages={51--59},
+  year={2002},
+  publisher={ACM New York, NY, USA}
 }
 
 @article{sedova2023development,
@@ -177,28 +184,6 @@
   booktitle={Proceedings of the 2nd international workshop on Software and performance},
   pages={195--203},
   year={2000}
-}
-
-@inproceedings{brewer2000towards,
-  title={Towards robust distributed systems},
-  author={Brewer, Eric A},
-  booktitle={PODC},
-  volume={7},
-  number={10.1145},
-  pages={343--477},
-  year={2000},
-  organization={Portland, OR}
-}
-
-@article{gilbert2002brewer,
-  title={Brewer's conjecture and the feasibility of consistent, available, partition-tolerant web services},
-  author={Gilbert, Seth and Lynch, Nancy},
-  journal={Acm Sigact News},
-  volume={33},
-  number={2},
-  pages={51--59},
-  year={2002},
-  publisher={ACM New York, NY, USA}
 }
 
 @article{hill2008amdahl,
@@ -265,11 +250,40 @@
   publisher={" O'Reilly Media, Inc."}
 }
 
+@article{holliday2003epidemic,
+  title={Epidemic algorithms for replicated databases},
+  author={Holliday, JoAnne and Steinke, Robert and Agrawal, Divyakant and El Abbadi, Amr},
+  journal={IEEE Transactions on Knowledge and Data Engineering},
+  volume={15},
+  number={5},
+  pages={1218--1238},
+  year={2003},
+  publisher={IEEE}
+}
+
+@inproceedings{gray1996dangers,
+  title={The dangers of replication and a solution},
+  author={Gray, Jim and Helland, Pat and O'Neil, Patrick and Shasha, Dennis},
+  booktitle={Proceedings of the 1996 ACM SIGMOD international Conference on Management of Data},
+  pages={173--182},
+  year={1996}
+}
+
 @article{curino2010schism,
   title={Schism: a workload-driven approach to database replication and partitioning},
   author={Curino, Carlo and Jones, Evan Philip Charles and Zhang, Yang and Madden, Samuel R},
   year={2010},
   publisher={Very Large Data Base Endowment Inc.(VLDB Endowment)}
+}
+
+@article{chou2006load,
+  title={Load balancing in distributed systems},
+  author={Chou, Timothy C. K. and Abraham, Jacob A.},
+  journal={IEEE Transactions on Software Engineering},
+  number={4},
+  pages={401--412},
+  year={2006},
+  publisher={IEEE}
 }
 
 @article{chandra1996unreliable,
@@ -283,44 +297,40 @@
   publisher={ACM New York, NY, USA}
 }
 
-
-
-
-
-
-
-
-@inproceedings{gray1996dangers,
-  title={The dangers of replication and a solution},
-  author={Gray, Jim and Helland, Pat and O'Neil, Patrick and Shasha, Dennis},
-  booktitle={Proceedings of the 1996 ACM SIGMOD international Conference on Management of Data},
-  pages={173--182},
-  year={1996}
-}
-
-@incollection{lamport2019part,
-  title={The part-time parliament},
+@incollection{lamport2019time,
+  title={Time, clocks, and the ordering of events in a distributed system},
   author={Lamport, Leslie},
-  booktitle={Concurrency: the works of Leslie Lamport},
-  pages={277--317},
+  booktitle={Concurrency: the Works of Leslie Lamport},
+  pages={179--196},
   year={2019}
 }
 
-@article{bernstein1981concurrency,
-  title={Concurrency control in distributed database systems},
-  author={Bernstein, Philip A and Goodman, Nathan},
-  journal={ACM Computing Surveys (CSUR)},
-  volume={13},
-  number={2},
-  pages={185--221},
-  year={1981},
-  publisher={ACM New York, NY, USA}
+@book{bernstein1987concurrency,
+  title={Concurrency control and recovery in database systems},
+  author={Bernstein, Philip A and Hadzilacos, Vassos and Goodman, Nathan and others},
+  volume={370},
+  year={1987},
+  publisher={Addison-wesley Reading}
 }
 
-@misc{bukh1992art,
-  title={The art of computer systems performance analysis, techniques for experimental design, measurement, simulation and modeling},
-  author={Bukh, Per Nikolaj D},
-  year={1992},
-  publisher={JSTOR}
+@article{nguyen2002consensus,
+  title={Consensus system for solving conflicts in distributed systems},
+  author={Nguyen, Ngoc Thanh},
+  journal={Information Sciences},
+  volume={147},
+  number={1-4},
+  pages={91--122},
+  year={2002},
+  publisher={Elsevier}
 }
 
+@article{fagnani2008randomized,
+  title={Randomized consensus algorithms over large scale networks},
+  author={Fagnani, Fabio and Zampieri, Sandro},
+  journal={IEEE Journal on Selected Areas in Communications},
+  volume={26},
+  number={4},
+  pages={634--649},
+  year={2008},
+  publisher={IEEE}
+}
