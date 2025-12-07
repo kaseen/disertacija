@@ -347,3 +347,26 @@ Obrasci propagacije utiču na kontenciju uglavnom u slučajevima kada više čvo
 Provera ispravnosti čvorova može privremeno smanjiti raspoloživu procesnu snagu i time pojačati pritisak na preostale čvorove, dok raspodela opterećenja ublažava kontenciju ravnomernijom distribucijom zahteva. U celini, kontenciju najviše povećavaju arhitekturalni obrasci koji uvode zajedničke kritične sekcije, globalna zaključavanja ili serijalizaciju pristupa istim podacima.
 
 \section{Operativna svojstva}
+Bezbednosni modeli predstavljaju formalizovane teorijske okvire kojima se sistematski definišu ciljevi, principi, mehanizmi i procedure za zaštitu podataka i resursa informacionih sistema od neovlašćenog pristupa, zloupotreba, tehničkih grešaka i savremenih digitalnih pretnji. Ovi modeli čine osnovu savremenih teorijskih i praktičnih pristupa informacionoj bezbednosti i zasnivanju arhitektura visokog nivoa pouzdanosti.
+
+Ključne bezbednosne osobine \cite{bishop2002art, sommer2019survey} koje ovi modeli obrađuju uključuju:
+\begin{enumerate}
+\item \textbf{Poverljivost} \eng{confidentiality} - svojstvo kojim se obezbeđuje da podaci ostanu dostupni isključivo ovlašćenim korisnicima, posebno kada je reč o ličnim, osetljivim ili zaštićenim informacijama,
+\item \textbf{Integritet} \eng{integrity} - svojstvo koje garantuje tačnost, potpunost i neizmenljivost podataka, sprečavajući njihovu modifikaciju od strane neovlašćenih korisnika,
+\item \textbf{Dostupnost} \eng{availability} - svojstvo koje obezbeđuje da resursi i usluge budu trajno i blagovremeno dostupni, uprkos greškama, napadima ili opterećenju sistema,
+\item \textbf{Autentičnost} \eng{authenticity} - svojstvo koje omogućava pouzdanu verifikaciju identiteta inicijatora koji šalje ili pruža određenu informaciju,
+\item \textbf{Neporecivost} \eng{non-repudiation} - svojstvo kojim se obezbeđuje da korisnici ne mogu negirati prethodno izvršene radnje, poput slanja, primanja ili potvrde poruka,
+\item \textbf{Autorizacija} \eng{authorization} - svojstvo koje određuje koji korisnici (ili procesi) poseduju prava za izvršavanje određenih operacija nad resursima sistema.
+\end{enumerate}
+
+Primena bezbednosnih modela suočava se sa brojnim izazovima, uključujući visoku složenost modernih informacionih sistema, troškove implementacije, organizacioni otpor korisnika, kao i tehnička ograničenja integracije različitih sigurnosnih mehanizama. Prestroge bezbednosne politike mogu značajno umanjiti produktivnost i upotrebljivost sistema, dok previše liberalan pristup povećava rizi kompromitovanja podataka. Savremene bezbednosne arhitekture stoga teže uspostavljanju održive ravnoteže između operativnih potreba i nivoa zaštite.
+
+U nastavku biće razmotrene ključne kategorije softverskih bezbednosnih mehanizama i njihov uticaj na gore navedene bezbednosne osobine:
+\begin{enumerate}
+\item Mehanizmi za identitet i autentikaciju,
+\item Mehanizmi autorizacije i kontrole pristupa,
+\item Kriptografski i poverljivi mehanizmi,
+\item Mehanizmi integriteta i validacije,
+\item Mehanizmi dostupnosti, otpornosti i oporavka,
+\item Mehanizmi odgovornosti, nadzora i neporecivosti.
+\end{enumerate}
