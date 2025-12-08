@@ -374,19 +374,37 @@ U nastavku biće razmotrene ključne kategorije softverskih bezbednosnih mehaniz
 \subsection{Kriptografski i poverljivi mehanizmi}
 Kriptografija predstavlja temeljni mehanizam za obezbeđivanje poverljivosti, integriteta i autentičnosti podataka u distribuiranim i informacionim sistemima. Njena suštinska uloga ogleda se u sprečavanju neovlašćenog pristupa informacijama putem formalno definisanih matematičkih transformacija, uz jasno određene ciljeve poput sigurnosti šifrovanja, otpornosti na kriptoanalitičke napade i verifikacije autentičnosti poruka.
 
-Prvi moderno definisan simetrični kriptografski algoritam projektovan za računare bio je ,,Lucifer'' \cite{feistel1973cryptography}, razvijen u IBM-u početkom sedamdesetih godina kao odgovor na rastuću potrebu za automatizovanom zaštitom podataka u bankarskim i finansijskim sistemima. U Luciferu je eksplicitno uvedena upotreba tajnog ključa, tj. numeričke vrednosti koja kontroliše procese šifrovanja i dešifrovanja, čime je postavljen temelj savremenim blok šiframa.
+Uobičajeno je da se učesnici u komunikacionim protokolima označavaju simboličkim imenima, najčešće Alisa (A) i Bob (B).
+
+\subsubsection{Simetrična kriptografija}
+Prvi moderno definisan simetrični kriptografski algoritam projektovan za računare bio je ,,Lucifer'' \cite{feistel1973cryptography}, razvijen u IBM-u početkom sedamdesetih godina 20. veka kao odgovor na rastuću potrebu za automatizovanom zaštitom podataka u bankarskim i finansijskim sistemima. U Luciferu je eksplicitno uvedena upotreba tajnog ključa, tj. numeričke vrednosti koja kontroliše procese šifrovanja i dešifrovanja, čime je postavljen temelj savremenim blok šiframa.
 
 \begin{definicija}
-Simetrična kriptografija je kriptografski model u kojem se za šifrovanje i dešifrovanje podataka koristi identičan tajni ključ.
+Simetrična kriptografija predstavlja kriptografski model u kojem se za šifrovanje i dešifrovanje podataka koristi identičan tajni ključ.
 \end{definicija}
+
+Kada Alisa želi da Bobu prenese poverljivu poruku, ona primenjuje simetrični algoritam šifrovanja koristeći unapred usaglašeni tajni ključ. Nakon što Bob primi šifrat, on primenjuje isti tajni ključ kako bi izvršio dešifrovanje i rekonstruisao originalni sadržaj. Bez pristupa tom ključu, nijedna treća strana ne može rekonstruisati poruku.
 
 Simetrični algoritmi mogu se podeliti na:
 \begin{enumerate}
 \item \textbf{Blok šifre} - obrađuju podatke u blokovima fiksne veličine, primenom višestrukih rundi transformacija, kao što su permutacije, substitucije i mešanje podataka. Ovakav dizajn obezbeđuje visok nivo otpornosti na kriptoanalitičke napade. Najzastupljeniji savremeni predstavnici su AES \cite{daemen2002design} i Camellia \cite{aoki2000camellia},
-\item \textbf{Strim šifre} - šifruju podatke kontinuirano, na nivou bitova ili bajtova, generisanjem pseudonasumičnog toka podataka (keystream) koji se kombinuje sa otvorenim tekstom. One su naročito pogodne za aplikacije koje zahtevaju nisku latenciju ili obradu podataka u realnom vremenu. Danas se najčešće koristi ChaCha20 \cite{bernstein2008chacha},
-\item \textbf{AEAD \eng{Authenticated Encryption with Associated Data} šema} - predstavljaju proširenje simetričnog šifrovanja koje istovremeno obezbeđuje poverljivost i integritet/autentičnost podataka. Primatelj dešifruje poruku i proverava da li je izmenjena. Najkorišćenije AEAD šeme danas su AES-GCM \cite{kasper2009faster} i ChaCha20-Poly1305 \cite{nir2018chacha20}.
+\item \textbf{Strim \eng{stream} šifre} - šifruju podatke kontinuirano, na nivou bitova ili bajtova, generisanjem pseudonasumičnog toka podataka koji se kombinuje sa otvorenim tekstom. One su naročito pogodne za aplikacije koje zahtevaju nisku latenciju ili obradu podataka u realnom vremenu. Danas se najčešće koristi ChaCha20 \cite{bernstein2008chacha},
+\item \textbf{AEAD \eng{Authenticated Encryption with Associated Data} šeme} - predstavljaju proširenje simetričnog šifrovanja koje istovremeno obezbeđuje poverljivost i integritet/autentičnost podataka. Primatelj dešifruje poruku i proverava da li je izmenjena. Najkorišćenije AEAD šeme danas su AES-GCM \cite{kasper2009faster} i ChaCha20-Poly1305 \cite{nir2018chacha20}.
 \end{enumerate}
 
 Prednost simetrične kriptografije, pored visokog nivoa sigurnosti, ogleda se u njenoj izuzetnoj brzini i efikasnosti, jer šifrovanje i dešifrovanje troše minimalne resurse i dobro se skaliraju za velike količine podataka.
 
-Međutim, osnovni izazov simetrične kriptografije jeste bezbedna distribucija tajnog ključa. Tajni ključ mora biti razmenjen na bezbedan način, jer kompromitacija ključa automatski kompromituje celokupnu komunikaciju. Dodatno, skaliranje sistema sa velikim brojem korisnika je zahtevno, pošto svaki par korisnika mora deliti sopstveni tajni ključ.
+Međutim, osnovni izazov simetrične kriptografije jeste \textbf{bezbedna distribucija tajnog ključa}. Tajni ključ mora biti razmenjen na bezbedan način, jer kompromitacija ključa automatski kompromituje celokupnu komunikaciju. Dodatno, skaliranje sistema sa velikim brojem korisnika je zahtevno, pošto svaki par korisnika mora deliti sopstveni tajni ključ.
+
+\subsubsection{Asimetrična kriptografija}
+Iako posedujemo efikasne metode za generisanje i proveru prostih brojeva, poput ,,Eratostenovog sita'' \cite{helfgott2020improved}, rastavljanje proizvoljnog prirodnog broja na proste činioce predstavlja izrazito težak problem za koji do danas nije poznat polinomialno efikasan algoritam \cite{crandall2005prime}. U originalnom radu \cite{rivest1978method} koji je uveo asimetričan kriptografski algoritam baziran na modularnoj aritmetici autori navode da se sigurnost sistema počiva na teškoći faktorizacije.
+
+\begin{definicija}
+Asimetrična kriptografija predstavlja kriptografski model u kojem se za šifrovanje i dešifrovanje podataka koriste dva različita, ali matematički povezana ključa: javni ključ, koji može biti slobodno distribuiran, i privatni ključ, koji mora ostati tajan. Poruka se šifruje javnim ključem primaoca, dok se dešifrovanje vrši odgovarajućim privatnim ključem, čime se obezbeđuje poverljivost komunikacije.
+\end{definicija}
+
+Kada Alisa želi da Bobu prenese poverljive podatke, ona ih šifruje Bobovim javnim ključem, čime obezbeđuje da jedino Bob, koristeći sopstveni privatni ključ, može da rekonstruše originalnu poruku. Nasuprot tome, ukoliko Alisa primeni sopstveni privatni ključ nad nekom porukom, rezultujući šifrat može biti verifikovan korišćenjem njenog javnog ključa, što svakome omogućava da proveri da poruka potiče upravo od nje. Ovaj princip neposredno vodi ka formalizaciji digitalnog potpisa kao fundamentalnog mehanizma asimetrične kriptografije.
+
+\begin{definicija}
+Digitalni potpis predstavlja kriptografski mehanizam u kojem se privatni ključ koristi za generisanje proverljivog kriptografskog otiska nad porukom, dok se odgovarajući javni ključ koristi za verifikaciju tog otiska. Proces verifikacije potvrđuje autentičnost pošiljaoca, integritet poruke i obezbeđuje nemogućnost poricanja autorstva.
+\end{definicija}
