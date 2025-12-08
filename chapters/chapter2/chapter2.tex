@@ -363,10 +363,30 @@ Primena bezbednosnih modela suočava se sa brojnim izazovima, uključujući viso
 
 U nastavku biće razmotrene ključne kategorije softverskih bezbednosnih mehanizama i njihov uticaj na gore navedene bezbednosne osobine:
 \begin{enumerate}
+\item Kriptografski i poverljivi mehanizmi,    
 \item Mehanizmi za identitet i autentikaciju,
 \item Mehanizmi autorizacije i kontrole pristupa,
-\item Kriptografski i poverljivi mehanizmi,
 \item Mehanizmi integriteta i validacije,
 \item Mehanizmi dostupnosti, otpornosti i oporavka,
 \item Mehanizmi odgovornosti, nadzora i neporecivosti.
 \end{enumerate}
+
+\subsection{Kriptografski i poverljivi mehanizmi}
+Kriptografija predstavlja temeljni mehanizam za obezbeđivanje poverljivosti, integriteta i autentičnosti podataka u distribuiranim i informacionim sistemima. Njena suštinska uloga ogleda se u sprečavanju neovlašćenog pristupa informacijama putem formalno definisanih matematičkih transformacija, uz jasno određene ciljeve poput sigurnosti šifrovanja, otpornosti na kriptoanalitičke napade i verifikacije autentičnosti poruka.
+
+Prvi moderno definisan simetrični kriptografski algoritam projektovan za računare bio je ,,Lucifer'' \cite{feistel1973cryptography}, razvijen u IBM-u početkom sedamdesetih godina kao odgovor na rastuću potrebu za automatizovanom zaštitom podataka u bankarskim i finansijskim sistemima. U Luciferu je eksplicitno uvedena upotreba tajnog ključa, tj. numeričke vrednosti koja kontroliše procese šifrovanja i dešifrovanja, čime je postavljen temelj savremenim blok šiframa.
+
+\begin{definicija}
+Simetrična kriptografija je kriptografski model u kojem se za šifrovanje i dešifrovanje podataka koristi identičan tajni ključ.
+\end{definicija}
+
+Simetrični algoritmi mogu se podeliti na:
+\begin{enumerate}
+\item \textbf{Blok šifre} - obrađuju podatke u blokovima fiksne veličine, primenom višestrukih rundi transformacija, kao što su permutacije, substitucije i mešanje podataka. Ovakav dizajn obezbeđuje visok nivo otpornosti na kriptoanalitičke napade. Najzastupljeniji savremeni predstavnici su AES \cite{daemen2002design} i Camellia \cite{aoki2000camellia},
+\item \textbf{Strim šifre} - šifruju podatke kontinuirano, na nivou bitova ili bajtova, generisanjem pseudonasumičnog toka podataka (keystream) koji se kombinuje sa otvorenim tekstom. One su naročito pogodne za aplikacije koje zahtevaju nisku latenciju ili obradu podataka u realnom vremenu. Danas se najčešće koristi ChaCha20 \cite{bernstein2008chacha},
+\item \textbf{AEAD \eng{Authenticated Encryption with Associated Data} šema} - predstavljaju proširenje simetričnog šifrovanja koje istovremeno obezbeđuje poverljivost i integritet/autentičnost podataka. Primatelj dešifruje poruku i proverava da li je izmenjena. Najkorišćenije AEAD šeme danas su AES-GCM \cite{kasper2009faster} i ChaCha20-Poly1305 \cite{nir2018chacha20}.
+\end{enumerate}
+
+Prednost simetrične kriptografije, pored visokog nivoa sigurnosti, ogleda se u njenoj izuzetnoj brzini i efikasnosti, jer šifrovanje i dešifrovanje troše minimalne resurse i dobro se skaliraju za velike količine podataka.
+
+Međutim, osnovni izazov simetrične kriptografije jeste bezbedna distribucija tajnog ključa. Tajni ključ mora biti razmenjen na bezbedan način, jer kompromitacija ključa automatski kompromituje celokupnu komunikaciju. Dodatno, skaliranje sistema sa velikim brojem korisnika je zahtevno, pošto svaki par korisnika mora deliti sopstveni tajni ključ.
