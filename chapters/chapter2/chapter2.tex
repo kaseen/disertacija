@@ -425,3 +425,26 @@ Međutim, asimetrični algoritmi značajno su sporiji i zahtevniji po pitanju pr
 Asimetrična i simetrična kriptografija se u praksi kombinuju kroz hibridne šeme, koje istovremeno obezbeđuju bezbednu razmenu ključeva i efikasnu razmenu podataka. Asimetrični algoritam se koristi samo za inicijalni bezbedni prenos privremenog tajnog ključa tzv. sesijskog ključa \eng{session key}, dok se dalja komunikacija šifruje simetričnim algoritmom visokih performansi.
 
 Najpoznatiji i najrasprostranjeniji primer hibridne šeme je protokol TLS \cite{rescorla2018transport}. U TLS-u server šalje klijentu digitalni sertifikat koji sadrži njegov javni ključ, nakon čega klijent generiše sesijski ključ i asimetrično ga šifruje. Po završetku razmene uspostavlja se brza i sigurna simetrična komunikacija.
+
+Kriptografski algoritmi za šifrovanje, bilo simetrični ili asimetrični, prvenstveno obezbeđuju \textbf{poverljivost} komunikacije. Međutim, poverljivost ne podrazumeva nužno i zaštitu integriteta podataka, što zahteva dodatne mehanizme.
+
+\subsubsection{Kriptografske heš funckije}
+Za razliku od simetričnih i asimetričnih kriptografskih šema, kriptografske heš funkcije $H$ ne koriste ključeve i ne omogućavaju rekonstrukciju izvornog podatka iz rezultujuće vrednosti. Primena heš funkcije na proizvoljan ulazni podatak generiše deterministički izračunatu vrednost fiksne dužine, tzv. \textit{heš} $h$, pri čemu dužina izlaza zavisi od konkretne primenjene funkcije.
+
+\begin{definicija}
+Kriptografska heš funkcija je deterministička transformacija koja proizvoljan ulazni niz podataka preslikava u izlaz fiksne dužine.
+\end{definicija}
+
+S obzirom na to da heš funkcija preslikava proizvoljno velik prostor ulaza u konačan prostor izlaza, teorijski je moguće da različiti ulazi imaju isti izlaz (kolizija). Stoga se bezbedna heš funkcija definiše svojstvima koja moraju biti teško ostvariva za napadača:
+\begin{enumerate}
+\item za isti ulaz $u$ funkcija uvek proizvodi isti izlaz $h$,
+\item promena jednog bita ulaza rezultira izlazom koji se značajno razlikuje od prethodnog,
+\item izuzetno je teško pronaći $u_1$ i $u_2$ takve da $u_1 \neq u_2$, a $H(u_1)=H(u_2)$,
+\item za dati heš $h$ teško je pronaći bilo koji ulaz $u$ za koji važi $H(u)=h$.
+\end{enumerate}
+
+Pored bezbednosti, savremene heš funkcije moraju biti dizajnirane za visoku efikasnost i mogućnost obrade podataka proizvoljne dužine.
+
+Najčešće korišćene moderne heš funkcije uključuju: porodicu SHA-2 \cite{pub2012secure} (npr. SHA-256), porodicu SHA-3 \cite{dworkin2015sha} zasnovanu na Keccak konstrukciji, kao i RIPEMD-160 \cite{dobbertin1996ripemd}.
+
+Heš funkcije imaju ključnu ulogu u kombinaciji sa digitalnim potpisima. Kada Alisa Bobu šalje fajl proizvoljno velike veličine, ona najpre izračunava heš fajla i digitalno ga potpisuje svojim privatnim ključem. Bob, po prijemu fajla i potpisa, izračunava heš primljenih podataka i verifikuje potpis korišćenjem Alisinog javnog ključa. Ukoliko se vrednosti poklapaju, Bob dobija garanciju da podaci nisu izmenjeni. Na ovaj način heš funkcije obezbeđuju \textbf{integritet} poruke.
