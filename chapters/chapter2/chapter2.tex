@@ -354,7 +354,7 @@ Ključne bezbednosne osobine \cite{bishop2002art, sommer2019survey} koje ovi mod
 \item \textbf{Poverljivost} \eng{confidentiality} - svojstvo kojim se obezbeđuje da podaci ostanu dostupni isključivo ovlašćenim korisnicima, posebno kada je reč o ličnim, osetljivim ili zaštićenim informacijama,
 \item \textbf{Integritet} \eng{integrity} - svojstvo koje garantuje tačnost, potpunost i neizmenljivost podataka, sprečavajući njihovu modifikaciju od strane neovlašćenih korisnika,
 \item \textbf{Dostupnost} \eng{availability} - svojstvo koje obezbeđuje da resursi i usluge budu trajno i blagovremeno dostupni, uprkos greškama, napadima ili opterećenju sistema,
-\item \textbf{Autentičnost} \eng{authenticity} - svojstvo koje omogućava pouzdanu verifikaciju identiteta inicijatora koji šalje ili pruža određenu informaciju,
+\item \textbf{Autentičnost} \eng{authenticity} - svojstvo koje omogućava pouzdanu identifikaciju inicijatora koji šalje ili pruža određenu informaciju,
 \item \textbf{Neporecivost} \eng{non-repudiation} - svojstvo kojim se obezbeđuje da korisnici ne mogu negirati prethodno izvršene radnje, poput slanja, primanja ili potvrde poruka,
 \item \textbf{Autorizacija} \eng{authorization} - svojstvo koje određuje koji korisnici (ili procesi) poseduju prava za izvršavanje određenih operacija nad resursima sistema.
 \end{enumerate}
@@ -448,3 +448,23 @@ Pored bezbednosti, savremene heš funkcije moraju biti dizajnirane za visoku efi
 Najčešće korišćene moderne heš funkcije uključuju: porodicu SHA-2 \cite{pub2012secure} (npr. SHA-256), porodicu SHA-3 \cite{dworkin2015sha} zasnovanu na Keccak konstrukciji, kao i RIPEMD-160 \cite{dobbertin1996ripemd}.
 
 Heš funkcije imaju ključnu ulogu u kombinaciji sa digitalnim potpisima. Kada Alisa Bobu šalje fajl proizvoljno velike veličine, ona najpre izračunava heš fajla i digitalno ga potpisuje svojim privatnim ključem. Bob, po prijemu fajla i potpisa, izračunava heš primljenih podataka i verifikuje potpis korišćenjem Alisinog javnog ključa. Ukoliko se vrednosti poklapaju, Bob dobija garanciju da podaci nisu izmenjeni. Na ovaj način heš funkcije obezbeđuju \textbf{integritet} poruke.
+
+\subsection{Funkcionalni bezbednosni okvir}
+Raniji informacioni sistemi nisu posedovali jedinstvene mehanizme za upravljanje celokupnim okruženjem, već je svaki uređaj unutar mreže morao biti zasebno konfigurisan i održavan. Identitet korisnika nije bio dosledno verifikovan na svim tačkama pristupa, pravila pristupa bila su gruba i neprecizna, sistemi nisu mogli da vode celovite evidencije o aktivnostima korisnika, a ukupna zaštita zavisila je od individualnih podešavanja svakog pojedinačnog uređaja.
+
+\begin{definicija}
+AAA \cite{metz2002aaa} \eng{Authentication, Authorization, Accounting} predstavlja bezbednosni okvir za proveru identiteta, ograničavanje pristupa i praćenje upotrebe resursa.
+\end{definicija}
+
+Originalni AAA model smatra se izuzetno moćnim i u praksi nezamenljivim \cite{de2000generic}, jer se široko tretira kao minimalna i standardizovana arhitektura za kontrolu pristupa.
+\begin{enumerate}
+\item \textbf{Autentikacija} je proces kojim se proverava da li je entitet (korisnik, uređaj, proces) zaista onaj za koga se predstavlja, najčešće korišćenjem kredencijala kao što su lozinke, tokeni ili digitalni sertifikati,
+\item \textbf{Autorizacija} je proces kojim se, nakon uspešne autentikacije, određuje koje radnje autentikovani entitet sme da preduzme i koji mu resursi pripadaju,
+\item \textbf{Evidencija} je proces sistematskog beleženja aktivnosti korisnika: početka i trajanja sesije, korišćenih usluga, nastalih grešaka, promena privilegija i sl. Ovi podaci se koriste za forenzičku analizu, evaluaciju performansi, otkrivanje anomalija, obračun i reviziju.
+\end{enumerate}
+
+AAA model omogućava logičku centralizaciju bezbednosnih politika i efikasnu kontrolu pristupa u složenim informacionim okruženjima, što je posebno važno u velikim i distribuiranim sistemima, jer smanjuje rizik od neovlašćenog korišćenja resursa i zloupotrebe privilegija.
+
+Savremeni sistemi, međutim, uvode i dodatne zahteve, što je dovelo do proširenja i prilagođavanja osnovnog AAA koncepta. Primeri uključuju dodavanje višefaktorskih mehanizama autentikacije \eng{2FA, MFA} radi podizanja nivoa zaštite \cite{ometov2018multi}, kao i upotrebu ograničenih, delegiranih tokena \eng{OAuth} koji smanjuju rizik u odnosu na deljenje glavnih kredencijala \cite{hardt2012oauth}.
+
+Iako se savremeni sigurnosni standardi i protokoli neprestano unapređuju radi povećanja otpornosti na nove pretnje, veliki broj bezbednosnih incidenata i dalje proističe iz ljudskih grešaka, poput korišćenja slabih lozinki ili nepažljivog rukovanja osetljivim podacima. Zbog toga se ljudski faktor u literaturi prepoznaje kao jedan od primarnih uzroka kompromitovanja čak i visoko zaštićenih sistema. Statistički podaci \cite{yeo2022human, theHumanFactor} dodatno potvrđuju da značajan procenat proboja uključuje element ljudske greške, često nezavisno od tehnološkog nivoa zaštite, što naglašava potrebu za kontinuiranom edukacijom korisnika, razvojem bezbednosne kulture i sistemskim pristupom upravljanju ljudskim faktorom.
