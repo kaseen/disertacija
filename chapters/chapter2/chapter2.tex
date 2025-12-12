@@ -422,11 +422,19 @@ Glavna prednost asimetrične kriptografije jeste što eliminiše problem bezbedn
 Međutim, asimetrični algoritmi značajno su sporiji i zahtevniji po pitanju procesorske snage u poređenju sa simetričnim, a za isti nivo bezbednosti zahtevaju znatno duže ključeve. To ih čini nepraktičnim za šifrovanje velikih količina podataka i ograničava primenu u resursno ograničenim sistemima.
 
 \subsubsection{Hibridna kriptografija}
-Asimetrična i simetrična kriptografija se u praksi kombinuju kroz hibridne šeme, koje istovremeno obezbeđuju bezbednu razmenu ključeva i efikasnu razmenu podataka. Asimetrični algoritam se koristi samo za inicijalni bezbedni prenos privremenog tajnog ključa tzv. sesijskog ključa \eng{session key}, dok se dalja komunikacija šifruje simetričnim algoritmom visokih performansi.
+Asimetrična i simetrična kriptografija se u savremenim bezbednosnim protokolima kombinuju u tzv. hibridnim kriptografskim šemama, koje istovremeno omogućavaju bezbedno uspostavljanje zajedničkog tajnog materijala i efikasno šifrovanje korisničkih podataka. Na taj način hibridna kriptografija rešava \textbf{problem razmene ključeva} \eng{key exchange problem}, odnosno prenos tajnog materijala preko nezaštićenog komunikacionog kanala.
 
-Najpoznatiji i najrasprostranjeniji primer hibridne šeme je protokol TLS \cite{rescorla2018transport}. U TLS-u server šalje klijentu digitalni sertifikat koji sadrži njegov javni ključ, nakon čega klijent generiše sesijski ključ i asimetrično ga šifruje. Po završetku razmene uspostavlja se brza i sigurna simetrična komunikacija.
+\begin{definicija}
+Hibridna kriptografija predstavlja pristup u kojem se za svaku pojedinačnu konekciju (sesiju) najpre uspostavlja glavni zajednički tajni materijal \eng{shared secret} korišćenjem asimetričnih algoritama za razmenu ključeva, nakon čega se celokupna dalja komunikacija šifruje brzim simetričnim algoritmima.
+\end{definicija}
 
-Kriptografski algoritmi za šifrovanje, bilo simetrični ili asimetrični, prvenstveno obezbeđuju \textbf{poverljivost} komunikacije. Međutim, poverljivost ne podrazumeva nužno i zaštitu integriteta podataka, što zahteva dodatne mehanizme.
+Iz uspostavljenog zajedničkog tajnog materijala, primenom algoritama za derivaciju ključeva \cite{chen2024recommendation} \eng{Key Derivation Functions}, generiše se čitav skup sesijskih ključeva \eng{session keys} koji se koriste za različite kriptografske potrebe, kao što su šifrovanje, autentikacija poruka, itd. 
+
+Međutim, aktivni napadač može presresti i čuvati sav saobraćaj, što dovodi do problema \textbf{tajnosti unapred} \cite{diffie2022new} \eng{forward secrecy}. Naime, ukoliko bi se u budućnosti kompromitovao glavni tajni materijal uspostavljen tokom početnog dogovora, sve ranije razmenjene poruke mogle bi biti dešifrovane. Stoga moderni protokoli koriste algoritme razmene ključeva koji obezbeđuju ovo svojstvo.
+
+Najrasprostranjeniji primer hibridne kriptografije jeste protokol TLS \cite{rescorla2018transport}. U TLS-u server šalje klijentu \textit{digitalni sertifikat} koji sadrži njegov javni ključ i druge verifikacione informacije. Klijent zatim generiše ili dogovara zajednički sesijski tajni materijal i asimetrično ga štiti tokom prenosa. Nakon uspešne razmene, dalja komunikacija se obavlja simetričnim šifrovanjem visoke efikasnosti.
+
+Kriptografski algoritmi za šifrovanje prvenstveno obezbeđuju \textbf{poverljivost} komunikacije. Međutim, poverljivost ne podrazumeva nužno i zaštitu integriteta podataka, pa je za to potrebno uvesti dodatne mehanizme.
 
 \subsubsection{Kriptografske heš funckije}
 Za razliku od simetričnih i asimetričnih kriptografskih šema, kriptografske heš funkcije $H$ ne koriste ključeve i ne omogućavaju rekonstrukciju izvornog podatka iz rezultujuće vrednosti. Primena heš funkcije na proizvoljan ulazni podatak generiše deterministički izračunatu vrednost fiksne dužine, tzv. \textit{heš} $h$, pri čemu dužina izlaza zavisi od konkretne primenjene funkcije.
