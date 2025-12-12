@@ -374,6 +374,10 @@ U nastavku biće razmotrene ključne kategorije softverskih bezbednosnih mehaniz
 \subsection{Kriptografski i poverljivi mehanizmi}
 Kriptografija predstavlja temeljni mehanizam za obezbeđivanje poverljivosti, integriteta i autentičnosti podataka u distribuiranim i informacionim sistemima. Njena suštinska uloga ogleda se u sprečavanju neovlašćenog pristupa informacijama putem formalno definisanih matematičkih transformacija, uz jasno određene ciljeve poput sigurnosti šifrovanja, otpornosti na kriptoanalitičke napade i verifikacije autentičnosti poruka.
 
+\begin{definicija}
+Osnovne operacije kriptografije jesu šifrovanje \eng{encryption}, proces pretvaranja podataka u nečitljiv oblik radi zaštite, i dešifrovanje \eng{decryption}, proces vraćanja šifrovanih podataka u njihov originalni, čitljiv oblik.
+\end{definicija}
+
 Uobičajeno je da se učesnici u komunikacionim protokolima označavaju simboličkim imenima, najčešće Alisa (A) i Bob (B).
 
 \subsubsection{Simetrična kriptografija}
@@ -437,7 +441,9 @@ Najrasprostranjeniji primer hibridne kriptografije jeste protokol TLS \cite{resc
 Kriptografski algoritmi za šifrovanje prvenstveno obezbeđuju \textbf{poverljivost} komunikacije. Međutim, poverljivost ne podrazumeva nužno i zaštitu integriteta podataka, pa je za to potrebno uvesti dodatne mehanizme.
 
 \subsubsection{Kriptografske heš funckije}
-Za razliku od simetričnih i asimetričnih kriptografskih šema, kriptografske heš funkcije $H$ ne koriste ključeve i ne omogućavaju rekonstrukciju izvornog podatka iz rezultujuće vrednosti. Primena heš funkcije na proizvoljan ulazni podatak generiše deterministički izračunatu vrednost fiksne dužine, tzv. \textit{heš} $h$, pri čemu dužina izlaza zavisi od konkretne primenjene funkcije.
+Simetrične i asimetrične kriptografske šeme su dvosmerne, odnosno podržavaju procese šifrovanja i dešifrovanja. Kriptografske heš funkcije $H$ ne koriste ključeve i ne omogućavaju rekonstrukciju izvornog podatka iz dobijene vrednosti, što ih čini jednosmernim funkcijama, i to je njihova ključna razlika u odnosu na klasične šeme šifrovanja.
+
+Primena heš funkcije na proizvoljan ulazni podatak generiše deterministički izračunatu vrednost fiksne dužine, tzv. \textit{heš} $h$, pri čemu dužina izlaza zavisi od konkretne primenjene funkcije.
 
 \begin{definicija}
 Kriptografska heš funkcija je deterministička transformacija koja proizvoljan ulazni niz podataka preslikava u izlaz fiksne dužine.
@@ -455,7 +461,11 @@ Pored bezbednosti, savremene heš funkcije moraju biti dizajnirane za visoku efi
 
 Najčešće korišćene moderne heš funkcije uključuju: porodicu SHA-2 \cite{pub2012secure} (npr. SHA-256), porodicu SHA-3 \cite{dworkin2015sha} zasnovanu na Keccak konstrukciji, kao i RIPEMD-160 \cite{dobbertin1996ripemd}.
 
-Heš funkcije imaju ključnu ulogu u kombinaciji sa digitalnim potpisima. Kada Alisa Bobu šalje fajl proizvoljno velike veličine, ona najpre izračunava heš fajla i digitalno ga potpisuje svojim privatnim ključem. Bob, po prijemu fajla i potpisa, izračunava heš primljenih podataka i verifikuje potpis korišćenjem Alisinog javnog ključa. Ukoliko se vrednosti poklapaju, Bob dobija garanciju da podaci nisu izmenjeni. Na ovaj način heš funkcije obezbeđuju \textbf{integritet} poruke.
+Kada Alisa šalje Bobu fajl proizvoljne veličine, najpre se izračunava heš sadržaja fajla. Zatim se izvršava potpisivanje fajla ili njegove heš vrednosti (ili kombinacija oba), pri čemu se potpis kreira korišćenjem Alisinog privatnog ključa (asimetrično) ili simetričnog sesijskog ključa, ukoliko postoji uspostavljena sesija. Po prijemu fajla, Bob izračunava heš primljenih podataka i verifikuje potpis koristeći odgovarajući ključ. Ukoliko se vrednosti podudaraju, Bob dobija garanciju da podaci nisu modifikovani tokom prenosa.
+
+Kada se potpis kreira privatnim ključem, ovaj postupak odgovara šemi digitalnog potpisa \cite{pub2000digital} \eng{Digital Signature Scheme, DSS}, dok se u slučaju potpisivanja sesijskim ključem primenjuje kod za autentifikaciju poruke \cite{krawczyk1997hmac} \eng{Message Authentication Code, MAC}. Ova razlika ima direktan uticaj na performanse protokola.
+
+Na ovaj način, heš funkcije obezbeđuju \textbf{integritet} poruke.
 
 \subsection{Funkcionalni bezbednosni okvir}
 Raniji informacioni sistemi nisu posedovali jedinstvene mehanizme za upravljanje celokupnim okruženjem, već je svaki uređaj unutar mreže morao biti zasebno konfigurisan i održavan. Identitet korisnika nije bio dosledno verifikovan na svim tačkama pristupa, pravila pristupa bila su gruba i neprecizna, sistemi nisu mogli da vode celovite evidencije o aktivnostima korisnika, a ukupna zaštita zavisila je od individualnih podešavanja svakog pojedinačnog uređaja.
