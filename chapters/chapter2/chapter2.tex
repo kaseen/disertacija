@@ -491,3 +491,24 @@ Autentikacioni mehanizmi se klasifikuju \cite{bonneau2012quest} kao odgovor na r
 \end{enumerate}
 
 S obzirom na to da nijedna pojedinačna klasa autentikacije ne obezbeđuje potpunu zaštitu, u savremenim sistemima se primenjuje višefaktorska autentikacija \cite{ometov2018multi} \eng{Multi-Factor Authentication, MFA}, kojom se kombinovanjem dva ili više različitih faktora značajno povećava otpornost sistema na kompromitaciju.
+
+Autentikacija primarno doprinosi ostvarivanju \textbf{autentičnosti} identiteta subjekata koji učestvuju u radu informacionog sistema, obezbeđujući pouzdano vezivanje identiteta za konkretne zahteve za pristup.
+
+\subsubsection{Autorizacija}
+Autorizacija predstavlja naredni korak u procesu kontrole pristupa informacionim sistemima, koji se izvršava nakon uspešne autentikacije subjekta. Dok autentikacija odgovara na pitanje \textit{ko} je korisnik, autorizacija određuje \textit{šta} je tom korisniku dozvoljeno da radi unutar sistema.
+
+\begin{definicija}
+Autorizacija je bezbednosni proces kojim se određuju dozvoljene operacije koje autentifikovani entitet može izvršiti nad resursima informacionog sistema.
+\end{definicija}
+
+Kontrola pristupa \eng{Access Control} u literaturi i praksi predstavlja fundamentalni i nezamenjivi bezbednosni mehanizam za sprovođenje odluka o autorizaciji u informacionim sistemima \cite{lampson1974protection}. Njena osnovna uloga ogleda se u doslednom ograničavanju upotrebe resursa u skladu sa unapred definisanim bezbednosnim politikama, čime se obezbeđuje zaštita sistema od neovlašćenog pristupa, prekoračenja ovlašćenja i zloupotrebe privilegija.
+
+Odluke o autorizaciji ne donose se proizvoljno, već se zasnivaju na apstraktnim modelima kontrole pristupa \cite{sandhu2002access}, koji formalno opisuju način dodele, provere i sprovođenja prava pristupa nad resursima informacionog sistema. Ovi modeli omogućavaju sistematično i konzistentno upravljanje privilegijama, nezavisno od konkretne tehničke implementacije. U nastavku su prikazani najčešće korišćeni modeli kontrole pristupa, poređani od konceptualno najmanje restriktivnih ka strožim oblicima kontrole:
+\begin{enumerate}
+\item \textbf{Diskreciona kontrola pristupa (DAC)} zasniva se na principu vlasništva nad resursima, gde svaki resurs ima svog vlasnika. Vlasnik ima diskreciono pravo da dodeljuje ili oduzima pristup drugim korisnicima ili grupama korisnika, što ovaj model čini fleksibilnim, ali potencijalno podložnim zloupotrebama.
+\item \textbf{Obavezna kontrola pristupa (MAC)} predstavlja strožiji i statičniji model, u kome su resursi i subjekti označeni bezbednosnim etiketama i nivoima poverljivosti. Pristup se dozvoljava isključivo na osnovu unapred definisanih pravila i hijerarhije bezbednosnih nivoa, bez mogućnosti diskrecione promene od strane korisnika.
+\item \textbf{Kontrola pristupa zasnovana na ulogama (RBAC)} može se posmatrati kao hibridni pristup koji kombinuje elemente DAC i MAC modela. U ovom modelu, privilegije se ne dodeljuju direktno korisnicima, već ulogama koje odražavaju njihove funkcije unutar organizacije. RBAC je danas jedan od najrasprostranjenijih modela u praksi zbog dobre ravnoteže između bezbednosti i administrativne jednostavnosti.
+\item \textbf{Kontrola pristupa zasnovana na atributima (ABAC)} predstavlja fleksibilan i dinamički model u kome se odluke o pristupu donose na osnovu kombinacije atributa subjekta, resursa, okruženja i zahteva. Ovaj model omogućava preciznu i kontekstno zavisnu autorizaciju i posebno je pogodan za složene, distribuirane i dinamične sisteme.
+\end{enumerate}
+
+Autorizacija ima ključnu ulogu u ostvarivanju \textbf{poverljivosti} i \textbf{integriteta} informacionih resursa, jer precizno definiše i dosledno sprovodi koje su operacije dozvoljene nad određenim podacima i funkcijama sistema.
