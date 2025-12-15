@@ -138,7 +138,7 @@ Međutim, postoje ozbiljna ograničenja:
 \item \textbf{Hardverski limit} - svaka mašina ima gornju granicu kapaciteta: maksimalan broj CPU jezgara, količinu RAM-a, maksimalnu brzinu I/O-a i skladišta. Jednom kada se taj limit dostigne, više nije moguće dodatno skalirati,
 \item \textbf{Ekonomska neefikasnost na visokom nivou} - cena raste brzo i nelinearno u odnosu na dobijene performanse. Na primer, povećanje broja jezgara ne donosi linearnu dobit performansi \cite{hill2008amdahl},
 \item \textbf{Opterećenje} - kada sistem dođe do zagušenja i resursi budu iscrpljeni, performanse mogu naglo da opadnu, uz značajan porast latencije, kašnjenja ili čak potpuni pad servisa. Kada se dostigne hardverski limit, ne postoji način daljeg skaliranja bez arhitekturne promene, a period oporavka može biti dug,
-\item \textbf{Jedna tačka otkaza \eng{single point of failure}} - ceo sistem zavisi od jedne mašine, pad ili otkaz te mašine znači da kompletan sistem prestaje sa radom.
+\item \textbf{Jedna tačka otkaza \eng{single point of failure}} - dostupnost celokupnog sistema direktno zavisi od ispravnosti jedne mašine, njen pad ili otkaz dovodi do potpunog prekida rada sistema.
 \end{enumerate}
 
 Da bi se makar delimično ublažile poslednje dve mane, jedno od poznatih rešenja jeste korišćenje rezerve \eng{hot standby}. To znači da postoji rezervna instanca spremna za aktivaciju u slučaju da glavna mašina zakaže ili postane neupotrebljiva. Ovo omogućava preuzimanje rada bez (ili uz minimalan) prekid za korisnike. Ipak, i ta rezerva nasleđuje sve prethodno navedene mane.
@@ -358,6 +358,8 @@ Ključne bezbednosne osobine \cite{bishop2002art, sommer2019survey} koje ovi mod
 \item \textbf{Neporecivost} \eng{non-repudiation} - svojstvo kojim se obezbeđuje da korisnici ne mogu negirati prethodno izvršene radnje, poput slanja, primanja ili potvrde poruka.
 \end{enumerate}
 
+Za razliku od ostalih bezbednosnih svojstava, dostupnost je u velikoj meri određena arhitektonskim i operativnim karakteristikama sistema. U distribuiranim sistemima, dostupnost se najviše oslanja na mehanizme replikacije, pri čemu direktno utiče na performanse i efikasnost. Zbog toga je ovo svojstvo detaljno razmotreno u prethodnom poglavlju.
+
 Primena bezbednosnih modela suočava se sa brojnim izazovima, uključujući visoku složenost modernih informacionih sistema, troškove implementacije, organizacioni otpor korisnika, kao i tehnička ograničenja integracije različitih sigurnosnih mehanizama. Prestroge bezbednosne politike mogu značajno umanjiti produktivnost i upotrebljivost sistema, dok previše liberalan pristup povećava rizi kompromitovanja podataka. Savremene bezbednosne arhitekture stoga teže uspostavljanju održive ravnoteže između operativnih potreba i nivoa zaštite.
 
 \subsection{Kriptografski i poverljivi mehanizmi}
@@ -482,6 +484,8 @@ Autentikacioni mehanizmi se klasifikuju \cite{bonneau2012quest} kao odgovor na r
 
 S obzirom na to da nijedna pojedinačna klasa autentikacije ne obezbeđuje potpunu zaštitu, u savremenim sistemima se primenjuje višefaktorska autentikacija \cite{ometov2018multi} \eng{Multi-Factor Authentication, MFA}, kojom se kombinovanjem dva ili više različitih faktora značajno povećava otpornost sistema na kompromitaciju.
 
+Autentičnost se u praksi ostvaruje kako na nivou identiteta, putem mehanizama autentikacije, tako i na nivou podataka i poruka, primenom kriptografskih mehanizama za verifikaciju porekla i integriteta.
+
 Autentikacija primarno doprinosi ostvarivanju \textbf{autentičnosti} identiteta subjekata koji učestvuju u radu informacionog sistema, obezbeđujući pouzdano vezivanje identiteta za konkretne zahteve za pristup.
 
 \subsubsection{Autorizacija}
@@ -500,6 +504,8 @@ Odluke o autorizaciji ne donose se proizvoljno, već se zasnivaju na apstraktnim
 \item \textbf{Kontrola pristupa zasnovana na ulogama (RBAC)} može se posmatrati kao hibridni pristup koji kombinuje elemente DAC i MAC modela. U ovom modelu, privilegije se ne dodeljuju direktno korisnicima, već ulogama koje odražavaju njihove funkcije unutar organizacije. RBAC je danas jedan od najrasprostranjenijih modela u praksi zbog dobre ravnoteže između bezbednosti i administrativne jednostavnosti.
 \item \textbf{Kontrola pristupa zasnovana na atributima (ABAC)} predstavlja fleksibilan i dinamički model u kome se odluke o pristupu donose na osnovu kombinacije atributa subjekta, resursa, okruženja i zahteva. Ovaj model omogućava preciznu i kontekstno zavisnu autorizaciju i posebno je pogodan za složene, distribuirane i dinamične sisteme.
 \end{enumerate}
+
+Autorizacioni modeli u praksi često primenjuju princip najmanjih privilegija \cite{ceesay2010authentication}, kojim se entitetima dodeljuju isključivo prava neophodna za izvršavanje njihovih zadataka, čime se značajno umanjuje rizik od kompromitacije poverljivih podataka.
 
 Autorizacija ima ključnu ulogu u ostvarivanju \textbf{poverljivosti} i \textbf{integriteta} informacionih resursa, jer precizno definiše i dosledno sprovodi koje su operacije dozvoljene nad određenim podacima i funkcijama sistema.
 
@@ -523,4 +529,4 @@ Evidencija omogućava nadzor ponašanja korisnika i sistema, procenu usklađenos
 
 Iako je evidencija prvenstveno uvedena kao bezbednosni mehanizam, u savremenim informacionim sistemima ona često ima i sekundarne namene. Velike količine podataka koje se prikupljaju kroz evidenciju aktivnosti korisnika mogu biti agregirane i analizirane radi poslovne optimizacije, ali i komercijalno eksploatisane kroz deljenje ili prodaju trećim stranama, uključujući oglašivačke i analitičke platforme. Ovakva praksa otvara značajna pitanja privatnosti, transparentnosti i informacione odgovornosti, budući da se podaci prikupljeni u svrhe bezbednosti i nadzora mogu koristiti izvan originalnog konteksta u kome su prikupljeni \cite{acquisti2016economics}.
 
-Evidencija primarno doprinosi ostvarivanju \textbf{neporecivosti} izvršenih radnji, jer, u kombinaciji sa kriptografskim mehanizmima, obezbeđuje kriptografski proverljive i vremenski obeležene dokaze o aktivnostima subjekata u sistemu.
+Evidencija primarno doprinosi ostvarivanju \textbf{neporecivosti} izvršenih radnji, dok se kriptografskim mehanizmima obezbeđuju proverljivi i vremenski obeleženi dokazi o aktivnostima subjekata u sistemu.
