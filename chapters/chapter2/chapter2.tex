@@ -360,16 +360,6 @@ Ključne bezbednosne osobine \cite{bishop2002art, sommer2019survey} koje ovi mod
 
 Primena bezbednosnih modela suočava se sa brojnim izazovima, uključujući visoku složenost modernih informacionih sistema, troškove implementacije, organizacioni otpor korisnika, kao i tehnička ograničenja integracije različitih sigurnosnih mehanizama. Prestroge bezbednosne politike mogu značajno umanjiti produktivnost i upotrebljivost sistema, dok previše liberalan pristup povećava rizi kompromitovanja podataka. Savremene bezbednosne arhitekture stoga teže uspostavljanju održive ravnoteže između operativnih potreba i nivoa zaštite.
 
-U nastavku biće razmotrene ključne kategorije softverskih bezbednosnih mehanizama i njihov uticaj na gore navedene bezbednosne osobine:
-\begin{enumerate}
-\item Kriptografski i poverljivi mehanizmi,    
-\item Mehanizmi za identitet i autentikaciju,
-\item Mehanizmi autorizacije i kontrole pristupa,
-\item Mehanizmi integriteta i validacije,
-\item Mehanizmi dostupnosti, otpornosti i oporavka,
-\item Mehanizmi odgovornosti, nadzora i neporecivosti.
-\end{enumerate}
-
 \subsection{Kriptografski i poverljivi mehanizmi}
 Kriptografija predstavlja temeljni mehanizam za obezbeđivanje poverljivosti, integriteta i autentičnosti podataka u distribuiranim i informacionim sistemima. Njena suštinska uloga ogleda se u sprečavanju neovlašćenog pristupa informacijama putem formalno definisanih matematičkih transformacija, uz jasno određene ciljeve poput sigurnosti šifrovanja, otpornosti na kriptoanalitičke napade i verifikacije autentičnosti poruka.
 
@@ -473,7 +463,7 @@ Raniji informacioni sistemi nisu posedovali jedinstvene mehanizme za upravljanje
 AAA \cite{metz2002aaa} \eng{Authentication, Authorization, Accounting} predstavlja bezbednosni okvir za proveru identiteta, ograničavanje pristupa i praćenje upotrebe resursa.
 \end{definicija}
 
-Originalni AAA model smatra se izuzetno moćnim i u praksi nezamenljivim \cite{de2000generic}, jer se široko tretira kao minimalna i standardizovana arhitektura za kontrolu pristupa. On omogućava logičku centralizaciju bezbednosnih politika i efikasnu kontrolu pristupa celokupnom informacionom okruženju, što je posebno važno u velikim, složenim i distribuiranim sistemima, jer smanjuje rizik od neovlašćenog korišćenja resursa i zloupotrebe privilegija.
+Originalni AAA model u literaturi i praksi se često smatra izuzetno moćnim i funkcionalno nezamenljivim \cite{de2000generic}, jer se široko tretira kao minimalna i standardizovana arhitektura za kontrolu pristupa. On omogućava logičku centralizaciju bezbednosnih politika i efikasnu kontrolu pristupa celokupnom informacionom okruženju, što je posebno važno u velikim, složenim i distribuiranim sistemima, jer smanjuje rizik od neovlašćenog korišćenja resursa i zloupotrebe privilegija.
 
 \subsubsection{Autentikacija}
 Autentikacija predstavlja inicijalni korak u procesu kontrole pristupa informacionim sistemima, budući da mehanizmi autorizacije i evidencije aktivnosti nemaju praktičnu vrednost ukoliko identitet subjekta nije pouzdano utvrđen.
@@ -512,3 +502,25 @@ Odluke o autorizaciji ne donose se proizvoljno, već se zasnivaju na apstraktnim
 \end{enumerate}
 
 Autorizacija ima ključnu ulogu u ostvarivanju \textbf{poverljivosti} i \textbf{integriteta} informacionih resursa, jer precizno definiše i dosledno sprovodi koje su operacije dozvoljene nad određenim podacima i funkcijama sistema.
+
+\subsubsection{Evidencija}
+Evidencija predstavlja završnu komponentu funkcionalnog bezbednosnog okvira i obuhvata sistematsko prikupljanje, čuvanje i analizu zapisa o aktivnostima autentifikovanih i autorizovanih entiteta u informacionom sistemu. Dok autentikacija i autorizacija definišu identitet i dozvole subjekata, evidencija omogućava uvid u to \textit{kako} se ta prava realizuju u praksi i na koji način su resursi korišćeni tokom rada sistema.
+
+\begin{definicija}
+Evidencija je bezbednosni proces kojim se beleže, čuvaju i analiziraju informacije o aktivnostima subjekata nad resursima informacionog sistema radi nadzora, revizije i ostvarivanja odgovornosti.
+\end{definicija}
+
+Primarna uloga evidencije ogleda se u povezivanju odluka o autentikaciji i autorizaciji sa konkretnim izvršenim radnjama. Ove informacije se najčešće evidentiraju u obliku dnevnika aktivnosti \eng{logs}, koji služe kao osnov za nadzor, detekciju anomalija, forenzičku analizu i reviziju sistema. U okruženjima sa visokim rizicima bezbednosti, dnevnici aktivnosti moraju biti dizajnirani tako da u slučaju kompromitacije sistema ne otkrivaju osetljive podatke koji bi mogli poslužiti napadaču za dalju eksploataciju \cite{schneier1999secure}.
+
+Evidencija se može organizovati \cite{bishop2002art} u sledeće grupe:
+\begin{enumerate}
+\item \textbf{Evidencija autentikacije} - obuhvata zapise o pokušajima autentikacije (uspešnim i neuspešnim), korišćenim autentikacionim mehanizmima, vremenu i trajanju autentikacione sesije, izvoru zahteva (npr. IP adresi, uređaju, lokaciji), promenama autentikacionih podataka i detekciji sumnjivih obrazaca.
+\item \textbf{Evidencija autorizacije} - obuhvata zahteve za pristup resursima, donete autorizacione odluke, reference na politike i pravila kontrole pristupa, promene privilegija i administrativne odluke o dodeli ili oduzimanju prava pristupa.
+\item \textbf{Ostala evidencija} - obuhvata podatke o aktivnostima i korišćenju resursa, bezbednosnim događajima i incidentima, sistemskim i konfiguracionim promenama, kao i zapise o integritetu samih evidencija.
+\end{enumerate}
+
+Evidencija omogućava nadzor ponašanja korisnika i sistema, procenu usklađenosti sa regulatornim i organizacionim zahtevima, kao i pravovremenu detekciju i analizu bezbednosnih incidenata. Ona predstavlja ključnu osnovu za forenzičku rekonstrukciju događaja nakon napada i za utvrđivanje odgovornosti u radu informacionih sistema. 
+
+Iako je evidencija prvenstveno uvedena kao bezbednosni mehanizam, u savremenim informacionim sistemima ona često ima i sekundarne namene. Velike količine podataka koje se prikupljaju kroz evidenciju aktivnosti korisnika mogu biti agregirane i analizirane radi poslovne optimizacije, ali i komercijalno eksploatisane kroz deljenje ili prodaju trećim stranama, uključujući oglašivačke i analitičke platforme. Ovakva praksa otvara značajna pitanja privatnosti, transparentnosti i informacione odgovornosti, budući da se podaci prikupljeni u svrhe bezbednosti i nadzora mogu koristiti izvan originalnog konteksta u kome su prikupljeni \cite{acquisti2016economics}.
+
+Evidencija primarno doprinosi ostvarivanju \textbf{neporecivosti} izvršenih radnji, jer, u kombinaciji sa kriptografskim mehanizmima, obezbeđuje kriptografski proverljive i vremenski obeležene dokaze o aktivnostima subjekata u sistemu.
