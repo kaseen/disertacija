@@ -394,7 +394,13 @@ Simetrični algoritmi mogu se podeliti na:
 
 Prednost simetrične kriptografije, pored visokog nivoa sigurnosti, ogleda se u njenoj izuzetnoj brzini i efikasnosti, jer šifrovanje i dešifrovanje troše minimalne resurse i dobro se skaliraju za velike količine podataka. Zbog ovih osobina, simetrična kriptografija predstavlja osnovu za šifrovanje podataka u sistemima sa visokim zahtevima u pogledu propusnosti i niske latencije.
 
-Međutim, osnovni izazov simetrične kriptografije jeste \textbf{bezbedna distribucija tajnog ključa}. Tajni ključ mora biti razmenjen na bezbedan način, jer kompromitacija ključa automatski kompromituje celokupnu komunikaciju. Dodatno, skaliranje sistema sa velikim brojem korisnika je zahtevno, pošto svaki par korisnika mora deliti sopstveni tajni ključ.
+Izazovi simetrične kriptografije uključuju otežano skaliranje sistema sa velikim brojem korisnika, budući da svaki par korisnika mora deliti sopstveni tajni ključ, kao i \textbf{problem razmene ključeva} \eng{key exchange problem}, koji se odnosi na bezbedan prenos tajnog kriptografskog materijala preko nezaštićenog komunikacionog kanala. Tajni ključ mora biti razmenjen na bezbedan način, jer njegova kompromitacija automatski dovodi do kompromitovanja celokupne komunikacije. 
+
+U tradicionalnim sistemima to je podrazumevalo da se inicijalna razmena ključeva mora obaviti neposrednim ili prethodno obezbeđenim putem, što predstavlja ozbiljno praktično ograničenje u okruženjima gde se komunikacione strane nalaze na velikim geografskim udaljenostima.
+
+Motivisani ovim problemom, Diffie i Hellman \cite{diffie1976} predlažu prvi praktični algoritam za uspostavljanje zajedničkog tajnog materijala \eng{shared secret} između dve strane tokom inicijalne faze komunikacije preko nezaštićenog kanala. Predloženi mehanizam omogućava da se za svaku novu sesiju nezavisno generiše novi tajni materijal, koji se u savremenim sistemima koristi kao osnova za izvođenje simetričnih privremenih (sesijskih) ključeva.
+
+Pored toga, ovaj rad po prvi put formalno uvodi koncept javno dostupnih informacija i privatnih tajni, pri čemu bezbednost sistema više ne zahteva postojanje tajnog kanala za inicijalnu razmenu ključeva. Autori takođe uvode teorijsku ideju digitalnih potpisa, čime postavljaju temelj za dalji razvoj asimetrične kriptografije i savremenih bezbednosnih protokola.
 
 \subsubsection{Asimetrična kriptografija}
 Iako posedujemo efikasne metode za generisanje i proveru prostih brojeva, poput ,,Eratostenovog sita'' \cite{helfgott2020improved}, rastavljanje proizvoljnog prirodnog broja na proste činioce predstavlja izrazito težak problem za koji do danas nije poznat polinomialno efikasan algoritam \cite{crandall2005prime}. U originalnom radu \cite{rivest1978method} koji je uveo asimetričan kriptografski algoritam baziran na modularnoj aritmetici autori navode da se sigurnost sistema počiva na teškoći faktorizacije.
@@ -409,10 +415,12 @@ Kada Alisa želi da Bobu prenese poverljive podatke, ona ih šifruje Bobovim jav
 Digitalni potpis predstavlja kriptografski mehanizam u kojem se privatni ključ koristi za generisanje proverljivog kriptografskog otiska nad porukom, dok se odgovarajući javni ključ koristi za verifikaciju tog otiska. Proces verifikacije potvrđuje autentičnost pošiljaoca, integritet poruke i obezbeđuje nemogućnost poricanja autorstva.
 \end{definicija}
 
+Međutim, da bi se obezbedila neporecivost i sprečilo naknadno poricanje ili umetanje događaja u prošlost, javlja se potreba da digitalni potpisi budu povezani sa preciznim vremenom njihovog nastanka. U ovom kontekstu razvijen je koncept kriptografskog vremenskog obeležavanja \cite{merkleprotocols} \eng{time-stamping} digitalnih dokaza, pri čemu se, radi pojednostavljenja modela, pretpostavlja postojanje centralnog autoriteta odgovornog za verifikaciju potpisa i održavanje pouzdane vremenske evidencije.
+
 Asimetrični kriptografski algoritmi mogu se klasifikovati prema matematičkim problemima na kojima se zasniva njihova sigurnost:
 \begin{enumerate}
 \item \textbf{Algoritmi zasnovani na problemu faktorizacije} - Bezbednost ovih sistema zasniva se na teškoći faktorizacije velikih kompozitnih brojeva na proste činioce. Koriste se u okruženjima gde je potrebna kompatibilnost i jednostavnost implementacije. Najistaknutiji predstavnik ove klase je RSA \cite{rivest1978method}.
-\item \textbf{Algoritmi zasnovani na problemu diskretnog logaritma u multiplikativnim grupama} - Bezbednost ovih sistema zasniva se na teškoći izračunavanja diskretnog logaritma u grupama modularne aritmetike. Ovi algoritmi se danas retko koriste u novim implementacijama zbog većih veličina ključeva. Glavni predstavnici ove klase su Diffie-Hellman \cite{diffie2022new} protokol razmene ključeva i \textit{Digital Signature Algorithm} \cite{pub2000digital}.
+\item \textbf{Algoritmi zasnovani na problemu diskretnog logaritma u multiplikativnim grupama} - Bezbednost ovih sistema zasniva se na teškoći izračunavanja diskretnog logaritma u grupama modularne aritmetike. Ovi algoritmi se danas retko koriste u novim implementacijama zbog većih veličina ključeva. Glavni predstavnici ove klase su Diffie-Hellman protokol razmene ključeva i \textit{Digital Signature Algorithm} \cite{pub2000digital}.
 \item \textbf{Algortimi zasnovani na eliptičkim kriavama} - Ovi algoritmi koriste algebarsku strukturu eliptičkih krivih nad konačnim poljima i obezbeđuju istu bezbednost kao prethodne klase uz znatno kraće ključeve i bolje performanse. Najzastupljeniji algoritmi su ECDSA \cite{johnson2001elliptic} (npr. nad krivama secp256k1 \cite{qu1999sec}) i EdDSA (npr. ed25519 \cite{bernstein2012high}).
 \item \textbf{Postkvantni algoritmi} - Zasnivanju se na matematičkim problemima za koje nisu poznati efikasni kvantni napadi. Posebno su značajni jer bi Šorov algoritam \cite{shor1994algorithms} kompromitovao prethodne tri klase ukoliko se pojave veliki univerzalni kvantni računari.
 \end{enumerate}
@@ -422,9 +430,7 @@ Glavna prednost asimetrične kriptografije jeste što eliminiše problem bezbedn
 Međutim, asimetrični algoritmi značajno su sporiji i zahtevniji po pitanju procesorske snage u poređenju sa simetričnim, a za isti nivo bezbednosti zahtevaju znatno duže ključeve. To ih čini nepraktičnim za šifrovanje velikih količina podataka i ograničava primenu u resursno ograničenim sistemima. Zbog značajnog performansnog opterećenja, asimetrična kriptografija nije pogodna za kontinuirano šifrovanje podataka u distribuiranim sistemima sa velikim obimom saobraćaja.
 
 \subsubsection{Hibridna kriptografija}
-Asimetrična i simetrična kriptografija u savremenim bezbednosnim protokolima integrišu se kroz hibridne kriptografske šeme, koje omogućavaju sigurno uspostavljanje zajedničkog tajnog materijala, uz istovremeno efikasno šifrovanje korisničkih podataka. Na taj način, performansni trošak asimetričnih mehanizama ograničen je na inicijalnu fazu uspostavljanja sesije, dok se efikasnost daljeg prenosa podataka zasniva na simetričnoj kriptografiji. 
-
-Hibridna kriptografija takođe rešava \textbf{problem razmene ključeva} \eng{key exchange problem}, odnosno prenos tajnog materijala preko nezaštićenog komunikacionog kanala.
+Ideja kombinovanja asimetričnih algoritama za uspostavljanje zajedničkog tajnog materijala i simetričnih šema za efikasno šifrovanje podataka prvi put se implicitno pojavljuje u radu Merkle-a \cite{merkleprotocols}, koji se u literaturi često smatra konceptualnom pretečom savremenih hibridnih kriptografskih protokola. Ovaj pristup omogućava da se performansni trošak asimetričnih mehanizama ograniči na inicijalnu fazu uspostavljanja sesije, dok se dalja komunikacija odvija korišćenjem brze i efikasne simetrične kriptografije.
 
 \begin{definicija}
 Hibridna kriptografija predstavlja pristup u kojem se za svaku pojedinačnu konekciju (sesiju) najpre uspostavlja glavni zajednički tajni materijal \eng{shared secret} korišćenjem asimetričnih algoritama za razmenu ključeva, nakon čega se celokupna dalja komunikacija šifruje brzim simetričnim algoritmima.
@@ -432,7 +438,7 @@ Hibridna kriptografija predstavlja pristup u kojem se za svaku pojedinačnu kone
 
 Iz uspostavljenog zajedničkog tajnog materijala, primenom algoritama za derivaciju ključeva \cite{chen2024recommendation} \eng{Key Derivation Functions}, generiše se čitav skup sesijskih ključeva \eng{session keys} koji se koriste za različite kriptografske potrebe, kao što su šifrovanje, autentikacija poruka, itd. 
 
-Međutim, aktivni napadač može presresti i čuvati sav saobraćaj, što dovodi do problema \textbf{tajnosti unapred} \cite{diffie2022new} \eng{forward secrecy}. Naime, ukoliko bi se u budućnosti kompromitovao glavni tajni materijal uspostavljen tokom početnog dogovora, sve ranije razmenjene poruke mogle bi biti dešifrovane. Stoga moderni protokoli koriste algoritme razmene ključeva koji obezbeđuju ovo svojstvo.
+Međutim, aktivni napadač može presresti i čuvati sav saobraćaj, što dovodi do problema \textbf{tajnosti unapred} \cite{canetti2001analysis} \eng{forward secrecy}. Naime, ukoliko bi se u budućnosti kompromitovao glavni tajni materijal uspostavljen tokom početnog dogovora, sve ranije razmenjene poruke mogle bi biti dešifrovane. Stoga moderni protokoli koriste algoritme razmene ključeva koji obezbeđuju ovo svojstvo.
 
 Najrasprostranjeniji primer hibridne kriptografije jeste protokol TLS \cite{rescorla2018transport}. U TLS-u server šalje klijentu \textit{digitalni sertifikat} koji sadrži njegov javni ključ i druge verifikacione informacije. Klijent zatim generiše ili dogovara zajednički sesijski tajni materijal i asimetrično ga štiti tokom prenosa. Nakon uspešne razmene, dalja komunikacija se obavlja simetričnim šifrovanjem visoke efikasnosti.
 
