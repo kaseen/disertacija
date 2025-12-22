@@ -20,7 +20,11 @@ Blokčejn, u skladu sa svojim nazivom, sastoji se od linearno uređenog niza blo
 Blok je skup transakcija i zaglavlja bloka koji sadrži metapodatke koji je kriptografski povezan sa prethodnim blokom, čime se formira lanac koji obezbeđuje konzistentnu, sigurnu i nepromenljivu evidenciju podataka u blokčejn mreži.
 \end{definicija}
 
-Svaki blok sadrži vremensku oznaku svog nastanka, kao i kriptografski heš prethodnog bloka, čime se uspostavlja lanac međusobno zavisnih vremenskih zapisa. Ovakva konstrukcija obezbeđuje neizmenljivost istorije sistema, jer bi svaka naknadna modifikacija sadržaja jednog bloka narušila konzistentnost svih narednih veza u lancu. Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu smatrati logički istovremenim, s obzirom na to da dele istu vremensku oznaku.
+Svaki blok sadrži vremensku oznaku svog nastanka, kao i kriptografski heš prethodnog bloka, čime se uspostavlja \textit{lanac međusobno zavisnih vremenskih zapisa}. Ovakva konstrukcija obezbeđuje neizmenljivost istorije sistema, budući da bi svaka naknadna modifikacija sadržaja jednog bloka narušila konzistentnost svih narednih veza u lancu. Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu smatrati logički istovremenim, s obzirom na to da dele istu vremensku oznaku nastanka.
+
+\begin{definicija}
+Blokčejn je javna, distribuirana struktura podataka koja održava redosled transakcija njihovim trajnim grupisanjem u blokove, pri čemu su blokovi povezani u linearan, hronološki lanac pomoću kriptografskih heš referenci.
+\end{definicija}
 
 Kada korisnici žele da koriste mrežu, oni formiraju transakciju, kriptografski je potpisuju svojim privatnim ključem i prosleđuju mreži. Nakon inicijalne provere validnosti, transakcija se privremeno smešta u ,,memorijski bazen'' nepotvrđenih transakcija \eng{mempool}, gde čeka da bude uključena u neki od narednih blokova.
 
@@ -32,9 +36,23 @@ Konsenzus mehanizam predstavlja centralnu tačku \textbf{koordinacije} i \textbf
 Konsenzus mehanizam u blokčejn sistemima predstavlja skup protokola i pravila kojima se obezbeđuje koordinisano prihvatanje novih blokova i održavanje jedinstvenog, konzistentnog stanja distribuirane evidencije.
 \end{definicija}
 
-Bitcoin kao konsenzus mehanizam primenjuje koncept dokazivanja uloženog rada. Ovaj pristup omogućava svakom učesniku mreže da ravnopravno učestvuje u procesu predlaganja novog bloka, bez oslanjanja na centralizovani autoritet ili prethodno dodeljeni identitet. Algoritam dokazivanja uloženog rada \eng{Proof of Work, PoW} zasniva se na rešavanju kriptografske zagonetke definisane kroz tzv. ciljni heš \eng{target hash}, koji predstavlja gornju granicu dozvoljene heš vrednosti zaglavlja bloka. Da bi novi blok bio prihvaćen, njegova heš vrednost mora biti manja ili jednaka ovoj unapred definisanoj ciljnoj vrednosti.
+Bitcoin kao konsenzus mehanizam primenjuje \textit{koncept dokazivanja uloženog rada}. Ovaj pristup omogućava svakom učesniku mreže da ravnopravno učestvuje u procesu predlaganja novog bloka, bez oslanjanja na centralizovani autoritet ili prethodno dodeljeni identitet. Algoritam dokazivanja uloženog rada \eng{Proof of Work, PoW} zasniva se na rešavanju kriptografske zagonetke definisane kroz tzv. ciljni heš \eng{target hash}, koji predstavlja gornju granicu dozvoljene heš vrednosti zaglavlja bloka. Da bi novi blok bio prihvaćen, njegova heš vrednost mora biti manja ili jednaka ovoj unapred definisanoj ciljnoj vrednosti.
 
 Učesnici koji predlažu novi blok prilagođavaju u njegovom zaglavlju tzv. \textit{počasnu} promenljivu \eng{nonce} i ponovo izračunavaju heš dok ne dobiju rezultat koji zadovoljava postavljeni uslov. Ovaj zadatak je konstruisan tako da ne postoji poznata efikasnija strategija od nasumičnog isprobavanja mogućih vrednosti metodom grube sile, dok je validacija pronađenog rešenja izuzetno brza i deterministička. Zbog značajnog računarskog i energetskog napora potrebnog za izvršavanje ovog procesa, učesnici koji obavljaju ovu funkciju nazivaju se rudari \eng{miners}.
+
+\begin{algorithm}
+\caption{Proces rudarenja}
+\begin{algorithmic}[1]
+\While{currentHash > targetHash}
+    \State currentHash = hash(...block header, nonce)
+    \If{currentHash $\leq$ targetHash}
+        \State Propagiraj blok
+    \Else
+        \State Uvećaj \textit{nonce}
+    \EndIf
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
 
 Nakon pronalaska odgovarajuće vrednosti počasne promenljive, rudar \textbf{propagira} predloženi blok ka ostalim čvorovima u mreži, koji nezavisno proveravaju validnost dokaza uloženog rada i usklađenost bloka sa ostalim protokolskim pravilima. Ukoliko su svi uslovi zadovoljeni, blok se prihvata kao naredni blok u lancu. Ova fundamentalna asimetrija između visokog troška generisanja novog bloka i zanemarljivog troška njegove verifikacije predstavlja ključni razlog zbog kojeg mehanizam dokazivanja uloženog rada omogućava funkcionisanje sistema u otvorenom i nepouzdanom distribuiranom okruženju.
 
