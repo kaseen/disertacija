@@ -11,11 +11,38 @@ Pokušaji realizacije elektronskog novca sa svojstvima fizičkog gotovinskog nov
 Na ovim teorijskim i tehničkim temeljima razvija se blokčejn tehnologija, koja svoju prvu široko prihvaćenu praktičnu realizaciju dobija kroz sistem \textit{Bitcoin} \cite{nakamoto2007bitcoin, crosby2016blockchain}. Njena ključna inovacija ogleda se u integraciji dotad nezavisnih kriptografskih i sistemskih koncepata, kriptografskog vremenskog obeležavanja, dokazivanja uloženog rada i javno proverljive evidencije događaja, u jedinstven, koherentan distribuirani mehanizam koji omogućava postizanje globalne saglasnosti među učesnicima mreže bez oslanjanja na centralni autoritet od poverenja.
 
 \begin{definicija}
-Transakcija predstavlja digitalni zapis kojim se prenosi vrednost ili podaci između učesnika distribuiranog sistema, uz kriptografsku zaštitu integriteta i autentičnosti.
+Blokčejn je javna, distribuirana struktura podataka koja održava redosled transakcija njihovim trajnim grupisanjem u blokove, pri čemu su blokovi povezani u linearan, hronološki lanac pomoću kriptografskih heš referenci.
 \end{definicija}
 
 Blokčejn, u skladu sa svojim nazivom, sastoji se od linearno uređenog niza blokova koji sadrže transakcije i prateće metapodatke. Ova struktura se \textbf{replikuje} kod svih učesnika mreže, zbog čega se može posmatrati kao javna, distribuirana struktura podataka koja funkcioniše kao knjiga evidencije \eng{ledger} svih transakcija izvršenih u sistemu. Početni element lanca naziva se \textit{blok geneze} \eng{Genesis block} i on je jedini blok koji nema prethodnika, te se eksplicitno inicijalizuje kako bi sistem mogao započeti svoj rad.
 
+\subsection{Transakcije i distribuirana evidencija}
+Kada korisnici žele da izvrše interakciju sa mrežom, oni konstruišu transakciju, kriptografski je potpisuju svojim privatnim ključem i prosleđuju je mreži na dalju obradu.
+
+\begin{definicija}
+Transakcija predstavlja digitalni zapis kojim se prenosi vrednost ili podaci između učesnika distribuiranog sistema, uz kriptografsku zaštitu integriteta i autentičnosti.
+\end{definicija}
+
+Nakon inicijalne provere formalne ispravnosti i validnosti potpisa, transakcija se privremeno smešta u lokalni ,,memorijski bazen'' nepotvrđenih transakcija \eng{mempool}, gde čeka da bude uključena u neki od narednih blokova.
+
+U otvorenom i distribuiranom okruženju, obrada, validacija i potvrđivanje transakcija predstavljaju potrošnju zajedničkih mrežnih resursa. Iz tog razloga, javni blokčejn sistemi uvode mehanizam naplate korišćenja mreže, kojim se istovremeno ograničava mogućnost zloupotreba u vidu masovnog slanja beskorisnih transakcija i obezbeđuje ekonomski podsticaj učesnicima koji učestvuju u održavanju i bezbednosti mreže.
+
+\begin{definicija}
+Transakciona naknada \eng{transaction fee, tx fee} predstavlja iznos koji korisnik prilaže uz transakciju kao naknadu za korišćenje resursa distribuirane mreže i njeno eventualno uključivanje u blokčejn.
+\end{definicija}
+
+Bitcoin sistem koristi \textbf{model nepotrošenih izlaza transakcija} \eng{Unspent Transaction Output, UTXO} za predstavljanje i praćenje stanja sredstava u mreži. U ovom modelu, svaka transakcija troši jedan ili više postojećih UTXO zapisa kao ulaze \eng{inputs} i generiše nove UTXO zapise kao izlaze \eng{outputs}.
+
+Ulazi transakcije referenciraju prethodno kreirane, ali još uvek nepotrošene izlaze koje korisnik namerava da iskoristi, dok izlazi definišu nove UTXO zapise koji predstavljaju primaoce poslatih sredstava i potencijalne ulaze u budućim transakcijama. Ukupna vrednost ulaza transakcije mora biti jednaka ili veća od zbira vrednosti izlaza.
+
+U Bitcoin mreži, zbir svih transakcionih naknada uključenih u jedan blok dodeljuje se učesniku koji je uspešno predložio i dodao novi blok u blokčejn. Na taj način, transakcione naknade predstavljaju značajan ekonomski podsticaj za održavanje mreže, ali i mehanizam za \textit{implicitno određivanje prioriteta transakcija}. 
+
+S obzirom na to da se transakcija sastoji od više ulaza i izlaza, transakciona naknada se implicitno definiše kao razlika između ukupne vrednosti ulaznih i izlaznih UTXO zapisa, što se formalno može izraziti sledećom relacijom:
+$$ tx\_fee = \sum_{x \in UTXO_{in}} value(x) - \sum_{y \in UTXO_{out}} value(y)$$
+
+Kako se zahteva da ukupna vrednost ulaznih UTXO zapisa bude veća ili jednaka ukupnoj vrednosti izlaznih zapisa, pri čemu razlika između ovih vrednosti predstavlja transakcionu naknadu, UTXO model implicitno nameće pravilo potpunog trošenja izlaza. Naime, svaki UTXO se, nakon što je iskorišćen kao ulaz i transakcija uspešno validirana, trajno uklanja iz skupa raspoloživih UTXO zapisa. Time se na protokolskom nivou ostvaruje zaštita od \textit{dvostrukog trošenja}, jer nijedan UTXO ne može biti istovremeno niti naknadno iskorišćen u više različitih transakcija.
+
+\subsection{Blok i zaglavlje bloka}
 \begin{definicija}
 Blok je skup transakcija i pripadajućeg zaglavlja koje sadrži metapodatke i koje je kriptografski povezano sa prethodnim blokom, čime se formira lanac koji obezbeđuje konzistentnu, sigurnu i nepromenljivu evidenciju podataka u blokčejn mreži.
 \end{definicija}
@@ -30,17 +57,18 @@ Zaglavlje bloka ima fiksnu veličinu od 80 bajtova i sadrži skup metapodataka n
 \item \textbf{Počasna promenljiva} \eng{nonce} (4 bajta) - promenljiva vrednost koja predstavlja rešenje prethodne kriptografske zagonetke, u slučaju iscrpljivanja njenog opsega, modifikuje se Merkleov koren putem dodatne vrednosti \eng{extra nonce}, nakon čega se proces nastavlja.
 \end{enumerate}
 
-Kako svaki blok sadrži vremensku oznaku svog nastanka, kao i kriptografski heš prethodnog bloka, na ovaj način se uspostavlja \textit{lanac međusobno zavisnih vremenskih zapisa}, koji predstavlja osnovu neizmenljivosti i hronološke konzistentnosti blokčejn strukture. Ovakva konstrukcija obezbeđuje neizmenljivost istorije sistema, budući da bi svaka naknadna modifikacija sadržaja jednog bloka narušila konzistentnost svih narednih veza u lancu. Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu smatrati logički istovremenim, s obzirom na to da dele istu vremensku oznaku nastanka.
+Kako svaki blok sadrži vremensku oznaku svog nastanka, kao i kriptografski heš prethodnog bloka, na ovaj način se uspostavlja \textit{lanac međusobno zavisnih vremenskih zapisa}, koji predstavlja osnovu neizmenljivosti i hronološke konzistentnosti blokčejn strukture. Ovakva konstrukcija obezbeđuje neizmenljivost istorije sistema, budući da bi svaka naknadna modifikacija sadržaja jednog bloka narušila konzistentnost svih narednih veza u lancu. 
+
+Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu smatrati logički istovremenim, s obzirom na to da dele istu vremensku oznaku nastanka.
+
+\subsection{Sistem postizanja konsenzusa i validacija novih blokova}
+Kako bi se formirao kandidat za novi blok, neophodno je da se prethodno prikupe nepotvrđene transakcije, pri čemu je ukupna veličina bloka unapred definisana protokolskim parametrima. Kako u distribuiranom okruženju više učesnika može istovremeno predložiti različite kandidate za sledeći blok koji se nadovezuju na isti prethodni blok, pa se javlja potreba za mehanizmom kojim se bira jedinstveni validni nastavak lanca.
 
 \begin{definicija}
-Blokčejn je javna, distribuirana struktura podataka koja održava redosled transakcija njihovim trajnim grupisanjem u blokove, pri čemu su blokovi povezani u linearan, hronološki lanac pomoću kriptografskih heš referenci.
+Predlagač bloka \eng{block proposer} je učesnik mreže koji ima pravo da predloži sledeći blok.
 \end{definicija}
 
-Kada korisnici žele da koriste mrežu, oni formiraju transakciju, kriptografski je potpisuju svojim privatnim ključem i prosleđuju mreži. Nakon inicijalne provere validnosti, transakcija se privremeno smešta u ,,memorijski bazen'' nepotvrđenih transakcija \eng{mempool}, gde čeka da bude uključena u neki od narednih blokova.
-
-Kako bi se formirao kandidat za novi blok, neophodno je da se prethodno prikupe nepotvrđene transakcije, pri čemu je ukupna veličina bloka unapred definisana protokolskim parametrima. Kako u distribuiranom okruženju više učesnika može istovremeno predložiti različite kandidate za sledeći blok koji se nadovezuju na isti prethodni blok, javlja se potreba za mehanizmom kojim se bira jedinstveni validni nastavak lanca.
-
-Konsenzus mehanizam predstavlja centralnu tačku \textbf{koordinacije} i \textbf{kontrolne decentralizacije} u blokčejn sistemu, budući da definiše i sprovodi skup pravila prema kojima se održava konzistentnost globalnog stanja mreže. U sistemu \textit{Bitcoin}, osnovno pravilo podrazumeva da se svaki novi blok nezavisno proverava od strane svih čvorova pre njegovog prihvatanja i uključivanja u lokalnu verziju lanca. Ovaj proces validacije obuhvata proveru ispravnosti svih transakcija sadržanih u bloku, čime se eliminišu pokušaji vizantijskih čvorova da nametnu blokove koji sadrže makar jednu nevalidnu transakciju.
+Konsenzus mehanizam predstavlja centralnu tačku \textbf{koordinacije} i \textbf{kontrolne decentralizacije} u blokčejn sistemu, budući da definiše i sprovodi skup pravila prema kojima se održava konzistentnost globalnog stanja mreže. Osnovno pravilo podrazumeva da se svaki novi blok nezavisno proverava od strane svih čvorova pre njegovog prihvatanja i uključivanja u lokalnu verziju lanca. Ovaj proces validacije obuhvata proveru ispravnosti svih transakcija sadržanih u bloku, čime se eliminišu pokušaji vizantijskih čvorova da nametnu blokove koji sadrže makar jednu nevalidnu transakciju.
 
 \begin{definicija}
 Konsenzus mehanizam u blokčejn sistemima predstavlja skup protokola i pravila kojima se obezbeđuje koordinisano prihvatanje novih blokova i održavanje jedinstvenog, konzistentnog stanja distribuirane evidencije.
@@ -48,7 +76,7 @@ Konsenzus mehanizam u blokčejn sistemima predstavlja skup protokola i pravila k
 
 Bitcoin kao konsenzus mehanizam primenjuje \textit{koncept dokazivanja uloženog rada}. Ovaj pristup omogućava svakom učesniku mreže da ravnopravno učestvuje u procesu predlaganja novog bloka, bez oslanjanja na centralizovani autoritet ili prethodno dodeljeni identitet. Algoritam dokazivanja uloženog rada \eng{Proof of Work, PoW} zasniva se na rešavanju kriptografske zagonetke definisane u prethodnom bloku, pri čemu ciljni prag predstavlja gornju granicu dozvoljene heš vrednosti zaglavlja sledećeg bloka. Da bi novi blok bio prihvaćen, njegova heš vrednost mora biti manja ili jednaka ovoj unapred definisanoj ciljnoj vrednosti.
 
-Učesnici koji predlažu novi blok prilagođavaju u njegovom zaglavlju \textit{nonce} i ponovo izračunavaju heš dok ne dobiju rezultat koji zadovoljava postavljeni uslov (Algoritam \ref{alg:proof_of_work}). Ovaj zadatak je konstruisan tako da ne postoji poznata efikasnija strategija od nasumičnog isprobavanja mogućih vrednosti metodom grube sile, dok je validacija pronađenog rešenja izuzetno brza i deterministička. Zbog značajnog računarskog i energetskog napora potrebnog za izvršavanje ovog procesa, učesnici koji obavljaju ovu funkciju nazivaju se rudari \eng{miners}.
+Učesnici koji predlažu novi blok prilagođavaju u njegovom zaglavlju \textit{nonce} i ponovo izračunavaju heš dok ne dobiju rezultat koji zadovoljava postavljeni uslov (Algoritam \ref{alg:proof_of_work}). Ovaj zadatak je konstruisan tako da ne postoji poznata efikasnija strategija od nasumičnog isprobavanja mogućih vrednosti metodom grube sile, dok je validacija pronađenog rešenja izuzetno brza i deterministička. Zbog značajnog računarskog i energetskog napora potrebnog za izvršavanje ovog procesa, predlagači blokova koji obavljaju ovu funkciju nazivaju se rudari \eng{miners}.
 
 \begin{algorithm}
 \caption{Proces rudarenja}
@@ -67,13 +95,16 @@ Učesnici koji predlažu novi blok prilagođavaju u njegovom zaglavlju \textit{n
 
 Svaki rudar nezavisno konstruiše kandidat za novi blok, pri čemu samostalno bira skup transakcija koje će u njega uključiti. Tokom izvršavanja algoritma dokazivanja uloženog rada, jedina promenljiva koja se sistematski menja u zaglavlju bloka jeste \textit{nonce}, dok je dominantna i računski najzahtevnija operacija višestruko kriptografsko heširanje kompletnog zaglavlja bloka. Ukupna računarska snaga angažovana u održavanju cele mreže meri se brojem izvršenih heš operacija u jedinici vremena, poznatim kao \eng{hashpower}, koji se u praksi izražava u megahašima ($10^{6}$), terahašima ($10^{12}$) i eksahašima ($10^{18}$) u sekundi.
 
+Ova fundamentalna asimetrija između visokog troška generisanja novog bloka i zanemarljivog troška njegove verifikacije predstavlja ključni razlog zbog kojeg mehanizam dokazivanja uloženog rada omogućava funkcionisanje sistema u otvorenom i nepouzdanom distribuiranom okruženju.
+
 Kako bi se očuvalo približno konstantno prosečno vreme generisanja bloka od deset minuta, mreža periodično prilagođava težinu ciljne heš vrednosti u zavisnosti od ukupne heš snage dostupne u sistemu. Ovo prilagođavanje se vrši na svakih 2016 blokova, čime se omogućava stabilno funkcionisanje sistema uprkos promenama u broju i kapacitetu učesnika koji učestvuju u procesu rudarenja.
 
-Nakon pronalaska odgovarajuće vrednosti počasne promenljive, rudar \textbf{propagira} predloženi blok ka ostalim čvorovima u mreži, koji nezavisno proveravaju validnost dokaza uloženog rada i usklađenost bloka sa ostalim protokolskim pravilima. Ukoliko su svi uslovi zadovoljeni, blok se prihvata kao naredni blok u lancu. Ova fundamentalna asimetrija između visokog troška generisanja novog bloka i zanemarljivog troška njegove verifikacije predstavlja ključni razlog zbog kojeg mehanizam dokazivanja uloženog rada omogućava funkcionisanje sistema u otvorenom i nepouzdanom distribuiranom okruženju.
+\subsection{Propagacija blokova i razrešavanje konflikata}
+Nakon pronalaska odgovarajuće vrednosti počasne promenljive predloženi blok se \textbf{propagira} ka ostalim čvorovima u mreži, koji nezavisno proveravaju validnost dokaza uloženog rada i usklađenost bloka sa ostalim protokolskim pravilima. Ukoliko su svi uslovi zadovoljeni, blok se prihvata kao naredni blok u lancu. 
 
 Moguće je, međutim, da dva ili više rudara u približno istom vremenskom intervalu pronađu i propagiraju različite, ali međusobno validne kandidate za $(n+1)$-ti blok koji se nadovezuju na isti prethodni $n$-ti blok. U tom slučaju, različiti podskupovi čvorova mogu privremeno prihvatiti različite verzije lanca kao važeće, što dovodi do kratkotrajne diverzifikacije stanja mreže. Ovo stanje se razrešava pronalaženjem narednog $(n+2)$-og bloka, budući da se svaki novi blok može nadovezati isključivo na jedan od postojećih kandidata.
 
-U ovakvom sistemu ne postoji centralni ili glavni čvor, ali pravilo najdužeg lanca \eng{longest chain rule} efektivno preuzima njegovu ulogu. Grana lanca koja se prva produži i postane duža od ostalih prihvata se kao kanonska verzija istorije sistema. Čvorovi koji su prethodno sledili kraću granu odbacuju je i sinhronizuju se sa najdužim važećim lancem, čime se mreža ponovo dovodi u konzistentno stanje. Kako se nad određenim blokom nadograđuje sve veći broj novih blokova, verovatnoća da alternativna grana nadmaši postojeći lanac opada eksponencijalno.
+U sistemu \textit{Bitcoin} ne postoji centralni ili glavni čvor, ali pravilo najdužeg lanca \eng{longest chain rule} efektivno preuzima njegovu ulogu. Grana lanca koja se prva produži i postane duža od ostalih prihvata se kao kanonska verzija istorije sistema. Čvorovi koji su prethodno sledili kraću granu odbacuju je i sinhronizuju se sa najdužim važećim lancem, čime se mreža ponovo dovodi u konzistentno stanje. Kako se nad određenim blokom nadograđuje sve veći broj novih blokova, verovatnoća da alternativna grana nadmaši postojeći lanac opada eksponencijalno.
 
 \begin{definicija}
 Finalnost \eng{finality} transakcije označava trenutak nakon kojeg se transakcija smatra trajno zabeleženom u blokčejnu i ne može biti poništena.
