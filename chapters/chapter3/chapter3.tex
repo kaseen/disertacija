@@ -16,7 +16,7 @@ Blokčejn je javna, distribuirana struktura podataka koja održava redosled tran
 
 Blokčejn, u skladu sa svojim nazivom, sastoji se od linearno uređenog niza blokova koji sadrže transakcije i prateće metapodatke. Ova struktura se \textbf{replikuje} kod svih učesnika mreže, zbog čega se može posmatrati kao javna, distribuirana struktura podataka koja funkcioniše kao knjiga evidencije \eng{ledger} svih transakcija izvršenih u sistemu. Početni element lanca naziva se \textit{blok geneze} \eng{Genesis block} i on je jedini blok koji nema prethodnika, te se eksplicitno inicijalizuje kako bi sistem mogao započeti svoj rad.
 
-\subsection{Transakcije i distribuirana evidencija}
+\subsection{Transakcije i blokovi}
 Kada korisnici žele da izvrše interakciju sa mrežom, oni konstruišu transakciju, kriptografski je potpisuju svojim privatnim ključem i prosleđuju je mreži na dalju obradu.
 
 \begin{definicija}
@@ -31,35 +31,25 @@ U otvorenom i distribuiranom okruženju, obrada, validacija i potvrđivanje tran
 Transakciona naknada \eng{transaction fee, tx fee} predstavlja iznos koji korisnik prilaže uz transakciju kao naknadu za korišćenje resursa distribuirane mreže i njeno eventualno uključivanje u blokčejn.
 \end{definicija}
 
-Bitcoin sistem koristi \textbf{model nepotrošenih izlaza transakcija} \eng{Unspent Transaction Output, UTXO} za predstavljanje i praćenje stanja sredstava u mreži. U ovom modelu, svaka transakcija troši jedan ili više postojećih UTXO zapisa kao ulaze \eng{inputs} i generiše nove UTXO zapise kao izlaze \eng{outputs}.
+Transakcione naknade predstavljaju dominantan mehanizam za \textit{implicitno određivanje prioriteta transakcija}, budući da obezbeđuju snažan ekonomski podsticaj učesnicima koji održavaju mrežu. S obzirom na to da svaka dodatna transakcija povećava veličinu bloka, dok je ukupna veličina bloka ograničena unapred definisanim parametrima protokola, proizvođači blokova su motivisani da pri formiranju narednog bloka uključe nepotvrđene transakcije sa većim naknadama, čime se postiže tržišno zasnovana selekcija transakcija.
 
-Ulazi transakcije referenciraju prethodno kreirane, ali još uvek nepotrošene izlaze koje korisnik namerava da iskoristi, dok izlazi definišu nove UTXO zapise koji predstavljaju primaoce poslatih sredstava i potencijalne ulaze u budućim transakcijama. Ukupna vrednost ulaza transakcije mora biti jednaka ili veća od zbira vrednosti izlaza.
-
-U Bitcoin mreži, zbir svih transakcionih naknada uključenih u jedan blok dodeljuje se učesniku koji je uspešno predložio i dodao novi blok u blokčejn. Na taj način, transakcione naknade predstavljaju značajan ekonomski podsticaj za održavanje mreže, ali i mehanizam za \textit{implicitno određivanje prioriteta transakcija}. 
-
-S obzirom na to da se transakcija sastoji od više ulaza i izlaza, transakciona naknada se implicitno definiše kao razlika između ukupne vrednosti ulaznih i izlaznih UTXO zapisa, što se formalno može izraziti sledećom relacijom:
-$$ tx\_fee = \sum_{x \in UTXO_{in}} value(x) - \sum_{y \in UTXO_{out}} value(y)$$
-
-Kako se zahteva da ukupna vrednost ulaznih UTXO zapisa bude veća ili jednaka ukupnoj vrednosti izlaznih zapisa, pri čemu razlika između ovih vrednosti predstavlja transakcionu naknadu, UTXO model implicitno nameće pravilo potpunog trošenja izlaza. Naime, svaki UTXO se, nakon što je iskorišćen kao ulaz i transakcija uspešno validirana, trajno uklanja iz skupa raspoloživih UTXO zapisa. Time se na protokolskom nivou ostvaruje zaštita od \textit{dvostrukog trošenja}, jer nijedan UTXO ne može biti istovremeno niti naknadno iskorišćen u više različitih transakcija.
-
-\subsection{Blok i zaglavlje bloka}
 \begin{definicija}
 Blok je skup transakcija i pripadajućeg zaglavlja koje sadrži metapodatke i koje je kriptografski povezano sa prethodnim blokom, čime se formira lanac koji obezbeđuje konzistentnu, sigurnu i nepromenljivu evidenciju podataka u blokčejn mreži.
 \end{definicija}
 
-Zaglavlje bloka ima fiksnu veličinu od 80 bajtova i sadrži skup metapodataka neophodnih za validaciju bloka i njegovo kriptografsko povezivanje sa ostatkom lanca. Ovi metapodaci uključuju:
+Kako svaki blok sadrži vremensku oznaku svog nastanka, kao i kriptografski heš prethodnog bloka, na ovaj način se uspostavlja \textit{lanac međusobno zavisnih vremenskih zapisa}, koji predstavlja osnovu neizmenljivosti i hronološke konzistentnosti blokčejn strukture. Ovakva konstrukcija obezbeđuje neizmenljivost istorije sistema, budući da bi svaka naknadna modifikacija sadržaja jednog bloka narušila konzistentnost svih narednih veza u lancu. 
+
+Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu smatrati logički istovremenim, s obzirom na to da dele istu vremensku oznaku nastanka.
+
+U Bitkoinu, zaglavlje bloka ima fiksnu veličinu od 80 bajtova i sadrži skup metapodataka neophodnih za validaciju bloka i njegovo kriptografsko povezivanje sa ostatkom lanca. Ovi metapodaci uključuju:
 \begin{enumerate}
 \item \textbf{Verzija} (4 bajta) - identifikator verzije bloka koji određuje skup protokolskih pravila i validacionih uslova koje čvorovi mreže treba da primenjuju prilikom njegove obrade,
 \item \textbf{Heš prethodnog bloka} (32 bajta) - kriptografska referenca na prethodni blok u lancu, kojom se obezbeđuje da bilo kakva izmena sadržaja prethodnog bloka nužno dovodi do promene zaglavlja tekućeg bloka,
 \item \textbf{Merkleov koren transakcija} (\textit{tx\_root}) (32 bajta) - heš vrednost korena Merkleovog stabla \cite{merkle1987digital} formiranog od svih transakcija uključenih u blok, svaka izmena makar jedne transakcije menja ovu vrednost,
 \item \textbf{Vremenska oznaka} (4 bajta) - trenutak početka procesa heširanja bloka izražen u Unix formatu, blok se smatra validnim ukoliko ova vrednost ne odstupa značajno od lokalnog vremena ostalih čvorova u mreži,
 \item \textbf{\textit{nBits}} (4 bajta) - kompaktno kodirana reprezentacija ciljne heš vrednosti \eng{target hash}, kojom se određuje težina kriptografske zagonetke i dinamički reguliše tempo generisanja sledećeg bloka u mreži,
-\item \textbf{Počasna promenljiva} \eng{nonce} (4 bajta) - promenljiva vrednost koja predstavlja rešenje prethodne kriptografske zagonetke, u slučaju iscrpljivanja njenog opsega, modifikuje se Merkleov koren putem dodatne vrednosti \eng{extra nonce}, nakon čega se proces nastavlja.
+\item \textbf{Počasna promenljiva} \eng{nonce} (4 bajta) - promenljiva vrednost koja predstavlja rešenje prethodne kriptografske zagonetke, u slučaju iscrpljivanja njenog opsega, dodatno se modifikuje Merkleov koren \eng{extra nonce}.
 \end{enumerate}
-
-Kako svaki blok sadrži vremensku oznaku svog nastanka, kao i kriptografski heš prethodnog bloka, na ovaj način se uspostavlja \textit{lanac međusobno zavisnih vremenskih zapisa}, koji predstavlja osnovu neizmenljivosti i hronološke konzistentnosti blokčejn strukture. Ovakva konstrukcija obezbeđuje neizmenljivost istorije sistema, budući da bi svaka naknadna modifikacija sadržaja jednog bloka narušila konzistentnost svih narednih veza u lancu. 
-
-Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu smatrati logički istovremenim, s obzirom na to da dele istu vremensku oznaku nastanka.
 
 \subsection{Sistem postizanja konsenzusa i validacija novih blokova}
 Kako bi se formirao kandidat za novi blok, neophodno je da se prethodno prikupe nepotvrđene transakcije, pri čemu je ukupna veličina bloka unapred definisana protokolskim parametrima. Kako u distribuiranom okruženju više učesnika može istovremeno predložiti različite kandidate za sledeći blok koji se nadovezuju na isti prethodni blok, pa se javlja potreba za mehanizmom kojim se bira jedinstveni validni nastavak lanca.
@@ -117,3 +107,19 @@ Opisani mehanizam dokazivanja uloženog rada pokazuje da Bitcoin ne postiže kon
 \begin{teorema}
 Verovatnosni konsenzus u blokčejn sistemima direktno zavisi od parametra finalnosti transakcija.
 \end{teorema}
+
+\subsection{Struktura i funkcionalnost blokčejn sistema}
+Razumevanje unutrašnje organizacije podataka u blokčejn sistemima predstavlja ključni preduslov za analizu njihovog funkcionisanja i bezbednosnih svojstava. Podaci u ovom kontekstu ne obuhvataju samo istoriju izvršenih transakcija, već i reprezentaciju trenutnog stanja mreže, odnosno način na koji se stanje sredstava i prava pojedinačnih učesnika definiše, ažurira i verifikuje. Različiti modeli upravljanja stanjem uslovljavaju načine potrošnje sredstava, pravila validacije transakcija, kao i skup funkcionalnosti koje sistem može ponuditi krajnjim korisnicima.
+
+Bitcoin sistem koristi \textbf{model nepotrošenih izlaza transakcija} \eng{Unspent Transaction Output, UTXO} za predstavljanje i praćenje stanja sredstava u mreži. U ovom modelu, svaka transakcija troši jedan ili više postojećih UTXO zapisa kao ulaze \eng{inputs} i generiše nove UTXO zapise kao izlaze \eng{outputs}.
+
+Po uspešnom dodavanju novog bloka u blokčejn, protokol automatski generiše posebnu transakciju bez ulaznih referenci, kojom se nova sredstva, zajedno sa prikupljenim transakcionim naknadama iz tog bloka, dodeljuju adresi učesnika koji je predložio i validno dodao blok. Ova transakcija, poznata kao \textit{blagajnička transakcija} \eng{coinbase transaction}, predstavlja jedini mehanizam kreiranja novih jedinica kriptovalute u obliku UTXO zapisa u Bitcoin sistemu, prema unapred definisanom monetarnom rasporedu.
+
+% TODO SCRIPTING LANGUAGE
+
+Ulazi transakcije referenciraju prethodno kreirane, ali još uvek nepotrošene izlaze koje korisnik namerava da iskoristi, dok izlazi definišu nove UTXO zapise koji predstavljaju primaoce poslatih sredstava i potencijalne ulaze u budućim transakcijama. Ukupna vrednost ulaza transakcije mora biti jednaka ili veća od zbira vrednosti izlaza.
+
+S obzirom na to da se transakcija sastoji od više ulaza i izlaza, transakciona naknada se implicitno definiše kao razlika između ukupne vrednosti ulaznih i izlaznih UTXO zapisa, što se formalno može izraziti sledećom relacijom:
+$$ tx\_fee = \sum_{x \in UTXO_{in}} value(x) - \sum_{y \in UTXO_{out}} value(y)$$
+
+Kako se zahteva da ukupna vrednost ulaznih UTXO zapisa bude veća ili jednaka ukupnoj vrednosti izlaznih zapisa, pri čemu razlika između ovih vrednosti predstavlja transakcionu naknadu, UTXO model implicitno nameće pravilo potpunog trošenja izlaza. Naime, svaki UTXO se, nakon što je iskorišćen kao ulaz i transakcija uspešno validirana, trajno uklanja iz skupa raspoloživih UTXO zapisa. Time se na protokolskom nivou ostvaruje zaštita od \textit{dvostrukog trošenja}, jer nijedan UTXO ne može biti istovremeno niti naknadno iskorišćen u više različitih transakcija.
