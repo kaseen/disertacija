@@ -1,7 +1,7 @@
 \chapter{Analitički okvir za evaluaciju informacionih sistema}
 Cilj ovog poglavlja jeste da uspostavi metodologiju za analizu tehničkih prednosti i ograničenja informacionih sistema, nezavisno od toga da li su oni centralizovani, distribuirani ili decentralizovani. Fokus je isključivo na njihovim \textbf{tehničkim atributima infrastrukture}, dok se menadžerski, organizacioni i ekonomski faktori pominju samo okvirno, jer ne predstavljaju predmet detaljne analize ove disertacije.
 
-Da bi se obezbedio standardizovan okvir evaluacije, kvalitativne karakteristike informacionih i softverskih arhitektura formalizuju se kroz \textbf{atribute kvaliteta} prema IEEE i ISO standardima \cite{bass2021software, 2013ISOI}. Za potrebe ove disertacije atributi kvaliteta biće grupisani u sledeće kategorije:
+Da bi se obezbedio standardizovan okvir evaluacije, karakteristike informacionih i softverskih arhitektura formalizuju se kroz \textbf{atribute kvaliteta} prema IEEE i ISO standardima \cite{bass2021software, 2013ISOI}. Za potrebe ove disertacije atributi kvaliteta biće grupisani u sledeće kategorije:
 \begin{enumerate}
 \item \textbf{Performanse i efikasnost:} performanse, skalabilnost, efikasnost korišćenja resursa, troškovna efikasnost, operativno održavanje, fleksibilnost, energetska efikasnost.
 \item \textbf{Operativna svojstva:} dostupnost, integritet, sigurnost, pouzdanost, otpornost na greške, konzistentnost podataka.
@@ -54,7 +54,7 @@ Da bi se precizno razlikovala perspektiva radnog sistema od perspektive informac
 
 Procesna jedinica generiše zahtev, dok informacioni sistem realizuje taj zahtev kroz skup tehničkih operacija.
 
-\begin{definicija}
+\begin{definicija}\label{def:zahtev}
 Zahtev predstavlja elementarnu funkcionalnu operaciju koju informacioni sistem treba da obradi. Finalizacija zahteva označava trenutak kada informacioni sistem završi kompletnu obradu zahteva.
 \end{definicija}
 
@@ -72,7 +72,7 @@ Tipični primeri zahteva uključuju upis podatka u bazu, izvršavanje funkcional
 U skladu sa savremenim pristupima modeliranju procesa i \textit{end-to-end} analizi radnih tokova \cite{sedova2023development}, \textbf{zahtev se ne posmatra kao izolovana jedinica}, već kao deo šireg procesa čija se vrednost i funkcionalna uloga ispoljava tek u interakciji sa ostalim procesima i komponentama arhitekture informacionog sistema.
 
 \begin{definicija}
-Performanse predstavljaju sposobnost informacionog sistema da efikasno obrađuje zahteve. U analizi informacionih arhitektura performanse se posmatraju kao kvalitativni atribut.
+Performanse predstavljaju sposobnost informacionog sistema da efikasno obrađuje zahteve. U analizi informacionih arhitektura performanse se posmatraju kao kvantitativni atribut.
 \end{definicija}
 
 Kako su performanse apstraktan pojam koji se kvantitativno izražava različitim metrikama, a pri tom različiti akteri mogu imati različite kriterijume ,,efikasnost'' sistema (npr. organizacije prvenstveno optimizuju troškove, dok krajnji korisnici vrednuju brzinu i cenu usluge), u daljem radu razmatraju se sledeće ključne performansne metrike:
@@ -98,7 +98,7 @@ U stanju zagušenja, zahtevi se akumuliraju brže nego što ih sistem može obra
 
 Primena fundamentalnih rezultata teorije čekanja \cite{adan2002queueing} omogućava formalno razumevanje ponašanja sistema kada dolazna stopa zahteva premaši njegov kapacitet, što se direktno preslikava na posmatrane performansne metrike. Time dobijamo:
 
-\begin{teorema}
+\begin{teorema}\label{teorema:kapacitet}
 Kada dolazna stopa zahteva premaši kapacitet sistema, propusnost dostiže svoj maksimum, latencija teži beskonačnosti, a cena obrade svakog zahteva eksponencijalno raste usled akumulacije redova čekanja i pojačane konkurencije za resurse.
 \end{teorema}
 
@@ -361,7 +361,7 @@ U celini, kontenciju najviše povećavaju arhitekturalni obrasci koji uvode zaje
 \section{Operativna svojstva}
 Bezbednosni modeli predstavljaju formalizovane teorijske okvire kojima se sistematski definišu bezbednosni ciljevi, principi i pravila ponašanja informacionih sistema u odnosu na pretnje, neovlašćen pristup i zloupotrebu resursa. U kontekstu distribuiranih informacionih sistema, ovi modeli se primenjuju u okruženjima koja karakterišu autonomni čvorovi, nepouzdani komunikacioni kanali i parcijalni otkazi, što značajno komplikuje ostvarivanje i koordinaciju bezbednosnih svojstava. 
 
-Ovi modeli čine osnovu savremenih teorijskih i praktičnih pristupa informacionoj bezbednosti i zasnivanju arhitektura visokog nivoa pouzdanosti. Ključna operativna bezbednosna svojstva \cite{bishop2002art, sommer2019survey}, koja se u literaturi često objedinuju pod akronimom \textit{CIAAN}, uključuju:
+Ovi modeli čine osnovu savremenih teorijskih i praktičnih pristupa informacionoj bezbednosti i zasnivanju arhitektura visokog nivoa pouzdanosti. Ključna operativna bezbednosna svojstva \cite{bishop2002art, sommer2019survey}, koja se u literaturi često objedinuju akronimom \textit{CIAAN}, predstavljaju kvalitativne osobine sistema i uključuju:
 \begin{enumerate}
 \item \textbf{Poverljivost} \eng{confidentiality} - svojstvo kojim se obezbeđuje da podaci ostanu dostupni isključivo ovlašćenim korisnicima, posebno kada je reč o ličnim, osetljivim ili zaštićenim informacijama,
 \item \textbf{Integritet} \eng{integrity} - svojstvo koje garantuje tačnost, potpunost i neizmenljivost podataka, sprečavajući njihovu modifikaciju od strane neovlašćenih korisnika,

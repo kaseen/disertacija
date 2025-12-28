@@ -19,13 +19,13 @@ Blokčejn je javna, distribuirana struktura podataka koja održava redosled tran
 Blokčejn, u skladu sa svojim nazivom, sastoji se od linearno uređenog niza blokova koji sadrže transakcije i prateće metapodatke. Ova struktura se \textbf{replikuje} kod svih učesnika mreže, zbog čega se može posmatrati kao javna, distribuirana struktura podataka koja funkcioniše kao knjiga evidencije \eng{ledger} svih transakcija izvršenih u sistemu. Početni element lanca naziva se \textit{blok geneze} \eng{Genesis block} i on je jedini blok koji nema prethodnika, te se eksplicitno inicijalizuje kako bi sistem mogao započeti svoj rad.
 
 \subsection{Transakcije i blokovi}
-Kada korisnici žele da izvrše interakciju sa mrežom, oni konstruišu transakciju, koja ujedno predstavlja osnovnu aplikativnu \textbf{poruku (zahtev)} sistema, kriptografski je potpisuju svojim privatnim ključem i prosleđuju je mreži na dalju obradu.
+Kada korisnici žele da ostvare interakciju sa mrežom, oni, u skladu sa Definicijom \ref{def:zahtev}, formiraju transakciju kao konkretnu instancu elementarnog zahteva sistema, kriptografski je potpisuju odgovarajućim privatnim ključem i prosleđuju mreži na dalju obradu.
 
 \begin{definicija}
 Transakcija predstavlja kriptografski zaštićen digitalni zapis kojim se prenosi vrednost ili podaci između učesnika distribuiranog sistema.
 \end{definicija}
 
-Korisnici mreže formiraju transakcije, kriptografski ih potpisuju svojim privatnim ključevima i prosleđuju mreži radi obrade. Nakon inicijalne verifikacije osnovnih uslova validnosti, transakcije se privremeno smeštaju u lokalni ,,memorijski bazen'' nepotvrđenih transakcija \eng{mempool}, gde čekaju da budu uključene u neki od narednih blokova.
+Nakon inicijalne verifikacije osnovnih uslova validnosti, transakcije se privremeno smeštaju u lokalni ,,memorijski bazen'' nepotvrđenih transakcija \eng{mempool}, gde čekaju da budu uključene u neki od narednih blokova.
 
 U otvorenom i distribuiranom okruženju, obrada, validacija i potvrđivanje transakcija predstavljaju potrošnju zajedničkih računarskih i komunikacionih resursa. Iz tog razloga, javni blokčejn sistemi uvode mehanizam naplate korišćenja mreže, kojim se istovremeno ograničava mogućnost zloupotreba u vidu masovnog slanja beskorisnih transakcija i obezbeđuje ekonomski podsticaj učesnicima koji učestvuju u održavanju i bezbednosti mreže.
 
@@ -39,15 +39,21 @@ Transakcione naknade predstavljaju dominantan mehanizam \textit{implicitnog odre
 Blok je skup transakcija i pripadajućeg zaglavlja koje sadrži metapodatke i koje je kriptografski povezano sa prethodnim blokom, čime se formira lanac koji obezbeđuje konzistentnu, sigurnu i nepromenljivu evidenciju podataka u blokčejn mreži.
 \end{definicija}
 
-Kako svaki blok sadrži vremensku oznaku svog nastanka, kao i kriptografski heš prethodnog bloka, na ovaj način se uspostavlja \textit{lanac međusobno zavisnih vremenskih zapisa}, koji predstavlja osnovu neizmenljivosti i hronološke konzistentnosti blokčejn strukture i funkcioniše kao logički \textbf{sat} distribuiranog sistema čime se obezbeđuje globalno \textbf{uređenje} transakcija na nivou cele mreže. Ovakva konstrukcija obezbeđuje neizmenljivost istorije sistema, budući da bi svaka naknadna modifikacija sadržaja jednog bloka narušila konzistentnost svih narednih veza u lancu. 
-
 Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu smatrati logički istovremenim, s obzirom na to da dele istu vremensku oznaku nastanka.
 
-S obzirom na to da se blokčejn struktura sastoji od niza međusobno povezanih blokova, blok predstavlja osnovnu strukturnu jedinicu sistema. Iz tog razloga, \textbf{kapacitet} blokčejna direktno je određen karakteristikama blokova i nije dinamički prilagodljiv, već je unapred fiksiran protokolom kroz parametre. U uslovima povećanog intenziteta dolaznih transakcija, ovakva ograničenja dovode do pojave \textbf{zagušenja}, koje se ispoljava kroz rast broja nepotvrđenih transakcija i povećanje transakcionih naknada.
+Kako svaki blok sadrži vremensku oznaku svog nastanka, kao i kriptografski heš prethodnog bloka, na ovaj način se uspostavlja \textit{lanac međusobno zavisnih vremenskih zapisa}, koji predstavlja osnovu neizmenljivosti i hronološke konzistentnosti blokčejn strukture i funkcioniše kao logički \textbf{sat} distribuiranog sistema čime se obezbeđuje globalno \textbf{uređenje} transakcija na nivou cele mreže. Ovakva konstrukcija obezbeđuje neizmenljivost istorije sistema, budući da bi svaka naknadna modifikacija sadržaja jednog bloka narušila konzistentnost svih narednih veza u lancu. 
+
+S obzirom na to da se blokčejn struktura sastoji od niza međusobno povezanih blokova, blok predstavlja osnovnu strukturnu jedinicu sistema. \textbf{Kapacitet} blokčejna se u tom kontekstu posmatra kao propusna moć sistema, odnosno maksimalna brzina kojom mreža može da obradi i trajno potvrdi transakcije, pri čemu je ovaj kapacitet unapred definisan protokolom kroz skup strukturnih i konsenzusnih parametara.
+
+\begin{definicija}
+Kapacitet blokčejn sistema se kvantifikuje kao broj transakcija po sekundi \eng{transactions per second, TPS}, što predstavlja prosečan broj transakcija koje mreža može da uključi u blokove i potvrdi u jedinici vremena, pod uslovom stabilnog stanja mreže.
+\end{definicija}
 
 \begin{teorema}
-Kapacitet blokčejna je fundamentalno ograničen maksimalnom veličinom pojedinačnog bloka i očekivanim vremenskim razmakom između generisanja uzastopnih blokova, nezavisno od dodatnih mehanizama kontrole opterećenja.
+Performanse blokčejna su fundamentalno ograničene veličinom pojedinačnog bloka i očekivanim vremenskim razmakom između generisanja uzastopnih blokova, koji su određeni protokolom, nezavisno od dodatnih mehanizama kontrole opterećenja ili optimizacija na višim slojevima sistema.
 \end{teorema}
+
+U uslovima povećanog intenziteta dolaznih transakcija, kada stopa pristizanja transakcija prelazi kapacitete sistema definisane protokolom, javlja se pojava \textbf{zagušenja}. Kako se broj nepotvrđenih transakcija povećava, tako se pojačava konkurencija za uključivanje transakcija u blok, a s obzirom na to da su transakcije s većim naknadama poželjnije, ovo dodatno doprinosi rastu prosečnih transakcionih naknada, što je u skladu sa Teoremom \ref{teorema:kapacitet}.
 
 U Bitkoinu, zaglavlje bloka ima fiksnu veličinu od 80 bajtova i sadrži skup metapodataka neophodnih za validaciju bloka i njegovo kriptografsko povezivanje sa ostatkom lanca. Ovi metapodaci uključuju:
 \begin{enumerate}
@@ -58,6 +64,10 @@ U Bitkoinu, zaglavlje bloka ima fiksnu veličinu od 80 bajtova i sadrži skup me
 \item \textbf{\textit{nBits}} (4 bajta) - kompaktno kodirana reprezentacija ciljne heš vrednosti \eng{target hash}, kojom se određuje težina kriptografske zagonetke i dinamički reguliše tempo generisanja sledećeg bloka u mreži,
 \item \textbf{Počasna promenljiva} \eng{nonce} (4 bajta) - slučajna ili iterativno menjana vrednost koja predstavlja rešenje prethodne kriptografske zagonetke, u slučaju iscrpljivanja njenog opsega, dodatno se modifikuje Merkleov koren \eng{extra nonce}.
 \end{enumerate}
+
+U Bitkoin protokolu, maksimalna veličina bloka je namerno ograničena na 1 MB \cite{croman2016scaling}, što predstavlja konzervativan dizajnerski izbor sa ciljem očuvanja decentralizacije i ograničavanja zahteva za skladištenje i propusni opseg čvorova mreže. Ovo ograničenje direktno utiče na performanse i dovodi do efektivnog kapaciteta od približno 7 TPS.
+
+Pokušaji izmene ovog parametra kroz povećanje veličine bloka bili su predmet višegodišnjih tehničkih i ideoloških rasprava unutar zajednice \eng{Bitcoin scaling debate}, koje su u pojedinim slučajevima rezultovale trajnim podelama mreže i nastankom alternativnih protokolskih implementacija.
 
 \subsection{Sistem postizanja konsenzusa i validacija novih blokova}
 Kako bi se formirao kandidat za novi blok, neophodno je da se prethodno prikupe nepotvrđene transakcije, pri čemu je ukupna veličina bloka unapred definisana protokolskim parametrima. Kako u distribuiranom okruženju više učesnika može istovremeno predložiti različite kandidate za sledeći blok koji se nadovezuju na isti prethodni blok, pa se javlja potreba za mehanizmom kojim se bira jedinstveni validni nastavak lanca.
