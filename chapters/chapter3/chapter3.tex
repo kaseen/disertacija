@@ -19,7 +19,7 @@ Blokčejn je javna, distribuirana struktura podataka koja održava redosled tran
 Blokčejn, u skladu sa svojim nazivom, sastoji se od linearno uređenog niza blokova koji sadrže transakcije i prateće metapodatke. Ova struktura se \textbf{replikuje} kod svih učesnika mreže, zbog čega se može posmatrati kao javna, distribuirana struktura podataka koja funkcioniše kao knjiga evidencije \eng{ledger} svih transakcija izvršenih u sistemu. Početni element lanca naziva se \textit{blok geneze} \eng{Genesis block} i on je jedini blok koji nema prethodnika, te se eksplicitno inicijalizuje kako bi sistem mogao započeti svoj rad.
 
 \subsection{Transakcije i blokovi}
-Kada korisnici žele da izvrše interakciju sa mrežom, oni konstruišu transakciju, koja ujedno predstavlja osnovnu aplikativnu \textbf{poruku} sistema, kriptografski je potpisuju svojim privatnim ključem i prosleđuju je mreži na dalju obradu.
+Kada korisnici žele da izvrše interakciju sa mrežom, oni konstruišu transakciju, koja ujedno predstavlja osnovnu aplikativnu \textbf{poruku (zahtev)} sistema, kriptografski je potpisuju svojim privatnim ključem i prosleđuju je mreži na dalju obradu.
 
 \begin{definicija}
 Transakcija predstavlja kriptografski zaštićen digitalni zapis kojim se prenosi vrednost ili podaci između učesnika distribuiranog sistema.
@@ -33,7 +33,7 @@ U otvorenom i distribuiranom okruženju, obrada, validacija i potvrđivanje tran
 Transakciona naknada \eng{transaction fee, tx fee} predstavlja iznos koji korisnik prilaže uz transakciju kao nadoknadu za korišćenje mrežnih resursa i njeno eventualno uključivanje u blokčejn.
 \end{definicija}
 
-Transakcione naknade predstavljaju dominantan mehanizam za \textit{implicitno određivanje prioriteta transakcija}, budući da obezbeđuju snažan ekonomski podsticaj učesnicima koji održavaju mrežu. S obzirom na to da svaka dodatna transakcija povećava veličinu bloka, dok je ukupna veličina bloka ograničena unapred definisanim parametrima protokola, proizvođači blokova su motivisani da pri formiranju narednog bloka uključe nepotvrđene transakcije sa većim naknadama, čime se postiže tržišno zasnovana selekcija transakcija.
+Transakcione naknade predstavljaju dominantan mehanizam \textit{implicitnog određivanja prioriteta transakcija} u javnim blokčejn sistemima. One stvaraju ekonomski podsticaj za učesnike zadužene za formiranje blokova, koji su motivisani da prilikom selekcije nepotvrđenih transakcija favorizuju one sa većim priloženim naknadama. Na ovaj način ostvaruje se tržišno zasnovan mehanizam raspodele ograničenog kapaciteta blokova, bez potrebe za centralizovanom kontrolom ili eksplicitnim pravilima prioritizacije.
 
 \begin{definicija}
 Blok je skup transakcija i pripadajućeg zaglavlja koje sadrži metapodatke i koje je kriptografski povezano sa prethodnim blokom, čime se formira lanac koji obezbeđuje konzistentnu, sigurnu i nepromenljivu evidenciju podataka u blokčejn mreži.
@@ -42,6 +42,12 @@ Blok je skup transakcija i pripadajućeg zaglavlja koje sadrži metapodatke i ko
 Kako svaki blok sadrži vremensku oznaku svog nastanka, kao i kriptografski heš prethodnog bloka, na ovaj način se uspostavlja \textit{lanac međusobno zavisnih vremenskih zapisa}, koji predstavlja osnovu neizmenljivosti i hronološke konzistentnosti blokčejn strukture i funkcioniše kao logički \textbf{sat} distribuiranog sistema čime se obezbeđuje globalno \textbf{uređenje} transakcija na nivou cele mreže. Ovakva konstrukcija obezbeđuje neizmenljivost istorije sistema, budući da bi svaka naknadna modifikacija sadržaja jednog bloka narušila konzistentnost svih narednih veza u lancu. 
 
 Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu smatrati logički istovremenim, s obzirom na to da dele istu vremensku oznaku nastanka.
+
+S obzirom na to da se blokčejn struktura sastoji od niza međusobno povezanih blokova, blok predstavlja osnovnu strukturnu jedinicu sistema. Iz tog razloga, \textbf{kapacitet} blokčejna direktno je određen karakteristikama blokova i nije dinamički prilagodljiv, već je unapred fiksiran protokolom kroz parametre. U uslovima povećanog intenziteta dolaznih transakcija, ovakva ograničenja dovode do pojave \textbf{zagušenja}, koje se ispoljava kroz rast broja nepotvrđenih transakcija i povećanje transakcionih naknada.
+
+\begin{teorema}
+Kapacitet blokčejna je fundamentalno ograničen maksimalnom veličinom pojedinačnog bloka i očekivanim vremenskim razmakom između generisanja uzastopnih blokova, nezavisno od dodatnih mehanizama kontrole opterećenja.
+\end{teorema}
 
 U Bitkoinu, zaglavlje bloka ima fiksnu veličinu od 80 bajtova i sadrži skup metapodataka neophodnih za validaciju bloka i njegovo kriptografsko povezivanje sa ostatkom lanca. Ovi metapodaci uključuju:
 \begin{enumerate}
@@ -62,7 +68,7 @@ Predlagač bloka \eng{block proposer} je učesnik mreže koji ima pravo da predl
 
 Konsenzus mehanizam predstavlja centralnu tačku \textbf{koordinacije} i \textbf{kontrolne decentralizacije} u blokčejn sistemu, budući da definiše i sprovodi skup pravila prema kojima se održava konzistentnost globalnog stanja mreže. Ovakav model omogućava prirodnu \textbf{raspodelu opterećenja}, jer svaki čvor samostalno učestvuje u procesu predlaganja blokova bez centralnog koordinatora. 
 
-Osnovno pravilo podrazumeva da se svaki novi blok nezavisno proverava od strane svih čvorova pre njegovog prihvatanja i uključivanja u lokalnu verziju lanca. Ovaj proces validacije obuhvata proveru ispravnosti svih transakcija sadržanih u bloku, čime se eliminišu pokušaji vizantijskih čvorova da nametnu blokove koji sadrže makar jednu nevalidnu transakciju.
+Osnovno pravilo podrazumeva da se svaki novi blok nezavisno proverava od strane svih čvorova pre njegovog prihvatanja i uključivanja u lokalnu verziju lanca. Ovaj proces validacije obuhvata proveru ispravnosti svih transakcija sadržanih u bloku, čime se eliminišu pokušaji vizantijskih čvorova da nametnu blokove koji sadrže makar jednu nevalidnu transakciju što uvodi značajno \textbf{režijsko opterećenje} usled potpune replikacije i verifikacije.
 
 \begin{definicija}
 Konsenzus mehanizam u blokčejn sistemima predstavlja skup protokola i pravila kojima se obezbeđuje koordinisano prihvatanje novih blokova i održavanje jedinstvenog stanja distribuirane evidencije.
