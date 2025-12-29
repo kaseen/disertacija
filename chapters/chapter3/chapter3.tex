@@ -46,14 +46,14 @@ Kako svaki blok sadrži vremensku oznaku svog nastanka, kao i kriptografski heš
 S obzirom na to da se blokčejn struktura sastoji od niza međusobno povezanih blokova, blok predstavlja osnovnu strukturnu jedinicu sistema. \textbf{Kapacitet} blokčejna se u tom kontekstu posmatra kao propusna moć sistema, odnosno maksimalna brzina kojom mreža može da obradi i trajno potvrdi transakcije, pri čemu je ovaj kapacitet unapred definisan protokolom kroz skup strukturnih i konsenzusnih parametara.
 
 \begin{definicija}
-Kapacitet blokčejn sistema se kvantifikuje kao broj transakcija po sekundi \eng{transactions per second, TPS}, što predstavlja prosečan broj transakcija koje mreža može da uključi u blokove i potvrdi u jedinici vremena, pod uslovom stabilnog stanja mreže.
+Kapacitet blokčejn sistema se kvantifikuje kao broj transakcija po sekundi \eng{transactions per second, TPS}, što predstavlja dugoročni prosečan broj transakcija koje mreža može da uključi u blokove i potvrdi u jedinici vremena, pod uslovom stabilnog stanja mreže.
 \end{definicija}
 
 \begin{teorema}
-Performanse blokčejna su fundamentalno ograničene veličinom pojedinačnog bloka i očekivanim vremenskim razmakom između generisanja uzastopnih blokova, koji su određeni protokolom, nezavisno od dodatnih mehanizama kontrole opterećenja ili optimizacija na višim slojevima sistema.
+Performanse blokčejn sistema su fundamentalno ograničene veličinom pojedinačnog bloka i očekivanim vremenskim razmakom između generisanja uzastopnih blokova, koji su određeni protokolom, nezavisno od dodatnih mehanizama kontrole opterećenja ili optimizacija na višim slojevima sistema.
 \end{teorema}
 
-U uslovima povećanog intenziteta dolaznih transakcija, kada stopa pristizanja transakcija prelazi kapacitete sistema definisane protokolom, javlja se pojava \textbf{zagušenja}. Kako se broj nepotvrđenih transakcija povećava, tako se pojačava konkurencija za uključivanje transakcija u blok, a s obzirom na to da su transakcije s većim naknadama poželjnije, ovo dodatno doprinosi rastu prosečnih transakcionih naknada, što je u skladu sa Teoremom \ref{teorema:kapacitet}.
+U uslovima povećanog intenziteta dolaznih transakcija, kada stopa pristizanja transakcija prelazi kapacitete sistema definisane protokolom, dolazi do \textbf{zagušenja}. Kako se broj nepotvrđenih transakcija povećava, tako se pojačava konkurencija za uključivanje transakcija u blok, a s obzirom na to da su transakcije s većim naknadama poželjnije, ovo dodatno doprinosi rastu prosečnih transakcionih naknada, što je u skladu sa Teoremom \ref{teorema:kapacitet}.
 
 U Bitkoinu, zaglavlje bloka ima fiksnu veličinu od 80 bajtova i sadrži skup metapodataka neophodnih za validaciju bloka i njegovo kriptografsko povezivanje sa ostatkom lanca. Ovi metapodaci uključuju:
 \begin{enumerate}
@@ -78,10 +78,16 @@ Predlagač bloka \eng{block proposer} je učesnik mreže koji ima pravo da predl
 
 Konsenzus mehanizam predstavlja centralnu tačku \textbf{koordinacije} i \textbf{kontrolne decentralizacije} u blokčejn sistemu, budući da definiše i sprovodi skup pravila prema kojima se održava konzistentnost globalnog stanja mreže. Ovakav model omogućava prirodnu \textbf{raspodelu opterećenja}, jer svaki čvor samostalno učestvuje u procesu predlaganja blokova bez centralnog koordinatora. 
 
-Osnovno pravilo podrazumeva da se svaki novi blok nezavisno proverava od strane svih čvorova pre njegovog prihvatanja i uključivanja u lokalnu verziju lanca. Ovaj proces validacije obuhvata proveru ispravnosti svih transakcija sadržanih u bloku, čime se eliminišu pokušaji vizantijskih čvorova da nametnu blokove koji sadrže makar jednu nevalidnu transakciju što uvodi značajno \textbf{režijsko opterećenje} usled potpune replikacije i verifikacije.
+Osnovno pravilo podrazumeva da se svaki novi blok nezavisno proverava od strane svih čvorova pre njegovog prihvatanja i uključivanja u lokalnu verziju lanca. Ovaj proces validacije obuhvata proveru ispravnosti svih transakcija sadržanih u bloku, čime se eliminišu pokušaji vizantijskih čvorova da nametnu blokove koji sadrže makar jednu nevalidnu transakciju.
 
 \begin{definicija}
 Konsenzus mehanizam u blokčejn sistemima predstavlja skup protokola i pravila kojima se obezbeđuje koordinisano prihvatanje novih blokova i održavanje jedinstvenog stanja distribuirane evidencije.
+\end{definicija}
+
+Opisani proces nezavisne validacije i replikacije svakog novog bloka kod svih čvorova mreže predstavlja značajan izvor \textbf{režijskog opterećenja} blokčejn sistema. Ovaj režijski rad obuhvata kriptografsku proveru transakcija, verifikaciju konsenzusnih uslova, propagaciju blokova kroz mrežu i održavanje konzistentne lokalne kopije lanca, pri čemu nijedna od navedenih aktivnosti neposredno ne doprinosi izvršenju primarnih korisničkih zahteva. Na osnovu Definicije \ref{def:overhead}, može se uvesti sledeća definicija:
+
+\begin{definicija}
+Režijsko opterećenje blokčejn sistema predstavlja sistemski trošak decentralizovanog modela rada, izražen kroz dodatnu potrošnju resursa, koji je nužna posledica očuvanja sigurnosti, konzistentnosti i integriteta distribuirane evidencije, a koji nije direktno povezan sa izvršavanjem korisničkih transakcija.
 \end{definicija}
 
 Bitcoin kao deo konsenzusnog mehanizma primenjuje \textit{koncept dokazivanja uloženog rada}. Ovaj pristup omogućava svakom učesniku mreže da ravnopravno učestvuje u procesu predlaganja novog bloka, bez oslanjanja na centralizovani autoritet ili prethodno dodeljeni identitet. Algoritam dokazivanja uloženog rada \eng{Proof of Work, PoW} zasniva se na rešavanju kriptografske zagonetke definisane u prethodnom bloku, pri čemu ciljni prag predstavlja gornju granicu dozvoljene heš vrednosti zaglavlja sledećeg bloka. Da bi novi blok bio prihvaćen, njegova heš vrednost mora biti manja ili jednaka ovoj unapred definisanoj ciljnoj vrednosti.
@@ -114,6 +120,7 @@ Nakon pronalaska odgovarajuće vrednosti počasne promenljive predloženi blok s
 
 Moguće je, međutim, da dva ili više rudara u približno istom vremenskom intervalu pronađu i propagiraju različite, ali međusobno validne kandidate za $(n+1)$-ti blok koji se nadovezuju na isti prethodni $n$-ti blok. U tom slučaju, različiti podskupovi čvorova mogu privremeno prihvatiti različite verzije lanca kao važeće, što dovodi do kratkotrajne diverzifikacije stanja mreže, čime se javlja \textbf{konflikt} u distribuiranom okruženju. Ovo stanje se razrešava pronalaženjem narednog $(n+2)$-og bloka, budući da se svaki novi blok može nadovezati isključivo na jedan od postojećih kandidata.
 
+% TODO
 U sistemu \textit{Bitcoin} ne postoji centralni ili glavni čvor, ali pravilo najdužeg lanca \eng{longest chain rule} efektivno preuzima njegovu ulogu. Grana lanca koja se prva produži i postane duža od ostalih prihvata se kao kanonska verzija istorije sistema. Čvorovi koji su prethodno sledili kraću granu odbacuju je i sinhronizuju se sa najdužim važećim lancem, čime se mreža ponovo dovodi u konzistentno stanje. Kako se nad određenim blokom nadograđuje sve veći broj novih blokova, verovatnoća da alternativna grana nadmaši postojeći lanac opada eksponencijalno.
 
 \begin{definicija}
