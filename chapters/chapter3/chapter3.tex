@@ -18,8 +18,12 @@ Blokčejn je javna, distribuirana struktura podataka koja održava redosled tran
 
 Blokčejn, u skladu sa svojim nazivom, sastoji se od linearno uređenog niza blokova koji sadrže transakcije i prateće metapodatke. Ova struktura se \textbf{replikuje} kod svih učesnika mreže, zbog čega se može posmatrati kao javna, distribuirana struktura podataka koja funkcioniše kao knjiga evidencije \eng{ledger} svih transakcija izvršenih u sistemu. Početni element lanca naziva se \textit{blok geneze} \eng{Genesis block} i on je jedini blok koji nema prethodnika, te se eksplicitno inicijalizuje kako bi sistem mogao započeti svoj rad.
 
+Kako se replikacijom obezbeđuje da svaki čvor mreže održava identično stanje distribuirane evidencije, time se postiže visoka \textbf{dostupnost} sistema, kao i otpornost na pojedinačne kvarove i privremenu nedostupnost čvorova.
+
 \subsection{Transakcije i blokovi}
-Kada korisnici žele da ostvare interakciju sa mrežom, oni, u skladu sa Definicijom \ref{def:zahtev}, formiraju transakciju kao konkretnu instancu elementarnog zahteva sistema, kriptografski je potpisuju odgovarajućim privatnim ključem i prosleđuju mreži na dalju obradu.
+Kada korisnici žele da ostvare interakciju sa mrežom, oni, u skladu sa Definicijom \ref{def:zahtev}, formiraju transakciju kao konkretnu instancu elementarnog zahteva sistema, kriptografski je potpisuju odgovarajućim privatnim ključem i prosleđuju mreži na dalju obradu. Na ovaj način ostvaruje se \textit{autentikacija zasnovana na kriptografiji}, čime se obezbeđuje \textbf{autentičnost} pošiljaoca i dokaz vlasništva nad sredstvima. Istovremeno, upotreba digitalnog potpisa obezbeđuje \textbf{neporecivost} transakcije, budući da se validan potpis ne može generisati bez posedovanja odgovarajućeg privatnog ključa.
+
+Iako su transakcije javno vidljive, sistem ne koristi eksplicitne identitete učesnika, već kriptografske adrese, čime se ostvaruje ograničen oblik \textbf{poverljivosti} u vidu pseudonimnosti, dok se potpuna zaštita sadržaja transakcija ne obezbeđuje na osnovnom protokolskom nivou.
 
 \begin{definicija}
 Transakcija predstavlja kriptografski zaštićen digitalni zapis kojim se prenosi vrednost ili podaci između učesnika distribuiranog sistema.
@@ -41,7 +45,7 @@ Blok je skup transakcija i pripadajućeg zaglavlja koje sadrži metapodatke i ko
 
 Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu smatrati logički istovremenim, s obzirom na to da dele istu vremensku oznaku nastanka.
 
-Kako svaki blok sadrži vremensku oznaku svog nastanka, kao i kriptografski heš prethodnog bloka, na ovaj način se uspostavlja \textit{lanac međusobno zavisnih vremenskih zapisa}, koji predstavlja osnovu neizmenljivosti i hronološke konzistentnosti blokčejn strukture i funkcioniše kao logički \textbf{sat} distribuiranog sistema čime se obezbeđuje globalno \textbf{uređenje} transakcija na nivou cele mreže. Ovakva konstrukcija obezbeđuje neizmenljivost istorije sistema, budući da bi svaka naknadna modifikacija sadržaja jednog bloka narušila konzistentnost svih narednih veza u lancu. 
+Kako svaki blok sadrži vremensku oznaku svog nastanka, kao i kriptografsku heš referencu na prethodni blok, formira se \textit{lanac međusobno zavisnih vremenskih zapisa}. Ovakva struktura predstavlja osnovu \textbf{integriteta} i hronološke konzistentnosti blokčejn sistema, pri čemu blokčejn funkcioniše kao logički \textbf{sat} distribuiranog sistema i omogućava globalno \textbf{uređenje} transakcija na nivou cele mreže. Svaka naknadna modifikacija sadržaja jednog bloka narušila bi konzistentnost svih narednih veza u lancu, čime bi se narušila celokupna sigurnost i validnost sistema.
 
 S obzirom na to da se blokčejn struktura sastoji od niza međusobno povezanih blokova, blok predstavlja osnovnu strukturnu jedinicu sistema. \textbf{Kapacitet} blokčejna se u tom kontekstu posmatra kao propusna moć sistema, odnosno maksimalna brzina kojom mreža može da obradi i trajno potvrdi transakcije, pri čemu je ovaj kapacitet unapred definisan protokolom kroz skup strukturnih i konsenzusnih parametara.
 
@@ -120,11 +124,10 @@ Nakon pronalaska odgovarajuće vrednosti počasne promenljive predloženi blok s
 
 Moguće je, međutim, da dva ili više rudara u približno istom vremenskom intervalu pronađu i propagiraju različite, ali međusobno validne kandidate za $(n+1)$-ti blok koji se nadovezuju na isti prethodni $n$-ti blok. U tom slučaju, različiti podskupovi čvorova mogu privremeno prihvatiti različite verzije lanca kao važeće, što dovodi do kratkotrajne diverzifikacije stanja mreže, čime se javlja \textbf{konflikt} u distribuiranom okruženju. Ovo stanje se razrešava pronalaženjem narednog $(n+2)$-og bloka, budući da se svaki novi blok može nadovezati isključivo na jedan od postojećih kandidata.
 
-% TODO
 U sistemu \textit{Bitcoin} ne postoji centralni ili glavni čvor, ali pravilo najdužeg lanca \eng{longest chain rule} efektivno preuzima njegovu ulogu. Grana lanca koja se prva produži i postane duža od ostalih prihvata se kao kanonska verzija istorije sistema. Čvorovi koji su prethodno sledili kraću granu odbacuju je i sinhronizuju se sa najdužim važećim lancem, čime se mreža ponovo dovodi u konzistentno stanje. Kako se nad određenim blokom nadograđuje sve veći broj novih blokova, verovatnoća da alternativna grana nadmaši postojeći lanac opada eksponencijalno.
 
 \begin{definicija}
-Finalnost \eng{finality} transakcije označava trenutak nakon kojeg se transakcija smatra trajno zabeleženom u blokčejnu i ne može biti poništena.
+Finalnost \eng{finality} transakcije označava trenutak nakon kojeg se transakcija smatra trajno zabeleženom u blokčejnu i ne može biti poništena, čime se ostvaruje praktična neporecivost.
 \end{definicija}
 
 Čvorovi koji su prethodno sledili kraću granu vrše reorganizaciju lanca \eng{re-org} i prelaze na najduži važeći lanac. Transakcije koje su bile uključene u blokove odbačene grane, a koje se ne pojavljuju u prihvaćenom lancu, vraćaju se u bazen nepotvrđenih transakcija \eng{mempool}, gde mogu ponovo biti uključene u neki od narednih blokova.
@@ -151,6 +154,8 @@ Kako ulazi transakcije referenciraju prethodno kreirane, ali još uvek nepotroš
 Slično tome, u slučaju kada vrednost pojedinačnog UTXO zapisa nije dovoljna za izvršenje željene transakcije, korisnik može kombinovati više sopstvenih UTXO zapisa kao ulaze, čime se njihova zbirna vrednost koristi za formiranje odgovarajućih izlaza transakcije.
 
 Mehanizam kojim Bitcoin mreža obezbeđuje da samo ovlašćeni korisnik može potrošiti određeni UTXO zasniva se na skriptnom jeziku koji je sastavni deo transakcione strukture, poznatom kao \textit{Bitcoin Script}. Reč je o jednostavnom, ali izrazito robusnom skriptnom jeziku zasnovanom na steku, koji se izvršava tokom procesa validacije transakcije i kojim se formalno proveravaju uslovi za potrošnju datog UTXO zapisa.
+
+Ovaj skriptni jezik omogućava sprovođenje \textbf{autorizacije} nad sredstvima, budući da definiše skup formalnih uslova koji moraju biti ispunjeni kako bi pristup bio odobren. U tom smislu, može se posmatrati kao pojednostavljen oblik \textit{diskrecione kontrole pristupa}, pri čemu se istovremeno obezbeđuju \textbf{integritet} stanja sredstava i \textbf{autentičnost} zahteva za njihovu potrošnju.
 
 Svaki UTXO sadrži pridruženu skriptu zaključavanja \eng{scriptPubKey}, kojom se definišu uslovi pod kojima taj izlaz može biti potrošen. Da bi određena transakcija validno potrošila UTXO, njen ulaz mora da obezbedi odgovarajuće podatke u okviru skripte otključavanja \eng{scriptSig}, tako da kombinacija ove dve skripte, nakon izvršavanja, rezultuje uspešnom validacijom. 
 
