@@ -18,7 +18,12 @@ Blokčejn je javna, distribuirana struktura podataka koja održava redosled tran
 
 Blokčejn, u skladu sa svojim nazivom, sastoji se od linearno uređenog niza blokova koji sadrže transakcije i prateće metapodatke. Ova struktura se \textbf{replikuje} kod svih učesnika mreže, zbog čega se može posmatrati kao javna, distribuirana struktura podataka koja funkcioniše kao knjiga evidencije \eng{ledger} svih transakcija izvršenih u sistemu. Početni element lanca naziva se \textit{blok geneze} \eng{Genesis block} i on je jedini blok koji nema prethodnika, te se eksplicitno inicijalizuje kako bi sistem mogao započeti svoj rad.
 
-Kako se replikacijom obezbeđuje da svaki čvor mreže održava identično stanje distribuirane evidencije, time se postiže visoka \textbf{dostupnost} sistema, kao i otpornost na pojedinačne kvarove i privremenu nedostupnost čvorova.
+Replikacijom se obezbeđuje da svaki čvor mreže održava lokalnu kopiju distribuirane evidencije, čime se postiže visok stepen \textbf{dostupnosti} sistema, kao i otpornost na pojedinačne kvarove i privremenu nedostupnost čvorova. U zavisnosti od arhitektonskih odluka i organizacije sistema, replikacija stanja može biti realizovana u više oblika, među kojima se izdvajaju:
+\begin{enumerate}
+\item \textbf{potpuna replikacija stanja}, u kojoj svaki čvor održava celokupno stanje i kompletnu istoriju mreže, u skladu sa Definicijom \ref{def:replikacija}, što je karakteristično za većinu klasičnih javnih blokčejn sistema,
+\item \textbf{parcijalna replikacija}, u kojoj čvorovi održavaju i validiraju samo podskup stanja i transakcija, primenom tehnika razdeljivanja podataka, u skladu sa Definicijom \ref{def:sharding},
+\item \textbf{slojevita replikacija}, kod koje se različiti slojevi sistema oslanjaju na različite nivoe i oblike replikacije, u skladu sa funkcionalnom podelom odgovornosti unutar ukupne arhitekture sistema.
+\end{enumerate}
 
 \subsection{Transakcije i blokovi}
 Kada korisnici žele da ostvare interakciju sa mrežom, oni, u skladu sa Definicijom \ref{def:zahtev}, formiraju transakciju kao konkretnu instancu elementarnog zahteva sistema, kriptografski je potpisuju odgovarajućim privatnim ključem i prosleđuju mreži na dalju obradu. Na ovaj način ostvaruje se \textit{autentikacija zasnovana na kriptografiji}, čime se obezbeđuje \textbf{autentičnost} pošiljaoca i dokaz vlasništva nad sredstvima. Istovremeno, upotreba digitalnog potpisa obezbeđuje \textbf{neporecivost} transakcije, budući da se validan potpis ne može generisati bez posedovanja odgovarajućeg privatnog ključa.
