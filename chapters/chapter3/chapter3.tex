@@ -58,7 +58,9 @@ S obzirom na to da se blokčejn struktura sastoji od niza međusobno povezanih b
 Kapacitet blokčejn sistema se kvantifikuje kao broj transakcija po sekundi \eng{transactions per second, TPS}, što predstavlja dugoročni prosečan broj transakcija koje mreža može da uključi u blokove i potvrdi u jedinici vremena, pod uslovom stabilnog stanja mreže.
 \end{definicija}
 
-\begin{teorema}
+Propusnost \eng{throughput} blokčejn sistema označava stvarni broj transakcija koje mreža efektivno obradi i potvrdi u jedinici vremena, pri konkretnim uslovima opterećenja, stanja mreže i ponašanja učesnika. Za razliku od kapaciteta, koji predstavlja protokolom definisanu gornju granicu, propusnost je operativna veličina i u praksi može varirati u vremenu, pri čemu važi da je njena vrednost uvek manja ili jednaka kapacitetu sistema.
+
+\begin{teorema}\label{teorema:performanse}
 Performanse blokčejn sistema su fundamentalno ograničene veličinom pojedinačnog bloka i očekivanim vremenskim razmakom između generisanja uzastopnih blokova, koji su određeni protokolom, nezavisno od dodatnih mehanizama kontrole opterećenja ili optimizacija na višim slojevima sistema.
 \end{teorema}
 
@@ -170,3 +172,10 @@ S obzirom na to da se transakcija sastoji od više ulaza i izlaza, a da ukupna v
 $$ tx\_fee = \sum_{x \in UTXO_{in}} value(x) - \sum_{y \in UTXO_{out}} value(y)$$
 
 Kako se zahteva da ukupna vrednost ulaznih UTXO zapisa bude veća ili jednaka ukupnoj vrednosti izlaznih zapisa, pri čemu razlika između ovih vrednosti predstavlja transakcionu naknadu, UTXO model implicitno nameće pravilo potpunog trošenja izlaza. Naime, svaki UTXO se, nakon što je iskorišćen kao ulaz i transakcija uspešno validirana, trajno uklanja iz skupa raspoloživih UTXO zapisa. Time se na protokolskom nivou ostvaruje zaštita od \textit{dvostrukog trošenja}, jer nijedan UTXO ne može biti istovremeno niti naknadno iskorišćen u više različitih transakcija.
+
+\subsection{Skalabilnost blokčejn sistema}
+U skladu sa Definicijom 2.6, \textbf{skalabilnost} blokčejn sistema odnosi se na sposobnost mreže da, uz povećanje raspoloživih resursa, ostvari porast efektivnog kapaciteta obrade transakcija, pri čemu se istovremeno očuvaju prihvatljive performansne karakteristike i bezbednosna svojstva sistema.
+
+Uprkos intenzivnom razvoju ove tehnologije, skalabilnost i dalje predstavlja jedno od ključnih otvorenih istraživačkih pitanja, budući da se upravo ograničenja u pogledu kapaciteta i performansi često identifikuju kao glavna prepreka širem usvajanju blokčejn tehnologije u savremenim informacionim sistemima. Sistematična analiza izazova skalabilnosti u blokčejn mrežama \cite{khan2021systematic} ukazuje da na skalabilnost utiče skup međuzavisnih faktora, uključujući propusnost transakcija, broj čvorova u mreži, veličinu distribuirane evidencije, veličinu bloka, troškove i kašnjenja komunikacije između čvorova, vreme finalizacije transakcija, kao i trošak izvršavanja transakcija. Među navedenim faktorima, propusnost transakcija se najčešće izdvaja kao centralna metrika u analizi skalabilnosti.
+
+Navedeni faktori su snažno međusobno povezani i u velikoj meri determinisani svojstvima primenjenog konsenzusnog mehanizma, budući da upravo konsenzus definiše ključne protokolske parametre, kao što su veličina bloka i vremenski interval između uzastopnih blokova. Savremeni konsenzusni mehanizmi, u svom osnovnom obliku, još uvek ne uspevaju da obezbede nivo propusnosti i latencije neophodan za širok spektar industrijskih primena, što je u saglasnosti sa Teoremom \ref{teorema:performanse}.

@@ -72,7 +72,7 @@ Tipični primeri zahteva uključuju upis podatka u bazu, izvršavanje funkcional
 U skladu sa savremenim pristupima modeliranju procesa i \textit{end-to-end} analizi radnih tokova \cite{sedova2023development}, \textbf{zahtev se ne posmatra kao izolovana jedinica}, već kao deo šireg procesa čija se vrednost i funkcionalna uloga ispoljava tek u interakciji sa ostalim procesima i komponentama arhitekture informacionog sistema.
 
 \begin{definicija}
-Performanse predstavljaju sposobnost informacionog sistema da efikasno obrađuje zahteve. U analizi informacionih arhitektura performanse se posmatraju kao kvantitativni atribut.
+Performanse predstavljaju skup kvantitativnih pokazatelja koji opisuju efikasnost obrade zahteva u informacionom sistemu.
 \end{definicija}
 
 Kako su performanse apstraktan pojam koji se kvantitativno izražava različitim metrikama, a pri tom različiti akteri mogu imati različite kriterijume ,,efikasnost'' sistema (npr. organizacije prvenstveno optimizuju troškove, dok krajnji korisnici vrednuju brzinu i cenu usluge), u daljem radu razmatraju se sledeće ključne performansne metrike:
@@ -85,7 +85,7 @@ Kako su performanse apstraktan pojam koji se kvantitativno izražava različitim
 Zajedničko za sve navedene metrike jeste da na njih direktno utiču tri fundamentalna \textbf{resursa} informacionog sistema: hardver (procesor, memorija, I/O podsistem), softver (algoritmi, implementacija, organizacija baze podataka) i mreža (latencija, širina opsega, pouzdanost i stabilnost veze).
 
 \begin{definicija}
-Kapacitet predstavlja maksimalnu dugoročno održivu stopu obrade zahteva koju informacioni sistem može da postigne u stabilnom režimu rada \cite{jain1991art}.
+Kapacitet predstavlja maksimalnu dugoročno održivu stopu obrade zahteva koju informacioni sistem može da postigne u stabilnom režimu rada, bez degradacije definisanih performansnih metrika \cite{jain1991art}.
 \end{definicija}
 
 Međutim, kada hardver, softver i/ili mrežni sloj ne mogu da obrade broj pristiglih zahteva, informacioni sistem izlazi iz stabilnog režima rada i ulazi u stanje \textbf{zagušenja}.
@@ -99,13 +99,13 @@ U stanju zagušenja, zahtevi se akumuliraju brže nego što ih sistem može obra
 Primena fundamentalnih rezultata teorije čekanja \cite{adan2002queueing} omogućava formalno razumevanje ponašanja sistema kada dolazna stopa zahteva premaši njegov kapacitet, što se direktno preslikava na posmatrane performansne metrike. Time dobijamo:
 
 \begin{teorema}\label{teorema:kapacitet}
-Kada dolazna stopa zahteva premaši kapacitet sistema, propusnost dostiže svoj maksimum, latencija teži beskonačnosti, a cena obrade svakog zahteva eksponencijalno raste usled akumulacije redova čekanja i pojačane konkurencije za resurse.
+Kada dolazna stopa zahteva premaši kapacitet sistema, propusnost dostiže svoj maksimum, latencija raste bez ograničenja, a cena obrade svakog zahteva eksponencijalno raste usled akumulacije redova čekanja i pojačane konkurencije za resurse.
 \end{teorema}
 
 U stvarnim informacionim sistemima obim pristiglih zahteva može u određenim trenucima da premaši raspoloživi kapacitet sistema. Zato je od suštinskog značaja razumeti kako se kapacitet može povećavati dodavanjem dodatnih resursa (računske snage, memorije, mrežnog kapaciteta, dodatnih čvorova itd.). U tom kontekstu definiše se sledeće svojstvo:
 
 \begin{definicija}
-Skalabilnost predstavlja sposobnost informacionog sistema da proporcionalno povećava svoj kapacitet obrade zahteva u odnosu na povećanje dostupnih resursa \cite{bondi2000characteristics}.
+Skalabilnost predstavlja sposobnost informacionog sistema da se uz povećanje dostupnih resursa ostvari porast kapaciteta obrade zahteva, uz očuvanje definisanih performansnih karakteristika \cite{bondi2000characteristics}.
 \end{definicija}
 
 \begin{definicija}
