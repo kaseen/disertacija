@@ -176,31 +176,47 @@ Kontejnerizacija predstavlja dominantan tehnološki pristup za raspoređivanje s
 Zahvaljujući ovim tehnologijama, arhitektonske organizacije informacionih sistema opisane u poglavlju \ref{sec:arhitektonska-organizacija} mogu se efikasno distribuirati i održavati u cloud infrastrukturi, uz značajno smanjenje tehničke složenosti i operativnih troškova u odnosu na tradicionalne modele upravljanja resursima.
 
 \section{Centralizacija u distribuiranim informacionim sistemima}
-Iako se savremeni distribuirani informacioni sistemi izvršavaju na više fizičkih čvorova, oni dele jedinstven model podataka, jedinstvenu poslovnu logiku i oslanjaju se na centralnu instancu upravljanja i poverenja. Takvi sistemi se, uprkos fizičkoj raspodeli, ponašaju kao jedna koherentna računarska celina sa jednim stanjem i jednim operativnim autoritetom. Iz toga proističe sledeća formulacija:
+Iako se savremeni informacioni sistemi često izvršavaju na velikom broju fizički distribuiranih čvorova, njihova dominantna arhitektonska paradigma i dalje ostaje klijent-server model. U takvim sistemima, uprkos fizičkoj raspodeli infrastrukture, poslovna logika, donošenje odluka i upravljanje stanjem sistema centralizovani su oko jedinstvene upravljačke instance ili skupa tesno koordinisanih autoriteta. Kao posledica toga, sistem se u operativnom smislu ponaša kao jedinstvena računarska celina sa jednim globalnim stanjem i jednim centrom poverenja.
 
 \begin{teorema}
-Fizička distribuiranost čvorova ne implicira decentralizaciju.
+Fizička distribuiranost čvorova ne implicira decentralizaciju informacionog sistema.
 \end{teorema}
 
-Tipičan primer predstavljaju globalne internet platforme (Facebook, Google, Amazon), koje upravljaju hiljadama servera u mnogim geografskim regionima, ali i dalje zadržavaju centralnu kontrolu nad autorizacijom, ažuriranjem stanja i operativnim upravljanjem infrastrukturom. Ovi sistemi jasno ilustruju da \textbf{distribuiranost nije isto što i decentralizacija}.
+Da bi se informacioni sistem mogao smatrati decentralizovanim, nije dovoljno da se izvršava na velikom broju čvorova. Neophodno je da njegova arhitektura bude projektovana bez centralne tačke kontrole ili otkaza \eng{single point of failure}, jer bi njen otkaz, uklanjanje ili kompromitovanje dovelo do poremećaja ili potpunog prekida rada sistema \cite{baran1964distributed}.
 
-Da bi se informacioni sistem smatrao decentralizovanim, nije dovoljno da se izvršava na velikom broju uređaja. Neophodno je da ti uređaji budu \textit{nezavisni akteri} koji kroz programski kod kolektivno verifikuju stanje, donose odluke i održavaju napredovanje sistema bez centralne tačke poverenja.
-
-Prema standardnoj klasifikaciji \cite{buterin2017meaning} razlikuju se tri nezavisne dimenzije decentralizacije:
+Prema standardnoj klasifikaciji \cite{buterin2017meaning}, decentralizacija se može analizirati kroz tri međusobno nezavisne dimenzije:
 \begin{enumerate}
-\item \textbf{Arhitektonska decentralizacija} - fizička i geografska raspodela čvorova,
-\item \textbf{Kontrolna (politička) decentralizacija} - raspodela moći odlučivanja među različitim akterima,
-\item \textbf{Logička decentralizacija} - struktura softverskog stanja i način na koji sistem konceptualno funkcioniše.
+\item \textbf{Arhitektonska decentralizacija} - fizička i geografska raspodela računarskih čvorova,
+\item \textbf{Kontrolna (politička) decentralizacija} - raspodela moći odlučivanja i upravljanja među različitim akterima,
+\item \textbf{Logička decentralizacija} - struktura softverskog stanja i način na koji sistem konceptualno funkcioniše kao celina.
 \end{enumerate}
 
-Arhitektonska decentralizacija odnosi se na \textbf{hardverski sloj}, kontrolna decentralizacija na \textbf{ljudski i organizacioni sloj}, dok logička decentralizacija pripada \textbf{softverskom sloju}. 
+Arhitektonska decentralizacija odnosi se pre svega na \textbf{hardverski sloj} sistema, kontrolna decentralizacija na \textbf{ljudski i organizacioni sloj}, dok se logička decentralizacija manifestuje na \textbf{softverskom i protokolarnom sloju}.
+
+Kontrolna (politička) decentralizacija podrazumeva odsustvo jedinstvenog entiteta koji ima ovlašćenje da izdaje naredbe, donosi konačne odluke ili unilateralno menja globalno stanje sistema. Da bi ovakav model bio moguć, čvorovi sistema moraju biti u stanju da međusobno komuniciraju direktno, bez posrednika koji nameću pravila komunikacije ili imaju privilegovanu ulogu u odlučivanju.
 
 \begin{definicija}
-Decentralizovan informacioni sistem je sistem u kojem nijedan čvor nema privilegovanu kontrolu nad stanjem, već konzistentnost i napredovanje sistema obezbeđuju distribuirani protokoli koji funkcionišu čak i u prisustvu nepouzdanih ili potencijalno malicioznih aktera.
+Mreža ravnopravnih korisnika \eng{peer-to-peer, P2P} predstavlja model komunikacije u kome svaki učesnik može preuzimati ulogu i klijenta i servera, omogućavajući direktan prenos podataka između dva ili više čvorova bez oslanjanja na centralni server \cite{oram2001peer}.
 \end{definicija}
 
-Ovakvo tumačenje omogućava da se decentralizacija posmatra kao proširenje sociotehničke perspektive radnih sistema, primenjeno na domene distribuiranih algoritama, konsenzusa i upravljanja stanjem bez centralnog autoriteta.
+Iako ovakva topologija eliminiše centralne tačke komunikacije i predstavlja osnovu arhitektonske decentralizacije, ona sama po sebi ne garantuje kontrolnu decentralizaciju. Pravila koja određuju ko može da učestvuje u mreži, koje poruke se smatraju validnim i kako se donose odluke o stanju sistema nisu određena topologijom mreže, već protokolima i politikama koje mogu biti centralizovano definisane.
 
-Od tri vrste decentralizacije, kontrolna decentralizacija obično ima najveću intuitivnu težinu. Kada neko kaže da je sistem ,,decentralizovan'', on najčešće misli da korisnici nisu podređeni jednom centralnom autoritetu i da nijedan subjekt nema moć da samostalno upravlja sistemom. Zbog toga sistem može biti arhitektonski ili logički centralizovan, a i dalje smatran decentralizovanim ukoliko je kontrola raspodeljena. Skoro svi moderni distribuirani informacioni sistemi ostaju kontrolno centralizovani.
+\begin{teorema}
+Mreža ravnopravnih korisnika predstavlja potreban, ali ne i dovoljan uslov za ostvarivanje kontrolne decentralizacije.
+\end{teorema}
+
+
+
+%Tipičan primer predstavljaju globalne internet platforme (\textit{Facebook}, \textit{Google}, \textit{Amazon}, itd...), koje upravljaju hiljadama servera u mnogim geografskim regionima, ali i dalje zadržavaju centralnu kontrolu nad autorizacijom, ažuriranjem stanja i operativnim upravljanjem infrastrukturom. Ovi sistemi jasno ilustruju da \textbf{distribuiranost nije isto što i decentralizacija}.
+
+%Da bi se informacioni sistem smatrao decentralizovanim, nije dovoljno da se izvršava na velikom broju uređaja. Neophodno je da ti uređaji budu \textit{nezavisni akteri} koji kroz programski kod kolektivno verifikuju stanje, donose odluke i održavaju napredovanje sistema bez centralne tačke poverenja koji funkcionišu u prisustvu nepouzdanih ili potencijalno malicioznih aktera tzv. vizantijskih čvorova.
+
+%\begin{definicija}
+%Decentralizovan informacioni sistem je sistem u kojem nijedan čvor nema privilegovanu kontrolu nad stanjem, već konzistentnost i napredovanje sistema obezbeđuju distribuirani protokoli.
+%\end{definicija}
+
+%Ovakvo tumačenje omogućava da se decentralizacija posmatra kao proširenje sociotehničke perspektive radnih sistema, primenjeno na domene distribuiranih algoritama, konsenzusa i upravljanja stanjem bez centralnog autoriteta.
+
+%Od tri vrste decentralizacije, kontrolna decentralizacija obično ima najveću intuitivnu težinu. Kada neko kaže da je sistem ,,decentralizovan'', on najčešće misli da korisnici nisu podređeni jednom centralnom autoritetu i da nijedan subjekt nema moć da samostalno upravlja sistemom. Zbog toga sistem može biti arhitektonski ili logički centralizovan, a i dalje smatran decentralizovanim ukoliko je kontrola raspodeljena. Skoro svi moderni distribuirani informacioni sistemi ostaju kontrolno centralizovani.
 
 %U nastavku rada, termin ,,sistem'' se koristi kao skraćenica za ,,informacioni sistem'', osim kada se izričito navodi drugačije.

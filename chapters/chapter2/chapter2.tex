@@ -138,7 +138,7 @@ Međutim, postoje ozbiljna ograničenja:
 \item \textbf{Hardverski limit} - svaka mašina ima gornju granicu kapaciteta: maksimalan broj CPU jezgara, količinu RAM-a, maksimalnu brzinu I/O-a i skladišta. Jednom kada se taj limit dostigne, više nije moguće dodatno skalirati,
 \item \textbf{Ekonomska neefikasnost na visokom nivou} - cena raste brzo i nelinearno u odnosu na dobijene performanse. Na primer, povećanje broja jezgara ne donosi linearnu dobit performansi \cite{hill2008amdahl},
 \item \textbf{Opterećenje} - kada sistem dođe do zagušenja i resursi budu iscrpljeni, performanse mogu naglo da opadnu, uz značajan porast latencije, kašnjenja ili čak potpuni pad servisa. Kada se dostigne hardverski limit, ne postoji način daljeg skaliranja bez arhitekturne promene, a period oporavka može biti dug,
-\item \textbf{Jedna tačka otkaza \eng{single point of failure}} - dostupnost celokupnog sistema direktno zavisi od ispravnosti jedne mašine, njen pad ili otkaz dovodi do potpunog prekida rada sistema.
+\item \textbf{Jedna tačka otkaza} - dostupnost celokupnog sistema direktno zavisi od ispravnosti jedne mašine, njen pad ili otkaz dovodi do potpunog prekida rada sistema.
 \end{enumerate}
 
 Da bi se makar delimično ublažile poslednje dve mane, jedno od poznatih rešenja jeste korišćenje rezerve \eng{hot standby}. To znači da postoji rezervna instanca spremna za aktivaciju u slučaju da glavna mašina zakaže ili postane neupotrebljiva. Ovo omogućava preuzimanje rada bez (ili uz minimalan) prekid za korisnike. Ipak, i ta rezerva nasleđuje sve prethodno navedene mane.
