@@ -47,13 +47,13 @@ U daljem radu fokus će biti samo na informacionim sistemima.
 Da bi se precizno definisao informacioni sistem, neophodno je najpre razjasniti pojam informacionih tehnologija, koje počivaju na skupu osnovnih tehničkih komponenti \cite{laudon2004management}. Te komponente obezbeđuju tehnološku osnovu rada informacionog sistema i obuhvataju:
 \begin{enumerate}
 \item \textbf{Hardver}, koji obezbeđuje fizičku infrastrukturu za izvršavanje softverskih komponenti,
-\item \textbf{Softver}, koji predstavlja logički sloj sistema i određuje njegove funkcionalnosti i stepen automatizacije poslovnih procesa,
+\item \textbf{Softver}, koji predstavlja logički sloj sistema i određuje njegove funkcionalnosti i stepen automatizacije poslovnih procesa i aktivnosti,
 \item \textbf{Bazu podataka}, koja istovremeno pruža fizički mehanizam trajnog čuvanja podataka i logički sloj za njihovo strukturisano čitanje, pisanje i upravljanje,
 \item \textbf{Mrežu}, kao infrastrukturni element koji omogućava komunikaciju i koordinaciju između različitih delova sistema.
 \end{enumerate}
 
 \begin{definicija}
-Informacione tehnologije (IT) obuhvataju hardver, softver, baze podataka i mreže kao primarna sredstva za procesiranje, čuvanje, razmenu i prikaz informacija neophodnih za realizaciju poslovnih procesa.
+Informacione tehnologije (IT) obuhvataju hardver, softver, baze podataka i mreže kao primarna sredstva za procesiranje, čuvanje, razmenu i prikaz informacija neophodnih za realizaciju poslovnih procesa i aktivnosti.
 \end{definicija}
 
 \begin{definicija}
@@ -176,18 +176,18 @@ Kontejnerizacija predstavlja dominantan tehnološki pristup za raspoređivanje s
 Zahvaljujući ovim tehnologijama, arhitektonske organizacije informacionih sistema opisane u poglavlju \ref{sec:arhitektonska-organizacija} mogu se efikasno distribuirati i održavati u cloud infrastrukturi, uz značajno smanjenje tehničke složenosti i operativnih troškova u odnosu na tradicionalne modele upravljanja resursima.
 
 \section{Centralizacija u distribuiranim informacionim sistemima}
-Iako se savremeni informacioni sistemi često izvršavaju na velikom broju fizički distribuiranih čvorova, njihova dominantna arhitektonska paradigma i dalje ostaje klijent-server model. U takvim sistemima, uprkos fizičkoj raspodeli infrastrukture, poslovna logika, donošenje odluka i upravljanje stanjem sistema centralizovani su oko jedinstvene upravljačke instance ili skupa tesno koordinisanih autoriteta. Kao posledica toga, sistem se u operativnom smislu ponaša kao jedinstvena računarska celina sa jednim globalnim stanjem i jednim centrom poverenja.
+Iako se savremeni informacioni sistemi često izvršavaju na velikom broju fizički distribuiranih čvorova, njihova dominantna arhitektonska paradigma i dalje ostaje klijent-server model. U takvim sistemima, uprkos fizičkoj raspodeli infrastrukture, poslovna logika, donošenje odluka i upravljanje stanjem sistema centralizovani su u okviru jedinstvene upravljačke instance ili skupa tesno koordinisanih autoriteta. Kao posledica toga, sistem se u operativnom smislu ponaša kao jedinstvena računarska celina sa jednim globalnim stanjem i jednim centrom poverenja.
 
 \begin{teorema}
 Fizička distribuiranost čvorova ne implicira decentralizaciju informacionog sistema.
 \end{teorema}
 
-Da bi se informacioni sistem mogao smatrati decentralizovanim, nije dovoljno da se izvršava na velikom broju čvorova. Neophodno je da njegova arhitektura bude projektovana bez centralne tačke kontrole ili jedinstvene tačke otkaza \eng{single point of failure}, jer bi njen otkaz, uklanjanje ili kompromitovanje dovelo do poremećaja ili potpunog prekida rada sistema \cite{baran1964distributed}.
+Da bi se informacioni sistem mogao smatrati decentralizovanim, nije dovoljno da se izvršava na velikom broju čvorova. Neophodno je da njegova arhitektura bude projektovana bez centralne tačke kontrole ili jedinstvene tačke otkaza sistema \eng{single point of failure}, jer bi njen otkaz, uklanjanje ili kompromitovanje dovelo do poremećaja ili potpunog prekida rada sistema \cite{baran1964distributed}.
 
 Prema standardnoj klasifikaciji \cite{buterin2017meaning}, decentralizacija se može analizirati kroz tri međusobno nezavisne dimenzije:
 \begin{enumerate}
 \item \textbf{Arhitektonska decentralizacija} - fizička i geografska raspodela računarskih čvorova,
-\item \textbf{Kontrolna (politička) decentralizacija} - raspodela moći odlučivanja i upravljanja među različitim akterima,
+\item \textbf{Kontrolna (politička) decentralizacija} - raspodela moći odlučivanja i upravljanja među različitim učesnicima,
 \item \textbf{Logička decentralizacija} - struktura softverskog stanja i način na koji sistem konceptualno funkcioniše kao celina.
 \end{enumerate}
 
@@ -196,28 +196,34 @@ Prema standardnoj klasifikaciji \cite{buterin2017meaning}, decentralizacija se m
 \subsection{Arhitektonska decentralizacija}
 Arhitektonska decentralizacija odnosi se pre svega na \textbf{hardverski sloj} sistema i ne predstavlja binarnu osobinu sistema, već kontinualni spektar koji zavisi od broja čvorova, njihove međusobne nezavisnosti, vlasničke strukture i fizičke raspodele.
 
-Tipičan primer sistema u kome su prisutne sve tri forme centralizacije jesu tradicionalne korporativne infrastrukture, gde se sistem izvršava na više fizički i geografski razdvojenih lokacija, ali su svi ti resursi u vlasništvu ili pod kontrolom jednog administrativnog entiteta i podležu jedinstvenoj upravljačkoj politici. Ovi sistemi jasno ilustruju da \textbf{distribuiranost nije isto što i decentralizacija}, jer ostaju arhitektonski centralizovani u smislu kontrole infrastrukture.
-
 \begin{definicija}
-Decentralizovana infrastruktura podrazumeva skup čvorova koje pokreću međusobno nezavisni vlasnici, pri čemu ne postoji centralni mehanizam za njihovo isključivanje, koordinaciju ili izdavanje dozvola za učešće u sistemu.
+Arhitektonska decentralizacija podrazumeva postojanje fizičke infrastrukture sastavljene od čvorova koje pokreću međusobno nezavisni vlasnici, raspoređenih na različitim fizičkim lokacijama, bez centralizovanog mehanizma upravljanja infrastrukturom.
 \end{definicija}
 
-Čak i ako se neki čvorovi nalaze u istom regionu ili kod istog provajdera, ključna razlika je u nezavisnosti kontrole, a ne u geografiji.
+Tipičan primer sistema u kome su prisutne sve tri forme centralizacije jesu tradicionalne korporativne infrastrukture, gde se sistem izvršava na više fizički i geografski razdvojenih lokacija, ali su svi ti resursi u vlasništvu ili pod kontrolom jednog administrativnog entiteta i podležu jedinstvenoj upravljačkoj politici. Ovi sistemi jasno ilustruju da \textbf{distribuiranost nije isto što i decentralizacija}, jer u pogledu kontrole infrastrukture ostaju arhitektonski centralizovani.
 
 \subsection{Kontrolna decentralizacija}
-Kontrolna (politička) decentralizacija odnosi se na \textbf{ljudski i organizacioni sloj} te se podrazumeva odsustvo jedinstvenog entiteta koji ima ovlašćenje da izdaje naredbe, donosi konačne odluke ili unilateralno menja globalno stanje sistema. Da bi ovakav model bio moguć, čvorovi sistema moraju biti u stanju da međusobno komuniciraju direktno, bez posrednika koji nameću pravila komunikacije ili imaju privilegovanu ulogu u odlučivanju.
+Kontrolna (politička) decentralizacija odnosi se na \textbf{ljudski i organizacioni sloj} sistema i podrazumeva odsustvo jedinstvenog entiteta koji poseduje ovlašćenje da izdaje naredbe, donosi konačne odluke ili menja globalno stanje sistema.
+
+\begin{definicija}
+Kontrolna decentralizacija označava svojstvo sistema u kojem nijedan pojedinačni čvor ili učesnik nema privilegovanu ulogu u donošenju odluka, već se napredovanje sistema postiže kolektivnim delovanjem nezavisnih učesnika, bez postojanja centralizovanog autoriteta ili tačke poverenja.
+\end{definicija}
+
+Da bi ovakav model bio moguć, čvorovi sistema moraju biti u mogućnosti da međusobno komuniciraju direktno, bez posrednika koji imaju centralnu ulogu i koji bi mogli da nameću pravila komunikacije.
 
 \begin{definicija}
 Mreža ravnopravnih korisnika \eng{peer-to-peer, P2P} predstavlja model komunikacije u kome svaki učesnik može preuzimati ulogu i klijenta i servera, omogućavajući direktan prenos podataka između dva ili više čvorova bez oslanjanja na centralni server \cite{oram2001peer}.
 \end{definicija}
 
-Iako ovakva topologija eliminiše centralne tačke komunikacije i predstavlja osnovu arhitektonske decentralizacije, ona sama po sebi ne garantuje kontrolnu decentralizaciju. Pravila koja određuju ko može da učestvuje u mreži, koje poruke se smatraju validnim i kako se donose odluke o stanju sistema nisu određena topologijom mreže, već protokolima i politikama koje mogu biti centralizovano definisane. 
+Iako ovakva topologija omogućava eliminisanje \textit{centralne tačke komunikacije} i predstavlja osnovu arhitektonske decentralizacije, ona sama po sebi ne garantuje ostvarivanje kontrolne decentralizacije. Naime, ne uklanja centralizovane kontrole nad pravilima sistema, kao što su pravo učešća u mreži, validnost poruka i način donošenja odluka o napredovanju globalnog stanja.
 
 \begin{teorema}
 Mreža ravnopravnih korisnika predstavlja potreban, ali ne i dovoljan uslov za ostvarivanje kontrolne decentralizacije.
 \end{teorema}
 
-Kontrolna decentralizacija podrazumeva model u kome čvorovi sistema funkcionišu kao međusobno \textit{nezavisni akteri} koji, kroz formalno definisane protokole odlučivanja, kolektivno uspostavljaju i održavaju napredovanje sistema bez postojanja centralizovanog autoriteta ili tačke poverenja. Međutim, ovo implicitno uvodi mogućnost da neki čvorovi u procesu odlučivanja postanu nepoverljivi ili maliciozni, bilo usled tehničkih kvarova, bilo kao posledica kompromitovanja od strane napadača koji nastoje da šalju lažne ili međusobno kontradiktorne poruke. 
+Iz tog razloga, sam sistem mora formalno definisati procese i aktivnosti čijim se izvršavanjem omogućava da svi čvorovi, na osnovu lokalnih informacija i razmene poruka, dinamički odrede sledeće globalno stanje i kolektivno ga prihvate.
+
+Međutim, uklanjanje centralizovanog autoriteta u procesima odlučivanja implicitno uvodi mogućnost da se pojedini čvorovi ponašaju neispravno ili maliciozno, bilo usled tehničkih kvarova, bilo kao posledica kompromitovanja od strane napadača koji šalju lažne ili međusobno kontradiktorne poruke.
 
 Ovakvi incidenti ilustruju izazov poznat kao \textit{Problem vizantijskih generala} \cite{lamport2019byzantine} \eng{Byzantine Generals Problem}, u kojem sistem mora da obezbedi konzistentan dogovor čak i u prisustvu čvorova koji se ponašaju maliciozno ili nepredvidivo. 
 
@@ -229,8 +235,7 @@ Vizantijski general je učesnik u distribuiranom sistemu koji je uključen u koo
 Ako se u mreži ravnopravnih korisnika ostvari kontrolna decentralizacija, sistem mora biti projektovan tako da toleriše postojanje vizantijskih čvorova.
 \end{teorema}
 
-Poznato je da za postizanje sigurnog dogovora u prisustvu do $f$ takvih čvorova mora važiti uslov $n \ge 3f + 1$.
-
+%Poznato je da, u klasičnom vizantijskom modelu grešaka, za postizanje sigurnog dogovora u prisustvu do $f$ vizantijskih čvorova mora važiti uslov $n \ge 3f + 1$.
 
 
 %\begin{definicija}
