@@ -237,6 +237,24 @@ Ako se u mreži ravnopravnih korisnika ostvari kontrolna decentralizacija, siste
 
 %Poznato je da, u klasičnom vizantijskom modelu grešaka, za postizanje sigurnog dogovora u prisustvu do $f$ vizantijskih čvorova mora važiti uslov $n \ge 3f + 1$.
 
+\subsection{Logička decentralizacija}
+Logička decentralizacija odnosi se na \textbf{softverski i protokolarni sloj} sistema i opisuje način na koji je sistem konceptualno modelovan i kako se njegovo stanje predstavlja, menja i interpretira od strane učesnika.
+
+Za razliku od arhitektonske i kontrolne decentralizacije, koje se odnose na fizičku infrastrukturu i raspodelu ovlašćenja, logička decentralizacija se tiče \textit{apstraktne strukture sistema} i njegove funkcionalne organizacije.
+
+\begin{definicija}
+Logička decentralizacija odnosi se na konceptualnu organizaciju sistema u kojoj ne postoji jedinstveno, globalno stanje koje svi čvorovi mreže moraju da dele i održavaju, već se stanje sistema sastoji od skupa lokalnih, međusobno nezavisnih stanja čije postojanje i evolucija nisu centralno koordinisani.
+\end{definicija}
+
+Primer sistema koji je logički decentralizovan, ali kontrolno centralizovan, predstavlja mreža za isporuku sadržaja \cite{pathan2007taxonomy} \eng{Content Delivery Network, CDN}. Ona se sastoji od velikog broja geografski raspoređenih rubnih servera \eng{edge servers}, koji se često nalaze van administrativne kontrole samog proizvođača sadržaja i služe za efikasnu isporuku statičkog sadržaja krajnjim korisnicima. Istu mrežu za isporuku sadržaja može koristiti više kompanija, te u sistemu ne postoji jedinstveno globalno stanje. Promene stanja sistema (npr. izmena ili ažuriranje fajlova) iniciraju se isključivo iz centralnog izvora, pri čemu svaka izmena sadržaja mora biti ažurirana na svim rubnim serverima.
+
+Primer sistema koji ostvaruje logičku i kontrolnu decentralizaciju predstavlja \textit{BitTorrent} protokol \cite{cohen2003incentives}, koji funkcioniše kao mreža ravnopravnih korisnika. Za svaki sadržaj formira se posebna grupa čvorova koji istovremeno učestvuju u razmeni njegovih delova, pri čemu svaki čvor održava isključivo sopstveno lokalno stanje. U sistemu ne postoji jedinstveno globalno stanje koje svi učesnici moraju da dele ili održavaju, već skup nezavisnih lokalnih stanja koja nisu međusobno usklađivana na nivou celokupne mreže. Promena stanja sistema manifestuje se kroz pojavu novog sadržaja, za koji se formira nova grupa čvorova. Funkcionisanje sistema proizilazi iz lokalnih interakcija između čvorova unutar pojedinačnih grupa. Iako servisi za pretragu sadržaja (npr. \textit{The Pirate Bay}) mogu olakšati pronalaženje relevantnih grupa korisnika, oni ne predstavljaju logičku komponentu sistema i nisu neophodni za njegovo osnovno funkcionisanje.
+
+Za razliku od statičkih sistema, dinamički informacioni sistemi podrazumevaju postojanje eksplicitnog modela napredovanja sistema tokom vremena kao rezultat događaja ili akcija učesnika. Održavanje konzistentnog ponašanja takvih sistema zahteva definisanu semantiku promena stanja, determinističke tranzicije i mehanizme za usaglašavanje različitih lokalnih pogleda na sistem.
+
+\begin{teorema}
+Ne postoji dinamički informacioni sistem koji istovremeno ostvaruje punu arhitektonsku, kontrolnu i logičku decentralizaciju.
+\end{teorema}
 
 %\begin{definicija}
 %Decentralizovan informacioni sistem je sistem u kojem nijedan čvor nema privilegovanu kontrolu nad stanjem, već konzistentnost i napredovanje sistema obezbeđuju distribuirani protokoli.
