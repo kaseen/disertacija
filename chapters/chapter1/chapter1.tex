@@ -24,7 +24,7 @@ Dalje, Alter u svom radu predstavlja osnovne elemente najopštijeg oblika radnog
 \item \textbf{Strategije} određuju pravac i nameru. One postoje na nivou preduzeća, odeljenja i konkretnog sistema rada. Strategije moraju biti usklađene i koherentne, jer neusaglašene strategije dovode do neuspešne implementacije i pogrešnih prioriteta.
 \end{enumerate}
 
-Prethodna definicija radnog sistema može se posmatrati kao analitička, jer pruža opis njegove strukture i međusobnih odnosa komponenti. Da bi se obezbedilo dublje teorijsko razumevanje pojma, uvodi se \textit{ontološka definicija} koja razmatra minimalni skup elemenata neophodnih da bi radni sistem postojao kao realan entitet. Iako Alter eksplicitno ne koristi termin ,,ontološki minimum radnog sistema’’, iz njegove definicije i logike pristupa proizlazi da su za postojanje svakog radnog sistema neophodni sledeći elementi:
+Prethodna definicija radnog sistema može se posmatrati kao analitička, jer pruža opis njegove strukture i međusobnih odnosa komponenti. Da bi se obezbedilo dublje teorijsko razumevanje pojma, uvodi se \textit{ontološka definicija} koja razmatra minimalni skup elemenata neophodnih da bi radni sistem postojao kao realan entitet. Iako Alter eksplicitno ne koristi termin ,,ontološki minimum radnog sistema'', iz njegove definicije i logike pristupa proizlazi da su za postojanje svakog radnog sistema neophodni sledeći elementi:
 \begin{enumerate}
 \item \textbf{procesi i aktivnosti} - koji određuju \textit{šta se radi}
 \item \textbf{učesnici} - koji određuju \textit{ko radi}
@@ -80,9 +80,15 @@ Informacioni sistemi mogu se posmatrati kao tehnološke implementacije radnih si
 
 Ovakva integracija pokazuje da se različite akademske klasifikacije informacionih sistema mogu dosledno mapirati na četiri osnovne kategorije radnih sistema, pri čemu se svaki informacioni sistem posmatra u funkciji vrednosti koju konkretan radni sistem nastoji da proizvede.
 
-\section{Arhitektonska organizacija informacionih sistema}\label{sec:arhitektonska-organizacija}
-\TODO{Napravi slike za svaku od ovih}
+Poslovni informacioni sistemi i posebno digitalna trgovina ili \textbf{e-trgovina} \eng{e-commerce} predstavljaju jedan od najdinamičnijih i najvrednijih segmenata savremenih informacionih sistema. Prema savremenim empirijskim analizama digitalne ekonomije \cite{veenam2024cross}, industrija globalne e-trgovine procenjena je na približno 21,1 trilion američkih dolara u 2023. godini, uz projekcije snažnog dugoročnog rasta u narednoj deceniji, prema tržišnim analizama na 183,8 triliona do 2032. godine, što potvrđuje njenu izuzetnu ekonomsku i tehnološku relevantnost.
 
+Ovakav obim digitalne trgovine podupire potrebu za visokim standardima performansi, pouzdanosti, skalabilnosti i sigurnosti informacionih sistema, jer tehnološki zahtevi \textit{platformi za e-trgovinu} često predstavljaju referentni nivo zahteva za savremene poslovne informacione sisteme.
+
+Informacioni sistemi u drugim domenima, poput javnog sektora, neprofitnih organizacija ili ličnih sistema, razlikuju se prvenstveno po svojim ciljevima i korisničkim zahtevima. Međutim, osnovni tehnološki izazovi i principi u velikoj meri ostaju isti.
+
+Stoga će se u daljem radu primarna pažnja posvetiti kontekstu e-trgovine, uz eksplicitno polazište da se razmatrani principi, mehanizmi i rešenja u velikoj meri mogu generalizovati na druge oblike informacionih sistema.
+
+\section{Arhitektonska organizacija informacionih sistema}\label{sec:arhitektonska-organizacija}
 Program predstavlja statički, fizički zapis koda na uređaju (hardveru) koji sam po sebi ne izvršava nikakvu aktivnost. Kada se pokrene njegova instanca, tj. kada se aplikacija učita u radnu memoriju računara, nastaje proces. Po završetku izvršavanja, proces se uklanja iz radne memorije i time prestaje da postoji.
 
 Najčešće se softver izvršava na uređajima koji poseduju operativni sistem \cite{tanenbaum2015modern} čija je uloga da omogući istovremeno izvršavanje i upravljanje više procesa na istom uređaju: planiranje njihovog izvršavanja, dodelu resursa, sinhronizaciju i međuprocesnu komunikaciju \eng{Inter-Process Communication}. U zavisnosti od fizičke strukture procesora može se u istom trenutku izvršavati jedan ili više procesa, pri čemu operativni sistem ,,naizmenično'' dodeljuje procesor procesima tako što pauzira, čuva i vraća njihov kontekst izvršavanja.
