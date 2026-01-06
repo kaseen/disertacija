@@ -43,21 +43,28 @@ Bez obzira na kategoriju, svi radni sistemi dele zajednički ontološki minimum,
 
 U daljem radu fokus će biti samo na informacionim sistemima.
 
-\section{Informactioni sistem}
-Da bi se precizno definisao informacioni sistem, neophodno je najpre razjasniti pojam informacionih tehnologija, koje počivaju na skupu osnovnih tehničkih komponenti \cite{laudon2004management}. Te komponente obezbeđuju tehnološku osnovu rada informacionog sistema i obuhvataju:
+\section{Informacioni sistem}
+Da bi se precizno definisao informacioni sistem, neophodno je najpre razjasniti pojam informacionih tehnologija, koje počivaju na skupu osnovnih tehničkih komponenti \cite{laudon2004management}. U svom osnovnom obliku, informacioni sistemi se zasnivaju na dve fundamentalne komponente:
 \begin{enumerate}
-\item \textbf{Hardver}, koji obezbeđuje fizičku infrastrukturu za izvršavanje softverskih komponenti,
-\item \textbf{Softver}, koji predstavlja logički sloj sistema i određuje njegove funkcionalnosti i stepen automatizacije poslovnih procesa i aktivnosti,
-\item \textbf{Bazu podataka}, koja istovremeno pruža fizički mehanizam trajnog čuvanja podataka i logički sloj za njihovo strukturisano čitanje, pisanje i upravljanje,
-\item \textbf{Mrežu}, kao infrastrukturni element koji omogućava komunikaciju i koordinaciju između različitih delova sistema.
+\item \textbf{Hardver}, koji obezbeđuje fizičku infrastrukturu neophodnu za izvršavanje računarskih procesa,
+\item \textbf{Softver}, koji predstavlja logički sloj sistema i definiše njegove funkcionalnosti, ponašanje i stepen automatizacije poslovnih procesa.
 \end{enumerate}
 
+Međutim, u savremenim informacionim sistemima, radi preciznije analize i jasnijeg modelovanja, ove osnovne komponente se u literaturi često posmatraju kroz dodatna dva konceptualna sloja, koji u sebi implicitno obuhvataju i hardverske i softverske elemente:
+
+\begin{enumerate}[start=3]
+\item \textbf{Bazu podataka}, koja obezbeđuje mehanizme trajnog čuvanja podataka, kao i logičke strukture i softverske servise za njihovo organizovano čitanje, pisanje i upravljanje,
+\item \textbf{Mrežu}, kao infrastrukturni i komunikacioni sloj koji omogućava razmenu podataka, koordinaciju i interoperabilnost između udaljenih delova sistema.
+\end{enumerate}
+
+Ovakva četvorokomponentna podela ne uvodi nove fundamentalne tehničke osnove sistema, već predstavlja analitički okvir koji omogućava jasnije razdvajanje odgovornosti, lakše razumevanje arhitekture i precizniju analizu ponašanja savremenih informacionih sistema.
+
 \begin{definicija}
-Informacione tehnologije (IT) obuhvataju hardver, softver, baze podataka i mreže kao primarna sredstva za procesiranje, čuvanje, razmenu i prikaz informacija neophodnih za realizaciju poslovnih procesa i aktivnosti.
+Informacione tehnologije (IT) predstavljaju skup tehničkih sredstava, uključujući hardver, softver, baze podataka i mreže, namenjenih procesiranju, čuvanju, razmeni i prikazu informacija neophodnih za realizaciju poslovnih procesa i aktivnosti.
 \end{definicija}
 
 \begin{definicija}
-Informacion sistem predstavlja sociotehnički sistem nastao integracijom radnog sistema sa informacionim tehnologijama.
+Informacioni sistem predstavlja sociotehnički sistem nastao integracijom radnog sistema sa informacionim tehnologijama.
 \end{definicija}
 
 Svaki informacioni sistem, bez obzira na svoju veličinu ili primenjenu tehnologiju, obuhvata tri osnovne funkcionalne celine: ulaz, obradu i izlaz. U savremenim softverskim rešenjima te celine se najčešće realizuju kao:
@@ -86,10 +93,14 @@ Ovakav obim digitalne trgovine podupire potrebu za visokim standardima performan
 
 Informacioni sistemi u drugim domenima, poput javnog sektora, neprofitnih organizacija ili ličnih sistema, razlikuju se prvenstveno po svojim ciljevima i korisničkim zahtevima. Međutim, osnovni tehnološki izazovi i principi u velikoj meri ostaju isti.
 
-Stoga će se u daljem radu primarna pažnja posvetiti kontekstu e-trgovine, uz eksplicitno polazište da se razmatrani principi, mehanizmi i rešenja u velikoj meri mogu generalizovati na druge oblike informacionih sistema.
+U daljem izlaganju, e-trgovina se koristi kao dominantni referentni primer savremenog informacionog sistema, jer u sebi objedinjuje tipične izazove visokog obima obrade, arhitekture i složenog upravljanja stanjem. Iz tog razloga, svi naredni koncepti i analize biće predstavljeni bez eksplicitnog navođenja domena primene, podrazumevajući kontekst e-trgovine. Ipak, razmatrani principi nisu vezani isključivo za ovaj domen, već predstavljaju opšte obrasce i mehanizme primenljive na širi spektar informacionih sistema.
 
 \section{Arhitektonska organizacija informacionih sistema}\label{sec:arhitektonska-organizacija}
 Program predstavlja statički, fizički zapis koda na uređaju (hardveru) koji sam po sebi ne izvršava nikakvu aktivnost. Kada se pokrene njegova instanca, tj. kada se aplikacija učita u radnu memoriju računara, nastaje proces. Po završetku izvršavanja, proces se uklanja iz radne memorije i time prestaje da postoji.
+
+\begin{definicija}
+Proces je instanca aplikacije koja ima sopstveni memorijski prostor i kontekst izvršavanja.
+\end{definicija}
 
 Najčešće se softver izvršava na uređajima koji poseduju operativni sistem \cite{tanenbaum2015modern} čija je uloga da omogući istovremeno izvršavanje i upravljanje više procesa na istom uređaju: planiranje njihovog izvršavanja, dodelu resursa, sinhronizaciju i međuprocesnu komunikaciju \eng{Inter-Process Communication}. U zavisnosti od fizičke strukture procesora može se u istom trenutku izvršavati jedan ili više procesa, pri čemu operativni sistem ,,naizmenično'' dodeljuje procesor procesima tako što pauzira, čuva i vraća njihov kontekst izvršavanja.
 
@@ -103,14 +114,20 @@ Proces tokom izvršavanja može pokrenuti dodatne podređene komponente koje omo
 Međutim, softver se može izvršavati i na uređajima bez klasičnog operativnog sistema, u tzv. \textit{bare-metal} okruženju, gde postoji samo jedan proces koji direktno radi na hardveru. Višestruki procesi i niti mogu postojati ukoliko je razvijeno posebno programsko okruženje koje to omogućava.
 
 \begin{definicija}
-Proces je instanca aplikacije koja ima sopstveni memorijski prostor i kontekst izvršavanja.
-\end{definicija}
-
-\begin{definicija}
 Instanca informacionog sistema je skup pokrenutih procesa koji rade u koordinaciji kako bi obezbedili punu funkcionalnost aplikacije.
 \end{definicija}
 
-Na osnovu broja i međusobne zavisnosti procesa u sistemu, moguće je razlikovati različite arhitekture informacionih sistema:
+Pokrenuti informacioni sistem nije statičan, već se njegovo ponašanje izražava kroz kontinuirano izvršavanje procesa i promene unutrašnjeg stanja sistema. U tom kontekstu uvode se dva ključna pojma:
+
+\begin{definicija}
+Stanje informacionog sistema predstavlja skup svih podataka i sistemskih parametara koji u datom trenutku u potpunosti opisuju njegovo operativno stanje.
+\end{definicija}
+
+\begin{definicija}
+Napredovanje informacionog sistema predstavlja proces prelaska sistema iz jednog stanja u drugo kao posledicu njegovog izvršavanja i obrade zahteva.
+\end{definicija}
+
+Način na koji informacioni sistem ostvaruje svoje napredovanje, kao i složenost upravljanja njegovim stanjem, direktno zavise od organizacije procesa koji čine njegovu instancu. U zavisnosti od broja procesa, njihove međusobne zavisnosti i načina komunikacije, informacioni sistemi se mogu realizovati kroz različite arhitektonske pristupe. Ovi pristupi definišu kako su funkcionalne celine sistema raspoređene, kako se ostvaruje koordinacija između njih i na koji način se upravlja promenama stanja sistema.
 
 \begin{description}
 
