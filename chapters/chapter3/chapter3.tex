@@ -45,7 +45,7 @@ Transakciona naknada \eng{transaction fee, tx fee} predstavlja iznos koji korisn
 Transakcione naknade predstavljaju dominantan mehanizam \textit{implicitnog određivanja prioriteta transakcija} u javnim blokčejn sistemima. One stvaraju ekonomski podsticaj za učesnike zadužene za formiranje blokova, koji su motivisani da prilikom selekcije nepotvrđenih transakcija favorizuju one sa većim priloženim naknadama. Na ovaj način ostvaruje se tržišno zasnovan mehanizam raspodele ograničenog kapaciteta blokova, bez potrebe za centralizovanom kontrolom ili eksplicitnim pravilima prioritizacije.
 
 \begin{definicija}
-Blok je skup transakcija i pripadajućeg zaglavlja koje sadrži metapodatke i koje je kriptografski povezano sa prethodnim blokom, čime se formira lanac koji obezbeđuje konzistentnu, sigurnu i nepromenljivu evidenciju podataka u blokčejn mreži.
+Blok predstavlja skup transakcija i odgovarajuće zaglavlje koje sadrži metapodatke neophodne za verifikaciju i povezivanje blokova, čime se formalizuje globalno napredovanje stanja celokupnog sistema.
 \end{definicija}
 
 Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu smatrati logički istovremenim, s obzirom na to da dele istu vremensku oznaku nastanka.
@@ -141,6 +141,7 @@ Finalnost \eng{finality} transakcije označava trenutak nakon kojeg se transakci
 
 Opisani mehanizam dokazivanja uloženog rada pokazuje da Bitcoin ne postiže konsenzus u strogo determinističkom smislu, već u obliku verovatnosne saglasnosti. U praksi se transakcija smatra prihvaćenom kada se nalazi u najdužem lancu i kada je nad njenim blokom izgrađen dovoljan broj narednih blokova, najčešće šest. Ovo pravilo predstavlja inženjerski kompromis između vremena čekanja i prihvatljivog nivoa rizika, pri čemu je verovatnoća reorganizacije lanca nakon tog broja \textbf{potvrda} zanemarljiva u realnim uslovima rada mreže. Iz ovoga sledi sledeća teorema:
 
+% TODO
 \begin{teorema}
 Verovatnosni konsenzus u blokčejn sistemima direktno zavisi od izabranog parametra finalnosti transakcija i dubine potvrda u lancu.
 \end{teorema}

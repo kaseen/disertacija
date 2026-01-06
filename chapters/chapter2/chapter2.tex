@@ -52,7 +52,7 @@ Da bi se precizno razlikovala perspektiva radnog sistema od perspektive informac
 \item \textbf{elementarnih operacija informacionog sistema} - osnovnih računskih, logičkih ili ulazno-izlaznih operacija koje softverska infrastruktura izvršava radi obrade zahteva.
 \end{enumerate}
 
-Procesna jedinica generiše zahtev, dok informacioni sistem realizuje taj zahtev kroz skup tehničkih operacija.
+Procesna jedinica generiše zahtev, dok informacioni sistem realizuje taj zahtev kroz skup tehničkih operacija, čime se ostvaruje napredovanje informacionog sistema sa svakim uspešno izvršenim zahtevom.
 
 \begin{definicija}\label{def:zahtev}
 Zahtev predstavlja elementarnu funkcionalnu operaciju koju informacioni sistem treba da obradi. Finalizacija zahteva označava trenutak kada informacioni sistem završi kompletnu obradu zahteva.
@@ -198,16 +198,16 @@ Kontencija predstavlja dominantni oblik režijskog opterećenja jer raste kvadra
 Kako broj instanci raste, sistem može ispoljiti sublinearno povećanje kapaciteta, stagnaciju ili degradaciju performansi \cite{hamann2021scalability}. Svaki novi čvor, osim što doprinosi procesnoj snazi, istovremeno uvodi dodatne konflikte u pristupu zajedničkim resursima i zahteva dodatnu koordinaciju, što može rasti brže od korisnog kapaciteta.
 
 \subsection{Teorija distribuiranih sistema}
-U distribuiranim informacionim sistemima ne postoji jedinstvena globalna memorija kojoj bi svi čvorovi imali istovremeni i potpuno konzistentan pristup \cite{kleppmann2017designing}. Umesto toga, podaci su fizički raspodeljeni između više čvorova koji paralelno obrađuju korisničke zahteve. Zbog toga nastaje potreba da se lokalne izmene podataka, nastale na jednom čvoru, usaglase sa ostalim čvorovima sistema.
+U distribuiranim informacionim sistemima ne postoji jedinstvena globalna memorija kojoj bi svi čvorovi imali istovremeni i potpuno konzistentan pristup \cite{kleppmann2017designing}. Umesto toga, podaci su fizički raspodeljeni između više čvorova koji paralelno obrađuju korisničke zahteve. Ovakva organizacija čini globalno napredovanje informacionog sistema izuzetno složenim, jer se lokalne izmene stanja, nastale na jednom čvoru, moraju usaglasiti sa ostalim čvorovima sistema putem razmene poruka.
 
 \begin{definicija}
 Poruka predstavlja elementarnu jedinicu komunikacije između čvorova u distribuiranom sistemu.
 \end{definicija}
 
-Bez dodatnih mehanizama, čvorovi bi razmenom poruka mogli da evoluiraju nezavisno jedni od drugih, što bi dovelo do divergentnih verzija podataka i nekonzistentnog stanja sistema.
+Bez dodatnih mehanizama koordinacije, čvorovi bi razmenom poruka mogli da lokalno napreduju nezavisno jedni od drugih, što bi dovelo do divergentnih verzija podataka i narušavanja konzistentnosti globalnog stanja sistema.
 
 \begin{definicija}
-Koordinacija obuhvata sve mehanizme pomoću kojih distribuirani čvorovi usklađuju svoje delovanje razmenom poruka, tako da sistem funkcioniše kao jedna logička celina.
+Koordinacija obuhvata sve mehanizme pomoću kojih distribuirani čvorovi usklađuju svoje napredovanje razmenom poruka, tako da sistem funkcioniše kao jedna logička celina.
 \end{definicija}
 
 Koordinacija je potrebna svaki put kada lokalna izmena na jednom čvoru treba da bude reflektovana u celom sistemu. Ovaj proces zahteva komunikaciju da su svi čvorovi blagovremeno dobili informaciju o lokalnim promenama. Mehanizam koji omogućava dostavljanje informacija o izmenama svim drugim čvorovima naziva se propagacija \cite{holliday2003epidemic}.
@@ -290,7 +290,7 @@ U praksi se primenjuju dva osnovna pristupa kontroli konkurentnog pristupa:
 Najviši stepen koordinacije postiže se primenom konsenzusnih protokola \cite{nguyen2002consensus}, jer oni omogućavaju snažnu konzistentnost i globalno determinističko uređenje upisa, čak i u prisustvu mrežnih kašnjenja, otkaza čvorova i particija mreže.
 
 \begin{definicija}
-Konsenzus rešava fundamentalni problem koordinacije u distribuiranim sistemima, u kojem skup čvorova mora da se usaglasi oko jedne zajedničke vrednosti, pri čemu moraju biti zadovoljeni sledeći uslovi:\\
+Konsenzus rešava fundamentalni problem koordinisanog napredovanja sistema u distribuiranim sistemima, u kojem skup čvorova mora da se usaglasi oko jedne zajedničke vrednosti, pri čemu moraju biti zadovoljeni sledeći uslovi:\\
 Sporazum \eng{agreement} - svi ispravni čvorovi moraju doneti identičnu odluku,\\
 Validnost \eng{validity} - odlučena vrednost mora poticati od neke predložene vrednosti,\\
 Okončanje \eng{termination} - svaki ispravan čvor mora eventualno doneti odluku.
