@@ -187,7 +187,7 @@ Kao što vidimo svaka instanca može predstavljati jedan proces ili skup međuso
 Distribuiran informacioni sistem predstavlja skup nezavisnih računarskih uređaja (čvorova) koji nemaju zajedničku memoriju i komuniciraju isključivo razmenom poruka, a svoj rad koordinišu tako da prema korisniku deluju kao jedinstven, koherentan sistem \cite{van2017distributed}.
 \end{definicija}
 
-\section{Računarstvo u oblaku i elastično skaliranje informacionih sistema}
+\section{Računarstvo u oblaku i elastično skaliranje informacionih sistema}\label{sec:cloud}
 Razvoj informacionih sistema tradicionalno je zahtevao nabavku sopstvene fizičke infrastrukture (servera, mrežne opreme, skladišta podataka) i angažovanje stručnog osoblja za njeno održavanje. Takav pristup nosi visoke početne troškove, zahteva složeno planiranje i otežava brzo prilagođavanje promenama u obimu posla.
 
 Savremene organizacije sve češće usvajaju model računarstva u oblaku \eng{cloud computing} \cite{mell2011nist}, u kome se infrastruktura, platforme i/ili softverske usluge iznajmljuju od eksternog provajdera. Umesto sopstvene opreme koriste se virtuelni resursi koji se dinamički dodeljuju prema potrebi, čime se omogućava \textbf{elastično skaliranje instanci informacionog sistema}, smanjuju troškovi infrastrukture i održavanja, umanjuje potreba za internim sistemskim osobljem i ubrzava postavljanje razvojnih i produkcionih okruženja.
@@ -256,7 +256,7 @@ U distribuiranim sistemima, mogućnost da se pojedini učesnici ponašaju vizant
 
 Iz tog razloga, svaki distribuirani sistem mora eksplicitno definisati pretpostavke o maksimalnom obimu vizantijskog ponašanja koji je u stanju da toleriše, što predstavlja njegovo fundamentalno teorijsko ograničenje.
 
-\begin{teorema}
+\begin{teorema}\label{teorema:vizantijski-granica}
 Ako se u mreži ravnopravnih korisnika ostvaruje kontrolna decentralizacija, sistem mora biti projektovan tako da definiše gornju granicu udela sistemskih resursa koji mogu biti pod kontrolom vizantijskih učesnika, unutar koje se garantuje korektno funkcionisanje sistema.
 \end{teorema}
 
