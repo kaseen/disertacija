@@ -13,9 +13,11 @@ Poslednje dve kategorije ne pripadaju tehničkim atributima infrastrukture u už
 
 Ovakva klasifikacija omogućava konzistentno i teorijski utemeljeno poređenje informacionih sistema na tehničkom nivou. Razmatranje ovih atributa jasno odvaja \textbf{tehnička svojstva sistema}, koja su primarni predmet istraživanja u ovoj disertaciji, od šireg organizacionog i poslovnog konteksta.
 
+% TODO
 U nastavku ovog poglavlja analiziraće se \textbf{prednosti i ograničenja kontrolno centralizovanih informacionih sistema}, pri čemu se tehnički atributi razmatraju nezavisno od toga da li se sistem izvršava na jednoj fizičkoj instanci ili na više fizičkih instanci.
 
 \section{CAP teorema}
+% TODO
 \begin{definicija}
 Kvalitativna analiza arhitektonskih ograničenja obuhvata identifikaciju i razumevanje fundamentalnih ograničenja distribuiranih sistema. 
 \end{definicija}
@@ -32,7 +34,7 @@ Mrežna particija može nastati u različitim situacijama, uključujući:
 
 Ponašanje sistema u ovakvim uslovima najpreciznije je opisano CAP teoremom, koju je prvi formulisao Eric Brewer \cite{brewer2000towards}, a formalno dokazali Gilbert i Lynch \cite{gilbert2002brewer}. Teorema definiše osnovni kompromis sa kojim se suočavaju svi distribuirani sistemi koji upravljaju deljenim stanjem.
 
-\begin{teorema}
+\begin{teorema}\label{teorema:cap}
 U distribuiranom sistemu koji čuva podatke moguće je istovremeno garantovati najviše dve od sledeće tri osobine:\\
 (1) \textbf{konzistentnost (C)} - svaki čvor vidi isto stanje sistema, tj. operacija čitanja uvek vraća poslednju potvrđenu upisanu vrednost,\\
 (2) \textbf{dostupnost (A)} - sistem garantuje odgovor na svaki zahtev u konačnom vremenu,\\
@@ -181,7 +183,7 @@ Kontencija \eng{contention penalty} predstavlja deo režijskog opterećenja nast
 
 Ovi fenomeni su formalno obuhvaćeni \textit{Univerzalnom zakonu skalabilnosti} \cite{gunther1993simple, gunther2008general}, koji opisuje kako režijsko opterećenje utiče na promenu \textbf{propusnosti} sistema pri povećanju broja instanci.
 
-\begin{teorema}
+\begin{teorema}\label{teorema:gunter}
 Gunterov univerzalni zakon skalabilnosti ima sledeću standardnu formu:
 $$C(N) = \frac{N}{1 + \alpha (N-1) + \beta N(N-1)} $$
 pri čemu:\\

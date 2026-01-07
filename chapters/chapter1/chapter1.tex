@@ -227,18 +227,18 @@ Tipičan primer sistema u kome su prisutne sve tri forme centralizacije jesu tra
 Kontrolna (politička) decentralizacija odnosi se na \textbf{ljudski i organizacioni sloj} sistema i podrazumeva odsustvo jedinstvenog entiteta koji poseduje ovlašćenje da izdaje naredbe, donosi konačne odluke ili menja globalno stanje sistema.
 
 \begin{definicija}
-Kontrolna decentralizacija označava svojstvo sistema u kojem nijedan pojedinačni čvor ili učesnik nema privilegovanu ulogu u donošenju odluka, već se napredovanje sistema postiže kolektivnim delovanjem nezavisnih učesnika, bez postojanja centralizovanog autoriteta ili tačke poverenja.
+Kontrolna decentralizacija označava svojstvo sistema u kojem nijedan pojedinačni čvor ili učesnik nema privilegovanu ulogu u donošenju odluka, već se napredovanje sistema ostvaruje kolektivnim delovanjem nezavisnih učesnika, bez postojanja centralizovanog autoriteta ili tačke poverenja.
 \end{definicija}
 
-Da bi ovakav model bio moguć, čvorovi sistema moraju biti u mogućnosti da međusobno komuniciraju direktno, bez posrednika koji imaju centralnu ulogu i koji bi mogli da nameću pravila komunikacije.
+Da bi ovakav model bio moguć, čvorovi sistema moraju biti u mogućnosti da međusobno komuniciraju direktno, bez posrednika sa centralnom ulogom koji bi mogli da nameću pravila komunikacije.
 
 \begin{definicija}
 Mreža ravnopravnih korisnika \eng{peer-to-peer, P2P} predstavlja model komunikacije u kome svaki učesnik može preuzimati ulogu i klijenta i servera, omogućavajući direktan prenos podataka između dva ili više čvorova bez oslanjanja na centralni server \cite{oram2001peer}.
 \end{definicija}
 
-Iako ovakva topologija omogućava eliminisanje \textit{centralne tačke komunikacije} i predstavlja osnovu arhitektonske decentralizacije, ona sama po sebi ne garantuje ostvarivanje kontrolne decentralizacije. Naime, ne uklanja centralizovane kontrole nad pravilima sistema, kao što su pravo učešća u mreži, validnost poruka i način donošenja odluka o napredovanju globalnog stanja.
+Iako ovakva topologija omogućava eliminisanje \textit{centralne tačke komunikacije} i predstavlja osnovu arhitektonske decentralizacije, ona sama po sebi ne garantuje ostvarivanje kontrolne decentralizacije. Naime, ona ne eliminiše centralizovane mehanizme kontrole nad pravilima sistema, kao što su pravo učešća u mreži, validnost poruka i način donošenja odluka o napredovanju globalnog stanja.
 
-\begin{teorema}
+\begin{teorema}\label{teorema:p2p}
 Mreža ravnopravnih korisnika predstavlja potreban, ali ne i dovoljan uslov za ostvarivanje kontrolne decentralizacije.
 \end{teorema}
 
@@ -252,11 +252,17 @@ Ovakvi incidenti ilustruju izazov poznat kao \textit{Problem vizantijskih genera
 Vizantijski general je učesnik u distribuiranom sistemu koji je uključen u koordinaciju ili donošenje zajedničke odluke, ali može biti zlonamern, neispravan ili namerno šalje netačne ili kontradiktorne informacije drugim učesnicima.
 \end{definicija}
 
+U distribuiranim sistemima, mogućnost da se pojedini učesnici ponašaju vizantijski predstavlja jedan od fundamentalni izazova za očuvanje korektnog i konzistentnog napredovanja sistema. Ukoliko vizantijski čvorovi raspolažu većinskim udelom resursa koji su relevantni za donošenje odluka i održavanje globalnog stanja sistema, bilo da se radi o broju čvorova, računarskoj snazi, udelu uloga ili drugim oblicima sistemskog uticaja, oni mogu preuzeti efektivnu kontrolu nad procesom odlučivanja, čime se narušavaju sigurnost, konzistentnost i kontrolna decentralizacija sistema. 
+
+Iz tog razloga, svaki distribuirani sistem mora eksplicitno definisati pretpostavke o maksimalnom obimu vizantijskog ponašanja koji je u stanju da toleriše, što predstavlja njegovo fundamentalno teorijsko ograničenje.
+
 \begin{teorema}
-Ako se u mreži ravnopravnih korisnika ostvari kontrolna decentralizacija, sistem mora biti projektovan tako da toleriše postojanje vizantijskih čvorova.
+Ako se u mreži ravnopravnih korisnika ostvaruje kontrolna decentralizacija, sistem mora biti projektovan tako da definiše gornju granicu udela sistemskih resursa koji mogu biti pod kontrolom vizantijskih učesnika, unutar koje se garantuje korektno funkcionisanje sistema.
 \end{teorema}
 
-%Poznato je da, u klasičnom vizantijskom modelu grešaka, za postizanje sigurnog dogovora u prisustvu do $f$ vizantijskih čvorova mora važiti uslov $n \ge 3f + 1$.
+U slučaju prekoračenja ove granice, vizantijski učesnici mogu manipulacijom porukama, pravilima validacije ili procesom donošenja odluka proizvesti divergentna stanja sistema, onemogućiti postizanje konsenzusa ili nametnuti sopstvenu verziju globalnog stanja, čime se efektivno urušava kontrolna decentralizacija.
+
+U klasičnom modelu vizantijskih grešaka, dokazano je da je za postizanje determinističkog i sigurnog konsenzusa u prisustvu do $f$ vizantijskih čvorova neophodno da ukupan broj učesnika zadovoljava uslov $n \ge 3f + 1$, čime se obezbeđuje da ispravni čvorovi čine strogu većinu u odnosu na potencijalno zlonamerne učesnike.
 
 \subsection{Logička decentralizacija}
 Logička decentralizacija odnosi se na \textbf{softverski i protokolarni sloj} sistema i opisuje način na koji je sistem konceptualno organizovan, odnosno kako se njegovo stanje modeluje, deli i koristi od strane učesnika.
@@ -273,7 +279,6 @@ Primer sistema koji je logički decentralizovan, ali kontrolno centralizovan, pr
 
 Primer sistema koji ostvaruje i logičku i kontrolnu decentralizaciju predstavlja \textit{BitTorrent} protokol \cite{cohen2003incentives}. BitTorrent funkcioniše kao mreža ravnopravnih korisnika u kojoj se za svaki sadržaj formira posebna grupa čvorova koji učestvuju u njegovoj razmeni. Svaki čvor održava isključivo sopstveno lokalno stanje, koje se odnosi na delove sadržaja koje poseduje i razmenjuje. U ovom sistemu ne postoji globalno stanje koje bi objedinjavalo sve učesnike mreže. Različite grupe čvorova funkcionišu nezavisno jedna od druge, a podela sistema na više delova ne narušava njegovu osnovnu funkcionalnost. Svaki deo mreže i dalje omogućava pronalaženje, razmenu i preuzimanje sadržaja u okviru svojih lokalnih interakcija. Servisi za pretragu sadržaja (npr. \textit{The Pirate Bay}) mogu olakšati pronalaženje relevantnih grupa korisnika, ali nisu neophodni za osnovno funkcionisanje sistema i ne predstavljaju njegovu logičku komponentu.
 
-
 Za razliku od statičkih sistema, dinamički informacioni sistemi podrazumevaju postojanje eksplicitnog modela napredovanja sistema tokom vremena kao rezultat događaja ili akcija učesnika. Održavanje konzistentnog ponašanja takvih sistema zahteva definisanu semantiku promena stanja, determinističke tranzicije i mehanizme za usaglašavanje različitih lokalnih pogleda na sistem.
 
 \begin{teorema}
@@ -281,6 +286,8 @@ Ne postoji dinamički informacioni sistem koji istovremeno ostvaruje punu arhite
 \end{teorema}
 
 %TODO ZAKLJUČAK
+
+%Decentralizacija se povećava sa brojem čvorova
 
 %\begin{definicija}
 %Decentralizovan informacioni sistem je sistem u kojem nijedan čvor nema privilegovanu kontrolu nad stanjem, već konzistentnost i napredovanje sistema obezbeđuju distribuirani protokoli.
