@@ -131,7 +131,7 @@ Kako bi se očuvalo približno konstantno prosečno vreme generisanja bloka od d
 \subsection{Propagacija blokova i razrešavanje konflikata}
 Nakon pronalaska odgovarajuće vrednosti počasne promenljive predloženi blok se \textbf{propagira} ka ostalim čvorovima u mreži, koji nezavisno proveravaju validnost dokaza uloženog rada i usklađenost bloka sa ostalim protokolskim pravilima, čime se ostvaruje \textbf{replikacija} globalnog stanja kod svih učesnika. Ukoliko su svi uslovi zadovoljeni, blok se prihvata kao naredni blok u lancu. 
 
-Moguće je, međutim, da dva ili više rudara u približno istom vremenskom intervalu pronađu i propagiraju različite, ali međusobno validne kandidate za $(n+1)$-ti blok koji se nadovezuju na isti prethodni $n$-ti blok. U tom slučaju, različiti podskupovi čvorova mogu privremeno prihvatiti različite verzije lanca kao važeće, što dovodi do kratkotrajne diverzifikacije stanja mreže, čime se javlja \textbf{konflikt} u distribuiranom okruženju. Ovo stanje se razrešava pronalaženjem narednog $(n+2)$-og bloka, budući da se svaki novi blok može nadovezati isključivo na jedan od postojećih kandidata.
+Moguće je, međutim, da dva ili više rudara u približno istom vremenskom intervalu pronađu i propagiraju različite, ali međusobno validne kandidate za $(n+1)$-ti blok koji se nadovezuju na isti prethodni $n$-ti blok. U tom slučaju, različiti podskupovi čvorova mogu privremeno prihvatiti različite verzije lanca kao važeće, što dovodi do kratkotrajnog račvanja \eng{fork} stanja mreže u više verzija, čime se javlja \textbf{konflikt} u distribuiranom okruženju. Ovo stanje se razrešava pronalaženjem narednog $(n+2)$-og bloka, budući da se svaki novi blok može nadovezati isključivo na jedan od postojećih kandidata.
 
 U sistemu \textit{Bitcoin} ne postoji centralni ili glavni čvor, ali pravilo najdužeg lanca \eng{longest chain rule} efektivno preuzima njegovu ulogu. Grana lanca koja se prva produži i postane duža od ostalih prihvata se kao kanonska verzija istorije sistema. Čvorovi koji su prethodno sledili kraću granu odbacuju je i sinhronizuju se sa najdužim važećim lancem, čime se mreža ponovo dovodi u konzistentno stanje. Kako se nad određenim blokom nadograđuje sve veći broj novih blokova, verovatnoća da alternativna grana nadmaši postojeći lanac opada eksponencijalno.
 
@@ -189,8 +189,22 @@ Jedan od načina za ublažavanje pomenutih kompromisa jeste primena privatnih il
 
 Nasuprot tome, \textit{javne blokčejn mreže} oslanjaju se na već uspostavljenu globalnu infrastrukturu koju održava veliki broj nezavisnih učesnika, čime se eliminišu pomenuti troškovi održavanja sopstvene infrastrukture, ali se troškovi korišćenja mreže prenose na same korisnike kroz mehanizme transakcionih naknada. Istovremeno, izražena decentralizacija ovih sistema unapređuje otpornost i sigurnost podataka na više nivoa, obuhvatajući kako infrastrukturni i aplikativni sloj, tako i krajnje korisnike, za razliku od prethodnih radova koji su se dominantno bavili bezbednošću platforme, zanemarujući korisničku perspektivu.
 
+\subsection{Sigurnost blokčejn sistema}
+Sigurnost predstavlja fundamentalno svojstvo blokčejn sistema, budući da obezbeđuje jedinstvenost, neizmenljivost i konzistentnost distribuirane knjige evidencije, čak i u prisustvu vizantijskih čvorova. Očuvanje ovih svojstava mora biti garantovano bez izuzetaka, jer kompromitovanje bilo kog od njih dovodi u pitanje osnovnu funkcionalnost i smisao postojanja blokčejn sistema.
+
+Usled asinhrone prirode distribuiranih mreža, blokovi se ne propagiraju istovremeno ka svim čvorovima, što može dovesti do privremenog postojanja konkurentnih verzija lanca. Takve situacije ne predstavljaju narušavanje sigurnosti sve dok mehanizam konsenzusa garantuje njihovo naknadno razrešenje i konvergenciju ka jedinstvenoj globalnoj istoriji transakcija.
+
+Međutim, ukoliko napadač raspolaže dovoljnim udelom resursa relevantnih za proces konsenzusa, može proizvesti alternativnu istoriju transakcija koja biva prihvaćena kao validna od većine čvorova. Time postaje moguće izvršiti reorganizaciju lanca, poništiti prethodno potvrđene transakcije, ostvariti dvostruku potrošnju i narušiti neizmenljivost evidencije, čime se sigurnost sistema direktno kompromituje.
+
+Iz navedenog sledi da sigurnost blokčejn sistema zavisi od sposobnosti konsenzusnog mehanizma da obezbedi dugoročnu konvergenciju ka jedinstvenoj verziji lanca, čak i u prisustvu zlonamernih učesnika.
+
+U tom kontekstu, stopa račvanja lanca $F$ iako ne predstavlja potpunu meru sigurnosti često se koristi kao indikativna metrika stabilnosti konsenzusa, pri čemu se u pojedinim radovima \cite{nakai2023blockchain} njen inverz koristi kao aproksimativna mera sigurnosti sistema:
+$$ Sigurnost = \frac{1}{F} $$
+
+U CP blokčejn sistemima sigurnost se zasniva na determinističkoj finalnosti, pri čemu se nakon dostizanja konsenzusa stanje sistema više ne može reorganizovati. Nasuprot tome, AP blokčejn sistemi ostvaruju verovatnosnu finalnost, gde se sigurnost transakcija povećava sa brojem nadogradnih blokova, ali teorijski nikada ne dostiže apsolutnu neizmenljivost.
+
 \subsection{Skalabilnost blokčejn sistema}
-U skladu sa Definicijom 2.6, \textbf{skalabilnost} blokčejn sistema odnosi se na sposobnost mreže da, uz povećanje raspoloživih resursa, ostvari porast efektivnog kapaciteta obrade transakcija, pri čemu se istovremeno očuvaju prihvatljive performansne karakteristike i bezbednosna svojstva sistema.
+U skladu sa Definicijom 2.6, skalabilnost blokčejn sistema odnosi se na sposobnost mreže da, uz povećanje raspoloživih resursa, ostvari porast efektivnog kapaciteta obrade transakcija, pri čemu se istovremeno očuvaju prihvatljive performansne karakteristike i bezbednosna svojstva sistema.
 
 Uprkos intenzivnom razvoju ove tehnologije, skalabilnost i dalje predstavlja jedno od ključnih otvorenih istraživačkih pitanja, budući da se upravo ograničenja u pogledu kapaciteta i performansi često identifikuju kao glavna prepreka širem usvajanju blokčejn tehnologije u savremenim informacionim sistemima. Sistematična analiza izazova skalabilnosti u blokčejn mrežama \cite{khan2021systematic} ukazuje da na skalabilnost utiče skup međuzavisnih faktora, uključujući propusnost transakcija, broj čvorova u mreži, veličinu distribuirane evidencije, veličinu bloka, troškove i kašnjenja komunikacije između čvorova, vreme finalizacije transakcija, kao i trošak izvršavanja transakcija.
 
