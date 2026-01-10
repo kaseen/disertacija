@@ -13,7 +13,7 @@ Na ovim teorijskim i tehničkim temeljima razvija se blokčejn tehnologija, koja
 Blokčejn sistemi mogu se posmatrati kao posebna klasa distribuiranih sistema u kojima su mehanizmi replikacije, koordinacije i konsenzusa strogo definisani protokolskim pravilima i kriptografskim ograničenjima.
 
 \begin{definicija}
-Blokčejn je mreža ravnopravnih čvorova sa distribuiranom strukturom podataka koja održava redosled transakcija njihovim trajnim grupisanjem u blokove, pri čemu su blokovi povezani u strogo hronološki lanac pomoću kriptografskih heš referenci.
+Blokčejn predstavlja distribuiranu mrežu ravnopravnih čvorova koja održava zajedničku globalnu knjigu podataka evidentiranjem transakcija u blokove, povezane u strogo hronološki lanac pomoću kriptografskih heš referenci.
 \end{definicija}
 
 Blokčejn, u skladu sa svojim nazivom, sastoji se od linearno uređenog niza blokova koji sadrže transakcije i prateće metapodatke. Ova struktura se \textbf{replikuje} kod svih učesnika mreže, zbog čega se može posmatrati kao javna, distribuirana struktura podataka koja funkcioniše kao knjiga evidencije \eng{ledger} svih transakcija izvršenih u sistemu. Početni element lanca naziva se \textit{blok geneze} \eng{Genesis block} i on je jedini blok koji nema prethodnika, te se eksplicitno inicijalizuje kako bi sistem mogao započeti svoj rad.
@@ -34,7 +34,11 @@ Iako su transakcije javno vidljive, sistem ne koristi eksplicitne identitete uč
 Transakcija predstavlja kriptografski zaštićen digitalni zapis kojim se prenosi vrednost ili podaci između učesnika distribuiranog sistema.
 \end{definicija}
 
-Nakon inicijalne verifikacije osnovnih uslova validnosti, transakcije se privremeno smeštaju u lokalni ,,memorijski bazen'' nepotvrđenih transakcija \eng{mempool}, gde čekaju da budu uključene u neki od narednih blokova.
+U zavisnosti od načina na koji se potpisane transakcije distribuiraju mreži na dalje procesuiranje, mogu se razlikovati dva osnovna modela blokčejn sistema:
+\begin{enumerate}
+\item U sistemima bez unapred definisanog rasporeda učesnika koji predlažu sledeće stanje sistema nije poznato koji će čvor izvršiti naredno globalno napredovanje, pa se transakcije privremeno smeštaju u lokalni bazen nepotvrđenih transakcija \eng{mempool}, gde čekaju da ih neki od učesnika uključi u naredni predlog stanja.
+\item U sistemima sa unapred definisanim rasporedom učesnika koji predlažu sledeće stanje sistema unapred je poznato koji čvor u kom trenutku ima pravo da izvrši globalno napredovanje, pa se transakcije direktno prosleđuju odgovarajućim čvorovima iz rasporeda na obradu i uključivanje u lanac.
+\end{enumerate}
 
 U otvorenom i distribuiranom okruženju, obrada, validacija i potvrđivanje transakcija predstavljaju potrošnju zajedničkih računarskih i komunikacionih resursa. Iz tog razloga, javni blokčejn sistemi uvode mehanizam naplate korišćenja mreže, kojim se istovremeno ograničava mogućnost zloupotreba u vidu masovnog slanja beskorisnih transakcija i obezbeđuje ekonomski podsticaj učesnicima koji učestvuju u održavanju i bezbednosti mreže.
 
@@ -48,9 +52,9 @@ Transakcione naknade predstavljaju dominantan mehanizam \textit{implicitnog odre
 Blok predstavlja skup transakcija i odgovarajuće zaglavlje koje sadrži metapodatke neophodne za verifikaciju i povezivanje blokova, čime se formalizuje globalno napredovanje stanja celokupnog sistema.
 \end{definicija}
 
-Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu smatrati logički istovremenim, s obzirom na to da dele istu vremensku oznaku nastanka.
+Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu smatrati logički istovremenim, jer dele istu vremensku oznaku nastanka u zaglavlju bloka. Heširanjem zaglavlja bloka formira se kriptografska heš referenca celog bloka, pri čemu i najmanja izmena sadržaja dovodi do promene heš vrednosti.
 
-Kako svaki blok sadrži vremensku oznaku svog nastanka, kao i kriptografsku heš referencu na prethodni blok, formira se \textit{lanac međusobno zavisnih vremenskih zapisa}. Ovakva struktura predstavlja osnovu \textbf{integriteta} i hronološke konzistentnosti blokčejn sistema, pri čemu blokčejn funkcioniše kao logički \textbf{sat} distribuiranog sistema i omogućava globalno \textbf{uređenje} transakcija na nivou cele mreže. Svaka naknadna modifikacija sadržaja jednog bloka narušila bi konzistentnost svih narednih veza u lancu, čime bi se narušila celokupna sigurnost i validnost sistema.
+Kako zaglavlje bloka sadrži vremensku oznaku svog nastanka, kao i kriptografsku heš referencu na prethodni blok, formira se \textit{lanac međusobno zavisnih vremenskih zapisa}. Ovakva struktura predstavlja osnovu \textbf{integriteta} i hronološke konzistentnosti blokčejn sistema, pri čemu blokčejn funkcioniše kao logički \textbf{sat} distribuiranog sistema i omogućava globalno \textbf{uređenje} transakcija na nivou cele mreže. Svaka naknadna modifikacija sadržaja jednog bloka narušila bi konzistentnost svih narednih veza u lancu, čime bi se narušila celokupna sigurnost i validnost sistema.
 
 S obzirom na to da se blokčejn struktura sastoji od niza međusobno povezanih blokova, blok predstavlja osnovnu strukturnu jedinicu sistema. \textbf{Kapacitet} blokčejna se u tom kontekstu posmatra kao propusna moć sistema, odnosno maksimalna brzina kojom mreža može da obradi i trajno potvrdi transakcije, pri čemu je ovaj kapacitet unapred definisan protokolom kroz skup strukturnih i konsenzusnih parametara.
 
@@ -139,7 +143,7 @@ U sistemu \textit{Bitcoin} ne postoji centralni ili glavni čvor, ali pravilo na
 Finalnost \eng{finality} transakcije označava trenutak nakon kojeg se transakcija smatra trajno zabeleženom u blokčejnu i ne može biti poništena, čime se ostvaruje praktična neporecivost.
 \end{definicija}
 
-Čvorovi koji su prethodno sledili kraću granu vrše reorganizaciju lanca \eng{re-org} i prelaze na najduži važeći lanac. Transakcije koje su bile uključene u blokove odbačene grane, a koje se ne pojavljuju u prihvaćenom lancu, vraćaju se u bazen nepotvrđenih transakcija \eng{mempool}, gde mogu ponovo biti uključene u neki od narednih blokova.
+Čvorovi koji su prethodno sledili kraću granu vrše reorganizaciju lanca \eng{re-org} i prelaze na najduži važeći lanac. Transakcije koje su bile uključene u blokove odbačene grane, a koje se ne pojavljuju u prihvaćenom lancu, ponovo se smatraju nepotvrđenim i vraćaju u proces daljeg distribuiranja i validacije, pri čemu prolaze istu proceduru kao i sve nove transakcije.
 
 Opisani mehanizam dokazivanja uloženog rada pokazuje da Bitcoin ne postiže konsenzus u strogo determinističkom smislu, već u obliku verovatnosne saglasnosti. U praksi se transakcija smatra prihvaćenom kada se nalazi u najdužem lancu i kada je nad njenim blokom izgrađen dovoljan broj narednih blokova, najčešće šest. Ovo pravilo predstavlja inženjerski kompromis između vremena čekanja i prihvatljivog nivoa rizika, pri čemu je verovatnoća reorganizacije lanca nakon tog broja \textbf{potvrda} zanemarljiva u realnim uslovima rada mreže. Iz ovoga sledi sledeća teorema:
 
