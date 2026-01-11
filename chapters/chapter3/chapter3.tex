@@ -206,6 +206,16 @@ Savremeni pristupi analizi decentralizacije \cite{ovezik2025sok} započinju izbo
 
 Radi procene decentralizacije izabranog sloja, neophodno je najpre identifikovati ključni resurs tog sloja i analizirati njegovu raspodelu među učesnicima. Pre same evaluacije decentralizacije sprovodi se faza \textit{predobrade prikupljenih podataka}, koja obuhvata grupisanje adresa koje pripadaju istom realnom entitetu, izbor perioda posmatranja za procenu udela resursa, identifikaciju aktivne populacije učesnika, definisanje učestalosti uzorkovanja podataka, kao i određivanje pragova za uključivanje ili isključivanje entiteta sa zanemarljivim udelima resursa.
 
+Kako ne postoji jedinstven indeks koji bi objedinio sve metrike u jednu numeričku vrednost, nakon sprovedene predobrade prikupljeni podaci se podvrgavaju kvantitativnoj analizi primenom više komplementarnih metrika decentralizacije, među kojima se najčešće koriste:
+\begin{enumerate}
+\item \textbf{Šenonova entropija} \cite{shannon1948mathematical}, koja kvantifikuje stepen neizvesnosti u predviđanju proizvođača narednog bloka, pri čemu veće vrednosti ukazuju na ravnomerniju raspodelu moći,
+\item \textbf{Ginijev koeficijent} \cite{gini1921measurement}, koji meri neravnomernost raspodele resursa među učesnicima, gde veće vrednosti označavaju viši stepen koncentracije,
+\item \textbf{Nakamoto koeficijent}, koji predstavlja minimalan broj entiteta čija bi koordinacija omogućila kontrolu većine resursa u mreži,
+\item \textbf{$\tau$ indeks}, koji generalizuje Nakamoto koeficijent određivanjem broja entiteta potrebnih za kontrolu unapred definisanog udela $\tau$ ukupnih resursa,
+\item \textbf{Koncentracioni odnos} \cite{shepherd1987concentration}, koji meri koliki deo ukupnih resursa pripada skupu od $n$ najmoćnijih učesnika,
+\item \textbf{Herfindahl-Hiršmanov indeks} \cite{rhoades1993herfindahl}, koji kvantifikuje ukupni stepen koncentracije resursa u sistemu i potiče iz oblasti antimonopolskih analiza.
+\end{enumerate}
+
 \subsection{Sigurnost blokčejn sistema}
 Sigurnost predstavlja fundamentalno svojstvo blokčejn sistema, budući da obezbeđuje jedinstvenost, neizmenljivost i konzistentnost distribuirane knjige evidencije, čak i u prisustvu vizantijskih čvorova. Očuvanje ovih svojstava mora biti garantovano bez izuzetaka, jer kompromitovanje bilo kog od njih dovodi u pitanje osnovnu funkcionalnost i smisao postojanja blokčejn sistema.
 
