@@ -75,6 +75,17 @@ Svaki informacioni sistem, bez obzira na svoju veličinu ili primenjenu tehnolog
 \end{enumerate}
 Ovakva podela predstavlja minimalnu logičku, odnosno konceptualnu arhitekturu informacionog sistema.
 
+\subsection{Tjuringova kompletnost} 
+Radni sistem formuliše zahteve u domenu realnih poslovnih procesa, dok informacioni sistem predstavlja njihovu formalizovanu, izvršivu reprezentaciju u digitalnom okruženju. Da bi se ostvarilo ovakvo preslikavanje, zahtevi moraju biti transformisani u dovoljno precizne i nedvosmislene formalne opise pogodne za implementaciju u okviru odgovarajućeg formalnog jezika informacionog sistema.
+
+U sistemima projektovanim za unapred definisan i konačno ograničen domen zahteva, upotreba ograničenih formalnih jezika predstavlja sasvim dovoljan pristup. Međutim, u slučajevima kada domen zahteva nije unapred konačno određen, svaka pojava nove poslovne logike zahtevala bi redizajn informacionog sistema ukoliko je njegov formalni jezik ograničene izražajnosti.
+
+Tjuringova kompletnost \cite{turing1936computable} predstavlja fundamentalno svojstvo formalnih računarskih sistema koje omogućava izražavanje proizvoljnih algoritama putem kombinacije sekvencijalnog izvršavanja, uslovnog grananja i iterativnih konstrukcija. Sistem koji poseduje ova svojstva teorijski je sposoban da implementira svaki izračunljivi algoritam, zbog čega se jezici koji ispunjavaju ove uslove nazivaju \textit{Tjuring kompletni jezici}.
+
+Tjuringova kompletnost postaje neophodan uslov u situacijama u kojima radni sistem ne može unapred ograničiti oblik svojih budućih zahteva, budući da omogućava implementaciju novih tipova funkcionalnih zahteva čija se struktura i logika ne mogu predvideti u fazi projektovanja sistema, bez potrebe za redizajnom osnovne arhitekture informacionog sistema.
+
+Iako Tjuringova kompletnost obezbeđuje maksimalnu izražajnost, ona istovremeno uvodi povećanu složenost u verifikaciji, analizi i kontroli ponašanja sistema. Zbog toga se u pojedinim domenima namerno koriste netjuring kompletni jezici kako bi se obezbedila veća sigurnost, predvidivost i formalna proverljivost izvršavanja.
+
 \subsection{Tipovi informacionih sistema}
 Informacioni sistemi mogu se posmatrati kao tehnološke implementacije radnih sistema različitih namena. U literaturi se klasifikuju prema organizacionom nivou, funkcionalnoj oblasti i domenu primene \cite{laudon2004management, bourgeois2019information}. Ove podele mogu se prirodno ugraditi u posmatranje radnih sistema kroz četiri kategorije definisane na kraju poglavlja \ref{sec:radni-sistem}, čime se dobija okvir za klasifikaciju informacionih sistema:
 
