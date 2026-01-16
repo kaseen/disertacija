@@ -161,7 +161,7 @@ Verovatnosni konsenzus u blokčejn sistemima direktno zavisi od izabranog parame
 \subsection{Struktura i funkcionalnost blokčejn sistema}
 Razumevanje unutrašnje organizacije podataka u blokčejn sistemima predstavlja ključni preduslov za analizu njihovog funkcionisanja i bezbednosnih svojstava. Podaci u ovom kontekstu ne obuhvataju samo istoriju izvršenih transakcija, već i reprezentaciju trenutnog stanja mreže, odnosno način na koji se stanje sredstava i prava pojedinačnih učesnika definiše, ažurira i verifikuje. Različiti modeli upravljanja stanjem uslovljavaju načine potrošnje sredstava, pravila validacije transakcija, kao i skup funkcionalnosti koje sistem može ponuditi krajnjim korisnicima.
 
-Jedan od fundamentalnih bezbednosnih problema koje svaki blokčejn sistem mora da reši na protokolskom nivou jeste \textit{problem dvostruke potrošnje} sredstava. U decentralizovanom okruženju bez centralnog autoriteta, neophodno je obezbediti da se ista jedinica vrednosti ne može validno potrošiti više puta. U blokčejn arhitekturama ovaj problem se rešava kroz dva dominantna modela upravljanja stanjem:
+Jedan od fundamentalnih bezbednosnih problema koje svaki blokčejn sistem mora da reši na protokolskom nivou jeste \textit{problem dvostruke potrošnje} sredstava. U decentralizovanom okruženju bez centralnog autoriteta, neophodno je obezbediti da se ista jedinica vrednosti ne može validno potrošiti više puta. U blokčejn arhitekturama ovaj problem se rešava kroz dva dominantna modela upravljanja stanjem \eng{data model}:
 \begin{enumerate}
 \item \textbf{Model nepotrošenih izlaza transakcija} \eng{Unspent Transaction Output, UTXO}, u kojem se potrošnja sredstava proverava jedinstvenim trošenjem postojećih izlaza transakcija,
 \item \textbf{Model globalnog stanja zasnovan na nalozima} \eng{account-based model}, u kojem se za svaki nalog održava stanje i sekvencijalni brojač transakcija \textit{nonce} koji obezbeđuje jedinstven redosled i sprečava dvostruku potrošnju.
@@ -190,7 +190,7 @@ Mehanizam kojim Bitcoin mreža obezbeđuje da samo ovlašćeni korisnik može po
 
 Ovaj skriptni jezik omogućava sprovođenje \textbf{autorizacije} nad sredstvima, budući da definiše skup formalnih uslova koji moraju biti ispunjeni kako bi pristup bio odobren. U tom smislu, može se posmatrati kao pojednostavljen oblik \textit{diskrecione kontrole pristupa}, pri čemu se istovremeno obezbeđuju \textbf{integritet} stanja sredstava i \textbf{autentičnost} zahteva za njihovu potrošnju.
 
-Svaki UTXO sadrži pridruženu skriptu zaključavanja \eng{scriptPubKey}, kojom se definišu uslovi pod kojima taj izlaz može biti potrošen. Da bi određena transakcija validno potrošila UTXO, njen ulaz mora da obezbedi odgovarajuće podatke u okviru skripte otključavanja \eng{scriptSig}, tako da kombinacija ove dve skripte, nakon izvršavanja, rezultuje uspešnom validacijom. 
+Svaki UTXO sadrži pridruženu skriptu zaključavanja \eng{scriptPubKey}, kojom se definišu uslovi pod kojima taj izlaz može biti potrošen. Da bi određena transakcija validno potrošila UTXO, njen ulaz mora da obezbedi odgovarajuće podatke u okviru skripte otključavanja \eng{scriptSig}, tako da kombinacija ove dve skripte, nakon izvršavanja nad stekom, rezultuje nenultom bajt-vrednošću (najčešće 0x01), što označava uspešnu validaciju. Potrošnja UTXO zapisa smatra se nevalidnom ukoliko tokom izvršavanja dođe do prekida skripte, ukoliko stek ostane prazan ili ukoliko se na vrhu steka nalazi negativna nula (0x80), koja se u Bitcoin skriptnoj semantici tretira kao netačna vrednost.
 
 Iako Bitcoin Script omogućava definisanje proizvoljno složenih uslova korišćenjem dostupnog skupa instrukcija, u praksi se najčešće koristi obrazac \textit{plaćanja na heš javnog ključa} \eng{Pay-to-Public-Key-Hash, P2PKH}. U ovom slučaju, pošiljalac prilaže digitalni potpis i odgovarajući javni ključ, dok skriptni mehanizam proverava da li heš dostavljenog javnog ključa odgovara vrednosti zaključanoj u referenciranom UTXO zapisu.
 
@@ -198,6 +198,37 @@ S obzirom na to da se transakcija sastoji od više ulaza i izlaza, a da ukupna v
 $$ tx\_fee = \sum_{x \in UTXO_{in}} value(x) - \sum_{y \in UTXO_{out}} value(y)$$
 
 Kako se zahteva da ukupna vrednost ulaznih UTXO zapisa bude veća ili jednaka ukupnoj vrednosti izlaznih zapisa, pri čemu razlika između ovih vrednosti predstavlja transakcionu naknadu, UTXO model implicitno nameće pravilo potpunog trošenja izlaza. Naime, svaki UTXO se, nakon što je iskorišćen kao ulaz i transakcija uspešno validirana, trajno uklanja iz skupa raspoloživih UTXO zapisa.
+
+\subsubsection{Pametni ugovori}
+Posmatrano iz apstraktnog ugla, svaki UTXO zapis, zbog svog jedinstvenog identifikatora i determinističkog mehanizma validacije, može se interpretirati kao instanca jednostavnog programa koji se može izvršiti tačno jednom. Ovaj program poseduje jednu implicitnu funkciju čije telo čini skripta zaključavanja \textit{scriptPubKey}, dok se ulazni parametri prosleđuju putem skripte otključavanja \textit{scriptSig}. Nakon uspešnog izvršavanja, dati UTXO prestaje da postoji i ne može biti ponovo iskorišćen, čime se obezbeđuje njegova jednokratna potrošivost.
+
+Na taj način, UTXO model realizuje mehanizam izvršavanja predikata potrošnje, koji se može formalizovati sledećim algoritmom:
+
+\begin{algorithm}
+\caption{UTXO kao predikat potrošnje}
+\begin{algorithmic}[1]
+\Function{ValidateUTXO}{$scriptSig$}
+    \State \textbf{execute} $scriptPubKey$ \textbf{with input} $scriptSig$
+    \If{stack \textbf{is non-empty} \textbf{and} top(stack) = \textbf{true}}
+        \State \Return \textbf{true}
+    \Else
+        \State \Return \textbf{false}
+    \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Bitcoin sistem na ovaj način omogućava izvršavanje jednostavnih, determinističkih programa u decentralizovanom okruženju, bez potrebe za pouzdanim posrednicima, pri čemu protokol garantuje da se svaki takav program može uspešno izvršiti najviše jednom. Ovakav koncept samostalno izvršavajućih ugovornih uslova prvi je formalno definisao Nick Szabo 1994. godine \cite{szabo1994}.
+
+\begin{definicija}
+Pametni ugovori predstavljaju programibilne ugovore u kojima su uslovi sporazuma eksplicitno definisani u obliku koda, koji se automatski izvršava kada su ispunjeni unapred određeni uslovi.
+\end{definicija}
+
+Jedan od ključnih tehnoloških iskoraka u razvoju blokčejn sistema predstavlja uvođenje Tjuring-kompletne virtuelne mašine na nivou cele mreže, čime je omogućeno izvršavanje opštih pametnih ugovora. U takvom okruženju, adrese mogu predstavljati i pametne ugovore, dok transakcije, pored prenosa vrednosti, mogu sadržati i naziv funkcije i skup parametara koji se prosleđuju pametnom ugovoru radi njegovog izvršavanja. Budući da je stanje blokčejna nepromenljivo, kombinacija pametnih ugovora i distribuirane knjige podataka omogućava izgradnju pouzdanog, transparentnog i verifikabilnog izvršnog okruženja.
+
+Virtuelna mašina nije strogi preduslov za realizaciju pametnih ugovora, ali značajno pojednostavljuje njihovu implementaciju i omogućava postojanje jedinstvenog izvršnog modela na nivou cele mreže, čime se blokčejn može posmatrati kao oblik \textbf{globalnog distribuiranog računara}.
+
+S obzirom na to da virtuelna mašina izvršava skup niskonivojskih \eng{low-level} instrukcija, u praksi se koriste viši programski jezici za pisanje pametnih ugovora, koji se potom prevode u odgovarajući bajtkod \eng{bytecode}. Tokom procesa prevođenja generišu se i programski interfejsi koji olakšavaju interakciju korisnika i drugih ugovora sa datim pametnim ugovorom.
 
 \section{Blokčejn trilema}
 U distribuiranim sistemima koji se oslanjaju na mrežnu komunikaciju, pojava mrežnih particija predstavlja neizbežnu realnost, usled čega Teorema \ref{teorema:cap} uvodi fundamentalno ograničenje nad skupom osobina koje takvi sistemi mogu istovremeno garantovati. Budući da je blokčejn po svojoj prirodi distribuirani sistem, navedeno ograničenje se neposredno primenjuje i na blokčejn mreže.
