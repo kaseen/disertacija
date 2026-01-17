@@ -88,24 +88,31 @@ U Bitkoin protokolu, maksimalna veličina bloka je namerno ograničena na 1 MB \
 Pokušaji izmene ovog parametra kroz povećanje veličine bloka bili su predmet višegodišnjih tehničkih i ideoloških rasprava unutar zajednice \eng{Bitcoin scaling debate}, koje su u pojedinim slučajevima rezultovale trajnim podelama mreže i nastankom alternativnih protokolskih implementacija.
 
 \subsection{Sistem postizanja konsenzusa i validacija novih blokova}
-Kako bi se formirao kandidat za novi blok, neophodno je da se prethodno prikupe nepotvrđene transakcije, pri čemu je ukupna veličina bloka unapred definisana protokolskim parametrima. Kako u distribuiranom okruženju više učesnika može istovremeno predložiti različite kandidate za sledeći blok koji se nadovezuju na isti prethodni blok, pa se javlja potreba za mehanizmom kojim se bira jedinstveni validni nastavak lanca.
+Kako bi se formirao kandidat za novi blok, neophodno je prethodno prikupiti nepotvrđene transakcije, pri čemu je ukupna veličina bloka unapred definisana protokolskim parametrima. U distribuiranom okruženju, više učesnika može istovremeno predložiti različite kandidate za naredni blok koji se nadovezuju na isti prethodni blok, čime se narušava jedinstvenost globalne istorije i javlja potreba za mehanizmom kojim se bira jedinstveni validni nastavak lanca.
 
 \begin{definicija}
-Predlagač bloka \eng{block proposer} je učesnik mreže koji ima pravo da predloži sledeći blok.
+Predlagač bloka \eng{block proposer} je učesnik mreže koji, u skladu sa pravilima konsenzus protokola, ima pravo da predloži sledeći blok u lancu.
 \end{definicija}
 
-Konsenzus mehanizam predstavlja centralnu tačku \textbf{koordinacije} i \textbf{kontrolne decentralizacije} u blokčejn sistemu, budući da definiše i sprovodi skup pravila prema kojima se održava konzistentnost globalnog stanja mreže. Ovakav model omogućava prirodnu \textbf{raspodelu opterećenja}, jer svaki čvor samostalno učestvuje u procesu predlaganja blokova bez centralnog koordinatora. 
+U blokčejn sistemima se polazi od pretpostavke da deo učesnika mreže može ispoljavati proizvoljno ili zlonamerno ponašanje, odnosno da sistem mora biti otporan na prisustvo \textbf{vizantijskih čvorova}. Iz tog razloga, konsenzus mehanizam predstavlja centralnu tačku \textbf{koordinacije} i \textbf{kontrolne decentralizacije}, jer definiše skup pravila prema kojima se obezbeđuje konzistentnost globalnog stanja mreže u uslovima nepoverenja među učesnicima.
 
-Osnovno pravilo podrazumeva da se svaki novi blok nezavisno proverava od strane svih čvorova pre njegovog prihvatanja i uključivanja u lokalnu verziju lanca. Ovaj proces validacije obuhvata proveru ispravnosti svih transakcija sadržanih u bloku, čime se eliminišu pokušaji vizantijskih čvorova da nametnu blokove koji sadrže makar jednu nevalidnu transakciju.
+Osnovno pravilo podrazumeva da se svaki predloženi blok nezavisno proverava od strane svih čvorova pre njegovog prihvatanja i uključivanja u lokalnu verziju lanca. Ovaj proces validacije obuhvata proveru ispravnosti svih transakcija i kriptografskih uslova sadržanih u bloku, čime se eliminišu pokušaji vizantijskih čvorova da nametnu nevalidne ili nekonzistentne promene stanja sistema.
 
 \begin{definicija}
-Konsenzus mehanizam u blokčejn sistemima predstavlja skup protokola i pravila kojima se obezbeđuje koordinisano prihvatanje novih blokova i održavanje jedinstvenog stanja distribuirane evidencije.
+Konsenzus mehanizam u blokčejn sistemima predstavlja skup protokola i pravila kojima se, u prisustvu potencijalno vizantijskih učesnika, obezbeđuje koordinisano prihvatanje novih blokova i održavanje jedinstvenog stanja distribuirane evidencije.
 \end{definicija}
 
-Opisani proces nezavisne validacije i replikacije svakog novog bloka kod svih čvorova mreže predstavlja značajan izvor \textbf{režijskog opterećenja} blokčejn sistema. Ovaj režijski rad obuhvata kriptografsku proveru transakcija, verifikaciju konsenzusnih uslova, propagaciju blokova kroz mrežu i održavanje konzistentne lokalne kopije lanca, pri čemu nijedna od navedenih aktivnosti neposredno ne doprinosi izvršenju primarnih korisničkih zahteva. Na osnovu Definicije \ref{def:overhead}, može se uvesti sledeća definicija:
+U zavisnosti od načina rešavanja izbora predlagača bloka, tolerancije grešaka i postizanja saglasnosti, konsenzus mehanizmi u blokčejn sistemima \cite{zhou2023systematic} mogu se klasifikovati u tri osnovne kategorije:
+\begin{enumerate}
+\item \textbf{Nakamoto-stil konsenzus mehanizmi}, koji omogućavaju otvoreno i dozvolom neograničeno učešće u procesu predlaganja blokova, oslanjaju se na verovatnosno određivanje predlagača bloka i, u slučaju račvanja \eng{fork}, obezbeđuju verovatnosnu finalnost,
+\item \textbf{Konsenzus mehanizmi sa tolerancijom vizantijskih grešaka \eng{Byzantine fault tolerance, BFT}}, koji se oslanjaju na eksplicitno glasanje unutar unapred definisanog skupa validatora i obezbeđuju determinističku finalnost bez račvanja, u granicama dozvoljenog broja vizantijskih čvorova,
+\item \textbf{Hibridni konsenzus mehanizmi}, koji kombinuju elemente Nakamoto-stil i BFT pristupa, tipično koristeći probabilistički mehanizam za proizvodnju blokova i BFT protokole za postizanje konačne finalnosti.
+\end{enumerate}
+
+Opisani proces nezavisne validacije, koordinacije i replikacije svakog novog bloka kod svih čvorova mreže predstavlja značajan izvor \textbf{režijskog opterećenja} blokčejn sistema. Ovo režijsko opterećenje obuhvata kriptografsku proveru transakcija, verifikaciju konsenzusnih uslova, razmenu poruka neophodnih za koordinaciju među čvorovima, kao i propagaciju blokova kroz mrežu i održavanje konzistentne lokalne kopije lanca. Iako nijedna od navedenih aktivnosti neposredno ne doprinosi izvršavanju korisničkih transakcija, one predstavljaju nužan preduslov za očuvanje sigurnosti, konzistentnosti i integriteta distribuirane evidencije.
 
 \begin{definicija}
-Režijsko opterećenje blokčejn sistema predstavlja sistemski trošak decentralizovanog modela rada, izražen kroz dodatnu potrošnju resursa, koji je nužna posledica očuvanja sigurnosti, konzistentnosti i integriteta distribuirane evidencije, a koji nije direktno povezan sa izvršavanjem korisničkih transakcija.
+Režijsko opterećenje blokčejn sistema predstavlja sistemski trošak decentralizovanog modela rada, izražen kroz dodatnu potrošnju resursa koja je neizbežna posledica tolerancije vizantijskih grešaka i odsustva centralnog autoriteta od poverenja, a koja nije direktno povezana sa izvršavanjem korisničkih transakcija.
 \end{definicija}
 
 \subsubsection{Algoritam dokazivanja uloženog rada}
@@ -136,10 +143,10 @@ Ova fundamentalna asimetrija između visokog troška generisanja novog bloka i z
 
 Kako bi se očuvalo približno konstantno prosečno vreme generisanja bloka od deset minuta, mreža periodično prilagođava težinu ciljne heš vrednosti u zavisnosti od ukupne heš snage dostupne u sistemu. Ovo prilagođavanje se vrši na svakih 2016 blokova, čime se omogućava stabilno funkcionisanje sistema uprkos promenama u broju i kapacitetu učesnika koji učestvuju u procesu rudarenja.
 
-\subsection{Propagacija blokova i razrešavanje konflikata}
+\subsubsection{Verovatnosni konsenzus i praktična finalnost transakcija}
 Nakon pronalaska odgovarajuće vrednosti počasne promenljive predloženi blok se \textbf{propagira} ka ostalim čvorovima u mreži, koji nezavisno proveravaju validnost dokaza uloženog rada i usklađenost bloka sa ostalim protokolskim pravilima, čime se ostvaruje \textbf{replikacija} globalnog stanja kod svih učesnika. Ukoliko su svi uslovi zadovoljeni, blok se prihvata kao naredni blok u lancu. 
 
-Moguće je, međutim, da dva ili više rudara u približno istom vremenskom intervalu pronađu i propagiraju različite, ali međusobno validne kandidate za $(n+1)$-ti blok koji se nadovezuju na isti prethodni $n$-ti blok. U tom slučaju, različiti podskupovi čvorova mogu privremeno prihvatiti različite verzije lanca kao važeće, što dovodi do kratkotrajnog račvanja \eng{fork} stanja mreže u više verzija, čime se javlja \textbf{konflikt} u distribuiranom okruženju. Ovo stanje se razrešava pronalaženjem narednog $(n+2)$-og bloka, budući da se svaki novi blok može nadovezati isključivo na jedan od postojećih kandidata.
+Moguće je, međutim, da dva ili više rudara u približno istom vremenskom intervalu pronađu i propagiraju različite, ali međusobno validne kandidate za $(n+1)$-ti blok koji se nadovezuju na isti prethodni $n$-ti blok. U tom slučaju, različiti podskupovi čvorova mogu privremeno prihvatiti različite verzije lanca kao važeće, što dovodi do kratkotrajnog račvanja stanja mreže u više verzija, čime se javlja \textbf{konflikt} u distribuiranom okruženju. Ovo stanje se razrešava pronalaženjem narednog $(n+2)$-og bloka, budući da se svaki novi blok može nadovezati isključivo na jedan od postojećih kandidata.
 
 U sistemu \textit{Bitcoin} ne postoji centralni ili glavni čvor, ali pravilo najdužeg lanca \eng{longest chain rule} efektivno preuzima njegovu ulogu. Grana lanca koja se prva produži i postane duža od ostalih prihvata se kao kanonska verzija istorije sistema. Čvorovi koji su prethodno sledili kraću granu odbacuju je i sinhronizuju se sa najdužim važećim lancem, čime se mreža ponovo dovodi u konzistentno stanje. Kako se nad određenim blokom nadograđuje sve veći broj novih blokova, verovatnoća da alternativna grana nadmaši postojeći lanac opada eksponencijalno.
 
