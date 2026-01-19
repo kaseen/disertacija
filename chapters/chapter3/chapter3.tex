@@ -24,7 +24,7 @@ Replikacijom se obezbeđuje da svaki čvor mreže održava lokalnu kopiju distri
 \begin{enumerate}
 \item \textbf{potpuna replikacija stanja}, u kojoj svaki čvor održava celokupno stanje i kompletnu istoriju mreže, u skladu sa Definicijom \ref{def:replikacija}, što je karakteristično za većinu klasičnih javnih blokčejn sistema,
 \item \textbf{parcijalna replikacija}, u kojoj čvorovi održavaju i validiraju samo podskup stanja i transakcija, primenom tehnika razdeljivanja podataka, u skladu sa Definicijom \ref{def:sharding},
-\item \textbf{slojevita replikacija}, kod koje se različiti slojevi sistema oslanjaju na različite nivoe i oblike replikacije, u skladu sa funkcionalnom podelom odgovornosti unutar ukupne arhitekture sistema.
+\item \textbf{slojevita replikacija}, kod koje se različiti slojevi sistema oslanjaju na različite nivoe i oblike replikacije, u skladu sa funkcionalnom podelom odgovornosti unutar ukupne arhitekture sistema, kako je definisano u Definiciji \ref{def:layering}.
 \end{enumerate}
 
 \subsection{Transakcije i blokovi}
@@ -253,7 +253,7 @@ Nasuprot tome, \textit{javne blokčejn mreže} oslanjaju se na već uspostavljen
 \subsection{Decentralizovanost blokčejn sistema}
 Uprkos svojoj distribuiranoj arhitekturi, svi čvorovi u blokčejn mreži teže usvajanju jedinstvene globalne verzije stanja sistema, čime se blokčejn može smatrati logički centralizovanim. Ova osobina omogućava konzistentno tumačenje istorije transakcija od strane svih učesnika.
 
-Blokčejn sistemi u svom izvornom obliku zasnovani su na Nakamoto konsenzusu, čija je osnovna ideja raspodela kontrole nad mrežom na veliki broj dozvolom neograničenih i međusobno nezavisnih učesnika. U takvom modelu, nijedan pojedinačni entitet ne poseduje odlučujuću moć nad funkcionisanjem sistema, budući da svaki učesnik može konkurisati za proizvodnju narednog bloka.  Izbor kanonske verzije lanca ne vrši se putem eksplicitnog glasanja, već implicitno kroz tržišni mehanizam konkurencije konsenzusnih resursa, pri čemu se kao važeći prihvata lanac sa najvećom akumuliranom težinom tog resursa, u skladu sa protokolskim pravilom izbora lanca.
+Blokčejn sistemi u svom izvornom obliku zasnovani su na Nakamoto konsenzusu, čija je osnovna ideja raspodela kontrole nad mrežom na veliki broj dozvolom neograničenih i međusobno nezavisnih učesnika. U takvom modelu, nijedan pojedinačni entitet ne poseduje odlučujuću moć nad funkcionisanjem sistema, budući da svaki učesnik može konkurisati za proizvodnju narednog bloka. Izbor kanonske verzije lanca ne vrši se putem eksplicitnog glasanja, već implicitno kroz tržišni mehanizam konkurencije konsenzusnih resursa, čime se kao važeći prihvata lanac sa najvećom akumuliranom težinom tog resursa, u skladu sa protokolskim pravilom izbora lanca.
 
 Nasuprot tome, blokčejn sistemi zasnovani na BFT konsenzus mehanizmima koriste unapred definisan skup validatora, pri čemu se u svakom krugu konsenzusa jedan čvor formalno bira od strane protokola kao predlagač bloka, dok ostali validatori učestvuju u procesu eksplicitnog glasanja. Ovakav pristup podrazumeva razmenu poruka čiji broj uobičajeno raste kvadratno sa brojem validatora, što praktično ograničava veličinu validacionog skupa. Zbog toga se BFT sistemi projektuju sa relativno malim brojem validatora, čime se postiže visoka efikasnost i deterministička finalnost, ali se istovremeno umanjuje stepen kontrolne decentralizacije.
 
@@ -300,3 +300,9 @@ Navedeni faktori su snažno međusobno povezani i u velikoj meri \textit{determi
 
 Propusnost transakcija se najčešće izdvaja kao centralna metrika u analizi skalabilnosti, budući da kvantitativno odražava sposobnost sistema da obradi zahteve u jedinici vremena. Iako propusnost ne predstavlja samu skalabilnost, već njenu operativnu meru, ona se u praksi najčešće koristi kao njen neposredni pokazatelj.
 $$ Skalabilnost = \frac{n}{T} $$
+
+U savremenim javnim blokčejn sistemima osnovni sloj (L1) projektovan je sa primarnim ciljem očuvanja visokog stepena decentralizacije i bezbednosti. Ovaj sloj obezbeđuje autoritativnu verziju globalnog stanja sistema i predstavlja krajnju instancu verifikacije i konsenzusne finalnosti.
+
+Paralelno sa tim, razvijaju se zasebni blokčejn sistemi koji predstavljaju više slojeve (L2), a koji funkcionišu izvan osnovnog lanca i imaju za cilj povećanje efektivne propusnosti sistema. Na ovim slojevima se izvršava obrada transakcija i privremeno održava stanje, dok se agregirani rezultati periodično zapisuju i kriptografski verifikuju na osnovnom sloju.
+
+Na ovaj način se postiže povećanje skalabilnosti sistema, budući da se osnovni sloj rasterećuje od neposredne obrade svih transakcija, dok se istovremeno zadržavaju njegova bezbednosna i decentralizovana svojstva. Slojevita arhitektura tako omogućava paralelizaciju obrade, smanjenje komunikacionog opterećenja i povećanje efektivne propusnosti bez narušavanja sigurnosnog modela osnovnog lanca.

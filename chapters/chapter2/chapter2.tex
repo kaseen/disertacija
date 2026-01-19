@@ -232,15 +232,19 @@ Propagacija i potvrde čine osnovu šireg mehanizma. Replikacija \cite{gray1996d
 Replikacija predstavlja proces održavanja više kopija (replika) istih podataka na različitim čvorovima distribuiranog sistema, u cilju povećanja dostupnosti i otpornosti na greške.
 \end{definicija}
 
-Iako replikacija obezbeđuje da svaki čvor poseduje identičan skup podataka, u mnogim sistemima nije neophodno da svi čvorovi održavaju celu bazu. Alternativni pristup zasniva se na razdvajanju podataka na manje, međusobno nezavisne celine.
+Iako replikacija obezbeđuje da svaki čvor poseduje identičan skup podataka, u mnogim sistemima nije neophodno da svi čvorovi održavaju celu bazu. Alternativni pristupi zasnivaju se na razdvajanju podataka na manje, međusobno nezavisne celine.
 
 \begin{definicija}\label{def:sharding}
 Razdeljivanje podataka \eng{sharding} predstavlja tehniku u kojoj se logički skup podataka deli na više disjunktnih particija, pri čemu je svaki čvor odgovoran za obradu samo svog podskupa podataka, čime se povećava paralelizam i kapacitet obrade sistema \cite{curino2010schism}.
 \end{definicija}
 
-U savremenim sistemima najčešće se primenjuju hibridni modeli u kojima se svaka particija dodatno replicira. Time se kombinuju prednosti replikacije (dostupnost i tolerancija na greške) i particionisanja (horizontalno skaliranje i smanjenje konkurencije nad podacima), što omogućava skalabilan, efikasan i otporan distribuirani informacioni sistem.
+\begin{definicija}\label{def:layering}
+Slojevitost podataka \eng{layering} predstavlja tehniku u kojoj se logički skup podataka organizuje u hijerarhijski raspoređene slojeve, gde osnovni sloj \eng{Layer 1, L1} održava autoritativno stanje sistema, dok viši slojevi obezbeđuju optimizovane, parcijalne ili privremene reprezentacije tog stanja, uz oslanjanje na niže slojeve radi očuvanja konzistentnosti \cite{lu2009hierarchical}.
+\end{definicija}
 
-Kako replikacija i razdeljivanje omogućavaju da svaki čvor nezavisno obrađuje korisničke zahteve, a koordinacioni mehanizmi obezbeđuju da sve replike i particije ostanu međusobno usaglašene u meri koju propisuje primenjeni model konzistentnosti, neophodno je sprečiti preopterećenje pojedinačnih delova. U tu svrhu uvodi se sledeći mehanizam:
+U savremenim sistemima najčešće se primenjuju hibridni modeli koji kombinuju različite oblike replikacije, čime se objedinuju njihove komplementarne prednosti i postiže skalabilan, efikasan i otporan distribuirani informacioni sistem.
+
+Kako replikacija omogućava da svaki čvor nezavisno obrađuje korisničke zahteve, a koordinacioni mehanizmi obezbeđuju da sve replike i particije ostanu međusobno usaglašene u meri koju propisuje primenjeni model konzistentnosti, neophodno je sprečiti preopterećenje pojedinačnih delova sistema. U tu svrhu uvodi se sledeći mehanizam:
 
 \begin{definicija}
 Raspodela opterećenja \eng{load balancing} predstavlja mehanizam koji dodeljuje dolazne zahteve različitim čvorovima sistema radi optimalnog iskorišćenja resursa, smanjenja vremena odaziva i sprečavanja preopterećenja pojedinačnih instanci \cite{chou2006load}.
