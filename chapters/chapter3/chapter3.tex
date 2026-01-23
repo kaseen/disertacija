@@ -38,7 +38,7 @@ Transakcija predstavlja kriptografski zaštićen digitalni zapis kojim se prenos
 
 U zavisnosti od načina na koji se potpisane transakcije distribuiraju mreži na dalje procesuiranje, mogu se razlikovati dva osnovna modela blokčejn sistema:
 \begin{enumerate}
-\item U sistemima bez unapred definisanog rasporeda učesnika koji predlažu sledeće stanje sistema nije poznato koji će čvor izvršiti naredno globalno napredovanje, pa se transakcije privremeno smeštaju u lokalni bazen nepotvrđenih transakcija \eng{mempool}, gde čekaju da ih neki od učesnika uključi u naredni predlog stanja.
+\item U sistemima bez unapred definisanog rasporeda učesnika koji predlažu sledeće stanje sistema nije poznato koji će čvor izvršiti naredno globalno napredovanje, pa se transakcije privremeno smeštaju u lokalni skup nepotvrđenih transakcija \eng{mempool}, gde čekaju da ih neki od učesnika uključi u naredni predlog stanja.
 \item U sistemima sa unapred definisanim rasporedom učesnika koji predlažu sledeće stanje sistema unapred je poznato koji čvor u kom trenutku ima pravo da izvrši globalno napredovanje, pa se transakcije direktno prosleđuju odgovarajućim čvorovima iz rasporeda na obradu i uključivanje u lanac.
 \end{enumerate}
 
@@ -163,7 +163,7 @@ Opisani mehanizam dokazivanja uloženog rada pokazuje da Bitcoin ne postiže kon
 Verovatnosni konsenzus u blokčejn sistemima direktno zavisi od izabranog parametra finalnosti transakcija i dubine potvrda u lancu.
 \end{teorema}
 
-\textbf{Vreme odaziva} sistema može se posmatrati kao interval između podnošenja transakcije u bazen nepotvrđenih transakcija i njenog dostizanja praktične finalnosti, što zavisi od opterećenja mreže i visine transakcione naknade.
+\textbf{Vreme odaziva} sistema može se posmatrati kao interval između podnošenja transakcije u skup nepotvrđenih transakcija i njenog dostizanja praktične finalnosti, što zavisi od opterećenja mreže i visine transakcione naknade.
 
 \subsection{Struktura i funkcionalnost blokčejn sistema}
 Razumevanje unutrašnje organizacije podataka u blokčejn sistemima predstavlja ključni preduslov za analizu njihovog funkcionisanja i bezbednosnih svojstava. Podaci u ovom kontekstu ne obuhvataju samo istoriju izvršenih transakcija, već i reprezentaciju trenutnog stanja mreže, odnosno način na koji se stanje sredstava i prava pojedinačnih učesnika definiše, ažurira i verifikuje. Različiti modeli upravljanja stanjem uslovljavaju načine potrošnje sredstava, pravila validacije transakcija, kao i skup funkcionalnosti koje sistem može ponuditi krajnjim korisnicima.
