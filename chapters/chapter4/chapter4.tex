@@ -15,11 +15,22 @@ Svaki validator mora imati funkcionalni pristup i konsenzusnom i izvršnom sloju
 
 Komunikacija između konsenzusnog i izvršnog sloja je dvosmerna i ostvaruje se isključivo putem standardizovanog interfejsa poznatog kao \textit{Engine API}, koji predstavlja jedini dozvoljeni mehanizam njihove koordinacije. Pod pretpostavkom odsustva vizantijskog ponašanja validatora, proces predlaganja i validacije novog bloka odvija se kroz sledeće faze:
 \begin{enumerate}
-\item Validator izabran za predlagača bloka u okviru konsenzusnog sloja inicira zahtev ka povezanom izvršnom klijentu radi generisanja sadržaja novog bloka.
-\item Izvršni klijent bira nepotvrđene transakcije iz svog lokalnog skupa, deterministički ih izvršava u okviru lokalne Eterijum virtuelne mašine i konstruiše izvršni sadržaj bloka \eng{Execution Payload}.
-\item Konsenzusni sloj predlagača preuzima izvršni sadržaj i proverava njegovu strukturnu, formatnu i kriptografsku ispravnost u skladu sa važećim pravilima protokola.
-\item Predlagač bloka kombinuje izvršni sadržaj sa konsenzusnim podacima u jedinstvenu strukturu bloka, koju zatim kriptografski potpisuje i distribuira svim validatorima u konsenzusnom sloju.
-\item Ostali validatori konsenzusnog sloja primaju predloženi blok i verifikuju isključivo konsenzusni deo bloka u skladu sa pravilima protokola.
-\item Validatori emitovanjem glasova \eng{attestations} učestvuju u procesu potvrđivanja bloka i njegovog uključivanja u kanonsku istoriju lanca.
-\item Nakon odluke konsenzusnog sloja o prihvatanju bloka, izvršni sloj svakog validatora deterministički ponovo izvršava transakcije sadržane u izvršnom sadržaju bloka i ažurira svoje lokalno stanje sistema.
+\item \label{PoS-1} Validator izabran za predlagača bloka u okviru konsenzusnog sloja inicira zahtev ka povezanom izvršnom klijentu radi generisanja sadržaja novog bloka.
+\item \label{PoS-2} Izvršni klijent bira nepotvrđene transakcije iz svog lokalnog skupa, deterministički ih izvršava u okviru lokalne Eterijum virtuelne mašine i konstruiše izvršni sadržaj bloka \eng{Execution Payload}.
+\item \label{PoS-3} Konsenzusni sloj predlagača preuzima izvršni sadržaj i proverava njegovu strukturnu, formatnu i kriptografsku ispravnost u skladu sa važećim pravilima protokola.
+\item \label{PoS-4} Predlagač bloka kombinuje izvršni sadržaj sa konsenzusnim podacima u jedinstvenu strukturu bloka, koju zatim kriptografski potpisuje i distribuira svim validatorima u konsenzusnom sloju.
+\item \label{PoS-5} Ostali validatori konsenzusnog sloja primaju predloženi blok i verifikuju isključivo konsenzusni deo bloka u skladu sa pravilima protokola.
+\item \label{PoS-6} Validatori emitovanjem potvrda učestvuju u procesu potvrđivanja bloka i njegovog uključivanja u kanonsku istoriju blokčejna.
+\item \label{PoS-7} Nakon odluke konsenzusnog sloja o prihvatanju bloka, izvršni sloj svakog validatora deterministički ponovo izvršava transakcije sadržane u izvršnom sadržaju bloka i ažurira svoje lokalno stanje sistema.
 \end{enumerate}
+
+\section{Konsenzusni sloj}
+Vreme u konsenzusnom sloju podeljeno je na epohe \eng{epochs}, pri čemu svaka epoha traje 6 minuta i 24 sekunde i sastoji se od 32 slota, dok trajanje pojedinačnog slota iznosi 12 sekundi. Na početku svake epohe, svi aktivni validatori se pseudonasumično raspoređuju u odbore \eng{committees} približno jednake veličine, tako da svakom slotu odgovara tačno jedan odbor. Radi očuvanja bezbednosnih garancija protokola, veličina svakog odbora ne može biti manja od 128 validatora.
+
+U svakom slotu se pseudonasumično bira jedan validator (Faza \ref{PoS-1}) koji preuzima ulogu predlagača bloka. Predlagač je odgovoran za kreiranje novog bloka tako što, putem povezanog izvršnog klijenta, bira transakcije iz svog lokalnog skupa nepotvrđenih transakcija i uključuje ih u izvršni sadržaj bloka (Faza \ref{PoS-2}). Nakon interne provere izvršnog sadržaja (Faza \ref{PoS-3}) i njegove integracije sa konsenzusnim podacima u jedinstvenu strukturu bloka (Faza \ref{PoS-4}), predloženi blok se distribuira ostalim validatorima u odgovarajućem odboru (Faza \ref{PoS-5}).
+
+Preostali validatori u odboru deluju kao glasači (Faze \ref{PoS-6}) i emituju potvrde \eng{attestations} kojima potvrđuju ispravnost konsenzusnog dela predloženog bloka. U ovoj fazi se ne proverava validnost transakcija niti izvršni sadržaj bloka, već isključivo usklađenost sa pravilima konsenzusnog protokola. Kako se svaki odbor sastoji od velikog broja validatora, direktna propagacija pojedinačnih potvrda bi dovela do zagušenja mreže, u skladu sa Teoremom \ref{teorema:gunter}. Iz tog razloga, svaki odbor je dodatno podeljen na manje komunikacione podmreže \eng{subnets}, pri čemu se svaki validator nalazi u tačno jednoj podmreži.
+
+Unutar svake podmreže, šesnaest validatora se bira u ulogu agregatora \eng{aggregators}, koji prikupljaju potvrde ostalih validatora i kombinuju njihove kriptografske potpise u jedan agregatni potpis primenom BLS šeme agregacije potpisa, i emituju dobijeni agregatni potpis široj mreži. Ovakav mehanizam omogućava efikasnu verifikaciju velikog broja potvrda uz minimalan komunikacioni i računarski trošak.
+
+Validator koji je izabran da bude predlagač bloka pakuje sve agregirane potvrde u jedan konačni BLS potpis koji je uključen u predložen blok.
