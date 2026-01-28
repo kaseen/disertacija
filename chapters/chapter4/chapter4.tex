@@ -29,9 +29,7 @@ Vreme u konsenzusnom sloju podeljeno je na epohe \eng{epochs}, pri čemu se svak
 
 S obzirom na to da je blokčejn deterministički distribuirani sistem, neophodno je obezbediti izvor pseudonasumičnosti koji je javno proverljiv, ali unapred nepredvidiv, kako bi se sprečilo da napadač utiče na raspodelu konsenzusnih uloga. U Eterijum konsenzusnom sloju, ovaj zahtev se ostvaruje putem distribuiranog mehanizma generisanja slučajnosti poznatog kao \textit{RANDAO} \cite{alpturer2024optimal}.
 
-RANDAO predstavlja kolektivni kriptografski protokol u kojem validatori postepeno doprinose generisanju zajedničke pseudonasumične vrednosti, koja se ažurira pri svakom predlaganju bloka i uključuje u njegovo zaglavlje. Sve dok u sistemu postoji makar jedan iskren validator, rezultujuća RANDAO vrednost ostaje nepredvidiva za potencijalnog napadača.
-
-Na osnovu tako generisane RANDAO vrednosti, na početku svake epohe vrši se deterministička, ali pseudonasumična permutacija skupa aktivnih validatora, čime se unapred određuju predlagači blokova i sastav odbora za pojedinačne slotove.
+RANDAO predstavlja kolektivni kriptografski protokol u kojem validatori postepeno doprinose generisanju zajedničke pseudonasumične vrednosti, koja se ažurira pri svakom predlaganju bloka i uključuje u njegovo zaglavlje. Na osnovu tako generisane RANDAO vrednosti, na početku svake epohe vrši se deterministička, ali pseudonasumična permutacija skupa aktivnih validatora, čime se unapred određuju predlagači blokova za čitavu epohu i sastav odbora za pojedinačne slotove.
 
 Predlagač bloka (Faza \ref{PoS-1}) je odgovoran za kreiranje novog bloka tako što, putem povezanog izvršnog klijenta, bira transakcije iz svog lokalnog skupa nepotvrđenih transakcija i uključuje ih u izvršni sadržaj bloka (Faza \ref{PoS-2}). Nakon interne provere izvršnog sadržaja (Faza \ref{PoS-3}) i njegove integracije sa konsenzusnim podacima u jedinstvenu strukturu bloka (Faza \ref{PoS-4}), predloženi blok se distribuira ostalim validatorima u odgovarajućem odboru (Faza \ref{PoS-5}).
 
@@ -76,7 +74,13 @@ Ovakav dvostepeni proces obezbeđuje toleranciju na vizantijsko ponašanje valid
 Nakon konfliktnog glasanja kad se ne finalizuje poslednja opravdana tačka, Casper FFG algoritam nastavlja sa radom gde se ista opravdana kontrolna tačka uzima za glasanje ali i nova ciljna kontrolna tačka u trenutnoj epohi, gde će se glasati za ovaj par. Ovim ponašanjem se vidi da je finalizacija skokovita jer nakon finalizacije sve kontrolne tačke između dva finalizovane kontrolne tačke ostaju implicitno nepovratne, iako formalno nisu finalizovane.
 
 \subsection{Bezbednosni mehanizmi konsenzusa}
-% Radi očuvanja bezbednosnih garancija protokola, veličina svakog odbora ne može biti manja od 128 validatora.
+Sve dok u procesu generisanja slučajnosti tokom jedne epohe postoji makar jedan iskren validator koji pravilno doprinosi RANDAO mehanizmu, dobijena pseudonasumična vrednost ostaje nepredvidiva za potencijalnog napadača, čime se obezbeđuje nepredvidivo raspoređivanje validatora u odbore.
+
+Radi očuvanja bezbednosnih garancija konsenzusnog protokola, Eterijum sistem teži da obezbedi da veličina svakog odbora ne padne ispod 128 validatora, čime se smanjuje verovatnoća uspešnih koordinisanih napada i pojedinačne manipulacije procesom potvrda.
+
+Činjenica da su uloge validatora za svaki slot unapred deterministički poznate na početku epohe otvara prostor za ciljane napade, poput selektivnih uskraćivanja usluge (DoS), čiji je cilj privremeno isključivanje predlagača bloka i usporavanje napredovanja sistema. Takođe, ova predvidivost omogućava primenu sofisticiranih MEV strategija \cite{malkhi2022maximal}, koje mogu negativno uticati na krajnje korisnike kroz manipulaciju redosledom i uključivanjem nepotvrđenih transakcija.
+
+Međutim, izbor trajanja epohe od 32 slota, odnosno 6 minuta i 24 sekunde, predstavlja inženjerski kompromis kojim se balansiraju bezbednost i efikasnost sistema. Ovakvo vremensko ograničenje značajno smanjuje prostor za koordinisane napade, budući da napadač raspolaže ograničenim vremenom za identifikaciju cilja, orkestraciju napada i njegovo sprovođenje pre promene raspodele uloga u narednoj epohi.
 
 Kako validator mora zaključati depozit od 32 ETH da bi učestvovao u konsenzusu, bezbednost sistema se oslanja na ekonomske podsticaje. Predlagač bloka dobija sredstva pri uspešnom dodavanju bloka, ali i validatori koji su slali potvrde za taj blok dobijaju manji deo sredstava. Isto tako, vizantijsko ponašanje validatora je eksplicitno kažnjivo i direktno utiče na zaključani ulog, čime se validatori motivišu da postupaju u skladu sa pravilima protokola. 
 
