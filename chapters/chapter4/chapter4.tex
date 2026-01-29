@@ -1,5 +1,5 @@
 \chapter{Arhitektura Eterijum blokčejna}
-Eterijum \cite{wood2014ethereum} \eng{Ethereum} predstavlja prvu blokčejn platformu koja je uvela Tjuring kompletne pametne ugovore i kao takva se u savremenoj akademskoj literaturi i industrijskoj praksi prepoznaje kao jedna od najaktivnijih i tehnološki najrazvijenijih platformi za razvoj decentralizovanih aplikacija \cite{hashkey2024}. Empirijske analize aktivnosti programerske zajednice ukazuju na izuzetno visok intenzitet razvoja, koji se ogleda u velikom broju izmena \eng{commit} u ključnim repozitorijumima povezanih sa Eterijum ekosistemom. Ovi pokazatelji potvrđuju centralnu ulogu Eterijuma u procesu tehnoloških inovacija unutar šireg blokčejn prostora \cite{vaccargiu2025mining}.
+Eterijum \cite{wood2014ethereum, ethdocs} \eng{Ethereum} predstavlja prvu blokčejn platformu koja je uvela Tjuring kompletne pametne ugovore i kao takva se u savremenoj akademskoj literaturi i industrijskoj praksi prepoznaje kao jedna od najaktivnijih i tehnološki najrazvijenijih platformi za razvoj decentralizovanih aplikacija \cite{hashkey2024}. Empirijske analize aktivnosti programerske zajednice ukazuju na izuzetno visok intenzitet razvoja, koji se ogleda u velikom broju izmena \eng{commit} u ključnim repozitorijumima povezanih sa Eterijum ekosistemom. Ovi pokazatelji potvrđuju centralnu ulogu Eterijuma u procesu tehnoloških inovacija unutar šireg blokčejn prostora \cite{vaccargiu2025mining}.
 
 Počevši od 15. septembra 2022. godine, mreža Eterijuma koristi mehanizam konsenzusa zasnovan na dokazivanju uloga \eng{Proof of Stake, PoS}, u okviru koga validatori imaju ključnu ulogu u procesu predlaganja i validacije novih blokova. Da bi učesnik mreže stekao status validatora, neophodno je da zaključa najmanje 32 ETH, koji predstavljaju primarnu kriptovalutu Eterijum blokčejna. Prema dostupnim podacima, od drugog kvartala 2024. godine mreža obuhvata približno jedan milion aktivnih validatora, uz umerene fluktuacije tog broja tokom vremena \cite{ethereumvalidators}.
 
@@ -67,11 +67,17 @@ Casper FFG predstavlja BFT mehanizam finalizacije koji se ne bavi predlaganjem b
 
 Kako svaka potvrda sadrži informacije o izvornoj i ciljnoj kontrolnoj tački, validatori putem svojih potvrda glasaju za prelaz između dve uzastopne kontrolne tačke pa potvrdama istovremeno učestvuju i u mehanizmu izbora grane i u procesu finalizacije.
 
-Ukoliko najmanje dve trećine ukupnog uloga aktivnih validatora u okviru jedne epohe potvrdi isti prelaz između kontrolnih tačaka, ciljana kontrolna tačka se smatra \textit{opravdanom}. Ukoliko se u narednoj epohi opravda novi prelaz koji polazi od ove opravdane kontrolne tačke, ona postaje \textit{finalizovana}. Na taj način, finalizacija zahteva uspešno opravdavanje u dve uzastopne epohe.
+Ukoliko \textbf{velika većina} (najmanje dve trećine ukupnog uloga aktivnih validatora) u okviru jedne epohe potvrdi isti prelaz između kontrolnih tačaka, ciljana kontrolna tačka se smatra \textit{opravdanom}. Ukoliko se u narednoj epohi opravda novi prelaz koji polazi od ove opravdane kontrolne tačke, ona postaje \textit{finalizovana}. Na taj način, finalizacija zahteva uspešno opravdavanje u dve uzastopne epohe.
 
 Ovakav dvostepeni proces obezbeđuje toleranciju na vizantijsko ponašanje validatora, ali Casper FFG algoritam ne pokušava da finalizuje svaku kontrolnu tačku redom, jer u slučaju konfliktnog glasanja dolazi da u trenutnoj rundi ne bude finalizovana kontrolna tačka. U slučajevima kad se ovo desi Eterijum mreža nastavlja sa verovatnosnom finalnošću zasnovanom na \textit{LMD-GHOST} algoritmu.
 
 Nakon konfliktnog glasanja kad se ne finalizuje poslednja opravdana tačka, Casper FFG algoritam nastavlja sa radom gde se ista opravdana kontrolna tačka uzima za glasanje ali i nova ciljna kontrolna tačka u trenutnoj epohi, gde će se glasati za ovaj par. Ovim ponašanjem se vidi da je finalizacija skokovita jer nakon finalizacije sve kontrolne tačke između dva finalizovane kontrolne tačke ostaju implicitno nepovratne, iako formalno nisu finalizovane.
+
+Ukoliko u konsenzusnom sloju protekne više od četiri uzastopnih epoha bez finalizacije kontrolnih tačaka, protokol automatski ulazi u režim \textit{curenja neaktivnosti} \eng{inactivity leak}. Cilj ovog mehanizma je uspostavljanje uslova neophodnih za povratak konačnosti lanca, čime se obezbeđuje otpornost sistema na ovakav tip poremećaja.
+
+Protokol curenja neaktivnosti postepeno umanjuje ulog nedostupnih validatora i validatora koji kontinuirano šalju atestacije koje ne doprinose velikoj većini, sve dok iskreni validatori ne ostvare dovoljnu težinu uloga što će im omogućiti da finalizuju lanac. Ovaj mehanizam istovremeno podstiče i iskrene, ali neaktivne validatore da se što pre ponovo uključe u protokol, jer iako nisu podložni sečenju, njihov ulog biva ekonomski umanjen.
+
+Funkcionalnost protokola curenja neaktivnosti uspešno je demonstrirana na testnoj mreži \textit{Medalla}, gde su iskreni validatori uspeli da se ponovo usaglase oko aktuelnog vrha lanca i povrate finalizaciju.
 
 \subsection{Bezbednosni mehanizmi konsenzusa}
 Sve dok u procesu generisanja slučajnosti tokom jedne epohe postoji makar jedan iskren validator koji pravilno doprinosi RANDAO mehanizmu, dobijena pseudonasumična vrednost ostaje nepredvidiva za potencijalnog napadača, čime se obezbeđuje nepredvidivo raspoređivanje validatora u odbore.
@@ -84,6 +90,7 @@ Istovremeno, ova predvidivost otvara prostor za ciljane napade na predlagače bl
 
 Međutim, izbor trajanja epohe od 32 slota, odnosno 6 minuta i 24 sekunde, predstavlja inženjerski kompromis kojim se balansiraju bezbednost i efikasnost sistema. Ovakvo vremensko ograničenje značajno smanjuje prostor za koordinisane napade, budući da napadač raspolaže ograničenim vremenom za identifikaciju cilja, orkestraciju napada i njegovo sprovođenje pre promene raspodele uloga u narednoj epohi.
 
+\subsubsection{Mehanizam sečenja zlonamernih validatora}
 Kako validator mora zaključati depozit od 32 ETH da bi učestvovao u konsenzusu, bezbednost sistema se oslanja na ekonomske podsticaje. Predlagač bloka dobija sredstva pri uspešnom dodavanju bloka, ali i validatori koji su slali potvrde za taj blok dobijaju manji deo sredstava. Isto tako, vizantijsko ponašanje validatora je eksplicitno kažnjivo i direktno utiče na zaključani ulog, čime se validatori motivišu da postupaju u skladu sa pravilima protokola. 
 
 Za razliku od Bitkoinovog konsenzus mehanizma zasnovanog na dokazu uloženog rada, Eterijumov konsenzus zasnovan na dokazu uloženog uloga uvodi složenije mehanizme glasanja i finalizacije, što povećava površinu potencijalnih napada, ali istovremeno omogućava preciznije i strože bezbednosne garancije.
@@ -92,7 +99,7 @@ Bezbednost se obezbeđuje kroz kazneni mehanizam poznat kao sečenje \eng{slashi
 
 Sečenje se primenjuje u sledećim slučajevima, koji se svode na zlonamerno predlaganje blokova ili neispravno glasanje:
 \begin{enumerate}
-\item Predlaganje više od jednog bloka za isti slot, čime validator direktno pokušava da izazove račvanje lanca, što predstavlja kršenje LMD-GHOST pravila izbora grane tzv. \textit{LMD-GHOST double vode},
+\item Predlaganje više od jednog bloka za isti slot, čime validator direktno pokušava da izazove račvanje lanca, što predstavlja kršenje LMD-GHOST pravila izbora grane tzv. \textit{LMD-GHOST double vote},
 \item Emitovanje dve potvrde takve da jedna logički obuhvata drugu u pogledu izabranih kontrolnih tačaka, čime validator pokušava da omogući retroaktivno prepisivanje istorije tzv. \textit{FFG surround vote},
 \item Emitovanje više potvrda za različite ciljne kontrolne tačke u istoj epohi koje se nalaze u različitim granama lanca, čime se narušava jedinstvenost finalizacije tzv. \textit{FFG double vote}.
 \end{enumerate}
@@ -111,6 +118,16 @@ U visoko idealizovanom modelu mreže, u kojem napadač poseduje izuzetno precizn
 \item \textbf{Napad lavine} \eng{avalanche attack} - u slučaju kontrole više uzastopnih predlagača, napadač akumulira zadržane blokove sve dok alternativna grana ne dostigne istu težinu kao iskrena grana lanca.
 \end{enumerate}
 
-Odbrambeni mehanizmi ugrađeni u protokol daju dodatne težine porukama u trentnom slotu ukoliko su primljene bez zakašnjenja, čime se značajno otežava realizacija prva dva napada, dok ovaj pristup ne pruža potpunu zaštitu od napada lavine \cite{neu2022two}. Ipak, autori pokazuju da je ovaj napad izvodljiv isključivo u teorijskim, visoko idealizovanim uslovima.
+Odbrambeni mehanizmi ugrađeni u protokol daju dodatne težine porukama u trenutnom slotu ukoliko su primljene bez zakašnjenja, čime se značajno otežava realizacija prva dva napada, dok ovaj pristup ne pruža potpunu zaštitu od napada lavine \cite{neu2022two}. Ipak, autori pokazuju da je ovaj napad izvodljiv isključivo u teorijskim, visoko idealizovanim uslovima.
 
 Sve navedeno ukazuje da su napadi sa malom težinom uloga u praksi teško izvodljivi, jer zahtevaju nerealistične pretpostavke o mrežnim uslovima i preciznoj koordinaciji napadača. Iz perspektive napadača, efikasnija strategija ostaje akumulacija većeg uloga i primena istih napada u znatno povoljnijem režimu.
+
+\subsubsection{Napadi sa velikom težinom uloga}
+Zlonamerni napadač može nastojati da akumulira značajnu količinu uloženih sredstava, čime se povećava njegov uticaj na ponašanje konsenzusnog protokola. U nastavku se razmatraju referentni pragovi udela ukupnog uloženog kapitala i njihove bezbednosne implikacije.
+
+\begin{description}
+\item \textbf{Odlaganje konačnosti (33\%)} - budući da je za opravdavanje prelaza između kontrolnih tačaka potrebna velika većina, napadač sa ovim udelom može sprečiti finalizaciju u konsenzusnom sloju bez direktnog uticaja na ponašanje iskrenih validatora. Odbrambeni mehanizam predstavlja aktivacija protokola curenja neaktivnosti nakon više uzastopnih epoha bez finalizacije.
+\item \textbf{Dvostruka finalnost (34\%)} - napadač može dvostruko atestirati sa svim svojim validatorima, pri čemu bi preostali iskreni validatori morali biti taktički podeljeni između dve grane kako bi obe bile finalizovane. Oporavak u ovom slučaju zahteva upravljanje van protokola, dok napadač biva ekonomski sankcionisan gubitkom celokupnog uloženog kapitala, što ovaj napad čini izuzetno skupim.
+\item \textbf{Kontrola budućnosti lanca (50\%)} - sa većinskim udelom uloga, napadač može dominirati izborom kanonske grane i uticati na uključivanje transakcija u blokove. Ublažavanje ovog napada zahteva intervenciju zajednice kroz mehanizme van protokola, uz veoma visoku ekonomsku cenu za napadača.
+\item \textbf{Kontrola prošlosti lanca (67\%)} - napadač može samostalno finalizovati proizvoljnu granu bez učešća iskrenih validatora, čime u potpunosti preuzima kontrolu nad konsenzusom. Jedina realna odbrana u ovom scenariju jeste ekstremno visoka ekonomska barijera za ostvarenje ovakvog napada.
+\end{description}
