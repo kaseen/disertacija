@@ -56,7 +56,7 @@ Usled asinhrone prirode distribuirane mreže, predloženi blok ne dospeva do svi
 
 S obzirom na to da svaka potvrda sadrži informaciju o bloku koji validator trenutno vidi na vrhu blokčejna, validator u svakom narednom slotu ima mogućnost da promeni svoj izbor i emituje novu potvrdu za blok na suprotnoj grani, ukoliko ne želi da glasa za istu granu. Iz tog razloga, u procesu izbora glavne grane u obzir se uzima isključivo poslednja važeća potvrda svakog validatora, odnosno potvrda sa najvećim brojem slota koju je validator emitovao i koja je uključena u agregirane BLS potpise \eng{Latest Message Driven, LMD}.
 
-Kako se u Eterijum mreži zaključava primarna kriptovaluta u vidu uloga validatora, izbor grane koja će biti proglašena glavnom u slučaju račvanja zasniva se na \textit{pravilu najtežeg lanca}, koje predstavlja varijaciju klasičnog pravila najdužeg lanca. Ovo pravilo ne posmatra broj blokova na grani, već \textbf{težina glasova} predstavlja ukupnu količinu ETH zaključanu u podstablu posmatranog bloka, uzimajući u obzir poslednje potvrde svih validatora koji su glasali za njega ili njegove potomke \eng{Greedy Heaviest-Observed Sub-Tree, GHOST}.
+Kako se u Eterijum mreži zaključava primarna kriptovaluta u vidu uloga validatora, izbor grane koja će biti proglašena glavnom u slučaju račvanja zasniva se na \textit{pravilu najtežeg lanca}, koje predstavlja varijaciju klasičnog pravila najdužeg lanca. Ovo pravilo ne posmatra broj blokova na grani, već \textbf{težina uloga} predstavlja ukupnu količinu ETH zaključanu u podstablu posmatranog bloka, koja uzima uzimajući u obzir poslednje potvrde svih validatora koji su glasali za njega ili njegove potomke \eng{Greedy Heaviest-Observed Sub-Tree, GHOST}.
 
 U slučaju račvanja, Nakamoto konsenzus obezbeđuje verovatnosnu finalnost Eterijum blokčejna primenom kombinovanog mehanizma \textit{LMD-GHOST}, koji koristi poslednje potvrde validatora za deterministički izbor grane sa najvećom ukupnom težinom.
 
@@ -78,7 +78,9 @@ Sve dok u procesu generisanja slučajnosti tokom jedne epohe postoji makar jedan
 
 Radi očuvanja bezbednosnih garancija konsenzusnog protokola, Eterijum sistem teži da obezbedi da veličina svakog odbora ne padne ispod 128 validatora, čime se smanjuje verovatnoća uspešnih koordinisanih napada i pojedinačne manipulacije procesom potvrda.
 
-Činjenica da su uloge validatora za svaki slot unapred deterministički poznate na početku epohe otvara prostor za ciljane napade, poput selektivnih uskraćivanja usluge (DoS), čiji je cilj privremeno isključivanje predlagača bloka i usporavanje napredovanja sistema. Takođe, ova predvidivost omogućava primenu sofisticiranih MEV strategija \cite{malkhi2022maximal}, koje mogu negativno uticati na krajnje korisnike kroz manipulaciju redosledom i uključivanjem nepotvrđenih transakcija.
+Činjenica da su uloge validatora za svaki slot deterministički poznate na početku epohe omogućava primenu sofisticiranih MEV strategija \cite{malkhi2022maximal}, koje mogu negativno uticati na krajnje korisnike kroz manipulaciju redosledom i selekcijom nepotvrđenih transakcija.
+
+Istovremeno, ova predvidivost otvara prostor za ciljane napade na predlagače blokova, poput uskraćivanja usluge kroz masovno slanje nepoželjnih poruka, sa ciljem da se predlagač privremeno učini nedostupnim ostatku mreže i time uspori napredovanje sistema. Potencijalno ublažavanje ovakvih napada razmatra se kroz koncept tajnog vođe \cite{burianova2025secret}, međutim efikasna realizacija ovog pristupa i dalje predstavlja otvoreno istraživačko pitanje.
 
 Međutim, izbor trajanja epohe od 32 slota, odnosno 6 minuta i 24 sekunde, predstavlja inženjerski kompromis kojim se balansiraju bezbednost i efikasnost sistema. Ovakvo vremensko ograničenje značajno smanjuje prostor za koordinisane napade, budući da napadač raspolaže ograničenim vremenom za identifikaciju cilja, orkestraciju napada i njegovo sprovođenje pre promene raspodele uloga u narednoj epohi.
 
@@ -96,3 +98,19 @@ Sečenje se primenjuje u sledećim slučajevima, koji se svode na zlonamerno pre
 \end{enumerate}
 
 U slučaju bilo kog od navedenih prekršaja, validator biva sankcionisan sečenjem, pri čemu se inicijalna kazna uvećava proporcionalno ukupnom broju validatora koji su sasečeni u istom vremenskom periodu. Ovakav mehanizam je dizajniran da učini koordinisane napade ekonomski neisplativim, jer u ekstremnim slučajevima može dovesti do potpunog gubitka uloženog depozita svih učesnika u napadu.
+
+\subsubsection{Napadi sa malom težinom uloga}
+Kako se stopa račvanja lanca koristi kao indikativna metrika stabilnosti konsenzusnog procesa, napadač može namerno izazivati česta račvanja sa ciljem destabilizacije mreže. Ovakvi napadi spadaju u domenu teorije igara primenjene na blokčejn sisteme \cite{pavloff2024game}.
+
+Napadač može namerno zanemariti aktuelni blok i emitovati potvrde za prethodni blok, ili, u slučaju uloge predlagača, zadržavati predložene blokove i potvrde pre njihovog objavljivanja u cilju izazivanja račvanja lanca \cite{neuder2021low}.
+
+U visoko idealizovanom modelu mreže, u kojem napadač poseduje izuzetno preciznu kontrolu nad vremenom isporuke poruka, moguće je realizovati sledeće strategije:
+\begin{enumerate}
+\item \textbf{Balansirajući napad} \eng{balancing attack} - napadač zadržava predloženi blok i potvrde, a zatim ih objavljuje u pažljivo odabranom trenutku kako bi podelio iskrene validatore u dve disjunktne grupe koje prihvataju različite grane lanca.
+\item \textbf{Odbijajući napad} \eng{bouncing attack} - napadač naizmenično potvrđuje opravdane blokove na različitim granama lanca, sa ciljem sprečavanja njihove finalizacije.
+\item \textbf{Napad lavine} \eng{avalanche attack} - u slučaju kontrole više uzastopnih predlagača, napadač akumulira zadržane blokove sve dok alternativna grana ne dostigne istu težinu kao iskrena grana lanca.
+\end{enumerate}
+
+Odbrambeni mehanizmi ugrađeni u protokol daju dodatne težine porukama u trentnom slotu ukoliko su primljene bez zakašnjenja, čime se značajno otežava realizacija prva dva napada, dok ovaj pristup ne pruža potpunu zaštitu od napada lavine \cite{neu2022two}. Ipak, autori pokazuju da je ovaj napad izvodljiv isključivo u teorijskim, visoko idealizovanim uslovima.
+
+Sve navedeno ukazuje da su napadi sa malom težinom uloga u praksi teško izvodljivi, jer zahtevaju nerealistične pretpostavke o mrežnim uslovima i preciznoj koordinaciji napadača. Iz perspektive napadača, efikasnija strategija ostaje akumulacija većeg uloga i primena istih napada u znatno povoljnijem režimu.
