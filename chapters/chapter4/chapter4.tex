@@ -131,3 +131,23 @@ Zlonamerni napadač može nastojati da akumulira značajnu količinu uloženih s
 \item \textbf{Kontrola budućnosti lanca (50\%)} - sa većinskim udelom uloga, napadač može dominirati izborom kanonske grane i uticati na uključivanje transakcija u blokove. Ublažavanje ovog napada zahteva intervenciju zajednice kroz mehanizme van protokola, uz veoma visoku ekonomsku cenu za napadača.
 \item \textbf{Kontrola prošlosti lanca (67\%)} - napadač može samostalno finalizovati proizvoljnu granu bez učešća iskrenih validatora, čime u potpunosti preuzima kontrolu nad konsenzusom. Jedina realna odbrana u ovom scenariju jeste ekstremno visoka ekonomska barijera za ostvarenje ovakvog napada.
 \end{description}
+
+Ukoliko nepošteni validatori ipak uspeju da kompromituju konsenzusni mehanizam i finalizuju verziju lanca koja je u suprotnosti sa interesima većine učesnika, Eterijum mreža se suočava sa ozbiljnim sistemskim problemom. U takvoj situaciji, mehanizmi ugrađeni u sam protokol postaju nedovoljni za oporavak, te krajnje rešenje podrazumeva oslanjanje na društveni sloj mreže kao poslednju liniju odbrane.
+
+\subsubsection{Društveni sloj Eterijuma}
+Društveni sloj \eng{social layer}, često označavan i kao Sloj 0 (L0), obuhvata sve oblike upravljanja i donošenja odluka koji se odvijaju van formalno definisanog protokola. U ovom sloju učestvuju korisnici, validatori, programeri klijentskog softvera, istraživači i šira zajednica, čija kolektivna odluka u krajnjem slučaju određuje koju verziju lanca mreža prihvata kao legitimnu.
+
+Napadi sa velikom težinom uloga zahtevaju izuzetno visok nivo društvene koordinacije kako bi bili neutralisani. Potencijalni odgovor zajednice može uključivati odbacivanje zlonamerne grane i prelazak na alternativnu, poštenu verziju lanca. Ovakav scenario efektivno dovodi do društveno koordinisanog razdvajanja lanca, pri čemu napadač ostaje sa finalizovanom, ali ekonomski bezvrednom verzijom sistema, budući da na njoj više ne postoji aktivna korisnička baza. Na taj način, ekonomska motivacija za sprovođenje ovakvog napada biva eliminisana.
+
+Iako društveni sloj predstavlja snažan mehanizam krajnje odbrane, on sam po sebi nije imun na različite oblike napada. Među najznačajnije pretnje društvenom sloju Eterijuma ubrajaju se:
+\begin{enumerate}
+\item Kampanje dezinformacija sa ciljem narušavanja poverenja u Eterijum mrežu, što može dovesti do smanjenja broja učesnika i posredno do nižeg stepena decentralizacije.
+\item Ciljani napadi, pritisci ili zastrašivanje usmereni ka programerima i istraživačima protokola, čime se potencijalno smanjuje broj aktivnih doprinosilaca i usporava razvoj sistema.
+\item Preterano restriktivni regulatorni okviri koji mogu obeshrabriti učešće u mreži i negativno uticati na šire prihvatanje blokčejn tehnologije.
+\item Infiltracija zlonamernih aktera u zajednicu sa ciljem zloupotrebe procesa donošenja odluka, produžavanja diskusija i odlaganja ključnih tehničkih unapređenja.
+\item Podmićivanje ili vršenje uticaja na pojedince sa značajnom reputacijom ili formalnom ulogom u ekosistemu radi manipulacije kolektivnim odlukama.
+\end{enumerate}
+
+Odbrana od napada na društveni sloj nije trivijalna i ne može se formalizovati isključivo tehničkim merama. Ipak, značajnu ulogu igra otvorena priroda Eterijum softvera \eng{open-source}, koja omogućava transparentnost, nezavisnu verifikaciju i široko učešće zajednice. Dodatno, jasno definisana dugoročna misija i vrednosti Eterijuma doprinose jačanju otpornosti zajednice na pokušaje manipulacije.
+
+Iz navedenih razloga, kontinuirano ulaganje u očuvanje snažnog i koherentnog društvenog sloja, zasnovanog na zajedničkim vrednostima decentralizacije, bezbednosti i otvorenosti, predstavlja ključni preduslov dugoročne stabilnosti i održivosti Eterijum protokola. Na kraju, bez obzira na tehničku sofisticiranost sistema, njegova bezbednost se u krajnjoj instanci svodi na ljude koji ga koriste, razvijaju i održavaju.
