@@ -153,3 +153,37 @@ Iako društveni sloj predstavlja snažan mehanizam krajnje odbrane, on sam po se
 Odbrana od napada na društveni sloj nije trivijalna i ne može se formalizovati isključivo tehničkim merama. Ipak, značajnu ulogu igra otvorena priroda Eterijum softvera \eng{open-source}, koja omogućava transparentnost, nezavisnu verifikaciju i široko učešće zajednice. Dodatno, jasno definisana dugoročna misija i vrednosti Eterijuma doprinose jačanju otpornosti zajednice na pokušaje manipulacije.
 
 Iz navedenih razloga, kontinuirano ulaganje u očuvanje snažnog i koherentnog društvenog sloja, zasnovanog na zajedničkim vrednostima decentralizacije, bezbednosti i otvorenosti, predstavlja ključni preduslov dugoročne stabilnosti i održivosti Eterijum protokola. Na kraju, bez obzira na tehničku sofisticiranost sistema, njegova bezbednost se u krajnjoj instanci svodi na ljude koji ga koriste, razvijaju i održavaju.
+
+\section{Izvršni sloj Eterijum mreže}
+Izvršni sloj Eterijum mreže definiše pravila za interakciju sa stanjem sistema, kao i mehanizme njegovog ažuriranja putem transakcija. Centralnu komponentu ovog sloja predstavlja Eterijum virtuelna mašina (EVM), koja obezbeđuje determinističko i bezbedno izvršavanje programskog koda na svim čvorovima koji učestvuju u mreži, čime se garantuje konzistentnost globalnog stanja sistema.
+
+Promene stanja u izvršnom sloju formalizovane su pomoću Eterijumove funkcije prelaska stanja $\Upsilon$ \eng{state transition function}. Ova funkcija uzima trenutno stanje sistema $\sigma_t$ i validnu transakciju $T$, te proizvodi novo stanje $\sigma_{t+1}$, što se može formalno zapisati kao:
+$$\sigma_{t+1} \equiv \Upsilon(\sigma_{t}, T)$$
+
+S obzirom na to da je, prema Definiciji \ref{def:blokcejn}, blokčejn strogo hronološki uređen lanac blokova $B$, ažuriranje stanja Eterijum mreže odvija se na nivou blokova. U tom kontekstu, uvodi se funkcija prelaska stanja na nivou bloka $\Pi$, koja se sastoji od uzastopne primene funkcije $\Upsilon$ nad svim transakcijama sadržanim u bloku. Time se prethodni izraz može proširiti na sledeći način:
+$$\sigma_{t+1} \equiv \Pi(\sigma_{t}, B)$$
+
+\subsection{Stanje Eterijum sistema}
+Trenutno stanje Eterijum sistema $\sigma_t$ \eng{world state} formalno se definiše kao preslikavanje između adresa naloga i pripadajućih stanja tih naloga.
+
+$$ \sigma_t : Address \to Account$$
+
+Adrese u Eterijum mreži su fiksne dužine od 160 bita (20 bajtova) i mogu pripadati jednoj od sledećih kategorija:
+\begin{enumerate}
+\item \textbf{Nalozi u spoljnom vlasništvu} \eng{Externally Owned Account, EOA} predstavljaju naloge krajnjih korisnika koji poseduju sredstva i nad kojima se kontrola ostvaruje isključivo putem odgovarajućeg privatnog ključa. Gubitak privatnog ključa rezultuje trajnim gubitkom pristupa sredstvima, dok kompromitacija ključa omogućava trećim licima da se neovlašćeno predstavljaju kao vlasnici naloga. Ovi nalozi se u praksi najčešće označavaju kao adrese novčanika \eng{wallet addresses}.
+\item \textbf{Nalozi pametnih ugovora} predstavljaju naloge povezane sa pametnim ugovorima i koji se kreiraju u trenutku postavljanja \eng{deployment} pametnog ugovora na mrežu.
+\end{enumerate}
+
+Bez obzira na tip naloga, osnovno stanje svakog naloga obuhvata sledeće komponente:
+\begin{enumerate}
+\item \textbf{Balans} - količinu kriptovalute ETH koja je pridružena datom nalogu.
+\item \textbf{Brojač} \eng{nonce} - celobrojnu vrednost koja se rastući povećava od nule i predstavlja broj transakcija iniciranih sa datog naloga. Ova vrednost služi kao mehanizam zaštite od dvostrukog trošenja, jer jednoznačno određuje redosled transakcija u istoriji izvršavanja.
+\end{enumerate}
+
+U slučaju naloga pametnog ugovora, stanje naloga dodatno uključuje i sledeće elemente:
+\begin{enumerate}[start=3]
+\item \textbf{Heš izvršnog koda} \eng{code hash} - kriptografsku heš vrednost nepromenljivog izvršnog koda pametnog ugovora.
+\item \textbf{Heš skladišta} \eng{storage hash} - korenski heš Merkle strukture koja predstavlja trenutno stanje trajnog skladišta pametnog ugovora.
+\end{enumerate}
+
+Pretpostavlja se da je preslikavanje $\sigma_t$ implementirano korišćenjem modifikovanog Merkle-Patricia stabla, koje obezbeđuje kriptografsku proverljivost integriteta podataka putem Merkle konstrukcije, kao i efikasne operacije umetanja, pretrage i brisanja sa logaritamskom složenošću u odnosu na broj elemenata \eng{the Practical Algorithm to Retrieve Information Coded in Alphanumeric, Patricia} \cite{morrison1968patricia}.
