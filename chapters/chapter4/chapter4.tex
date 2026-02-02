@@ -164,26 +164,36 @@ S obzirom na to da je, prema Definiciji \ref{def:blokcejn}, blokčejn strogo hro
 $$\sigma_{t+1} \equiv \Pi(\sigma_{t}, B)$$
 
 \subsection{Stanje Eterijum sistema}
-Trenutno stanje Eterijum sistema $\sigma_t$ \eng{world state} formalno se definiše kao preslikavanje između adresa naloga i pripadajućih stanja tih naloga.
+Trenutno stanje Eterijum sistema $\sigma_t$ \eng{world state} formalno se definiše kao preslikavanje između \textit{adresa} naloga i pripadajućih \textit{stanja} tih naloga.
 
-$$ \sigma_t : Address \to Account$$
+$$ \sigma_t : Address_{160} \to Account$$
 
-Adrese u Eterijum mreži su fiksne dužine od 160 bita (20 bajtova) i mogu pripadati jednoj od sledećih kategorija:
+Pretpostavlja se da je preslikavanje $\sigma_t$ implementirano korišćenjem modifikovanog Merkle-Patricia stabla, koje obezbeđuje kriptografsku proverljivost integriteta podataka putem Merkle konstrukcije, kao i efikasne operacije umetanja, pretrage i brisanja sa logaritamskom složenošću u odnosu na broj elemenata \eng{the Practical Algorithm to Retrieve Information Coded in Alphanumeric, Patricia} \cite{morrison1968patricia}.
+
+Zbog toga se u svakom bloku Eterijum blokčejna čuva korenska vrednost ovog stabla \eng{state root}, koja omogućava svim čvorovima u mreži da kriptografski verifikuju da li se nalaze u istom globalnom stanju nakon prelaska iz jednog bloka u naredni. Kako svaka promena stanja bilo kog naloga neminovno dovodi do promene korena stabla, upoređivanje isključivo ove korenske vrednosti predstavlja efikasan mehanizam za proveru konzistentnosti stanja, bez potrebe za poređenjem pojedinačnih stanja naloga tokom ažuriranja mreže.
+
+\textbf{Adrese} u Eterijum mreži su fiksne dužine od 160 bita (20 bajtova) i mogu pripadati jednoj od sledećih kategorija:
 \begin{enumerate}
 \item \textbf{Nalozi u spoljnom vlasništvu} \eng{Externally Owned Account, EOA} predstavljaju naloge krajnjih korisnika koji poseduju sredstva i nad kojima se kontrola ostvaruje isključivo putem odgovarajućeg privatnog ključa. Gubitak privatnog ključa rezultuje trajnim gubitkom pristupa sredstvima, dok kompromitacija ključa omogućava trećim licima da se neovlašćeno predstavljaju kao vlasnici naloga. Ovi nalozi se u praksi najčešće označavaju kao adrese novčanika \eng{wallet addresses}.
 \item \textbf{Nalozi pametnih ugovora} predstavljaju naloge povezane sa pametnim ugovorima i koji se kreiraju u trenutku postavljanja \eng{deployment} pametnog ugovora na mrežu.
 \end{enumerate}
 
-Bez obzira na tip naloga, osnovno stanje svakog naloga obuhvata sledeće komponente:
+\textbf{Stanje} svakog naloga, nezavisno od toga da li se radi o nalogu u spoljnom vlasništvu ili nalogu pametnog ugovora, sastoji se od sledećih osnovnih komponenti:
 \begin{enumerate}
 \item \textbf{Balans} - količinu kriptovalute ETH koja je pridružena datom nalogu.
 \item \textbf{Brojač} \eng{nonce} - celobrojnu vrednost koja se rastući povećava od nule i predstavlja broj transakcija iniciranih sa datog naloga. Ova vrednost služi kao mehanizam zaštite od dvostrukog trošenja, jer jednoznačno određuje redosled transakcija u istoriji izvršavanja.
 \end{enumerate}
 
-U slučaju naloga pametnog ugovora, stanje naloga dodatno uključuje i sledeće elemente:
+U slučaju naloga pametnog ugovora, stanje naloga može imati proizvoljnu veličinu, budući da pored osnovnih komponenti dodatno obuhvata i sledeće elemente:
 \begin{enumerate}[start=3]
-\item \textbf{Heš izvršnog koda} \eng{code hash} - kriptografsku heš vrednost nepromenljivog izvršnog koda pametnog ugovora.
+\item \textbf{Heš izvršnog koda} \eng{code hash} - kriptografska heš vrednost nepromenljivog izvršnog koda pametnog ugovora, koja služi kao referenca odgovarajućem bajtkodu.
 \item \textbf{Heš skladišta} \eng{storage hash} - korenski heš Merkle strukture koja predstavlja trenutno stanje trajnog skladišta pametnog ugovora.
 \end{enumerate}
 
-Pretpostavlja se da je preslikavanje $\sigma_t$ implementirano korišćenjem modifikovanog Merkle-Patricia stabla, koje obezbeđuje kriptografsku proverljivost integriteta podataka putem Merkle konstrukcije, kao i efikasne operacije umetanja, pretrage i brisanja sa logaritamskom složenošću u odnosu na broj elemenata \eng{the Practical Algorithm to Retrieve Information Coded in Alphanumeric, Patricia} \cite{morrison1968patricia}.
+% TODO Prebaci
+Samim tim, svaka promena stanja pametnog ugovora direktno utiče na promenu korenske vrednosti stabla globalnog stanja.
+
+\subsubsection{Skladište pametnog ugovora}
+Izvršni kod pametnog ugovora se čuva u nepromenljivom i logički izdvojenom segmentu sistema, koji se u formalnom modelu Eterijuma označava kao virtuelna memorija samo za čitanje \eng{Virtual ROM}. Pristup ovom kodu omogućen je isključivo na osnovu heša izvršnog koda koji se nalazi u stanju naloga pametnog ugovora.
+
+Tokom izvršavanja transakcije, bajtkod pametnog ugovora se ne učitava u celosti, već se čita sekvencijalno i po potrebi. Izvršni sloj pristupa izvršnom kodu instrukciju po instrukciju, dok se eksplicitno kopiranje delova bajtkoda u radnu memoriju vrši pomoću specijalizovane EVM instrukcije \texttt{CODECOPY}, koja omogućava selektivno premeštanje koda u memoriju radi dalje obrade.
