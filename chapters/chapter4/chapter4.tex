@@ -164,11 +164,10 @@ S obzirom na to da je, prema Definiciji \ref{def:blokcejn}, blokčejn strogo hro
 $$\sigma_{t+1} \equiv \Pi(\sigma_{t}, B)$$
 
 \subsection{Stanje Eterijum sistema}
-Trenutno stanje Eterijum sistema $\sigma_t$ \eng{world state} formalno se definiše kao preslikavanje između \textit{adresa} naloga i pripadajućih \textit{stanja} tih naloga.
+\textbf{Trenutno stanje Eterijum sistema} $\boldsymbol{\sigma}$ \eng{world state} formalno se definiše kao preslikavanje između \textit{adresa} naloga i pripadajućih \textit{stanja} tih naloga.
+$$ \sigma : Address_{160} \to Account $$
 
-$$ \sigma_t : Address_{160} \to Account$$
-
-Pretpostavlja se da je preslikavanje $\sigma_t$ implementirano korišćenjem modifikovanog Merkle-Patricia stabla, koje obezbeđuje kriptografsku proverljivost integriteta podataka putem Merkle konstrukcije, kao i efikasne operacije umetanja, pretrage i brisanja sa logaritamskom složenošću u odnosu na broj elemenata \eng{the Practical Algorithm to Retrieve Information Coded in Alphanumeric, Patricia} \cite{morrison1968patricia}.
+Pretpostavlja se da je preslikavanje $\sigma$ implementirano korišćenjem modifikovanog Merkle-Patricia stabla, koje obezbeđuje kriptografsku proverljivost integriteta podataka putem Merkle konstrukcije, kao i efikasne operacije umetanja, pretrage i brisanja sa logaritamskom složenošću u odnosu na broj elemenata \eng{the Practical Algorithm to Retrieve Information Coded in Alphanumeric, Patricia} \cite{morrison1968patricia}.
 
 Zbog toga se u svakom bloku Eterijum blokčejna čuva korenska vrednost ovog stabla \eng{state root}, koja omogućava svim čvorovima u mreži da kriptografski verifikuju da li se nalaze u istom globalnom stanju nakon prelaska iz jednog bloka u naredni. Kako svaka promena stanja bilo kog naloga neminovno dovodi do promene korena stabla, upoređivanje isključivo ove korenske vrednosti predstavlja efikasan mehanizam za proveru konzistentnosti stanja, bez potrebe za poređenjem pojedinačnih stanja naloga tokom ažuriranja mreže.
 
@@ -190,10 +189,16 @@ U slučaju naloga pametnog ugovora, stanje naloga može imati proizvoljnu velič
 \item \textbf{Heš skladišta} \eng{storage hash} - korenski heš Merkle strukture koja predstavlja trenutno stanje trajnog skladišta pametnog ugovora.
 \end{enumerate}
 
-% TODO Prebaci
-Samim tim, svaka promena stanja pametnog ugovora direktno utiče na promenu korenske vrednosti stabla globalnog stanja.
-
 \subsubsection{Skladište pametnog ugovora}
+\textbf{Trenutno stanje pametnog ugovora} $\boldsymbol{\sigma_{addr}}$ formalno se definiše kao preslikavanje između \textit{ključeva} i \textit{vrednosti}, pri čemu ključevi predstavljaju najmanje adresabilne skladišne jedinice \eng{storage slots} Eterijum virtuelne mašine. Svaki skladišni slot ima fiksnu veličinu od 32 bajta, odnosno 256 bita.
+$$ \sigma_{addr} : \mathbb{B}_{32} \to \mathbb{B}_{32} $$
+
+Pretpostavlja se da je preslikavanje $\sigma_{addr}$ implementirano korišćenjem modifikovanog Merkle-Patricia stabla, koje obezbeđuje kriptografsku proverljivost i efikasno ažuriranje stanja. Svaki nalog koji poseduje neprazan \textit{heš izvršnog koda} ima pridruženo sopstveno trajno skladište, čime se implicitno identifikuje kao nalog pametnog ugovora.
+
+Shodno tome, svaka promena stanja pametnog ugovora dovodi do promene njegovog skladišta, što se reflektuje kroz izmenu odgovarajućeg heša skladišta. Ova promena se dalje propagira do korenske vrednosti Merkle-Patricia stabla globalnog stanja, čime se obezbeđuje da svaka izmena trajnog stanja bude kriptografski evidentirana na nivou celog sistema.
+
+Eterijum virtuelna mašina, posmatrana apstraktno, nudi pametnim ugovorima model trajnog skladištenja u vidu niza nezavisnih 32-bajtnih memorijskih lokacija, nad kojima se primenjuju pravila Merkle-Patricia strukture. Način na koji se prosti ili složeni tipovi podataka mapiraju na ove skladišne slotove nije definisan samim EVM-om, već zavisi od kompajlera i njegovih odluka prilikom prevođenja koda iz programskog jezika višeg nivoa u odgovarajuće EVM instrukcije.
+
 Izvršni kod pametnog ugovora se čuva u nepromenljivom i logički izdvojenom segmentu sistema, koji se u formalnom modelu Eterijuma označava kao virtuelna memorija samo za čitanje \eng{Virtual ROM}. Pristup ovom kodu omogućen je isključivo na osnovu heša izvršnog koda koji se nalazi u stanju naloga pametnog ugovora.
 
 Tokom izvršavanja transakcije, bajtkod pametnog ugovora se ne učitava u celosti, već se čita sekvencijalno i po potrebi. Izvršni sloj pristupa izvršnom kodu instrukciju po instrukciju, dok se eksplicitno kopiranje delova bajtkoda u radnu memoriju vrši pomoću specijalizovane EVM instrukcije \texttt{CODECOPY}, koja omogućava selektivno premeštanje koda u memoriju radi dalje obrade.
