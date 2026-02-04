@@ -155,15 +155,24 @@ Odbrana od napada na društveni sloj nije trivijalna i ne može se formalizovati
 Iz navedenih razloga, kontinuirano ulaganje u očuvanje snažnog i koherentnog društvenog sloja, zasnovanog na zajedničkim vrednostima decentralizacije, bezbednosti i otvorenosti, predstavlja ključni preduslov dugoročne stabilnosti i održivosti Eterijum protokola. Na kraju, bez obzira na tehničku sofisticiranost sistema, njegova bezbednost se u krajnjoj instanci svodi na ljude koji ga koriste, razvijaju i održavaju.
 
 \section{Izvršni sloj Eterijum mreže}
-Izvršni sloj Eterijum mreže definiše pravila za interakciju sa stanjem sistema, kao i mehanizme njegovog ažuriranja putem transakcija. Centralnu komponentu ovog sloja predstavlja Eterijum virtuelna mašina (EVM), koja obezbeđuje determinističko i bezbedno izvršavanje programskog koda na svim čvorovima koji učestvuju u mreži, čime se garantuje konzistentnost globalnog stanja sistema.
+Izvršni sloj Eterijum mreže definiše semantiku interakcije sa stanjem sistema, kao i mehanizme njegovog ažuriranja kroz izvršavanje transakcija. Centralnu komponentu ovog sloja predstavlja Eterijum virtuelna mašina (EVM), koja obezbeđuje Tjuring-kompletan model izvršavanja zasnovan na steku. Pametni ugovori, najčešće pisani u programskim jezicima višeg nivoa, prevode se u EVM bajtkod \eng{bytecode}, odnosno u niz niskonivojskih instrukcija koje se izvršavaju unutar ove virtuelne mašine.
 
+Na ovaj način se postiže determinističko, izolovano i bezbedno izvršavanje programskog koda na svim čvorovima koji učestvuju u mreži, čime se garantuje da će svi ispravni čvorovi, polazeći od istog ulaznog stanja i skupa transakcija, doći do identičnog globalnog stanja sistema.
+
+Sa apstraktnog stanovišta, Eterijum virtuelna mašina može se posmatrati kao sistem sastavljen od sledeće tri osnovne komponente:
+\begin{enumerate}
+\item \textbf{Skladište naloga} koje predstavlja trajno stanje sistema i koje svi čvorovi čuvaju lokalno. Ono obuhvata trenutno stanje svih naloga u mreži, uključujući stanja pametnih ugovora, i čini sastavni deo globalnog stanja Eterijum sistema.
+\item \textbf{Stanje mašine} koje predstavlja izvršno okruženje u kome se izvršava bajtkod pametnih ugovora. Ovo stanje može se posmatrati kao apstraktni virtuelni procesor EVM-a i obuhvata elemente poput programskog brojača, steka, privremene memorije i preostalog gasa, pri čemu je njegovo trajanje ograničeno na jedno izvršavanje.
+\item \textbf{Virtuelna memorija samo za čitanje \eng{Virtual ROM}}, koja je nepromenljiva i u kojoj se smešta izvršni bajtkod pametnih ugovora u trenutku njihovog postavljanja na mrežu \eng{deployment}. Ovaj bajtkod ostaje trajno vezan za nalog pametnog ugovora i ne može se menjati tokom njegovog životnog veka.
+\end{enumerate}
+
+\subsection{Skladište naloga}
 Promene stanja u izvršnom sloju formalizovane su pomoću Eterijumove funkcije prelaska stanja $\Upsilon$ \eng{state transition function}. Ova funkcija uzima trenutno stanje sistema $\sigma_t$ i validnu transakciju $T$, te proizvodi novo stanje $\sigma_{t+1}$, što se može formalno zapisati kao:
 $$\sigma_{t+1} \equiv \Upsilon(\sigma_{t}, T)$$
 
 S obzirom na to da je, prema Definiciji \ref{def:blokcejn}, blokčejn strogo hronološki uređen lanac blokova $B$, ažuriranje stanja Eterijum mreže odvija se na nivou blokova. U tom kontekstu, uvodi se funkcija prelaska stanja na nivou bloka $\Pi$, koja se sastoji od uzastopne primene funkcije $\Upsilon$ nad svim transakcijama sadržanim u bloku. Time se prethodni izraz može proširiti na sledeći način:
 $$\sigma_{t+1} \equiv \Pi(\sigma_{t}, B)$$
 
-\subsection{Stanje Eterijum sistema}
 \textbf{Trenutno stanje Eterijum sistema} $\boldsymbol{\sigma}$ \eng{world state} formalno se definiše kao preslikavanje između \textit{adresa} naloga i pripadajućih \textit{stanja} tih naloga.
 $$ \sigma : Address_{160} \to Account $$
 
@@ -174,7 +183,7 @@ Zbog toga se u svakom bloku Eterijum blokčejna čuva korenska vrednost ovog sta
 \textbf{Adrese} u Eterijum mreži su fiksne dužine od 160 bita (20 bajtova) i mogu pripadati jednoj od sledećih kategorija:
 \begin{enumerate}
 \item \textbf{Nalozi u spoljnom vlasništvu} \eng{Externally Owned Account, EOA} predstavljaju naloge krajnjih korisnika koji poseduju sredstva i nad kojima se kontrola ostvaruje isključivo putem odgovarajućeg privatnog ključa. Gubitak privatnog ključa rezultuje trajnim gubitkom pristupa sredstvima, dok kompromitacija ključa omogućava trećim licima da se neovlašćeno predstavljaju kao vlasnici naloga. Ovi nalozi se u praksi najčešće označavaju kao adrese novčanika \eng{wallet addresses}.
-\item \textbf{Nalozi pametnih ugovora} predstavljaju naloge povezane sa pametnim ugovorima i koji se kreiraju u trenutku postavljanja \eng{deployment} pametnog ugovora na mrežu.
+\item \textbf{Nalozi pametnih ugovora} predstavljaju naloge povezane sa pametnim ugovorima i koji se kreiraju u trenutku postavljanja pametnog ugovora na mrežu.
 \end{enumerate}
 
 \textbf{Stanje} svakog naloga, nezavisno od toga da li se radi o nalogu u spoljnom vlasništvu ili nalogu pametnog ugovora, sastoji se od sledećih osnovnih komponenti:
@@ -189,7 +198,6 @@ U slučaju naloga pametnog ugovora, stanje naloga može imati proizvoljnu velič
 \item \textbf{Heš skladišta} \eng{storage hash} - korenski heš Merkle strukture koja predstavlja trenutno stanje trajnog skladišta pametnog ugovora.
 \end{enumerate}
 
-\subsubsection{Skladište pametnog ugovora}
 \textbf{Trenutno stanje pametnog ugovora} $\boldsymbol{\sigma_{addr}}$ formalno se definiše kao preslikavanje između \textit{ključeva} i \textit{vrednosti}, pri čemu ključevi predstavljaju najmanje adresabilne skladišne jedinice \eng{storage slots} Eterijum virtuelne mašine. Svaki skladišni slot ima fiksnu veličinu od 32 bajta, odnosno 256 bita.
 $$ \sigma_{addr} : \mathbb{B}_{32} \to \mathbb{B}_{32} $$
 
@@ -197,8 +205,9 @@ Pretpostavlja se da je preslikavanje $\sigma_{addr}$ implementirano korišćenje
 
 Shodno tome, svaka promena stanja pametnog ugovora dovodi do promene njegovog skladišta, što se reflektuje kroz izmenu odgovarajućeg heša skladišta. Ova promena se dalje propagira do korenske vrednosti Merkle-Patricia stabla globalnog stanja, čime se obezbeđuje da svaka izmena trajnog stanja bude kriptografski evidentirana na nivou celog sistema.
 
-Eterijum virtuelna mašina, posmatrana apstraktno, nudi pametnim ugovorima model trajnog skladištenja u vidu niza nezavisnih 32-bajtnih memorijskih lokacija, nad kojima se primenjuju pravila Merkle-Patricia strukture. Način na koji se prosti ili složeni tipovi podataka mapiraju na ove skladišne slotove nije definisan samim EVM-om, već zavisi od kompajlera i njegovih odluka prilikom prevođenja koda iz programskog jezika višeg nivoa u odgovarajuće EVM instrukcije.
+Eterijum virtuelna mašina, posmatrana apstraktno, pruža pametnim ugovorima mehanizam trajnog skladištenja putem instrukcije \texttt{SSTORE} \cite{SSTOREeip2929}, koji se realizuje kao skup nezavisnih skladišnih lokacija fiksne veličine od 32 bajta, kao i mehanizam čitanja skladišta pametnog ugovora instrukcijom \texttt{SLOAD} \cite{SLOADeip1559}. Način na koji se prosti ili složeni tipovi podataka mapiraju na ove skladišne slotove nije definisan samim EVM-om, već zavisi od kompajlera i njegovih odluka prilikom prevođenja koda iz programskog jezika višeg nivoa u odgovarajuće EVM instrukcije.
 
+\section{Virtuelna memorija samo za čitanje}
 Izvršni kod pametnog ugovora se čuva u nepromenljivom i logički izdvojenom segmentu sistema, koji se u formalnom modelu Eterijuma označava kao virtuelna memorija samo za čitanje \eng{Virtual ROM}. Pristup ovom kodu omogućen je isključivo na osnovu heša izvršnog koda koji se nalazi u stanju naloga pametnog ugovora.
 
 Tokom izvršavanja transakcije, bajtkod pametnog ugovora se ne učitava u celosti, već se čita sekvencijalno i po potrebi. Izvršni sloj pristupa izvršnom kodu instrukciju po instrukciju, dok se eksplicitno kopiranje delova bajtkoda u radnu memoriju vrši pomoću specijalizovane EVM instrukcije \texttt{CODECOPY}, koja omogućava selektivno premeštanje koda u memoriju radi dalje obrade.
