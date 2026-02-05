@@ -155,15 +155,15 @@ Odbrana od napada na društveni sloj nije trivijalna i ne može se formalizovati
 Iz navedenih razloga, kontinuirano ulaganje u očuvanje snažnog i koherentnog društvenog sloja, zasnovanog na zajedničkim vrednostima decentralizacije, bezbednosti i otvorenosti, predstavlja ključni preduslov dugoročne stabilnosti i održivosti Eterijum protokola. Na kraju, bez obzira na tehničku sofisticiranost sistema, njegova bezbednost se u krajnjoj instanci svodi na ljude koji ga koriste, razvijaju i održavaju.
 
 \section{Izvršni sloj Eterijum mreže}
-Izvršni sloj Eterijum mreže definiše semantiku interakcije sa stanjem sistema, kao i mehanizme njegovog ažuriranja kroz izvršavanje transakcija. Centralnu komponentu ovog sloja predstavlja Eterijum virtuelna mašina (EVM), koja obezbeđuje Tjuring-kompletan model izvršavanja zasnovan na steku. Pametni ugovori, najčešće pisani u programskim jezicima višeg nivoa, prevode se u EVM bajtkod \eng{bytecode}, odnosno u niz niskonivojskih instrukcija koje se izvršavaju unutar ove virtuelne mašine.
+Izvršni sloj Eterijum mreže definiše semantiku interakcije sa stanjem sistema, kao i mehanizme njegovog ažuriranja kroz izvršavanje transakcija koje mogu sadržati izvršni kod. Centralnu komponentu ovog sloja predstavlja Eterijum virtuelna mašina (EVM), koja obezbeđuje Tjuring-kompletan model izvršavanja. Pametni ugovori, koji se najčešće pišu u programskim jezicima višeg nivoa, prevode se u EVM bajtkod \eng{bytecode}, odnosno u niz niskonivojskih bajt-instrukcija koje se izvršavaju unutar ove virtuelne mašine.
 
-Na ovaj način se postiže determinističko, izolovano i bezbedno izvršavanje programskog koda na svim čvorovima koji učestvuju u mreži, čime se garantuje da će svi ispravni čvorovi, polazeći od istog ulaznog stanja i skupa transakcija, doći do identičnog globalnog stanja sistema.
+Na ovaj način ostvaruje se determinističko, izolovano i bezbedno izvršavanje programskog koda na svim čvorovima koji učestvuju u mreži. Time se garantuje da će svi ispravni čvorovi, polazeći od istog ulaznog stanja i identičnog skupa transakcija, dospeti do istog globalnog stanja sistema.
 
 Sa apstraktnog stanovišta, Eterijum virtuelna mašina može se posmatrati kao sistem sastavljen od sledeće tri osnovne komponente:
 \begin{enumerate}
 \item \textbf{Skladište naloga} koje predstavlja trajno stanje sistema i koje svi čvorovi čuvaju lokalno. Ono obuhvata trenutno stanje svih naloga u mreži, uključujući stanja pametnih ugovora, i čini sastavni deo globalnog stanja Eterijum sistema.
-\item \textbf{Stanje mašine} koje predstavlja izvršno okruženje u kome se izvršava bajtkod pametnih ugovora. Ovo stanje može se posmatrati kao apstraktni virtuelni procesor EVM-a i obuhvata elemente poput programskog brojača, steka, privremene memorije i preostalog gasa, pri čemu je njegovo trajanje ograničeno na jedno izvršavanje.
-\item \textbf{Virtuelna memorija samo za čitanje \eng{Virtual ROM}}, koja je nepromenljiva i u kojoj se smešta izvršni bajtkod pametnih ugovora u trenutku njihovog postavljanja na mrežu \eng{deployment}. Ovaj bajtkod ostaje trajno vezan za nalog pametnog ugovora i ne može se menjati tokom njegovog životnog veka.
+\item \textbf{Stanje mašine}, koje predstavlja izvršno okruženje u kome se izvršava bajtkod pametnih ugovora. Ono se može posmatrati kao apstraktni virtuelni procesor koji, pored samog izvršavanja, meri i računarski napor neophodan za izvršenje transakcije.
+\item \textbf{Virtuelna memorija samo za čitanje \eng{Virtual ROM}}, koja je nepromenljiva i u kojoj se smešta izvršni bajtkod pametnih ugovora u trenutku njihovog izvršavanja.
 \end{enumerate}
 
 \subsection{Skladište naloga}
@@ -207,7 +207,21 @@ Shodno tome, svaka promena stanja pametnog ugovora dovodi do promene njegovog sk
 
 Eterijum virtuelna mašina, posmatrana apstraktno, pruža pametnim ugovorima mehanizam trajnog skladištenja putem instrukcije \texttt{SSTORE} \cite{SSTOREeip2929}, koji se realizuje kao skup nezavisnih skladišnih lokacija fiksne veličine od 32 bajta, kao i mehanizam čitanja skladišta pametnog ugovora instrukcijom \texttt{SLOAD} \cite{SLOADeip1559}. Način na koji se prosti ili složeni tipovi podataka mapiraju na ove skladišne slotove nije definisan samim EVM-om, već zavisi od kompajlera i njegovih odluka prilikom prevođenja koda iz programskog jezika višeg nivoa u odgovarajuće EVM instrukcije.
 
-\section{Virtuelna memorija samo za čitanje}
+\subsection{Stanje mašine}
+Stanje mašine Eterijum virtuelne mašine inicijalizuje se na početku izvršavanja transakcije i uništava se po njenom završetku, zbog čega ima isključivo privremeni karakter. Ono obuhvata sledeće komponente:
+\begin{enumerate}
+\item \textbf{Brojač programa \eng{Program Counter, PC}} - označava adresu sledeće bajt-instrukcije koja će biti izvršena.
+\item \textbf{Stek} - struktura podataka koja dozvoljava pristup isključivo elementu na vrhu \eng{last in, first out (LIFO)}, maksimalne dubine od 1024 elementa, pri čemu je svaki element veličine jedne skladišne reči.
+\item \textbf{Privremena memorija} - linearni niz bajtova sa nasumičnim pristupom elementima, koji služi kao pomoćni prostor za izvođenje proračuna tokom izvršavanja transakcije.
+\item \textbf{Preostali gas} - kvantitativna mera raspoloživih računarskih resursa, koja određuje da li transakcija poseduje dovoljno sredstava za svoje kompletno izvršavanje.
+\end{enumerate}
+
+U slučaju da transakcija sadrži više internih poziva, odnosno interakciju sa više pametnih ugovora, za svaki takav poziv inicijalizuje se zasebno stanje mašine. Međutim, radi očuvanja konteksta izvršavanja unutar iste transakcije, uvedeno je i \textbf{privremeno skladište} \cite{TRANSIENTeip1153} \eng{transient storage}, čiji je životni vek ograničen na trajanje transakcije.
+
+S obzirom na to da je bajtkod pametnog ugovora predstavljen kao niz bajtova, gde svaki bajt označava jednu operaciju koju EVM prepoznaje, izvršavanje koda može se modelovati kao iterativni proces. U svakom koraku izvršava se instrukcija na adresi na koju pokazuje brojač programa, nakon čega se brojač ažurira. Proces se nastavlja sve dok se ne dođe do kraja koda, dok se ne izvrši instrukcija \texttt{STOP} ili \texttt{RETURN}, ili dok ne nastupi greška.
+
+\subsection{Virtuelna memorija samo za čitanje}
 Izvršni kod pametnog ugovora se čuva u nepromenljivom i logički izdvojenom segmentu sistema, koji se u formalnom modelu Eterijuma označava kao virtuelna memorija samo za čitanje \eng{Virtual ROM}. Pristup ovom kodu omogućen je isključivo na osnovu heša izvršnog koda koji se nalazi u stanju naloga pametnog ugovora.
 
+% TODO
 Tokom izvršavanja transakcije, bajtkod pametnog ugovora se ne učitava u celosti, već se čita sekvencijalno i po potrebi. Izvršni sloj pristupa izvršnom kodu instrukciju po instrukciju, dok se eksplicitno kopiranje delova bajtkoda u radnu memoriju vrši pomoću specijalizovane EVM instrukcije \texttt{CODECOPY}, koja omogućava selektivno premeštanje koda u memoriju radi dalje obrade.
