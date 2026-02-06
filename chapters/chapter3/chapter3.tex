@@ -36,15 +36,16 @@ Iako su transakcije javno vidljive, sistem ne koristi eksplicitne identitete uč
 Transakcija predstavlja kriptografski zaštićen digitalni zapis kojim se prenosi vrednost ili podaci između učesnika distribuiranog sistema.
 \end{definicija}
 
+% TODO VAZNO
 U zavisnosti od načina na koji se potpisane transakcije distribuiraju mreži na dalje procesuiranje, mogu se razlikovati dva osnovna modela blokčejn sistema:
 \begin{enumerate}
 \item U sistemima bez unapred definisanog rasporeda učesnika koji predlažu sledeće stanje sistema nije poznato koji će čvor izvršiti naredno globalno napredovanje, pa se transakcije privremeno smeštaju u lokalni skup nepotvrđenih transakcija \eng{mempool}, gde čekaju da ih neki od učesnika uključi u naredni predlog stanja.
 \item U sistemima sa unapred definisanim rasporedom učesnika koji predlažu sledeće stanje sistema unapred je poznato koji čvor u kom trenutku ima pravo da izvrši globalno napredovanje, pa se transakcije direktno prosleđuju odgovarajućim čvorovima iz rasporeda na obradu i uključivanje u lanac.
 \end{enumerate}
 
-U otvorenom i distribuiranom okruženju, obrada, validacija i potvrđivanje transakcija predstavljaju potrošnju zajedničkih računarskih i komunikacionih resursa. Iz tog razloga, javni blokčejn sistemi uvode mehanizam naplate korišćenja mreže, kojim se istovremeno ograničava mogućnost zloupotreba u vidu masovnog slanja beskorisnih transakcija i obezbeđuje ekonomski podsticaj učesnicima koji učestvuju u održavanju i bezbednosti mreže.
+U otvorenom i distribuiranom okruženju, obrada, validacija i potvrđivanje transakcija predstavljaju potrošnju zajedničkih računarskih i komunikacionih resursa. Iz tog razloga, javni blokčejn sistemi uvode mehanizam naplate korišćenja mreže u primarnu kriptovalutu blokčejna \eng{native cryptocurrency}, kojim se istovremeno ograničava mogućnost zloupotreba u vidu masovnog slanja beskorisnih transakcija i obezbeđuje ekonomski podsticaj učesnicima koji učestvuju u održavanju i bezbednosti mreže.
 
-\begin{definicija}
+\begin{definicija}\label{def:txfee}
 Transakciona naknada \eng{transaction fee, tx fee} predstavlja iznos koji korisnik prilaže uz transakciju kao nadoknadu za korišćenje mrežnih resursa i njeno eventualno uključivanje u blokčejn.
 \end{definicija}
 

@@ -220,6 +220,44 @@ U slučaju da transakcija sadrži više internih poziva, odnosno interakciju sa 
 
 S obzirom na to da je bajtkod pametnog ugovora predstavljen kao niz bajtova, gde svaki bajt označava jednu operaciju koju EVM prepoznaje, izvršavanje koda može se modelovati kao iterativni proces. U svakom koraku izvršava se instrukcija na adresi na koju pokazuje brojač programa, nakon čega se brojač ažurira. Proces se nastavlja sve dok se ne dođe do kraja koda, dok se ne izvrši instrukcija \texttt{STOP} ili \texttt{RETURN}, ili dok ne nastupi greška.
 
+\textbf{Gas} predstavlja obračunsku jedinicu kojom se meri količina računarskih resursa potrebnih za izvršavanje transakcije u Eterijum mreži. Ukupna transakciona naknada, u smislu Definicije \ref{def:txfee}, određuje se na osnovu ukupne potrošnje gasa tokom izvršavanja transakcije i cene gasa koju korisnik navodi prilikom njenog slanja. Na taj način se obezbeđuje da upotreba računarskih resursa mreže ima eksplicitnu ekonomsku cenu.
+
+Cena gasa nije konstantna i može se menjati tokom vremena u zavisnosti od opterećenja mreže. Prilikom slanja transakcije, korisnik definiše cenu gasa koju je spreman da plati za korišćenje računarskih resursa mreže. Ova cena se izražava u denominaciji osnovne valute sistema, pri čemu važi odnos $1\textit{ gwei} = 10^{-9}\textit{ ETH}$.
+
+U Eterijum sistemu uveden je mehanizam osnovne naknade \cite{FEEeip1559} \eng{base fee}, koja predstavlja minimalnu cenu gasa po jedinici resursa koju korisnik mora da plati kako bi transakcija bila uključena u blok. Ovaj mehanizam zasniva se na konceptima ponude i potražnje:
+\begin{enumerate}
+\item \textbf{Ponuda} predstavlja ukupnu količinu računarskih resursa koju Eterijum mreža može da potroši u jednom koraku napredovanja sistema, odnosno maksimalnu količinu gasa po bloku. Ova vrednost je protokolski ograničena i dinamički prilagođavana, te u trenutnoj implementaciji iznosi 60 miliona gasa \cite{TPSeip7935}, što omogućava ostvarivanje performansi reda veličine oko 40 TPS.
+\item \textbf{Potražnja} odgovara ukupnoj količini gasa utrošenoj na izvršavanje svih transakcija u prethodnom bloku, koja se poredi sa ciljnom vrednošću od 50\% iskorišćenosti raspoložive ponude gasa.
+\end{enumerate}
+
+Ukoliko je iskorišćenost gasa u prethodnom bloku veća od 50\%, osnovna naknada se povećava, dok se u suprotnom slučaju smanjuje. Promena osnovne naknade ograničena je na maksimalno 12.5\% po bloku, čime se obezbeđuje stabilnost sistema. Ovakav eksponencijalni mehanizam prilagođavanja (Tabela \ref{tabelaExp}) onemogućava dugotrajno zadržavanje visoke popunjenosti blokova i doprinosi ekonomskoj održivosti mreže.
+
+\begin{table}[ht]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{llll}
+\hline
+\textbf{Broj bloka} & \textbf{Iskorišćenost mreže} & \textbf{Povećanje naknade} & \textbf{Trenutna osnovna naknada} \\
+\hline
+1 & 50\% & 0\% & 100 gwei \\
+2 & 100\% & 12,5\% & 100 gwei \\
+3 & 100\% & 12,5\% & 112.5 gwei \\
+4 & 100\% & 12,5\% & 126.6 gwei \\
+5 & 100\% & 12,5\% & 142.4 gwei \\
+... & ... & 12,5\% & ... \\
+30 & 100\% & 12,5\% & 2705.6 gwei \\
+... & ... & 12,5\% & ... \\
+100 & 100\% & 12,5\% & 10302608.6 gwei \\
+\hline
+\end{tabular}
+\caption{Eksponencionalni rast cene osnovne naknade prilikom velike opterećenosti mreže}
+\label{tabelaExp}
+\end{table}
+
+Izračunavanje ukupne naknade za gas transakcije se vrši pomoću sledeće formule:
+$$ \textit{Ukupna transakciona naknada} = \textit{Količina gasa} \cdot (\textit{Osnovna naknada} + \textit{Prioritetna naknada}) $$
+gde je prioritetna naknada opcioni bakšiš za transakcije višeg prioriteta.
+
 \subsection{Virtuelna memorija samo za čitanje}
 Izvršni kod pametnog ugovora se čuva u nepromenljivom i logički izdvojenom segmentu sistema, koji se u formalnom modelu Eterijuma označava kao virtuelna memorija samo za čitanje \eng{Virtual ROM}. Pristup ovom kodu omogućen je isključivo na osnovu heša izvršnog koda koji se nalazi u stanju naloga pametnog ugovora.
 
