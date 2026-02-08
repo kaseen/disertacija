@@ -224,7 +224,7 @@ S obzirom na to da je bajtkod pametnog ugovora predstavljen kao niz bajtova, gde
 
 Cena gasa nije konstantna i može se menjati tokom vremena u zavisnosti od opterećenja mreže. Prilikom slanja transakcije, korisnik definiše cenu gasa koju je spreman da plati za korišćenje računarskih resursa mreže. Ova cena se izražava u denominaciji osnovne valute sistema, pri čemu važi odnos $1\textit{ gwei} = 10^{-9}\textit{ ETH}$.
 
-U Eterijum sistemu uveden je mehanizam osnovne naknade \cite{FEEeip1559} \eng{base fee}, koja predstavlja minimalnu cenu gasa po jedinici resursa koju korisnik mora da plati kako bi transakcija bila uključena u blok. Ovaj mehanizam zasniva se na konceptima ponude i potražnje:
+U Eterijum sistemu standardni tip transakcije koristi mehanizam osnovne naknade \cite{FEEeip1559} \eng{base fee}, koja predstavlja minimalnu cenu gasa po jedinici resursa koju korisnik mora da plati kako bi transakcija bila uključena u blok. Ovaj mehanizam zasniva se na konceptima ponude i potražnje:
 \begin{enumerate}
 \item \textbf{Ponuda} predstavlja ukupnu količinu računarskih resursa koju Eterijum mreža može da potroši u jednom koraku napredovanja sistema, odnosno maksimalnu količinu gasa po bloku. Ova vrednost je protokolski ograničena i dinamički prilagođavana, te u trenutnoj implementaciji iznosi 60 miliona gasa \cite{TPSeip7935}, što omogućava ostvarivanje performansi reda veličine oko 40 TPS.
 \item \textbf{Potražnja} odgovara ukupnoj količini gasa utrošenoj na izvršavanje svih transakcija u prethodnom bloku, koja se poredi sa ciljnom vrednošću od 50\% iskorišćenosti raspoložive ponude gasa.
@@ -268,3 +268,30 @@ Korisnici prilikom interakcije sa pametnim ugovorom u polje podataka transakcije
 Međutim, direktno pozivanje funkcija u obliku bajtkoda nije ni ljudski čitljivo niti praktično za upotrebu, zbog čega značajnu ulogu ima aplikacioni binarni interfejs \eng{Application Binary Interface, ABI}. ABI definiše imena funkcija, njihove potpise i tipove argumenata u strogo strukturisanom formatu, čime uspostavlja formalni dogovor između pametnog ugovora i spoljašnjih korisnika ili aplikacija. 
 
 U suštini, ABI deluje kao prevodilački sloj između ljudski čitljivog interfejsa pametnog ugovora i njegove niskonivojske bajtovske reprezentacije koja se izvršava na blokčejnu, omogućavajući pouzdanu i transparentnu interakciju bez potrebe za ručnim enkodiranjem ili dekodiranjem transakcionih podataka.
+
+\section{Transakcije i njihova obrada u Eterijumu}
+
+U Eterijum sistemu transakcije mogu inicirati isključivo nalozi kojima upravljaju korisnici. Pametni ugovori ne mogu samostalno inicirati transakcije, već se njihovo izvršavanje pokreće isključivo kao posledica transakcije koju inicira korisnik. Tokom izvršavanja pametnog ugovora moguće je generisati interne pozive ka drugim ugovorima ili nalozima, ali se oni ne smatraju nezavisnim transakcijama već delom izvršavanja iste transakcije.
+
+Prilikom slanja transakcije, korisnik je dužan da kriptografski potpiše skup sledećih polja:
+\begin{enumerate}
+\item \textbf{od} - adresa pošiljaoca koja potpisuje transakciju,
+\item \textbf{do} - adresa primaoca i ukoliko se radi o nalogu u spoljnom vlasništvu vrši se prenos vrednosti, dok se u slučaju pametnog ugovora izvršava njegov kod,
+\item \textbf{potpis} - kriptografski dokaz kojim pošiljalac potvrđuje da je transakciju autorizovao svojim privatnim ključem,
+\item \textbf{brojač} - redni broj transakcije inicirane sa datog naloga, koji sprečava ponavljanje transakcija,
+\item \textbf{vrednost} - iznos u ETH koji se prenosi sa pošiljaoca na primaoca,
+\item \textbf{ulazni podaci} - opciono polje koje se koristi za prosleđivanje dodatnih podataka, najčešće prilikom interakcije sa pametnim ugovorima,
+\item \textbf{ograničenje gasa} \eng{gasLimit} - maksimalna količina gasa koju transakcija može potrošiti tokom izvršavanja,
+\item \textbf{cena gasa} - cena koju je korisnik spreman da plati po jedinici gasa.
+\end{enumerate}
+
+Eterijum je u početku podržavao samo jedan format transakcija, ali je sistem vremenom evoluirao kako bi omogućio uvođenje novih funkcionalnosti bez narušavanja kompatibilnosti sa postojećim formatima. Ova je ostvareno uvođenjem tipiziranih transakcija, pri čemu se tipu transakcije dodeljuje numerička oznaka u opsegu od 0 do 128, koja prethodi ostatku transakcionih podataka \cite{TXTYPEeip2718}.
+
+U zavisnosti od vrednosti tipa, transakcije se klasifikuju na sledeći način:
+\begin{enumerate}
+\item \textbf{Tip 0} - originalni format transakcije bez eksplicitnog prefiksa tipa, koji se implicitno tumači kao tip 0,
+\item \textbf{Tip 1} - transakcije koje uvode dodatno polje sa listama ugovora i skladišnih jedinica kojima će se pristupati tokom izvršavanja \cite{TXTYPE1eip2930}, čime se omogućava smanjenje troškova gasa,
+\item \textbf{Tip 2} - transakcije koje uvode mehanizam osnovne naknade i dodatna polja za maksimalnu prioritetnu naknadu \eng{maxPriorityFeePerGas} i maksimalnu ukupnu naknadu \eng{maxFeePerGas}, čime se postiže veća efikasnost i fleksibilnost,
+\item \textbf{Tip 3} - transakcije koje omogućavaju privremeno skladištenje velikih binarnih objekata \cite{TXTYPE3eip4844} \eng{Binary Large Objects, BLOB}, čime se značajno unapređuje dostupnost podataka i skalabilnost mreže,
+\item \textbf{Tip 4} - transakcije koje omogućavaju da se nalog u spoljnom vlasništvu privremeno ponaša kao pametan ugovor \cite{TXTYPE4eip7702}, bez narušavanja njegove osnovne funkcionalnosti, što predstavlja važan korak ka dugoročnim razvojnim ciljevima Eterijum sistema.
+\end{enumerate}
