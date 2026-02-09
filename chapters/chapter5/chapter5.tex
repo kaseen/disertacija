@@ -1,0 +1,8 @@
+\chapter{Metodologija optimizacije pametnih ugovora za e-trgovinu}
+Sumirajući prethodno izloženo, neoptimizovane funkcije pametnih ugovora \cite{chen2017under} mogu značajno povećati količinu gasa potrebnu za njihovo izvršavanje usled uvećanog računarskog napora, naročito u uslovima povećanog opterećenja mreže. Ovakvo ponašanje negativno utiče na korisničko iskustvo, ali i na ukupne performanse blokčejn sistema, s obzirom na to da je veličina blokova ograničena ukupnom količinom gasa koja se može potrošiti u jednom napredovanju sistema. Stoga se kao primarni cilj nameće minimizacija potrošnje gasa tokom izvršavanja funkcija pametnih ugovora.
+
+Posebno značajan faktor u tom kontekstu predstavlja trajno skladištenje podataka na blokčejnu. Svaki podatak upisan u skladište mora biti lokalno sačuvan od strane svih čvorova mreže, čime se direktno povećava ukupna količina podataka koje blokčejn sistem održava. Na primer, upis jedne skladišne jedinice veličine 32 bajta, u sistemu sa približno milion validatora i dodatnim dobavljačkim čvorovima, rezultuje ukupnim replikovanim prostorom od približno
+$$ 32 \text{ bytes} \cdot 1{,}000{,}000 \approx 30 \text{ MB} $$
+što ilustruje značajan prostorni i infrastrukturni trošak čak i za minimalne upise.
+
+Iz navedenih razloga, metodologija optimizacije pametnih ugovora u ovom radu primarno je usmerena na smanjenje upotrebe trajnog skladišta. Kako su operacije čitanja i pisanja u skladište među najskupljim operacijama u pogledu potrošnje gasa, fokus optimizacije stavljen je na njihovu minimizaciju. Sve ostale operacije koje se izvršavaju unutar funkcije tokom njenog trajanja imaju znatno manji uticaj na ukupnu potrošnju gasa i u daljoj analizi biće modelovane aproksimativno radi pojednostavljenja formalnog zapisa.

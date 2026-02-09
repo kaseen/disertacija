@@ -295,3 +295,11 @@ U zavisnosti od vrednosti tipa, transakcije se klasifikuju na sledeći način:
 \item \textbf{Tip 3} - transakcije koje omogućavaju privremeno skladištenje velikih binarnih objekata \cite{TXTYPE3eip4844} \eng{Binary Large Objects, BLOB}, čime se značajno unapređuje dostupnost podataka i skalabilnost mreže,
 \item \textbf{Tip 4} - transakcije koje omogućavaju da se nalog u spoljnom vlasništvu privremeno ponaša kao pametan ugovor \cite{TXTYPE4eip7702}, bez narušavanja njegove osnovne funkcionalnosti, što predstavlja važan korak ka dugoročnim razvojnim ciljevima Eterijum sistema.
 \end{enumerate}
+
+Imajući u vidu prethodno opisane komponente sistema, sada se može sagledati kompletan tok jedne transakcije u Eterijum mreži:
+\begin{enumerate}
+\item Korisnik bira odgovarajući tip transakcije, popunjava neophodna polja, kriptografski je potpisuje i prosleđuje dobavljačkom čvoru \eng{provider} Eterijum mreže.
+\item Nakon inicijalne validacije formata i osnovnih pravila ispravnosti, transakcija se smešta u lokalni skup nepotvrđenih transakcija \eng{mempool}. Zatim se putem ogovaračkog protokola propagira ka ostalim čvorovima mreže, koji je po prijemu smeštaju u sopstvene lokalne skupove nepotvrđenih transakcija.
+\item U narednom slotu, validator izabran za predlagača bloka odlučuje da li će korisnikova transakcija biti uključena u predloženi blok, pri čemu na ovu odluku značajno utiče visina cene gasa koju je korisnik spreman da plati po jedinici resursa.
+\item Predloženi blok se propagira kroz mrežu, pri čemu ostali validatori proveravaju njegovu ispravnost, izvršavaju transakcije, ažuriraju lokalno stanje sistema i nastavljaju proces glasanja i finalizacije u skladu sa pravilima konsenzusa.
+\end{enumerate}
