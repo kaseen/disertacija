@@ -6,3 +6,26 @@ $$ 32 \text{ bytes} \cdot 1{,}000{,}000 \approx 30 \text{ MB} $$
 što ilustruje značajan prostorni i infrastrukturni trošak čak i za minimalne upise.
 
 Iz navedenih razloga, metodologija optimizacije pametnih ugovora u ovom radu primarno je usmerena na smanjenje upotrebe trajnog skladišta. Kako su operacije čitanja i pisanja u skladište među najskupljim operacijama u pogledu potrošnje gasa, fokus optimizacije stavljen je na njihovu minimizaciju. Sve ostale operacije koje se izvršavaju unutar funkcije tokom njenog trajanja imaju znatno manji uticaj na ukupnu potrošnju gasa i u daljoj analizi biće modelovane aproksimativno radi pojednostavljenja formalnog zapisa.
+
+\section{Troškovi pristupa skladištu i njihov uticaj na cenu izvršavanja}
+U Eterijum sistemu svaka transakcija koju korisnik podnosi poseduje osnovni, tzv. unutrašnji gas \eng{intrinsic gas}, koji predstavlja minimalni trošak obrade transakcije nezavisno od njenog izvršnog sadržaja. Ova osnovna cena iznosi 21.000 jedinica gasa, uz dodatni trošak koji zavisi od veličine ulaznih podataka prosleđenih u okviru transakcije.
+
+S obzirom na to da dužina ulaznih podataka može varirati, potrošnja gasa direktno je povezana sa količinom podataka i računarskim naporom potrebnim za njihovu obradu. Za svaki bajt ulaznih podataka plaća se 4 jedinice gasa ukoliko je bajt jednak nuli, odnosno 16 jedinica gasa za svaki nenulti bajt.
+
+Tokom izvršavanja transakcije, Eterijum virtuelna mašina izvršava instrukcije pametnog ugovora, pri čemu operacije koje čitaju ili menjaju trenutno stanje ugovora značajno doprinose ukupnoj ceni izvršavanja koju snosi korisnik. Radi optimizacije, sistem uvodi mehanizam keširanja skladišnih jedinica u okviru jedne transakcije, čime se umanjuje trošak višestrukih pristupa istom skladišnom slotu.
+
+Prvi pristup skladišnoj jedinici u toku transakcije označava se kao hladan pristup \eng{cold access}, nakon čega se ta skladišna jedinica smatra toplom \eng{warm access} za preostalo trajanje iste transakcije. Cena hladnog pristupa iznosi 2.100 jedinica gasa, dok svaki naredni topli pristup istoj skladišnoj jedinici košta 100 jedinica gasa.
+
+Operacija upisa u skladište, realizovana instrukcijom \texttt{SSTORE}, ima različite cene u zavisnosti od prethodnog i novog stanja skladišne jedinice:
+\begin{enumerate}
+\item Ukoliko je skladišna jedinica inicijalno prazna (sadrži nultu vrednost), a instrukcija \texttt{SSTORE} je postavlja na nenultu vrednost, povećava se ukupna količina trajnih podataka u sistemu, te ova operacija košta 20.000 jedinica gasa,
+\item Ukoliko skladišna jedinica već sadrži nenultu vrednost i u okviru transakcije se menja u drugu nenultu vrednost, trošak iznosi 2.900 jedinica gasa,
+\item Svaka naredna promena iste skladišne jedinice u okviru iste transakcije dodatno košta 100 jedinica gasa,
+\item Ukoliko se skladišna jedinica sa nenultom vrednošću postavi na nultu vrednost, korisniku se odobrava povraćaj od 4.800 jedinica gasa, čime se umanjuje cena trenutne transakcije.
+\end{enumerate}
+
+U daljoj analizi, prve dve navedene cene označavaćemo kao SSTORE(1) i SSTORE(2), a izraz ,,ako nije nula'' odnosiće se na slučaj u kojem je skladišna jedinica pre početka transakcije sadržala nenultu vrednost. Prikazane cene podrazumevaju topli pristup skladištu, te u slučaju hladnog pristupa, ukupni troškovi iznose 22.100 odnosno 5.000 jedinica gasa.
+
+Kako troškove izvršavanja transakcija u potpunosti snose korisnici mreže, vlasnici pametnih ugovora, poput kompanija i preduzeća, snose isključivo trošak njihovog inicijalnog postavljanja na mrežu. Tokom transakcije za postavljanje ugovora, nakon naplate unutrašnjeg gasa, izvršava se instrukcija \texttt{CREATE}, čiji osnovni trošak iznosi 32.000 jedinica gasa. Zatim se izvršava konstruktorski bajtkod, pri čemu se naplaćuje svaka instrukcija, kao i operacije upisa u skladište po ceni SSTORE(1) sa toplim pristupom. Na kraju, dodatno se naplaćuje 200 jedinica gasa za svaki bajt izvršnog bajtkoda trajno smeštenog na mreži.
+
+Usled ranijih zloupotreba mehanizma povraćaja gasa putem tzv. tokena za gas \cite{luo2022understanding}, Eterijum protokol je onemogućio povraćaj gasa prilikom uništavanja izvršnog bajtkoda pametnog ugovora instrukcijom \texttt{SELFDESTRUCT} \cite{SELFDESTRUCTeip3529}.
