@@ -44,6 +44,66 @@ Ovakva struktura pogodna je za primenu u sistemima e-trgovine, gde svaki proizvo
 
 U ovom radu primenjuje se detaljna analiza osnovnih operacija, kovanja \eng{minting}, prenosa i uništavanja \eng{burn}, kada su dodatne informacije enkodirane u preostalih 96 bita, pri čemu se upoređuje potrošnja gasa u različitim scenarijima ulaza. Analiza obuhvata procenu prednosti i ograničenja predloženog pristupa, uz očuvanje funkcionalne kompatibilnosti i bezbednosnih svojstava originalnih standarda.
 
-U prethodnom radu \cite{tasic2024cost} fokus je bio na modelovanju elektronskih kupona, imajući u vidu da savremeno tržište elektronske trgovine u velikoj meri zavisi od njihove upotrebe. Pokazano je da se značajne uštede ostvaruju enkodiranjem svih relevantnih informacija o kuponu unutar jedne skladišne jedinice, čime je unapređen pristup ranijim rešenjima koja su za svaki novi kupon instancirala zaseban pametni ugovor, što je izrazito skladišno neefikasno. U zaključku tog rada eksplicitno je istaknuto da su sprovedena merenja relevantna za sve platforme elektronske trgovine koje svoje proizvode ili usluge predstavljaju putem NFT-ova.
+U prethodnom radu \cite{tasic2024cost} fokus je bio na modelovanju elektronskih kupona kao specifične instance digitalnih entiteta u sistemima elektronske trgovine, imajući u vidu da savremeno tržište u velikoj meri zavisi od njihove primene. U tom radu demonstrirano je da se značajne uštede u potrošnji gasa ostvaruju enkodiranjem svih relevantnih informacija o kuponu unutar jedne skladišne jedinice. Time je unapređen pristup ranijim rešenjima koja su za svaki novi kupon instancirala zaseban pametni ugovor, što je izrazito skladišno i infrastrukturno neefikasno.
+
+Iako su eksperimentalna merenja sprovedena nad modelom elektronskih kupona, predložena metodologija nije ograničena isključivo na tu primenu. U zaključku tog rada eksplicitno je istaknuto da su sprovedena merenja relevantna za sve platforme elektronske trgovine koje svoje proizvode ili usluge predstavljaju putem NFT-ova čiji se atributi mogu kompaktno enkodirati u okviru jedne skladišne jedinice. U tom smislu, \textbf{kuponi predstavljaju reprezentativan studijski slučaj}, dok su izvedeni zaključci primenljivi na širi spektar NFT-zasnovanih modela u elektronskoj trgovini.
 
 Predložena metodologija primenljiva je na svim blokčejn sistemima zasnovanim na Eterijum virtuelnoj mašini, imajući u vidu njenu široku zastupljenost i standardizovan model skladišta. Dodatno, koncept je prilagodljiv i drugim sinhronim blokčejn sistemima koji koriste sličan model izvršavanja i upravljanja stanjem.
+
+\section{Kompaktno modelovanje podataka u jednoj skladišnoj jedinici}
+Kako bi se elektronski kuponi prilagodili NFT funkcionalnostima, sve relevantne informacije o kuponu enkodirane su tako da zauzimaju tačno jednu skladišnu jedinicu. Ovo se postiže primenom bitskih operacija ili pažljivim pakovanjem podataka u složenu strukturu \cite{marchesi2020design}. Kada susedna polja unutar strukture zahtevaju ukupno 256 bita ili manje, kompajler vrši optimizaciju i kombinuje više vrednosti u jednu skladišnu reč od 256 bita.
+
+Na ovaj način obezbeđuje se da se prilikom upisa podataka izvršava samo jedna \texttt{SSTORE} operacija, dok je za čitanje svih atributa kupona dovoljna jedna \texttt{SLOAD} operacija, čime se minimizuje broj pristupa trajnom skladištu.
+
+U okviru ovakvog modela, kupon sadrži sledeće informacije:
+\begin{enumerate}
+\item Adresu vlasnika kupona (160 bita),
+\item Početnu vremensku oznaku u \textit{Unix} formatu koja definiše trenutak od kog kupon postaje validan (64 bita),
+\item Skup od osam binarnih promenljivih, svaka veličine jednog bita. U demonstracionom modelu jedna promenljiva označava da li je kupon ,,poklonjiv'', što omogućava njegov prenos između korisnika. Druge promenljive mogu imati funkcionalnosti poput ,,tržišno prenosiv'', čime bi se omogućila sekundarna trgovina (ukupno 8 bita),
+\item Celobrojnu vrednost koja predstavlja procenat popusta (8 bita),
+\item Parametar koji definiše trajanje važenja kupona nakon početne vremenske oznake. Ova vrednost izražena je u jednakim vremenskim intervalima označenim sa $T$, koji se definišu prilikom postavljanja ugovora (16 bita).
+\end{enumerate}
+
+Ovakvo gusto enkodiranje podataka nužno uvodi određena ograničenja. Na primer, korišćenje 8 bita za procenat popusta onemogućava reprezentaciju decimalnih vrednosti. Slično tome, izbor veličine vremenskog intervala $T$ direktno utiče na maksimalno moguće trajanje važenja kupona i ukoliko je $T$ jednak jednom danu, maksimalna dužina važenja iznosi približno $\approx$20 godina. Iako je moguće primenom bitskih operatora precizno kontrolisati raspodelu proizvoljnog broja bitova, uključujući vrednosti koje nisu deljive sa 8, u ovom radu je takav pristup izostavljen radi jednostavnosti implementacije i preglednosti formalne analize.
+
+Svi razmatrani NFT standardi dele istu osnovnu logiku za ključne operacije. Algoritam \ref{alg:nft} prikazuje pseudokod operacija kovanja, prenosa i uništavanja, pri čemu su promenljive kupona grupisane u jednu skladišnu jedinicu, kao što je prethodno opisano. Pseudokod je zasnovan na programskom jeziku \textit{Solidity}, kao najzastupljenijem jeziku za razvoj aplikacija nad EVM-om. Na početku svake funkcije definišu se uslovi ispravnosti putem naredbe \textit{require}, u skladu sa principima bezbednog dizajna pametnih ugovora i ustaljenom praksom u industriji.
+
+\begin{algorithm}
+\caption{Osnovna logika funkcija kovanja, prenosa i uništavanja koje e-kupon implementira primenom odgovarajućih NFT standarda}
+\label{alg:nft}
+\begin{algorithmic}[1]
+\Function{mint}{to, quantity, startTimestamp, giftable, percentage, numOfBlocks}
+    \RequireState{quantity > 0}
+    \RequireState{to != address(0)}
+    \RequireState{percentage > 0 \Andd percentage <= 100}
+    \RequireState{numOfBlocks > 0 \Andd numOfBlocks < $2^{16}$}
+    \State owners[currentIndex] = Coupon(to, startTimestamp, giftable, percentage, numOfBlocks)
+    \State balances[to]++
+    \State currentIndex += quantity
+\EndFunction
+\Function{transfer}{from, to, id}
+    \State owner = ownerOf(id)
+    \RequireState{owner == from}
+    \RequireState{to != address(0)}
+    \RequireState{owners[id].giftable == true}
+    \State balances[from]--
+    \State balances[to]++
+    \State owners[id].owner = to
+\EndFunction
+\Function{burn}{id}
+    \State owner = ownerOf(id)
+    \State coupon = owners[id]
+    \RequireState{coupon.startTimestamp + coupon.numOfBlock * BLOCK\_DURATION >= block.timestamp}
+    \State balances[owner]--
+    \State \textbf{delete} owners[id]
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+U narednim podpoglavljima, objašnjen je hronološki pregled razvoja NFT standarda. Sistematski su opisani nedostaci identifikovani u svakom standardu, koji su poslužili kao podsticaji za razvoj narednih. Za svaki standard predstavljena je logika operacija kovanja, prenosa i sagorevanja, sa detaljnom analizom o instukcijama koje pristupaju skladištu, jer su to glavni faktori koji utiču na potrošnju gasa. Uticaj ostalih operacija je minimalan i biće procenjen po potrebi. Na kraju svakoj standarda, demonstrirane su modifikacije datog NFT standarda za implementaciju kuponskoh rešenja koji se dalje korsiti u merenju.
+
+\subsection{ERC721}
+
+\subsection{ERC721A}
+
+\subsection{ERC721Psi}
