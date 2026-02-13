@@ -24,7 +24,7 @@ Operacija upisa u skladište, realizovana instrukcijom \texttt{SSTORE}, ima razl
 \item Ukoliko se skladišna jedinica sa nenultom vrednošću postavi na nultu vrednost, korisniku se odobrava povraćaj od 4.800 jedinica gasa, čime se umanjuje cena trenutne transakcije.
 \end{enumerate}
 
-U daljoj analizi, prve dve navedene cene označavaćemo kao SSTORE(1) i SSTORE(2), a izraz ,,ako nije nula'' odnosiće se na slučaj u kojem je skladišna jedinica pre početka transakcije sadržala nenultu vrednost. Prikazane cene podrazumevaju topli pristup skladištu, te u slučaju hladnog pristupa, ukupni troškovi iznose 22.100 odnosno 5.000 jedinica gasa.
+U daljoj analizi, prve dve navedene cene označavaćemo kao \Sj i \Sd, a izraz ,,ako nije nula'' odnosiće se na slučaj u kojem je skladišna jedinica pre početka transakcije sadržala nenultu vrednost. Prikazane cene podrazumevaju topli pristup skladištu, te u slučaju hladnog pristupa, ukupni troškovi iznose 22.100 odnosno 5.000 jedinica gasa.
 
 Kako troškove izvršavanja transakcija u potpunosti snose korisnici mreže, vlasnici pametnih ugovora, poput kompanija i preduzeća, snose isključivo trošak njihovog inicijalnog postavljanja na mrežu. Tokom transakcije za postavljanje ugovora, nakon naplate unutrašnjeg gasa, izvršava se instrukcija \texttt{CREATE}, čiji osnovni trošak iznosi 32.000 jedinica gasa. Zatim se izvršava konstruktorski bajtkod, pri čemu se naplaćuje svaka instrukcija, kao i operacije upisa u skladište po ceni SSTORE(1) sa toplim pristupom. Na kraju, dodatno se naplaćuje 200 jedinica gasa za svaki bajt izvršnog bajtkoda trajno smeštenog na mreži.
 
@@ -42,7 +42,7 @@ $$ mapping(\textit{uint256 tokenId} \Rightarrow address)\textit{ private }\_owne
 
 Ovakva struktura pogodna je za primenu u sistemima e-trgovine, gde svaki proizvod ili usluga mora posedovati jedinstveni identifikator. Imajući u vidu da EVM operiše nad skladišnim jedinicama veličine 256 bita, dok adrese zauzimaju 160 bita, preostalih 96 bita moguće je iskoristiti za kompaktno enkodiranje dodatnih informacija o proizvodu ili usluzi unutar iste skladišne jedinice.
 
-U ovom radu primenjuje se detaljna analiza osnovnih operacija, kovanja \eng{minting}, prenosa i uništavanja \eng{burn}, kada su dodatne informacije enkodirane u preostalih 96 bita, pri čemu se upoređuje potrošnja gasa u različitim scenarijima ulaza. Analiza obuhvata procenu prednosti i ograničenja predloženog pristupa, uz očuvanje funkcionalne kompatibilnosti i bezbednosnih svojstava originalnih standarda.
+U ovom radu primenjuje se detaljna analiza osnovnih operacija, kreiranja \eng{minting}, prenosa i uništavanja \eng{burn}, kada su dodatne informacije enkodirane u preostalih 96 bita, pri čemu se upoređuje potrošnja gasa u različitim scenarijima ulaza. Analiza obuhvata procenu prednosti i ograničenja predloženog pristupa, uz očuvanje funkcionalne kompatibilnosti i bezbednosnih svojstava originalnih standarda.
 
 U prethodnom radu \cite{tasic2024cost} fokus je bio na modelovanju elektronskih kupona kao specifične instance digitalnih entiteta u sistemima elektronske trgovine, imajući u vidu da savremeno tržište u velikoj meri zavisi od njihove primene. U tom radu demonstrirano je da se značajne uštede u potrošnji gasa ostvaruju enkodiranjem svih relevantnih informacija o kuponu unutar jedne skladišne jedinice. Time je unapređen pristup ranijim rešenjima koja su za svaki novi kupon instancirala zaseban pametni ugovor, što je izrazito skladišno i infrastrukturno neefikasno.
 
@@ -61,49 +61,93 @@ U okviru ovakvog modela, kupon sadrži sledeće informacije:
 \item Početnu vremensku oznaku u \textit{Unix} formatu koja definiše trenutak od kog kupon postaje validan (64 bita),
 \item Skup od osam binarnih promenljivih, svaka veličine jednog bita. U demonstracionom modelu jedna promenljiva označava da li je kupon ,,poklonjiv'', što omogućava njegov prenos između korisnika. Druge promenljive mogu imati funkcionalnosti poput ,,tržišno prenosiv'', čime bi se omogućila sekundarna trgovina (ukupno 8 bita),
 \item Celobrojnu vrednost koja predstavlja procenat popusta (8 bita),
-\item Parametar koji definiše trajanje važenja kupona nakon početne vremenske oznake. Ova vrednost izražena je u jednakim vremenskim intervalima označenim sa $T$, koji se definišu prilikom postavljanja ugovora (16 bita).
+\item Parametar koji definiše trajanje važenja kupona nakon početne vremenske oznake. Ova vrednost izražena je u jednakim vremenskim intervalima, koji se definišu prilikom postavljanja ugovora (16 bita).
 \end{enumerate}
 
-Ovakvo gusto enkodiranje podataka nužno uvodi određena ograničenja. Na primer, korišćenje 8 bita za procenat popusta onemogućava reprezentaciju decimalnih vrednosti. Slično tome, izbor veličine vremenskog intervala $T$ direktno utiče na maksimalno moguće trajanje važenja kupona i ukoliko je $T$ jednak jednom danu, maksimalna dužina važenja iznosi približno $\approx$20 godina. Iako je moguće primenom bitskih operatora precizno kontrolisati raspodelu proizvoljnog broja bitova, uključujući vrednosti koje nisu deljive sa 8, u ovom radu je takav pristup izostavljen radi jednostavnosti implementacije i preglednosti formalne analize.
+Ovakvo gusto enkodiranje podataka nužno uvodi određena ograničenja. Na primer, korišćenje 8 bita za procenat popusta onemogućava reprezentaciju decimalnih vrednosti. Slično tome, izbor veličine vremenskog intervala direktno utiče na maksimalno moguće trajanje važenja kupona i ukoliko je jednak jednom danu, maksimalna dužina važenja iznosi približno $\approx$20 godina. Iako je moguće primenom bitskih operatora precizno kontrolisati raspodelu proizvoljnog broja bitova, uključujući vrednosti koje nisu deljive sa 8, u ovom radu je takav pristup izostavljen radi jednostavnosti implementacije i preglednosti formalne analize.
 
-Svi razmatrani NFT standardi dele istu osnovnu logiku za ključne operacije. Algoritam \ref{alg:nft} prikazuje pseudokod operacija kovanja, prenosa i uništavanja, pri čemu su promenljive kupona grupisane u jednu skladišnu jedinicu, kao što je prethodno opisano. Pseudokod je zasnovan na programskom jeziku \textit{Solidity}, kao najzastupljenijem jeziku za razvoj aplikacija nad EVM-om. Na početku svake funkcije definišu se uslovi ispravnosti putem naredbe \textit{require}, u skladu sa principima bezbednog dizajna pametnih ugovora i ustaljenom praksom u industriji.
+Svi razmatrani NFT standardi dele istu osnovnu logiku za ključne operacije. Algoritam \ref{alg:nft} prikazuje pseudokod operacija kreiranja, prenosa i uništavanja, pri čemu su promenljive kupona grupisane u jednu skladišnu jedinicu, kao što je prethodno opisano. Pseudokod je zasnovan na programskom jeziku \textit{Solidity}, kao najzastupljenijem jeziku za razvoj aplikacija nad EVM-om. Na početku svake funkcije definišu se uslovi ispravnosti putem naredbe \textit{require}, u skladu sa principima bezbednog dizajna pametnih ugovora i ustaljenom praksom u industriji.
 
 \begin{algorithm}
-\caption{Osnovna logika funkcija kovanja, prenosa i uništavanja koje e-kupon implementira primenom odgovarajućih NFT standarda}
+\caption{Osnovna logika funkcija kreiranja, prenosa i uništavanja koje e-kupon implementira primenom odgovarajućih NFT standarda}
 \label{alg:nft}
 \begin{algorithmic}[1]
 \Function{mint}{to, quantity, startTimestamp, giftable, percentage, numOfBlocks}
-    \RequireState{quantity > 0}
-    \RequireState{to != address(0)}
-    \RequireState{percentage > 0 \Andd percentage <= 100}
-    \RequireState{numOfBlocks > 0 \Andd numOfBlocks < $2^{16}$}
-    \State owners[currentIndex] = Coupon(to, startTimestamp, giftable, percentage, numOfBlocks)
-    \State balances[to]++
-    \State currentIndex += quantity
+    \RequireState{quantity \Gg 0}
+    \RequireState{to \Neq address(0)}
+    \RequireState{percentage \Gg 0 \Andd percentage \Geq 100}
+    \RequireState{numOfBlocks \Gg 0 \Andd numOfBlocks \Ll $2^{16}$}
+    \State owners[currentIndex] \Eq Coupon(to, startTimestamp, giftable, percentage, numOfBlocks)
+    \State balances[to]\PlusPlus
+    \State currentIndex \PlusEq quantity
 \EndFunction
 \Function{transfer}{from, to, id}
-    \State owner = ownerOf(id)
-    \RequireState{owner == from}
-    \RequireState{to != address(0)}
-    \RequireState{owners[id].giftable == true}
-    \State balances[from]--
-    \State balances[to]++
-    \State owners[id].owner = to
+    \State owner \Eq ownerOf(id)
+    \RequireState{owner \EqEq from}
+    \RequireState{to \Neq address(0)}
+    \RequireState{owners[id].giftable \EqEq true}
+    \State balances[from]\MinusMinus
+    \State balances[to]\PlusPlus
+    \State owners[id].owner \Eq to
 \EndFunction
 \Function{burn}{id}
-    \State owner = ownerOf(id)
-    \State coupon = owners[id]
-    \RequireState{coupon.startTimestamp + coupon.numOfBlock * BLOCK\_DURATION >= block.timestamp}
-    \State balances[owner]--
+    \State owner \Eq ownerOf(id)
+    \State coupon \Eq owners[id]
+    \RequireState{coupon.startTimestamp \Plus coupon.numOfBlock \Times \_BLOCK\_DURATION \Geq block.timestamp}
+    \State balances[owner]\MinusMinus
     \State \textbf{delete} owners[id]
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
-U narednim podpoglavljima, objašnjen je hronološki pregled razvoja NFT standarda. Sistematski su opisani nedostaci identifikovani u svakom standardu, koji su poslužili kao podsticaji za razvoj narednih. Za svaki standard predstavljena je logika operacija kovanja, prenosa i sagorevanja, sa detaljnom analizom o instukcijama koje pristupaju skladištu, jer su to glavni faktori koji utiču na potrošnju gasa. Uticaj ostalih operacija je minimalan i biće procenjen po potrebi. Na kraju svakoj standarda, demonstrirane su modifikacije datog NFT standarda za implementaciju kuponskoh rešenja koji se dalje korsiti u merenju.
+U narednim podpoglavljima, objašnjen je hronološki pregled razvoja NFT standarda. Sistematski su opisani nedostaci identifikovani u svakom standardu, koji su poslužili kao podsticaji za razvoj narednih. Za svaki standard predstavljena je logika operacija kreiranja, prenosa i sagorevanja, sa detaljnom analizom o instukcijama koje pristupaju skladištu, jer su to glavni faktori koji utiču na potrošnju gasa. Uticaj ostalih operacija je minimalan i biće procenjen po potrebi. Na kraju svakoj standarda, demonstrirane su modifikacije datog NFT standarda za implementaciju kuponskoh rešenja koji se dalje korsiti u merenju.
 
-\subsection{ERC721}
+\subsection{ERC-721}
+ERC-721 predstavlja osnovni standard za implementaciju nezamenljivih tokena, definišući interfejs i minimalni skup funkcionalnosti neophodnih za njihovo kreiranje, praćenje vlasništva i prenos. Standard uspostavlja model u kojem se vlasništvo nad tokenima evidentira putem mape vlasnika \textit{\_owners}, koja preslikava jedinstveni identifikator tokena na adresu njegovog vlasnika, dok se ukupan broj tokena u vlasništvu određene adrese prati putem mape stanja \textit{\_balances}. Na osnovu ovih struktura moguće je efikasno odrediti vlasnika proizvoljnog tokena, kao i ukupan broj tokena koje određeni korisnik poseduje.
 
-\subsection{ERC721A}
+Osnovna logika operacija kreiranja, prenosa i uništavanja ostaje konceptualno identična opštem modelu prikazanom u Algoritmu \ref{alg:nft}, te se u ovom potpoglavlju fokus stavlja isključivo na specifičnosti implementacije i njihove implikacije na pristup skladištu i potrošnju gasa.
 
-\subsection{ERC721Psi}
+Radi prilagođavanja standarda implementaciji elektronskih kupona, uvedena je dodatna promenljiva koja definiše trajanje osnovnog vremenskog intervala, označena kao \textit{\_BLOCK\_DURATION}. Ova vrednost se inicijalizuje prilikom postavljanja pametnog ugovora i koristi se za određivanje ukupnog trajanja validnosti kupona. Takođe, mapa vlasnika modifikovana je tako da umesto adrese vlasnika direktno preslikava identifikator tokena u strukturu \textit{CouponInfo}, koja enkodira sve relevantne informacije o kuponu unutar jedne skladišne jedinice, kao što je opisano u prethodnom potpoglavlju.
+
+Originalni ERC-721 standard omogućava kreiranje tokena sa proizvoljno zadatim identifikatorima, pod uslovom da dati identifikator nije prethodno dodeljen. Međutim, radi usklađivanja eksperimentalnih uslova sa naprednijim standardima koji se razmatraju u nastavku rada, ovaj mehanizam je modifikovan uvođenjem promenljive \textit{\_currentIndex}, koja označava identifikator narednog tokena koji će biti kreiran. Na ovaj način obezbeđuje se sekvencijalna dodela identifikatora i omogućava konzistentno poređenje potrošnje gasa između različitih standarda. Inicijalizacija ovih promenljivih vrši se u konstruktoru pametnog ugovora, kao što je prikazano u Algoritmu \ref{alg:erc721_constructor}.
+
+\begin{algorithm}
+\caption{Konstruktor e-kupona zasnovan na ERC-721 standardu}
+\label{alg:erc721_constructor}
+\begin{algorithmic}[1]
+\Constructor{name, symbol, blockDuration}
+    \State \_name \Eq name
+    \State \_symbol \Eq symbol
+    \State \_BLOCK\_DURATION \Eq blockDuration
+    \State \_currentIndex \Eq 0
+\EndConstructor
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Kreiranje}
+Proces kreiranja kupona je pojedinačan, odnosno u svakom pozivu kreira se tačno jedan token, i podrazumeva dodelu vlasništva nad novim tokenom uz uključivanje dodatnih parametara koji definišu funkcionalna svojstva kupona. Pored adrese primaoca, funkcija prima i početnu vremensku oznaku, indikator prenosivosti kupona, vrednost popusta i broj vremenskih intervala tokom kojih kupon ostaje validan.
+
+Pre upisa podataka u skladište vrši se validacija ulaznih parametara kako bi se obezbedila njihova konzistentnost sa definisanim modelom enkodiranja, posebno u pogledu ograničenja reprezentacije procentualne vrednosti i maksimalnog trajanja važenja kupona. Nakon uspešne validacije, strukturirani podaci o kuponu upisuju se u mapu vlasnika na poziciji definisanoj promenljivom \textit{\_currentIndex}, nakon čega se ova promenljiva inkrementira.
+
+Sa aspekta potrošnje gasa, svaki proces kreiranja kupona podrazumeva upis nove skladišne jedinice u mapu vlasnika, što uzrokuje trošak hladne \Sj operacije, budući da se radi o prethodno nekorišćenoj skladišnoj jedinici. Istovremeno, ažuriranje mape stanja vlasnika takođe uzrokuje trošak hladne \Sd operacije, ako prethodna vrednost nije nula. Promena vrednosti promenljive \textit{\_currentIndex} realizuje se kao topla \Sd operacija, ako nije nula, jer je skladišna jedinica već pristupljena tokom validacije funkcije.
+
+\subsubsection{Prenos}
+Operacija prenosa kupona proširuje osnovni ERC-721 model dodatnom proverom koja osigurava da je kupon označen kao prenosiv. Nakon validacije vlasništva nad tokenom i ispravnosti adrese primaoca, vrši se ažuriranje stanja skladišta.
+
+Tokom ove operacije realizuju se sledeće izmene skladišta:
+\begin{enumerate}
+\item Stanje pošiljaoca se smanjuje za jedan, što uzrokuje trošak hladne \Sd operacije, uz mogućnost povraćaja gasa ukoliko nova vrednost postane nula,
+\item Stanje primaoca se povećava za jedan, što uzrokuje trošak hladne \Sd operacije, ako nije nula,
+\item Vlasništvo nad tokenom ažurira se izmenom odgovarajuće skladišne jedinice u mapi vlasnika, pri čemu se ova operacija realizuje uz trošak tople \Sd operacije, jer je skladišna jedinica već učitana tokom validacije vlasništva.
+\end{enumerate}
+
+\subsubsection{Uništavanje}
+Operacija uništavanja kupona omogućava njegovo uklanjanje iz sistema nakon isteka perioda validnosti. Za razliku od osnovnog ERC-721 modela, implementacija kupona uvodi dodatnu proveru koja koristi enkodirane vremenske parametre kako bi se osiguralo da je kupon istekao. Ova provera formalno se izražava uslovom:
+
+$$ startTimestamp + \_BLOCK\_DURATION \cdot numOfBlocks \leq block.timestamp $$
+
+Ukoliko je uslov ispunjen, skladišna jedinica koja sadrži informacije o kuponu briše se iz mape vlasnika, čime se skladišna lokacija vraća u nulto stanje. Ova operacija rezultuje povraćajem dela prethodno utrošenog gasa, u skladu sa pravilima EVM modela. Istovremeno, stanje vlasnika se umanjuje za jednu jedinicu, uz odgovarajući trošak hladne \Sd operacije i potencijalni dodatni povraćaj gasa ukoliko nova vrednost postane nula.
+
+\subsection{ERC-721A}
+
+\subsection{ERC-721Psi}
