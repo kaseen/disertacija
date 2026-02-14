@@ -102,14 +102,8 @@ Svi razmatrani NFT standardi dele istu osnovnu logiku za ključne operacije. Alg
 
 U narednim podpoglavljima, objašnjen je hronološki pregled razvoja NFT standarda. Sistematski su opisani nedostaci identifikovani u svakom standardu, koji su poslužili kao podsticaji za razvoj narednih. Za svaki standard predstavljena je logika operacija kreiranja, prenosa i sagorevanja, sa detaljnom analizom o instukcijama koje pristupaju skladištu, jer su to glavni faktori koji utiču na potrošnju gasa. Uticaj ostalih operacija je minimalan i biće procenjen po potrebi. Na kraju svakoj standarda, demonstrirane su modifikacije datog NFT standarda za implementaciju kuponskoh rešenja koji se dalje korsiti u merenju.
 
-\subsection{ERC-721}
-ERC-721 predstavlja osnovni standard za implementaciju nezamenljivih tokena, definišući interfejs i minimalni skup funkcionalnosti neophodnih za njihovo kreiranje, praćenje vlasništva i prenos. Standard uspostavlja model u kojem se vlasništvo nad tokenima evidentira putem mape vlasnika \textit{\_owners}, koja preslikava jedinstveni identifikator tokena na adresu njegovog vlasnika, dok se ukupan broj tokena u vlasništvu određene adrese prati putem mape stanja \textit{\_balances}. Na osnovu ovih struktura moguće je efikasno odrediti vlasnika proizvoljnog tokena, kao i ukupan broj tokena koje određeni korisnik poseduje.
-
-Osnovna logika operacija kreiranja, prenosa i uništavanja ostaje konceptualno identična opštem modelu prikazanom u Algoritmu \ref{alg:nft}, te se u ovom potpoglavlju fokus stavlja isključivo na specifičnosti implementacije i njihove implikacije na pristup skladištu i potrošnju gasa.
-
-Radi prilagođavanja standarda implementaciji elektronskih kupona, uvedena je dodatna promenljiva koja definiše trajanje osnovnog vremenskog intervala, označena kao \textit{\_BLOCK\_DURATION}. Ova vrednost se inicijalizuje prilikom postavljanja pametnog ugovora i koristi se za određivanje ukupnog trajanja validnosti kupona. Takođe, mapa vlasnika modifikovana je tako da umesto adrese vlasnika direktno preslikava identifikator tokena u strukturu \textit{CouponInfo}, koja enkodira sve relevantne informacije o kuponu unutar jedne skladišne jedinice, kao što je opisano u prethodnom potpoglavlju.
-
-Originalni ERC-721 standard omogućava kreiranje tokena sa proizvoljno zadatim identifikatorima, pod uslovom da dati identifikator nije prethodno dodeljen. Međutim, radi usklađivanja eksperimentalnih uslova sa naprednijim standardima koji se razmatraju u nastavku rada, ovaj mehanizam je modifikovan uvođenjem promenljive \textit{\_currentIndex}, koja označava identifikator narednog tokena koji će biti kreiran. Na ovaj način obezbeđuje se sekvencijalna dodela identifikatora i omogućava konzistentno poređenje potrošnje gasa između različitih standarda. Inicijalizacija ovih promenljivih vrši se u konstruktoru pametnog ugovora, kao što je prikazano u Algoritmu \ref{alg:erc721_constructor}.
+% TODO NAME SYMBOL
+Radi prilagođavanja svih standarda implementaciji elektronskih kupona, uvedena je dodatna promenljiva koja definiše trajanje osnovnog vremenskog intervala, označena kao \textit{\_BLOCK\_DURATION}. Ova vrednost se inicijalizuje prilikom postavljanja pametnog ugovora na mrežu i koristi se za određivanje ukupnog trajanja validnosti kupona. Inicijalizacija ovih promenljivih vrši se u konstruktoru pametnog ugovora, kao što je prikazano u Algoritmu \ref{alg:erc721_constructor}.
 
 \begin{algorithm}
 \caption{Konstruktor e-kupona zasnovan na ERC-721 standardu}
@@ -124,30 +118,157 @@ Originalni ERC-721 standard omogućava kreiranje tokena sa proizvoljno zadatim i
 \end{algorithmic}
 \end{algorithm}
 
+\subsection{ERC-721}
+ERC-721 predstavlja osnovni standard za implementaciju nezamenljivih tokena, definišući interfejs i minimalni skup funkcionalnosti neophodnih za njihovo kreiranje, praćenje vlasništva i prenos. Osnovna logika operacija kreiranja, prenosa i uništavanja ostaje konceptualno identična opštem modelu prikazanom u Algoritmu \ref{alg:nft}, te se u ovom potpoglavlju fokus stavlja isključivo na specifičnosti implementacije i njihove implikacije na pristup skladištu i potrošnju gasa. 
+
+Standard uspostavlja model u kojem se vlasništvo nad tokenima evidentira putem mape vlasnika \textit{\_owners}, koja preslikava jedinstveni identifikator tokena na adresu njegovog vlasnika, dok se ukupan broj tokena u vlasništvu određene adrese prati putem mape stanja \textit{\_balances}. Na osnovu ovih struktura moguće je efikasno odrediti vlasnika proizvoljnog tokena, kao i ukupan broj tokena koje određeni korisnik poseduje.
+
+Originalni ERC-721 standard omogućava kreiranje tokena sa proizvoljno zadatim identifikatorima, pod uslovom da dati identifikator nije prethodno dodeljen. Međutim, radi usklađivanja eksperimentalnih uslova sa naprednijim standardima koji se razmatraju u nastavku rada, ovaj mehanizam je modifikovan uvođenjem promenljive \textit{\_currentIndex}, koja označava identifikator narednog tokena koji će biti kreiran. Na ovaj način obezbeđuje se sekvencijalna dodela identifikatora i omogućava konzistentno poređenje potrošnje gasa između različitih standarda. 
+
 \subsubsection{Kreiranje}
-Proces kreiranja kupona je pojedinačan, odnosno u svakom pozivu kreira se tačno jedan token, i podrazumeva dodelu vlasništva nad novim tokenom uz uključivanje dodatnih parametara koji definišu funkcionalna svojstva kupona. Pored adrese primaoca, funkcija prima i početnu vremensku oznaku, indikator prenosivosti kupona, vrednost popusta i broj vremenskih intervala tokom kojih kupon ostaje validan.
+Proces kreiranja kupona je pojedinačan, odnosno u svakom pozivu funkcije kreira se tačno jedan token. Pored dodele vlasništva nad novim tokenom, funkcija prihvata dodatne parametre koji definišu funkcionalna svojstva kupona.
 
-Pre upisa podataka u skladište vrši se validacija ulaznih parametara kako bi se obezbedila njihova konzistentnost sa definisanim modelom enkodiranja, posebno u pogledu ograničenja reprezentacije procentualne vrednosti i maksimalnog trajanja važenja kupona. Nakon uspešne validacije, strukturirani podaci o kuponu upisuju se u mapu vlasnika na poziciji definisanoj promenljivom \textit{\_currentIndex}, nakon čega se ova promenljiva inkrementira.
+Mapa vlasnika modifikovana je tako da umesto adrese vlasnika direktno preslikava identifikator tokena u strukturu \textit{CouponInfo}, koja enkodira sve relevantne informacije o kuponu unutar jedne skladišne jedinice, kao što je opisano u prethodnom potpoglavlju. Iz tog razloga funkcija, pored adrese primaoca, prima i početnu vremensku oznaku, indikator prenosivosti, vrednost popusta i broj vremenskih intervala validnosti.
 
-Sa aspekta potrošnje gasa, svaki proces kreiranja kupona podrazumeva upis nove skladišne jedinice u mapu vlasnika, što uzrokuje trošak hladne \Sj operacije, budući da se radi o prethodno nekorišćenoj skladišnoj jedinici. Istovremeno, ažuriranje mape stanja vlasnika takođe uzrokuje trošak hladne \Sd operacije, ako prethodna vrednost nije nula. Promena vrednosti promenljive \textit{\_currentIndex} realizuje se kao topla \Sd operacija, ako nije nula, jer je skladišna jedinica već pristupljena tokom validacije funkcije.
+Na početku izvršavanja funkcije vrši se validacija ulaznih parametara kako bi se obezbedila njihova konzistentnost sa definisanim modelom enkodiranja, posebno u pogledu ograničenja reprezentacije procentualne vrednosti i maksimalnog trajanja važenja kupona. Nakon uspešne validacije, strukturirani podaci o kuponu upisuju se u mapu vlasnika na poziciji definisanoj promenljivom \textit{\_currentIndex}, nakon čega se ova promenljiva inkrementira.
+
+Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
+\begin{enumerate}
+\item Upis nove skladišne jedinice u mapu vlasnika uzrokuje trošak hladne \Sj operacije, budući da se radi o prethodno nekorišćenoj skladišnoj jedinici.
+\item Ažuriranje mape stanja vlasnika uzrokuje trošak hladne \Sd operacije, ako prethodna vrednost nije nula.
+\item Promena vrednosti promenljive \textit{\_currentIndex} realizuje se kao topla \Sd operacija, ako nije nula, jer je skladišna jedinica već pristupljena tokom izvršavanja funkcije.
+\end{enumerate}
 
 \subsubsection{Prenos}
-Operacija prenosa kupona proširuje osnovni ERC-721 model dodatnom proverom koja osigurava da je kupon označen kao prenosiv. Nakon validacije vlasništva nad tokenom i ispravnosti adrese primaoca, vrši se ažuriranje stanja skladišta.
+Na početku izvršavanja funkcije prenosa trenutni vlasnik se učitava u memoriju radi validacije. Nakon toga vrši se provera vlasništva nad tokenom i ispravnosti adrese primaoca. Dodatno, implementacija kupona proširuje osnovni ERC-721 model proverom da li je kupon označen kao prenosiv. Nakon uspešne validacije ažuriraju se brojevi kupona adresa i prenosi vlasništvo.
 
-Tokom ove operacije realizuju se sledeće izmene skladišta:
+Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \begin{enumerate}
-\item Stanje pošiljaoca se smanjuje za jedan, što uzrokuje trošak hladne \Sd operacije, uz mogućnost povraćaja gasa ukoliko nova vrednost postane nula,
-\item Stanje primaoca se povećava za jedan, što uzrokuje trošak hladne \Sd operacije, ako nije nula,
-\item Vlasništvo nad tokenom ažurira se izmenom odgovarajuće skladišne jedinice u mapi vlasnika, pri čemu se ova operacija realizuje uz trošak tople \Sd operacije, jer je skladišna jedinica već učitana tokom validacije vlasništva.
+\item Učitavanje vlasnika u memoriju radi validacije generiše trošak hladne \Sl operacije.
+\item Stanje pošiljaoca se smanjuje za jedan, što uzrokuje trošak hladne \Sd operacije, uz mogućnost povraćaja gasa ukoliko nova vrednost postane nula.
+\item Stanje primaoca se povećava za jedan, što uzrokuje trošak hladne \Sd operacije, ako nije nula.
+\item Vlasništvo nad tokenom ažurira se izmenom odgovarajuće skladišne jedinice u mapi vlasnika, pri čemu se operacija realizuje uz trošak tople \Sd operacije, jer je skladišna jedinica već učitana tokom validacije.
 \end{enumerate}
 
 \subsubsection{Uništavanje}
-Operacija uništavanja kupona omogućava njegovo uklanjanje iz sistema nakon isteka perioda validnosti. Za razliku od osnovnog ERC-721 modela, implementacija kupona uvodi dodatnu proveru koja koristi enkodirane vremenske parametre kako bi se osiguralo da je kupon istekao. Ova provera formalno se izražava uslovom:
+Operacija uništavanja omogućava uklanjanje kupona iz sistema nakon isteka perioda validnosti. Kao i kod prenosa, na početku se učitava vlasnik radi validacije. Implementacija kupona uvodi dodatnu proveru zasnovanu na enkodiranim vremenskim parametrima, čime se osigurava da je kupon istekao. Ova provera formalno se izražava uslovom:
 
 $$ startTimestamp + \_BLOCK\_DURATION \cdot numOfBlocks \leq block.timestamp $$
 
-Ukoliko je uslov ispunjen, skladišna jedinica koja sadrži informacije o kuponu briše se iz mape vlasnika, čime se skladišna lokacija vraća u nulto stanje. Ova operacija rezultuje povraćajem dela prethodno utrošenog gasa, u skladu sa pravilima EVM modela. Istovremeno, stanje vlasnika se umanjuje za jednu jedinicu, uz odgovarajući trošak hladne \Sd operacije i potencijalni dodatni povraćaj gasa ukoliko nova vrednost postane nula.
+Ukoliko je uslov ispunjen, skladišna jedinica koja sadrži informacije o kuponu briše se iz mape vlasnika, čime se skladišna lokacija vraća u nulto stanje.
+
+Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
+\begin{enumerate}
+\item Stanje vlasnika se umanjuje za jednu jedinicu, uz trošak hladne \Sd operacije i potencijalni dodatni povraćaj gasa ukoliko nova vrednost postane nula.
+\item Oslobađanje skladišne jedinice u mapi vlasništva rezultuje povraćajem dela prethodno utrošenog gasa u skladu sa pravilima EVM modela.
+\end{enumerate}
 
 \subsection{ERC-721A}
+U standardu ERC-721, proces kreiranja tokena je strukturalno pojedinačan. Stoga, ukoliko je potrebno kreirati više tokena unutar jedne transakcije, neophodno je koristiti iterativni postupak, pri čemu se mapa vlasništva ažurira u svakoj iteraciji, jer svaki token mora biti evidentiran zasebno \cite{ranjbar2023nft}. Ovakav pristup dovodi do višestrukog upisivanja identičnih podataka u skladište kada se više tokena dodeljuje istoj adresi, što rezultuje značajnim troškovima gasa.
+
+Standard ERC-721A \cite{ERC721A} uvodi optimizaciju upravo za ovaj scenario, sa ciljem smanjenja troškova gasa prilikom kreiranja više međusobno ekvivalentnih ERC-721 tokena dodeljenih istoj adresi. Ova optimizacija rešava problem visokih troškova povezanih sa pojedinačnim evidentiranjem vlasništva za svaki token.
+
+ERC-721A omogućava efikasno grupno kreiranje tokena \eng{batch minting} tako što se informacija o vlasništvu eksplicitno upisuje samo za prvi token u grupi \eng{head of the batch}, dok se vlasništvo nad preostalim tokenima implicitno podrazumeva. Na ovaj način se broj operacija upisa u skladište značajno smanjuje, čime se ostvaruju uštede gasa tokom kreiranja. Međutim, ova optimizacija uvodi dodatne troškove tokom operacija prenosa i uništavanja tokena, jer implicitno vlasništvo tada mora biti eksplicitno razrešeno.
+
+Standard koristi mapu upakovanih vlasničkih podataka \textit{\_packedOwnerships}, koja preslikava identifikator tokena u kompaktnu reprezentaciju vlasništva korišćenjem bitskih operacija. Ova reprezentacija se smešta u jednu skladišnu jedinicu i definiše se kao:
+$$ owner \Razmak | \Razmak (timestamp \ll 160) \Razmak | \Razmak (nextInitialized \ll 225) $$
+
+gde:
+\begin{itemize}
+\item \textit{owner} predstavlja adresu vlasnika tokena,
+\item \textit{timestamp} predstavlja vremensku oznaku kreiranja tokena u \textit{Unix} formatu,
+\item \textit{nextInitialized} predstavlja binarnu promenljivu koja označava da li su informacije o narednom identifikatoru tokena implicitno definisane.
+\item Bit koji označava stanje iskorišenosti \textit{burned} implicitno je postavljen na netačno tokom kreiranja.
+\end{itemize}
+
+Pored toga, standard koristi mapa upakovanih stanja \textit{\_packedAddressData} (SLIKA TODO), koja preslikava adresu u kompaktnu strukturu podataka radi praćenja:
+\begin{itemize}
+\item broja tokena u vlasništvu adrese,
+\item broja kreiranih tokena,
+\item broja uništenih tokena,
+\item dodatnih pomoćnih podataka povezanih sa adresom.
+\end{itemize}
+
+\subsubsection{Kreiranje}
+ERC-721A omogućava kreiranje više tokena unutar jedne transakcije. Funkcija za kreiranje, pored standardnih parametara, prima i broj tokena koji se kreiraju. Kako su identifikatori tokena uzastopni, početni identifikator se najpre učitava u memoriju, nakon čega se vrši validacija ulaznih parametara.
+
+Informacije o vlasništvu se zatim eksplicitno upisuju samo za prvi token u grupi, korišćenjem sledeće kompaktne reprezentacije:
+$$ owner \Razmak | \Razmak (startTimestamp \ll 160) \Razmak | \Razmak (nextInitialized \ll 225) \Razmak | $$
+$$ (gitable \ll 226) \Razmak | \Razmak (percentage \ll 232) \Razmak | \Razmak (numOfBlocks \ll 240) $$ 
+
+Ova reprezentacija proširuje osnovni model tako što umesto vremena kreiranja beleži vreme početka važenja kupona, kao i dodatne informacije specifične za kupon, pri čemu se svi podaci pakuju u jednu skladišnu jedinicu korišćenjem bitskih operacija, umesto korišćenja eksplicitne strukture podataka.
+
+Nakon toga, pokazivač na naredni identifikator tokena povećava se za ukupan broj kreiranih tokena. Skladišne jedinice koje odgovaraju ostalim tokenima u grupi ostaju neinicijalizovane, čime implicitno predstavljaju vlasništvo nad tokenima, koje se razrešava tek tokom kasnijih operacija.
+
+% TODO: ALGORIAM ZA MINT
+
+U okviru ove operacije izvršavaju se sledeće operacije pristupa skladištu:
+\begin{enumerate}
+\item Učitavanje vrednosti promenljive pokazivača, što uzrokuje trošak hladne operacije \Sl.
+\item Upis nove skladišne jedinice u mapu vlasništva za prvi identifikator u grupi, što uzrokuje trošak hladne \Sj operacije.
+\item Ažuriranje mape stanja primaoca, što uzrokuje trošak hladne \Sd operacije, ako prethodna vrednost nije nula.
+\item Promena vrednosti promenljive pokazivača, koja se realizuje kao topla \Sd operacija, ako nije nula, jer je skladišna jedinica već pristupljena tokom validacije funkcije.
+\end{enumerate}
+
+Ključna optimizacija proizilazi iz činjenice da se operacija \Sj izvršava samo jednom, za prvi token u grupi, dok se za ostale tokene vlasništvo implicitno podrazumeva, čime se značajno smanjuju ukupni troškovi gasa.
+
+\subsubsection{Prenos}
+Operacija prenosa kupona zadržava istu funkcionalnu logiku kao u ERC-721 modelu, uz dodatni korak određivanja eksplicitnih informacija o vlasništvu. Budući da vlasništvo može biti implicitno, pre validacije prenosa vrši se pronalaženje odgovarajuće inicijalizovane skladišne jedinice pretraživanjem mape vlasništva unazad, počevši od identifikatora datog kupona.
+
+Kako je vlasništvo implicitno definisano, standard uvodi funkciju \textit{\_packedOwnershipOf}, koja pronalazi eksplicitno evidentirano vlasništvo pretragom unazad kroz mapu \textit{\_packedOwnerships}, počevši od prosleđenog identifikatora tokena, sve dok se ne pronađe inicijalizovana skladišna jedinica (Algoritam \ref{alg:erc721a_implicit}).
+
+\begin{algorithm}
+\caption{Algoritam za pronalaženje implicitnog vlasništva u ERC-721A standardu}
+\label{alg:erc721a_implicit}
+\begin{algorithmic}[1]
+\Function{\_packedOwnershipOf}{id}
+    \State packed \Eq \_packedOwnerships[id]
+    \If{packed \Neq 0}
+        \Returnn{packed}
+    \EndIf
+    \If{id \Geq \_currentIndex}
+        \Revert
+    \EndIf
+    \While{true}
+        \State packed \Eq \_packedOwnerships[id]
+        \If{packed \Neq 0}
+            \Returnn{packed}
+        \EndIf 
+    \EndWhile
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Ova operacija ima iterativnu prirodu i njen trošak raste proporcionalno rastojanju između posmatranog tokena i prvog tokena u grupi. Ako $n \geq 1$ predstavlja ovo rastojanje, procenjeni trošak funkcije može se aproksimirati kao:
+$$ (n + 2) \cdot \texttt{SLOAD} + (n + 4) \cdot 141 $$
+gde prvi sabirak predstavlja trošak operacija učitavanja iz skladišta, dok drugi sabirak predstavlja aproksimaciju troška ostalih instrukcija. Instrukcije van petlje su zaokružene tako da koštaju četriri puta više od instrukcija unutar petlje, radi kompaktije formule. Procena je zasnovana na empirijskoj analizi višestrukih pokretanja algoritama, sa širokim rasponom udaljenosti između početka serije i traženog identifikatora tokena iz istog grupnog kreiranja.
+
+Nakon pronalaženja vlasnika, ažuriraju se odgovarajući podaci o vlasništvu i stanju adresa. Ukoliko se prenosi token čije je vlasništvo implicitno definisano, potrebno je eksplicitno inicijalizovati skladišnu jedinicu za taj token, čime se implicitno grupno vlasništvo deli na dva segmenta. Ovo predstavlja dodatni trošak u odnosu na standard ERC-721.
+
+Operacija prenosa uključuje sledeće troškove pristupa skladištu:
+\begin{enumerate}
+\item Trošak određivanja vlasništva, u skladu sa prethodno navedenom formulom.
+\item Smanjenje stanja pošiljaoca, što uzrokuje trošak hladne operacije \Sd.
+\item Povećanje stanja primaoca, što uzrokuje trošak hladne operacije \Sd, ako nije nula.
+\item Ažuriranje informacija o vlasništvu za preneti token, što uzrokuje trošak tople operacije \Sd,
+\item Potencijalni dodatni upis u narednu skladišnu jedinicu radi očuvanja implicitnog vlasništva preostalih tokena u grupi, što uzrokuje trošak hladne operacije \Sj.
+\end{enumerate}
+
+U implementaciji e-kupona, vremenska oznaka kreiranja se ne ažurira tokom prenosa, kako bi se očuvala informacija o vremenu početka važenja kupona.
+
+\subsubsection{Uništavanje}
+Operacija uništavanja prati sličan postupak kao i prenos. Najpre se pronalazi vlasnik tokena korišćenjem iste metode za razrešavanje implicitnog vlasništva, nakon čega se ažuriraju odgovarajući podaci o stanju adrese i vlasništvu tokena.
+
+Važno je napomenuti da, iako token postaje trajno nevažeći, odgovarajuća skladišna jedinica ostaje zauzeta. Kao posledica toga, ne dolazi do povraćaja gasa, što predstavlja dodatni nedostatak u odnosu na standard ERC-721.
+
+Tokom ove operacije realizuju se sledeći troškovi:
+\begin{enumerate}
+\item Trošak određivanja vlasništva.
+\item Ažuriranje stanja vlasnika, što uzrokuje trošak hladne operacije \Sd.
+\item Ažuriranje informacija o vlasništvu za uništen token, što uzrokuje trošak tople operacije \Sd.
+\item Potencijalni dodatni upis radi očuvanja implicitnog vlasništva preostalih tokena u grupi, što uzrokuje trošak hladne operacije \Sj.
+\end{enumerate}
+
+Vremenom, kako se implicitno definisani tokeni prenose ili uništavaju, broj implicitnih vlasništava se smanjuje, a trošak budućih operacija se približava trošku standardne \texttt{SSTORE} operacije, čime se početne uštede gasa postepeno amortizuju.
 
 \subsection{ERC-721Psi}
