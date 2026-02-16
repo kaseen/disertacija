@@ -324,3 +324,15 @@ Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 Vremenom, kako se implicitno definisani tokeni prenose ili uništavaju, broj implicitno definisanih vlasništava se smanjuje, a trošak budućih operacija se približava trošku standardne \texttt{SSTORE} operacije, čime se početne uštede gasa postepeno amortizuju.
 
 \subsection{ERC-721Psi}
+Standard ERC-721Psi \cite{ERC721Psi} predstavlja alternativu standardu ERC-721A sa dodatnim mehanizmom koji rešava problem neefikasne pretrage prvog tokena u grupi. Na taj način se otklanja ključni nedostatak implicitnog modela vlasništva u standardu ERC-721A, posebno u opštem slučaju kada je veličina grupe novokreiranih tokena proizvoljno velika.
+
+Radi postizanja ove efikasnosti, standard uvodi sledeće komponente:
+\begin{enumerate}
+\item Dodatnu mapu u obliku bitmape \textit{\_batchHead}, u kojoj se prati identifikator prvog tokena u grupi prilikom svakog kreiranja,
+\item De Bruijnov ciklus \cite{de1946combinatorial} reda $P_8$, koji omogućava efikasno određivanje pozicije prvog postavljenog bita u bitmapi,
+\item Pretraživačku heš-tabelu koja, na osnovu vrednosti dobijene De Bruijnovim preslikavanjem, omogućava direktno određivanje indeksa početnog tokena u grupi.
+\end{enumerate}
+
+Uvođenje bitmape uvodi dodatne troškove pri izvršavanju osnovnih funkcija standarda, jer je potrebno održavati njeno stanje tokom svih pomenutih operacija. Međutim, De Bruijnov ciklus i odgovarajuća pretraživačka tabela predstavljaju konstante poznate u vreme kompajliranja te su uključene u bajtkod za izvršavanje pametnog ugovora. Njihovo korišćenje podrazumeva isključivo pristup virtuelnoj memoriji samo za čitanje, bez pristupa skladištu pametnog ugovora, te stoga ne stvara dodatne troškove u pogledu potrošnje gasa.
+
+Za razliku od ranije opisanih standarda, osnovna implementacija ERC-721Psi ne uključuje praćenje stanja adresa niti funkcionalnost uništavanja tokena. Ove mogućnosti se uvode kroz proširenja pametnog ugovora \textit{ERC721PsiAddressData} i \textit{ERC721PsiBurnable}. Navedena proširenja su uvedena radi usklađivanja eksperimentalnih uslova sa prethodnim standardima, kako bi se omogućilo konzistentno i uporedivo merenje potrošnje gasa među prethodno uvedenim standardima.
