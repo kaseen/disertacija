@@ -193,9 +193,13 @@ Pored toga, standard koristi mapu upakovanog stanja podataka \textit{\_packedAdd
 ERC-721A omogućava kreiranje više identičnih tokena unutar jedne transakcije. Funkcija za kreiranje kupona, pored parametara definisanih u osnovnom ERC-721 standardu, dodatno prima i broj kupona koji se kreiraju. Kako su identifikatori tokena uzastopni, pokazivač na naredni identifikator kupona najpre se učitava u memoriju, nakon čega se vrši validacija ulaznih parametara.
 
 Informacije o vlasništvu se zatim eksplicitno upisuju samo za prvi token u grupi, korišćenjem sledeće kompaktne reprezentacije:
-$$ owner \Razmak | \Razmak (startTimestamp \ll 160) \Razmak | \Razmak (nextInitialized \ll 225) \Razmak | $$ 
-\vspace{-25px}
-$$ (gitable \ll 226) \Razmak | \Razmak (percentage \ll 232) \Razmak | \Razmak (numOfBlocks \ll 240) $$ 
+\begin{equation}
+\label{eq:erc721_packed}
+\begin{split}
+owner \Razmak | \Razmak (startTimestamp \ll 160) \Razmak | \Razmak (nextInitialized \ll 225) \Razmak | \\
+(gitable \ll 226) \Razmak | \Razmak (percentage \ll 232) \Razmak | \Razmak (numOfBlocks \ll 240)
+\end{split}
+\end{equation}
 
 Ova reprezentacija proširuje osnovni model tako što umesto vremena kreiranja beleži vreme početka važenja kupona, kao i dodatne informacije specifične za kupon, pri čemu se svi podaci pakuju u jednu skladišnu jedinicu korišćenjem bitskih operacija, umesto korišćenja eksplicitne strukture podataka.
 
@@ -336,3 +340,31 @@ Radi postizanja ove efikasnosti, standard uvodi sledeće komponente:
 Uvođenje bitmape uvodi dodatne troškove pri izvršavanju osnovnih funkcija standarda, jer je potrebno održavati njeno stanje tokom svih pomenutih operacija. Međutim, De Bruijnov ciklus i odgovarajuća pretraživačka tabela predstavljaju konstante poznate u vreme kompajliranja te su uključene u bajtkod za izvršavanje pametnog ugovora. Njihovo korišćenje podrazumeva isključivo pristup virtuelnoj memoriji samo za čitanje, bez pristupa skladištu pametnog ugovora, te stoga ne stvara dodatne troškove u pogledu potrošnje gasa.
 
 Za razliku od ranije opisanih standarda, osnovna implementacija ERC-721Psi ne uključuje praćenje stanja adresa niti funkcionalnost uništavanja tokena. Ove mogućnosti se uvode kroz proširenja pametnog ugovora \textit{ERC721PsiAddressData} i \textit{ERC721PsiBurnable}. Navedena proširenja su uvedena radi usklađivanja eksperimentalnih uslova sa prethodnim standardima, kako bi se omogućilo konzistentno i uporedivo merenje potrošnje gasa među prethodno uvedenim standardima.
+
+\subsubsection{Kreiranje}
+Proces kreiranja kupona prima iste ulazne argumente kao odgovarajuća funkcija u standardu ERC-721A. Na početku izvršavanja pokazivač na naredni identifikator tokena učitava se iz skladišta u memoriju, nakon čega se sprovode iste validacije ulaznih parametara.
+
+Informacije o vlasništvu se zatim eksplicitno upisuju samo za prvi token u grupi, korišćenjem formule \ref{eq:erc721_packed}, gde je binarna promenljiva \textit{nextInitialized} izostavljena, jer se u ovom standardu ne koristi. Time se omogućava proširenje dostupnog prostora za jedan bit unutar upakovane strukture vlasničkih podataka u odnosu na standard ERC-721A.
+
+Tokom kreiranja neophodno je postaviti odgovarajući bit u bitmapi \textit{\_batchHead}, kojim se označava prvi token u grupi. Kako skladišna jedinica u EVM-u ima veličinu od 256 bita, bitmapa je organizovana kao mapa uzastopnih blokova \eng{bucket} od po 256 bita. U ovoj reprezentaciji, vrednost \textit{1} na određenoj poziciji označava da identifikator tokena koji odgovara toj poziciji predstavlja početak grupe. Postupak postavljanja odgovarajućeg bita sastoji se od određivanja indeksa bloka kojem pripada dati identifikator, nakon čega se postavlja odgovarajući bit unutar tog bloka, kao što je prikazano u Algoritmu \ref{alg:erc721psi_set}.
+
+\begin{algorithm}
+\caption{Postavljanje prvog u grupi u bitmapi standarda ERC-721Psi}
+\label{alg:erc721psi_set}
+\begin{algorithmic}[1]
+\Function{bitmap\_set}{id}
+    \State bucket \Eq id $\gg$ 8
+    \State mask \Eq (1 $\ll$ 255) $\gg$ (id \& 0xff)
+    \State bitmap[bucket] \OrEq mask
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
+\begin{enumerate}
+\item Učitavanje vrednosti pokazivača na naredni identifikator tokena uzrokuje trošak hladne operacije \Sl.
+\item Upis vlasničkih podataka za prvi identifikator u grupi uzrokuje trošak hladne operacije \Sj.
+\item Ažuriranje bitmape na odgovarajućoj poziciji uzrokuje trošak hladne operacije \Sd\ ako dati blok nije nula, odnosno hladne \Sj\ operacije.
+\item Ažuriranje stanja primaoca uzrokuje trošak hladne operacije \Sd, ukoliko prethodna vrednost nije bila nula.
+\item Ažuriranje vrednosti pokazivača na naredni identifikator realizuje se kao topla \Sd\ operacija, ako nije nula, jer je skladišna jedinica već pristupljena tokom validacije funkcije.
+\end{enumerate}
