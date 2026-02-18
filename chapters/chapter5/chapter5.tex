@@ -332,14 +332,20 @@ Standard ERC-721Psi \cite{ERC721Psi} predstavlja alternativu standardu ERC-721A 
 
 Radi postizanja ove efikasnosti, standard uvodi sledeće komponente:
 \begin{enumerate}
-\item Dodatnu mapu u obliku bitmape \textit{\_batchHead}, u kojoj se prati identifikator prvog tokena u grupi prilikom svakog kreiranja,
+\item Dodatnu mapu u obliku bitmape \textit{\_batchHead}, koja efikasno beleži početak svake grupe postavljanjem jednog bita na poziciji odgovarajućeg identifikatora.
 \item De Bruijnov ciklus \cite{de1946combinatorial} reda $P_8$, koji omogućava efikasno određivanje pozicije prvog postavljenog bita u bitmapi,
 \item Pretraživačku heš-tabelu koja, na osnovu vrednosti dobijene De Bruijnovim preslikavanjem, omogućava direktno određivanje indeksa početnog tokena u grupi.
 \end{enumerate}
 
 Uvođenje bitmape uvodi dodatne troškove pri izvršavanju osnovnih funkcija standarda, jer je potrebno održavati njeno stanje tokom svih pomenutih operacija. Međutim, De Bruijnov ciklus i odgovarajuća pretraživačka tabela predstavljaju konstante poznate u vreme kompajliranja te su uključene u bajtkod za izvršavanje pametnog ugovora. Njihovo korišćenje podrazumeva isključivo pristup virtuelnoj memoriji samo za čitanje, bez pristupa skladištu pametnog ugovora, te stoga ne stvara dodatne troškove u pogledu potrošnje gasa.
 
-Za razliku od ranije opisanih standarda, osnovna implementacija ERC-721Psi ne uključuje praćenje stanja adresa niti funkcionalnost uništavanja tokena. Ove mogućnosti se uvode kroz proširenja pametnog ugovora \textit{ERC721PsiAddressData} i \textit{ERC721PsiBurnable}. Navedena proširenja su uvedena radi usklađivanja eksperimentalnih uslova sa prethodnim standardima, kako bi se omogućilo konzistentno i uporedivo merenje potrošnje gasa među prethodno uvedenim standardima.
+Za razliku od ranije opisanih standarda, osnovna implementacija ERC-721Psi ne uključuje praćenje stanja adresa niti funkcionalnost uništavanja tokena. Ove mogućnosti se uvode kroz sledeća proširenja pametnog ugovora:
+
+\begin{enumerate}
+\item \textit{ERC721PsiAddressData} definiše strukturu podataka ekvivalentnu strukturi iz standarda ERC-721A, korišćenjem mape upakovanog stanja adresa \textit{\_packedAddressData}. Ovo proširenje eksplicitno razdvaja funkcionalnost praćenja stanja adresa od osnovne implementacije standarda, čime se omogućava modularno uključivanje ove funkcionalnosti samo kada je potrebna.
+\item \textit{ERC721PsiBurnable} uvodi dodatnu bitmapu \textit{\_burnedToken}, koja beleži stanje uništenosti tokena. Za efikasno određivanje relevantnih pozicija u bitmapi koristi se isti De Bruijnov ciklus i odgovarajuća pretraživačka heš-tabela kao i u slučaju originalne bitmape \textit{\_batchHead}.
+\end{enumerate}
+Navedena proširenja su uključena radi usklađivanja eksperimentalnih uslova sa prethodnim standardima, kako bi se omogućilo konzistentno i uporedivo merenje potrošnje gasa.
 
 \subsubsection{Kreiranje}
 Proces kreiranja kupona prima iste ulazne argumente kao odgovarajuća funkcija u standardu ERC-721A. Na početku izvršavanja pokazivač na naredni identifikator tokena učitava se iz skladišta u memoriju, nakon čega se sprovode iste validacije ulaznih parametara.
@@ -367,4 +373,72 @@ Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \item Ažuriranje bitmape na odgovarajućoj poziciji uzrokuje trošak hladne operacije \Sd\ ako dati blok nije nula, odnosno hladne \Sj\ operacije.
 \item Ažuriranje stanja primaoca uzrokuje trošak hladne operacije \Sd, ukoliko prethodna vrednost nije bila nula.
 \item Ažuriranje vrednosti pokazivača na naredni identifikator realizuje se kao topla \Sd\ operacija, ako nije nula, jer je skladišna jedinica već pristupljena tokom validacije funkcije.
+\end{enumerate}
+
+\subsubsection{Prenos}
+Operacija prenosa kupona zadržava istu osnovnu funkcionalnu logiku kao u standardu ERC-721A, uz dodatni korak ažuriranja bitmape. Određivanje vlasnika tokena zasniva se na pronalaženju identifikatora prvog tokena u grupi označenog u bitmapi, nakon čega se na osnovu te informacije očitava vlasništvo tokena iz mape upakovanih vlasničkih podataka.
+
+Pre početka postupka razrešavanja implicitnog vlasništva, vrši se validacija prosleđenog identifikatora tokena funkciji. Ovaj korak uključuje proveru da li identifikator pripada važećem opsegu, kao i dodatnu proveru da li je token označen kao uništen u bitmapi \textit{\_burnedToken}. Nakon uspešne validacije, određivanje vlasnika realizuje se korišćenjem funkcije \textit{\_getBatchHead}, koja pronalazi identifikator prvog tokena u odgovarajućoj grupi.
+
+Za razliku od standarda ERC-721A, gde se pretraga realizuje sekvencijalnim proveravanjem pojedinačnih identifikatora, ERC-721Psi koristi bitmapu \textit{\_batchHead}, čime se omogućava paralelnu obradu 256 identifikatora. Na ovaj način se broj potrebnih iteracija značajno smanjuje, što dovodi do znatno efikasnijeg određivanja implicitnog vlasništva.
+
+Algoritam \ref{alg:erc721psi_implicit} za pronalaženje prvog tokena u grupi sastoji se iz sledećih koraka:
+\begin{enumerate}
+\item Određuje se indeks skladišnog bloka u bitmapi kome pripada posmatrani identifikator, kao i njegova relativna pozicija unutar tog bloka.
+\item \label{BH-2} Pronađeni identifikator u datom bloku pomera se na krajnju desnu poziciju unutar bloka bitmape primenom bitovskog pomeranja udesno. Ovim postupkom razmak između prvog tokena u grupi i prosleđenog identifikatora postaje ekvivalentan poziciji najmanje značajnog postavljenog bita \eng{least significant set bit, LS1B}, za koji je poznat efikasan algoritam \cite{leiserson1998using}, razvijen za procesore koji ne poseduju instrukcije za brojanje vodećih ili završnih nula.
+\item Primenom De Bruijnovog preslikavanja i odgovarajuće pretraživačke heš-tabele, koja je ugrađena u bajtkod pametnog ugovora, određuje se pozicija najmanje značajnog postavljenog bita.
+\item Na osnovu dobijene pozicije rekonstruiše se pozicija u bitmapi identifikatora prvog tokena u grupi, pomoću koje može da se odredi skladišna jedinica koja sadrži eksplicitno definisane informacije o vlasništvu.
+\end{enumerate}
+
+Važno je napomenuti da tokom izvršavanja Koraka \ref{BH-2} može doći do slučaja da je vrednost posmatranog bloka jednaka nuli, što znači da se prvi token u grupi nalazi u nekom od prethodnih blokova. U tom slučaju se u petlji učitavaju prethodni blokovi sve dok se ne pronađe blok sa nenultom vrednošću, koji po konstrukciji sadrži identifikator prvog tokena u odgovarajućoj grupi.
+
+\begin{algorithm}
+\caption{Algoritam za pronalaženje implicitnog vlasništva u ERC-721Psi standardu}
+\label{alg:erc721psi_implicit}
+\begin{algorithmic}[1]
+\Function{bitmap\_scan\_forward}{id}
+    \State bucket \Eq id $\gg$ 8
+    \State bucketIndex \Eq (id \& 0xff)
+    \State bb \Eq bitmap[bucket]
+    \State bb \Eq bb $\gg$ (255 \Minus bucketIndex)
+    \If{bb \Gg 0}
+        \Returnn{(bucket $\ll$ 8) | (bucketIndex \Minus DeBrujin(bb))}
+    \Else
+        \While{true}
+            \State bucket\MinusMinus
+            \State bb \Eq bitmap[bucket]
+            \If{bb \Gg 0}
+                \Returnn{(bucket $\ll$ 8) | (255 \Minus DeBrujin(bb))}
+            \EndIf
+        \EndWhile
+    \EndIf
+
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Izračunavanje indeksa LS1B unutar jednog bloka ima konstantnu vremensku složenost, nezavisno od pozicije LS1B u okviru bloka. Time se omogućava istovremena obrada 256 lokacija uz konstantan trošak.
+
+Ako sa $n \geq 1$ označimo rastojanje između posmatranog tokena i prvog tokena u grupi, procenjeni trošak funkcije opisane Algoritmom \ref{alg:erc721psi_implicit} može se aproksimirati izrazom
+\begin{equation}
+\label{eq:erc721psi}
+\bigg(\frac{n}{256}+1\bigg)\cdot\texttt{SLOAD}+\bigg(\frac{n}{256}+2.5\bigg)\cdot194
+\end{equation}
+gde prvi član, kao i ranije, predstavlja trošak operacija učitavanja iz skladišta, dok drugi član predstavlja aproksimaciju svih preostalih instrukcija. Cena tih instrukcija je zaokružena radi kompaktnije formulacije, pri čemu je procena zasnovana na istoj empirijskoj analizi kao i u prethodnom slučaju.
+
+Upravo zbog učitavanja 256 lokacija istovremeno, ova metoda je značajno jeftinija od sekvencijalne pretrage. Petlja za pronalaženje prvog tokena u grupi pomoću bitmape ponavlja se znatno približno ređe nego u ERC-721A standardu, uprkos nešto većem broju aritmetičkih i bitovskih operacija. 
+
+Na primer, za $n = 1000$ procenjeni trošak je približno $\approx 134$ puta manji u odnosu na ERC-721A, dok je za $n = 10000$ trošak približno $\approx 225$ puta manji. U graničnom slučaju kada $n \rightarrow \infty$, odnos troškova teži faktoru 256.
+
+Nakon pronalaženja implicitnog vlasništva, analogno prethodnom standardu, grupno vlasništvo se deli na dva segmenta, nakon čega je potrebno eksplicitno evidentirati ovu promenu u bitmapi. Nakon toga se ažuriraju odgovarajući podaci o vlasništvu i stanju adresa kao i u prethodnom standardu.
+
+Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
+\begin{enumerate}
+\item Provera da li dati identifikator postoji, sa dodatnom proverom da li je token označen kao uništen, uz trošak dve hladne \Sl\ operacije,
+\item Trošak određivanja pozicije implicitnog vlasništva u bitmapi, izračunat formulom \ref{eq:erc721psi}.
+\item Učitavanje iz mape upakovanog stanja podataka na osnovu pronađene pozicije implicitnog vlasništva u bitmapi, što uzrokuje trošak hladne \Sl\ operacije.
+\item Ažuriranje desnog segmenta mape upakovanog stanja podataka originalnog vlasnika, što uzrokuje trošak hladne operacije \Sj.
+\item Ažuriranje desnog segmenta bitmape originalnog vlasnika, što uzrokuje trošak tople operacije \Sd\ ako naredni bitmap blok nije prazan, odnosno tople operacije \Sj\ ako je prazan.
+\item Ažuriranje stanja novog vlasnika, što uzrokuje trošak hladne operacije \Sj.
+\item Ažuriranje bitmape novog vlasnika, sa troškom od 100 gasa jer je skladišna jedinica već pristupljena, pod uslovom da nije prethodno pristupljena toplom \Sd\ operacijom.
 \end{enumerate}
