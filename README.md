@@ -3,4 +3,4 @@ Compile:
 pdflatex main.tex; bibtex main; pdflatex main.tex; pdflatex main.tex
 ```
 
-Total hours spent: 233h
+Total hours spent: 235h

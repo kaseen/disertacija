@@ -68,7 +68,6 @@ Ovakvo gusto enkodiranje podataka nužno uvodi određena ograničenja. Na primer
 
 Svi razmatrani NFT standardi dele istu osnovnu logiku za ključne operacije. Algoritam \ref{alg:nft} prikazuje pseudokod operacija kreiranja, prenosa i uništavanja, pri čemu su promenljive kupona grupisane u jednu skladišnu jedinicu, kao što je prethodno opisano. Pseudokod je zasnovan na programskom jeziku \textit{Solidity}, kao najzastupljenijem jeziku za razvoj aplikacija nad EVM-om. Na početku svake funkcije definišu se uslovi ispravnosti putem naredbe \textit{require}, u skladu sa principima bezbednog dizajna pametnih ugovora i ustaljenom praksom u industriji.
 
-% TODO ALGORITHMIC OD 1
 \begin{algorithm}
 \caption{Osnovna logika funkcija kreiranja, prenosa i uništavanja koje e-kupon implementira primenom odgovarajućih NFT standarda}
 \label{alg:nft}
@@ -82,6 +81,8 @@ Svi razmatrani NFT standardi dele istu osnovnu logiku za ključne operacije. Alg
     \State balances[to]\PlusPlus
     \State currentIndex \PlusEq quantity
 \EndFunction
+\end{algorithmic}
+\begin{algorithmic}[1]
 \Function{transfer}{from, to, id}
     \State owner \Eq ownerOf(id)
     \RequireState{owner \EqEq from}
@@ -91,6 +92,8 @@ Svi razmatrani NFT standardi dele istu osnovnu logiku za ključne operacije. Alg
     \State balances[to]\PlusPlus
     \State owners[id].owner \Eq to
 \EndFunction
+\end{algorithmic}
+\begin{algorithmic}[1]
 \Function{burn}{id}
     \State owner \Eq ownerOf(id)
     \State coupon \Eq owners[id]
@@ -103,8 +106,7 @@ Svi razmatrani NFT standardi dele istu osnovnu logiku za ključne operacije. Alg
 
 U narednim podpoglavljima, objašnjen je hronološki pregled razvoja NFT standarda. Sistematski su opisani nedostaci identifikovani u svakom standardu, koji su poslužili kao podsticaji za razvoj narednih. Za svaki standard predstavljena je logika operacija kreiranja, prenosa i sagorevanja, sa detaljnom analizom o instukcijama koje pristupaju skladištu, jer su to glavni faktori koji utiču na potrošnju gasa. Uticaj ostalih operacija je minimalan i biće procenjen po potrebi. Na kraju svakoj standarda, demonstrirane su modifikacije datog NFT standarda za implementaciju kuponskoh rešenja koji se dalje korsiti u merenju.
 
-% TODO NAME SYMBOL
-Radi prilagođavanja svih standarda implementaciji elektronskih kupona, uvedena je dodatna promenljiva koja definiše trajanje osnovnog vremenskog intervala, označena kao \textit{\_BLOCK\_DURATION}. Ova vrednost se inicijalizuje prilikom postavljanja pametnog ugovora na mrežu i koristi se za određivanje ukupnog trajanja validnosti kupona. Inicijalizacija ovih promenljivih vrši se u konstruktoru pametnog ugovora, kao što je prikazano u Algoritmu \ref{alg:erc721_constructor}.
+Prilikom postavljanja pametnog ugovora na mrežu, NFT standardi čuvaju metapodatke, ime i simbol, radi jednostavnog razlikovanja kolekcija, jer bi se bez njih kolekcija prikazivala kao adresa ugovora što nije ljudski čitljivo. Dodatno, radi prilagođavanja standarda implementaciji elektronskih kupona, uvedena je dodatna promenljiva koja definiše trajanje osnovnog vremenskog intervala, označena kao \textit{\_BLOCK\_DURATION}, koja se takođe inicijalizuje prilikom postavljanja pametnog ugovora na mrežu, i koristi za određivanje ukupnog trajanja validnosti kupona. Inicijalizacija ovih promenljivih vrši se u konstruktoru pametnog ugovora, kao što je prikazano u Algoritmu \ref{alg:erc721_constructor}.
 
 \begin{algorithm}
 \caption{Implementacija konstruktora elektronskih kupona u skladu sa NFT standardom}
@@ -153,7 +155,10 @@ Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 
 \subsubsection{Uništavanje}
 Operacija uništavanja omogućava uklanjanje kupona iz sistema nakon isteka perioda validnosti. Kao i kod prenosa, na početku se učitava vlasnik radi validacije. Implementacija kupona uvodi dodatnu proveru zasnovanu na enkodiranim vremenskim parametrima, čime se osigurava da je kupon istekao. Ova provera formalno se izražava uslovom:
-$$ startTimestamp + \_BLOCK\_DURATION \cdot numOfBlocks \leq block.timestamp $$
+\begin{equation}
+\label{eq:erc721_burn}
+startTimestamp + \_BLOCK\_DURATION \cdot numOfBlocks \leq block.timestamp
+\end{equation}
 
 Ukoliko je uslov ispunjen, skladišna jedinica koja sadrži informacije o kuponu briše se iz mape vlasnika, čime se skladišna lokacija vraća u nulto stanje.
 
@@ -248,15 +253,15 @@ Kako je vlasništvo implicitno definisano, standard uvodi funkciju \textit{\_pac
 \label{alg:erc721a_implicit}
 \begin{algorithmic}[1]
 \Function{\_packedOwnershipOf}{id}
-    \State packed \Eq \_packedOwnerships[id]
+    \State packed \Eq \_packedOwnerships[id]\coldSLOAD
     \If{packed \Neq 0}
         \Returnn{packed}
     \EndIf
-    \If{id \Geq \_currentIndex}
+    \If{id \Geq \_currentIndex}\coldSLOAD
         \Revert
     \EndIf
     \While{true}
-        \State packed \Eq \_packedOwnerships[id]
+        \State packed \Eq \_packedOwnerships[id]\coldSLOAD
         \If{packed \Neq 0}
             \Returnn{packed}
         \EndIf 
@@ -399,14 +404,14 @@ Važno je napomenuti da tokom izvršavanja Koraka \ref{BH-2} može doći do slu�
 \Function{bitmap\_scan\_forward}{id}
     \State bucket \Eq id $\gg$ 8
     \State bucketIndex \Eq (id \& 0xff)
-    \State bb \Eq bitmap[bucket]
+    \State bb \Eq bitmap[bucket]\coldSLOAD
     \State bb \Eq bb $\gg$ (255 \Minus bucketIndex)
     \If{bb \Gg 0}
         \Returnn{(bucket $\ll$ 8) | (bucketIndex \Minus DeBrujin(bb))}
     \Else
         \While{true}
             \State bucket\MinusMinus
-            \State bb \Eq bitmap[bucket]
+            \State bb \Eq bitmap[bucket]\coldSLOAD
             \If{bb \Gg 0}
                 \Returnn{(bucket $\ll$ 8) | (255 \Minus DeBrujin(bb))}
             \EndIf
@@ -428,17 +433,31 @@ gde prvi član, kao i ranije, predstavlja trošak operacija učitavanja iz sklad
 
 Upravo zbog učitavanja 256 lokacija istovremeno, ova metoda je značajno jeftinija od sekvencijalne pretrage. Petlja za pronalaženje prvog tokena u grupi pomoću bitmape ponavlja se znatno približno ređe nego u ERC-721A standardu, uprkos nešto većem broju aritmetičkih i bitovskih operacija. 
 
-Na primer, za $n = 1000$ procenjeni trošak je približno $\approx 134$ puta manji u odnosu na ERC-721A, dok je za $n = 10000$ trošak približno $\approx 225$ puta manji. U graničnom slučaju kada $n \rightarrow \infty$, odnos troškova teži faktoru 256.
+Na primer, za $n = 1000$ procenjeni trošak je približno $\approx$134 puta manji u odnosu na ERC-721A, dok je za $n = 10000$ trošak približno $\approx$225 puta manji. U graničnom slučaju kada $n \rightarrow \infty$, odnos troškova teži faktoru 256.
 
 Nakon pronalaženja implicitnog vlasništva, analogno prethodnom standardu, grupno vlasništvo se deli na dva segmenta, nakon čega je potrebno eksplicitno evidentirati ovu promenu u bitmapi. Nakon toga se ažuriraju odgovarajući podaci o vlasništvu i stanju adresa kao i u prethodnom standardu.
 
 Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \begin{enumerate}
-\item Provera da li dati identifikator postoji, sa dodatnom proverom da li je token označen kao uništen, uz trošak dve hladne \Sl\ operacije,
+\item Provera da li dati identifikator postoji, sa dodatnom proverom da li je token označen kao uništen, uz trošak dve hladne \Sl\ operacije.
 \item Trošak određivanja pozicije implicitnog vlasništva u bitmapi, izračunat formulom \ref{eq:erc721psi}.
 \item Učitavanje iz mape upakovanog stanja podataka na osnovu pronađene pozicije implicitnog vlasništva u bitmapi, što uzrokuje trošak hladne \Sl\ operacije.
 \item Ažuriranje desnog segmenta mape upakovanog stanja podataka originalnog vlasnika, što uzrokuje trošak hladne operacije \Sj.
 \item Ažuriranje desnog segmenta bitmape originalnog vlasnika, što uzrokuje trošak tople operacije \Sd\ ako naredni bitmap blok nije prazan, odnosno tople operacije \Sj\ ako je prazan.
 \item Ažuriranje stanja novog vlasnika, što uzrokuje trošak hladne operacije \Sj.
 \item Ažuriranje bitmape novog vlasnika, sa troškom od 100 gasa jer je skladišna jedinica već pristupljena, pod uslovom da nije prethodno pristupljena toplom \Sd\ operacijom.
+\end{enumerate}
+
+\subsubsection{Uništavanje}
+Operacija uništavanja prati istu osnovnu logiku kao i u ERC-721A standardu, uz dodatno ažuriranje bitmape koja evidentira stanje uništenosti tokena. Najpre se određuje implicitni vlasnik tokena pretraživanjem bitmape početaka grupa, čime se istovremeno implicitno proverava da li je kupon već iskorišten. Nakon određivanja informacija o vlasništvu, proverava se da li su ispunjeni uslovi za uništavanje primenom formule \ref{eq:erc721_burn}. Ukoliko je provera uspešna, evidentira se stanje uništenosti tokena i ažurira odgovarajuće stanje u mapi upakovanog stanja adresa.
+
+Zbog korišćenja ekstenzije koja beleži stanje uništenosti tokena, ova operacija podrazumeva postavljanje odgovarajućeg bita u bitmapi uništenosti na vrednost \textit{1}. Kao posledica ovakvog pristupa, iako token postaje trajno nevažeći, ne dolazi do povraćaja gasa, jer se tokom uništavanja vrši dodatni upis u skladište, analogno prethodnom standardu.
+
+Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
+\begin{enumerate}
+\item Provera da li dati identifikator postoji, sa dodatnom proverom da li je token označen kao uništen, uz trošak dve hladne \Sl\ operacije.
+\item Trošak određivanja pozicije implicitnog vlasništva u bitmapi, izračunat formulom \ref{eq:erc721psi}.
+\item Učitavanje iz mape upakovanog stanja podataka na osnovu pronađene pozicije implicitnog vlasništva u bitmapi, što uzrokuje trošak hladne \Sl\ operacije.
+\item Ažuriranje bitmape uništenosti tokena, što uzrokuje trošak tople \Sd\ operacije, ako nije nula.
+\item Ažuriranje stanja korisnika u mapi upakovanog stanja adresa, što uzrokuje trošak hladne \Sd\ operacije, ako nije nula.
 \end{enumerate}
