@@ -471,3 +471,14 @@ Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \item Ažuriranje bitmape uništenosti tokena, što uzrokuje trošak tople \Sd\ operacije, ako nije nula.
 \item Ažuriranje stanja korisnika u mapi upakovanog stanja adresa, što uzrokuje trošak hladne \Sd\ operacije, ako nije nula.
 \end{enumerate}
+
+\section{Rezultati eksperimentalne analize}
+Nakon definisanja različitih pristupa implementaciji elektronskih kupona kroz NFT standarde, kao i analize njihovih operacija, za eksperimentalno određivanje potrošnje gasa korišćen je razvojni okvir \textit{Foundry} \cite{foundry}, koji predstavlja široko prihvaćen alat za razvoj i testiranje pametnih ugovora. Ovaj okvir obuhvata alat \textit{forge} (v0.2.0), koji se koristi za izgradnju, testiranje i implementaciju pametnih ugovora, kao i alat \textit{anvil} (v0.2.0), koji obezbeđuje lokalni čvor Eterijum testne mreže. U okviru ovog okruženja implementirani su pametni ugovori za sve posmatrane standarde, pri čemu je merena potrošnja gasa za izvršavanje operacija nad elektronskim kuponima.
+
+Radi obezbeđivanja doslednosti i uporedivosti rezultata, svi pametni ugovori kompajlirani su korišćenjem kompajlera \textit{solc} v0.8.22, sa onemogućenom optimizacijom. Za implementaciju ERC-721 standarda korišćena je referentna implementacija biblioteke \textit{OpenZeppelin} v4.9.0 \cite{openzeppelin}, dok su za standarde ERC-721A i ERC-721Psi korišćene implementacije v4.2.3, odnosno v0.7.0.
+
+U cilju preciznog poređenja efikasnosti implementacija, analizirana je isključivo potrošnja gasa posmatranih operacija nad kuponima, bez uključivanja osnovnog troška transakcije od 21.000 jedinica gasa, koji je konstantan i nezavisan od implementacije standarda. Pre sprovođenja eksperimenata izvršena je inicijalizacija svih relevantnih internih promenljivih stanja, uključujući promenljivu \textit{\_currentIndex} kod svih standarda, promenljivu \textit{\_burnCounter} kod ERC-721A standarda, kao i obe bitmape kod ERC-721Psi standarda.
+
+U eksperimentalnom delu analizirana je zavisnost potrošnje gasa od broja kupona kreiranih u jednoj transakciji. Testovi su sprovedeni pozivanjem funkcije za kreiranje sa vrednostima parametra $n \in \{1, 2, 3, 5, 10, 20\}$, pri čemu je za svaku vrednost izmerena ukupna potrošnja gasa. Važno je napomenuti da je broj kreiranih kupona jedini parametar koji utiče na potrošnju gasa ove operacije, dok ostali parametri imaju konstantan uticaj.
+
+Analogno tome, za analizu operacija prenosa i uništavanja korišćen je identifikator kupona oblika $n+1$, koji predstavlja rastojanje između prvog tokena u grupi i posmatranog tokena. Na ovaj način simuliran je najgori slučaj određivanja implicitnog vlasništva u okviru grupe. U slučaju analize uništavanja više kupona u jednoj transakciji, funkcija uništavanja pozivana je uzastopno za različite identifikatore kupona, čime je obezbeđeno da se u svakom pozivu obrađuje različiti kupon.
