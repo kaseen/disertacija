@@ -482,3 +482,121 @@ U cilju preciznog poređenja efikasnosti implementacija, analizirana je isključ
 U eksperimentalnom delu analizirana je zavisnost potrošnje gasa od broja kupona kreiranih u jednoj transakciji. Testovi su sprovedeni pozivanjem funkcije za kreiranje sa vrednostima parametra $n \in \{1, 2, 3, 5, 10, 20\}$, pri čemu je za svaku vrednost izmerena ukupna potrošnja gasa. Važno je napomenuti da je broj kreiranih kupona jedini parametar koji utiče na potrošnju gasa ove operacije, dok ostali parametri imaju konstantan uticaj.
 
 Analogno tome, za analizu operacija prenosa i uništavanja korišćen je identifikator kupona oblika $n+1$, koji predstavlja rastojanje između prvog tokena u grupi i posmatranog tokena. Na ovaj način simuliran je najgori slučaj određivanja implicitnog vlasništva u okviru grupe. U slučaju analize uništavanja više kupona u jednoj transakciji, funkcija uništavanja pozivana je uzastopno za različite identifikatore kupona, čime je obezbeđeno da se u svakom pozivu obrađuje različiti kupon.
+
+\begin{description}
+
+\item \textbf{Kreiranje više kupona u jednoj transakciji}
+
+Pretpostavlja se da adrese korisnika imaju nulta početna stanja pre operacije kreiranja, što odgovara scenariju u kome korisnik po prvi put koristi platformu. U tom slučaju, trošak kreiranja prvog kupona veći je za 17.100 jedinica gasa u odnosu na naredna kreiranja, što odgovara razlici između operacija \Sj\ i \Sd. Ova razlika proizlazi iz činjenice da se pri prvom upisu u mapu stanja vrši prelaz iz nulte u nenultu vrednost, dok se kod narednih upisa ažurira već inicijalizovana lokacija.
+
+Kao što je očekivano, standard ERC-721 ostvaruje najveće troškove gasa u poređenju sa standardima ERC-721A i ERC-721Psi, jer podrazumeva eksplicitno čuvanje informacija o vlasništvu za svaki pojedinačni kupon. Nasuprot tome, standardi ERC-721A i ERC-721Psi postižu značajno niže troškove zahvaljujući implicitnom modelovanju vlasništva u okviru sekvencijalno dodeljenih identifikatora, pri čemu je ERC-721Psi neznatno skuplji zbog dodatnog troška ažuriranja bitmape.
+
+\begin{figure}[H]
+\centering
+
+\begin{minipage}{0.48\textwidth}
+\centering
+
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{c|c c c}
+ & \textbf{ERC-721} & \textbf{ERC-721A} & \textbf{ERC-721Psi} \\
+\hline
+\textbf{1} & 54.095 & 52.104 & 59.089 \\
+\textbf{2} & 81.189 & 54.035 & 61.077 \\
+\textbf{3} & 108.194 & 56.010 & 62.994 \\
+\textbf{5} & 162.424 & 59.827 & 66.856 \\
+\textbf{10} & 297.718 & 69.520 & 76.559 \\
+\textbf{20} & 568.444 & 88.819 & 95.993 \\
+\end{tabular}
+%\captionof{table}{TODO}
+%\label{tab:TODO}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[height=4cm]{example-image}
+%\captionof{figure}{TODO}
+%\label{tab:TODO}
+\end{minipage}
+
+\end{figure}
+
+\item \textbf{Prenos kupona u zavisnosti od udaljenosti od početka grupe}
+
+Pretpostavlja se da adresa primaoca ima nulto početno stanje, dok adresa pošiljaoca poseduje više kupona, što predstavlja tipičan slučaj u praktičnoj primeni. Kao što je očekivano, trošak prenosa kod standarda ERC-721 ostaje konstantan, budući da se vlasništvo nad svakim kuponom eksplicitno čuva nezavisno od ostalih kupona.
+
+Za standard ERC-721A uočava se da je trošak prenosa manji za kupone koji su bliže početku grupe, ali raste sa povećanjem udaljenosti, što je posledica potrebe za pronalaženjem implicitno definisanog vlasništva. Suprotno tome, standard ERC-721Psi ostvaruje približno konstantan trošak prenosa, jer se informacija o početku grupe efikasno pronalazi korišćenjem bitmape, pri čemu se, za posmatrane parametre testiranja, svi kuponi nalaze unutar istog bloka bitmape.
+
+Dalja analiza pokazuje da, analogno operaciji kreiranja, trošak prenosa opada za 17.100 jedinica gasa ukoliko adresa primaoca već poseduje nenultu vrednost u mapi stanja. Takođe, kod standarda ERC-721A i ERC-721Psi, ukoliko preneti kupon predstavlja početak grupe ili, u slučaju ERC-721A, ima postavljenu binarnu promenljivu \textit{\_nextInitialized}, izbegava se dodatna \Sj\ operacija, čime se ostvaruje dodatno smanjenje troškova. Konačno, jedino standard ERC-721 ostvaruje povraćaj gasa u slučaju kada se nakon prenosa stanje pošiljaoca smanjuje na nulu, što rezultuje smanjenjem ukupnog troška prenosa za 4.800 jedinica gasa.
+
+\begin{figure}[H]
+\centering
+
+\begin{minipage}{0.48\textwidth}
+\centering
+
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{c|c c c}
+ & \textbf{ERC-721} & \textbf{ERC-721A} & \textbf{ERC-721Psi} \\
+\hline
+\textbf{1} & 46.844 & 89.248 & 105.088 \\
+\textbf{2} & 46.844 & 91.488 & 105.108 \\
+\textbf{3} & 46.844 & 93.708 & 105.108 \\
+\textbf{5} & 46.844 & 98.213 & 105.064 \\
+\textbf{10} & 46.844 & 109.392 & 105.106 \\
+\textbf{20} & 46.844 & 131.869 & 105.065 \\
+\end{tabular}
+%\captionof{table}{TODO}
+%\label{tab:TODO}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[height=4cm]{example-image}
+%\captionof{figure}{TODO}
+%\label{tab:TODO}
+\end{minipage}
+
+\end{figure}
+
+\item \textbf{Uništavanje kupona u zavisnosti od udaljenosti od početka grupe}
+
+Pretpostavlja se da korisnik nakon uništavanja kupona zadržava nenulto stanje, što predstavlja realističan scenario imajući u vidu da se analiza odnosi na slučaj grupnog kreiranja više kupona u okviru jedne transakcije. 
+
+Trošak uništavanja kod standarda ERC-721 ostaje konstantan, nezavisno od udaljenosti kupona unutar grupe, budući da se vlasništvo nad svakim kuponom čuva eksplicitno i nezavisno. Analogno operaciji prenosa, povraćaj gasa primenjuje se samo kod ovog standarda, što ga čini troškovno najpovoljnijim.
+
+Kod standarda ERC-721Psi trošak uništavanja ostaje približno konstantan pod pretpostavkom da se svi posmatrani kuponi nalaze unutar istog bloka bitmape. U tom slučaju, ažurira se već inicijalizovani blok, čija je vrednost nenulta, što je realistična pretpostavka imajući u vidu da jedan blok bitmape obuhvata 256 uzastopnih identifikatora.
+
+Sa druge strane, standard ERC-721A ostvaruje najveće troškove, posebno pri većim udaljenostima od početka grupe, usled potrebe za pronalaženjem implicitno definisanog vlasništva. Dodatno, operacija uništavanja dovodi do razdvajanja prethodno jedinstvene grupe na dva segmenta, pri čemu je neophodno eksplicitno evidentirati granice novonastalih segmenata, što generiše dodatne troškove.
+
+\begin{figure}[H]
+\centering
+
+\begin{minipage}{0.48\textwidth}
+\centering
+
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{c|c c c}
+ & \textbf{ERC-721} & \textbf{ERC-721A} & \textbf{ERC-721Psi} \\
+\hline
+\textbf{1} & 13.873 & 65.199 & 22.006 \\
+\textbf{2} & 13.873 & 67.485 & 22.007 \\
+\textbf{3} & 13.873 & 69.745 & 22.008 \\
+\textbf{5} & 13.873 & 74.209 & 22.006 \\
+\textbf{10} & 13.873 & 85.435 & 22.072 \\
+\textbf{20} & 13.873 & 107.822 & 22.050 \\
+\end{tabular}
+%\captionof{table}{TODO}
+%\label{tab:TODO}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[height=4cm]{example-image}
+%\captionof{figure}{TODO}
+%\label{tab:TODO}
+\end{minipage}
+
+\end{figure}
+
+\end{description}
