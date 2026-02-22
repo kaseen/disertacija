@@ -494,12 +494,16 @@ Kao što je očekivano, standard ERC-721 ostvaruje najveće troškove gasa u por
 \begin{figure}[H]
 \centering
 
-\begin{minipage}{0.48\textwidth}
+\begin{minipage}{0.46\textwidth}
 \centering
 
+\small
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{c|c c c}
- & \textbf{ERC-721} & \textbf{ERC-721A} & \textbf{ERC-721Psi} \\
+& 
+\textbf{\tikz{\draw[black, fill=gray!20] (0,0) rectangle (0.15,0.15);} ERC-721} &
+\textbf{\tikz{\draw[black, fill=gray!90] (0,0) rectangle (0.15,0.15);} ERC-721A} &
+\textbf{\tikz{\draw[black, fill=black!80] (0,0) rectangle (0.15,0.15);} ERC-721Psi} \\
 \hline
 \textbf{1} & 54.095 & 52.104 & 59.089 \\
 \textbf{2} & 81.189 & 54.035 & 61.077 \\
@@ -508,17 +512,48 @@ Kao što je očekivano, standard ERC-721 ostvaruje najveće troškove gasa u por
 \textbf{10} & 297.718 & 69.520 & 76.559 \\
 \textbf{20} & 568.444 & 88.819 & 95.993 \\
 \end{tabular}
-%\captionof{table}{TODO}
-%\label{tab:TODO}
 \end{minipage}
 \hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[height=4cm]{example-image}
-%\captionof{figure}{TODO}
-%\label{tab:TODO}
-\end{minipage}
+\begin{tikzpicture}
+\begin{axis}[
+    % Velicina
+    width=\textwidth,
+    height=4.8cm,
+    % Tip
+    ybar,
+    bar width=6pt,
+    % y osa
+    ymin=0,
+    ymax=600000,
+    ytick={0,60000,120000,180000,240000,300000,360000,420000,480000,540000,600000},
+    scaled y ticks=false,
+    y tick label style={
+        font=\tiny,
+        /pgf/number format/fixed,
+        /pgf/number format/1000 sep={.}
+    },
+    ymajorgrids=true,
+    grid style={dashed,gray!40},
+    % x osa
+    symbolic x coords={1,2,3,5,10,20},
+    xtick=data,
+    xticklabel style={
+        font=\tiny,
+        yshift=5pt
+    },
+    xtick style={draw=none}
+]
 
+\addplot[fill=gray!20] coordinates {(1,54095) (2,81189) (3,108194) (5,162424) (10,297718) (20,568444)};
+\addplot[fill=gray!90] coordinates {(1,52104) (2,54035) (3,56010) (5,59827) (10,69520) (20,88819)};
+\addplot[fill=black!80]  coordinates {(1,59089) (2,61077) (3,62994) (5,66856) (10,76559) (20,95993)};
+
+\end{axis}
+\end{tikzpicture}
+\end{minipage}
+\caption{Potrošnja gasa NFT standarda prilikom višestrukog kreiranja kupona u jednoj transakciji}
 \end{figure}
 
 \item \textbf{Prenos kupona u zavisnosti od udaljenosti od početka grupe}
@@ -585,6 +620,130 @@ Sa druge strane, standard ERC-721A ostvaruje najveće troškove, posebno pri ve�
 \textbf{5} & 13.873 & 74.209 & 22.006 \\
 \textbf{10} & 13.873 & 85.435 & 22.072 \\
 \textbf{20} & 13.873 & 107.822 & 22.050 \\
+\end{tabular}
+%\captionof{table}{TODO}
+%\label{tab:TODO}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[height=4cm]{example-image}
+%\captionof{figure}{TODO}
+%\label{tab:TODO}
+\end{minipage}
+
+\end{figure}
+
+\item \textbf{Uništavanje više kupona u jednoj transakciji}
+
+Korisnicima je omogućeno da unište više kupona u okviru jedne transakcije. U ovom eksperimentu pretpostavlja se da proces uništavanja započinje od prvog kupona u sekvenci, pri čemu se broj uzastopno uništenih kupona varira za $n \in \{1, 2, 3, 4, 5\}$. Cilj ove analize jeste da se prikaže opšte ponašanje pri višestrukom uništavanju kupona u okviru iste transakcije, bez razmatranja slučajeva u kojima se kuponi nalaze na proizvoljnim pozicijama unutar prethodno formirane grupe.
+
+Uočava se da standard ERC-721 ostvaruje najniži početni trošak, budući da se prilikom uništavanja oslobađa skladišna jedinica i ostvaruje povraćaj gasa od 4.800 jedinica. Međutim, svaka naredna operacija podrazumeva dodatne skladišne pristupe, pri čemu se i dalje plaća razlika između troška skladišnog pristupa i ostvarivog povraćaja, tako da ukupni trošak raste približno linearno sa brojem uništenih kupona.
+
+Kod standarda ERC-721Psi ne postoji mehanizam povraćaja gasa, ali se tokom uzastopnih uništavanja ažurira ista bitmap struktura koja evidentira stanje kupona. Nakon prvog upisa, svaka naredna izmena unutar iste transakcije predstavlja skladišni pristup, čiji je trošak 100 jedinica gasa. Posledično, počevši od određenog broja uništenih kupona, standard ERC-721Psi postaje troškovno povoljniji u odnosu na ERC-721.
+
+Standard ERC-721A ostvaruje najveće troškove u ovom scenariju, budući da se za svaki uništeni kupon eksplicitno ažuriraju informacije o vlasništvu, bez ostvarivanja dodatnog povraćaja gasa, što dovodi do rasta ukupne potrošnje.
+
+\begin{figure}[H]
+\centering
+
+\begin{minipage}{0.48\textwidth}
+\centering
+
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{c|c c c}
+ & \textbf{ERC-721} & \textbf{ERC-721A} & \textbf{ERC-721Psi} \\
+\hline
+\textbf{1} & 13.786 & 45.770 & 22.051 \\
+\textbf{2} & 22.580 & 74.880 & 28.196 \\
+\textbf{3} & 32.493 & 104.079 & 34.412 \\
+\textbf{4} & 43.332 & 133.149 & 40.627 \\
+\textbf{5} & 54.191 & 162.327 & 46.773 \\
+\end{tabular}
+%\captionof{table}{TODO}
+%\label{tab:TODO}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[height=4cm]{example-image}
+%\captionof{figure}{TODO}
+%\label{tab:TODO}
+\end{minipage}
+
+\end{figure}
+
+\item \textbf{Ponašanje operacija ERC-721A i ERC-721Psi pri velikim grupnim operacijama}
+
+Kao što je pokazano u formulama \ref{eq:erc721a} i \ref{eq:erc721psi}, prednost standarda ERC-721Psi dolazi do izražaja prilikom grupnih kreiranja. U nastavku se analizira ponašanje svake od osnovnih operacija za $n \in \{100, 1.000, 10.000\}$. Troškovi operacije kreiranja za navedene vrednosti parametra $n$ gotovo su identični kod oba standarda, dok se kod operacija prenosa i uništavanja uočavaju značajne razlike u potrošnji gasa.
+
+\begin{figure}[H]
+\centering
+
+\begin{minipage}{0.48\textwidth}
+\centering
+
+\renewcommand{\arraystretch}{1.7}
+\begin{tabular}{c c|c c}
+&  & \textbf{ERC-721A} & \textbf{ERC-721Psi} \\
+\hline
+
+\multirow{3}{*}{\rotatebox{90}{\textbf{Kreiranje}}}
+& \textbf{100} & 243.154 & 251.272 \\
+& \textbf{1.000} & 1.980.198 & 1.998.171 \\
+& \textbf{100.000} & 19.350.153 & 19.467.128 \\
+\hline
+
+\multirow{3}{*}{\rotatebox{90}{\textbf{Prenos}}}
+& \textbf{100} & 311.083 & 105.108 \\
+& \textbf{1.000} & 2.328.005 & 130.779 \\
+& \textbf{100.000} & 22.476.835 & 194.654 \\
+\hline
+
+\multirow{3}{*}{\rotatebox{90}{\textbf{Uništavanje}}}
+& \textbf{100} & 287.103 & 22.050 \\
+& \textbf{1.000} & 2.304.024 & 46.000 \\
+& \textbf{100.000} & 22.452.766 & 128.628 \\
+\hline
+
+\end{tabular}
+%\captionof{table}{TODO}
+%\label{tab:TODO}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[height=4cm]{example-image}
+%\captionof{figure}{TODO}
+%\label{tab:TODO}
+\end{minipage}
+
+\end{figure}
+
+\item \textbf{Postavljanje pametnih ugovora na mrežu}
+
+Prethodne analize bile su usmerene na troškove gasa koje snose korisnici, s ciljem unapređenja korisničkog iskustva, budući da upravo oni iniciraju transakcije. Sa stanovišta kompanija i preduzeća, relevantan je inicijalni trošak postavljanja pametnog ugovora na mrežu, na kojoj će korisnici naknadno izvršavati optimizovane transakcije.
+
+Svi prethodno prikazani rezultati dobijeni su sa isključenim optimizatorom kompajlera, kako bi izveštaji o potrošnji gasa bili što precizniji i transparentniji. U nastavku se prikazuju troškovi postavljanja pametnog ugovora sa isključenim i sa uključenim optimizatorom, pri čemu je optimizator podešen na podrazumevanu vrednost od 200 pokretanja.
+
+Kao što se može očekivati, standard ERC-721Psi ostvaruje najveći trošak postavljanja, budući da sadrži dodatnu logiku za održavanje bitmap strukture, uključujući implementaciju de Brujinovog ciklusa i prateće pretraživačke heš strukture, koje su uključene u bajtkod pri postavljanju ugovora.
+
+\begin{figure}[H]
+\centering
+
+\begin{minipage}{0.48\textwidth}
+\centering
+
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{c|c c}
+ & \textbf{\parbox{2.5cm}{\centering optimizator \\
+isključen}} & 
+\textbf{\parbox{2.5cm}{\centering optimizator \\
+uključen}} \\
+\hline
+\textbf{ERC-721} & 1.461.405 & 814.973 \\
+\textbf{ERC-721A} & 1.346.155 & 783.314 \\
+\textbf{ERC-721Psi} & 2.308.873 & 1.331.204 \\
 \end{tabular}
 %\captionof{table}{TODO}
 %\label{tab:TODO}
