@@ -759,3 +759,20 @@ uključen}} \\
 \end{figure}
 
 \end{description}
+
+\section{Ograničenja predložene metodologije}
+U okviru predložene metodologije, za reprezentaciju proizvoda ili usluga sa jedinstvenim identifikatorom na javnim EVM-kompatibilnim blokčejn mrežama korišćeni su postojeći NFT standardi. Optimizacija je ostvarena iskorišćavanjem neiskorišćenih bitova unutar mapiranja vlasništva, čime je omogućeno pakovanje dodatnih atributa proizvoda ili usluge u okviru jedne skladišne jedinice. Na taj način smanjen je broj operacija čitanja i upisa u skladište, što direktno utiče na smanjenje potrošnje gasa.
+
+Međutim, predstavljeni koncept može se primeniti i na druge blokčejn sisteme, pod uslovom da pametni ugovori nemaju ograničen skladišni kapacitet, jer u takvom slučaju svi tokeni mogu biti modelovani u okviru jedinstvenog ugovora, čime se otvara mogućnost primene identične NFT logike. Dodatno, ukoliko je skladišna jedinica tih sistema veće dužine u odnosu na EVM model, dodatni prostor se može iskoristiti za zapis većeg broja podataka unutar jednog skladišnog slota.
+
+Iako je analiza sprovedena nad javnim blokčejn sistemima, koncept optimalnog pakovanja podataka nije ograničen isključivo na njih. Pristup je primenljiv i u privatnim ili dozvolom ograničenim blokčejn mrežama, jer se zasniva na opštem principu racionalnog korišćenja skladišnog prostora. Ovaj pristup doprinosi smanjenju ukupne količine podataka koje čuvaju čvorovi mreže, smanjenju veličine blokova i povećanju ekonomske održivosti celokupnog ekosistema.
+
+Predloženi metodološki okvir može se integrisati u šire studije koje se bave konkretnim domenima primene. U slučajevima kada je potrebno koristiti više skladišnih jedinica za zapis složenijih struktura podataka, predstavljeni šematski model omogućava relativno jednostavno proširenje analize i kvantifikaciju efikasnosti takvog pristupa.
+
+Međutim, identifikovana su sledeća ograničenja predložene metodologije:
+\begin{enumerate}
+\item Prilikom pakovanja više promenljivih u jednu skladišnu jedinicu polazi se od pretpostavke da je veličina adrese u EVM okruženju 160 bita. S obzirom na dinamičan razvoj blokčejn tehnologije, ne postoji garancija da će ova veličina ostati nepromenjena. Eventualna promena mogla bi smanjiti raspoloživi prostor unutar skladišnog slota, čime bi bilo neophodno prilagoditi predloženi model optimizacije, pri čemu bi osnovni koncept metodologije ostao nepromenjen.
+\item Upotreba implicitnog vlasništva uvodi ograničenje u kontekstu grupnog kreiranja NFT-ova. Kada se više tokena kreira u okviru iste transakcije, podaci se eksplicitno čuvaju samo za prvi token, dok ostali implicitno nasleđuju iste vrednosti. Ovakav pristup je efikasan u slučaju identičnih instanci, ali postaje ograničavajući u scenarijima koji zahtevaju veću raznovrsnost atributa unutar jedne serije.
+\item Analiza je fokusirana na statičke modele proizvoda i usluga, kod kojih se atributi ne menjaju često ili ne zahtevaju složene dinamičke interakcije. Postoje poslovni modeli sa izraženom dinamikom podataka koji nisu obuhvaćeni ovom analizom, a koji bi zahtevali dodatne mehanizme ažuriranja i potencijalno drugačiju strukturu skladištenja.
+\item Predloženi pristup primenljiv je na blokčejn sisteme u kojima NFT standard funkcioniše u okviru jednog pametnog ugovora sa praktično neograničenim skladištem. Suprotan primer predstavlja arhitektura kakva je primenjena na asinhronoj mreži blokčejna \textit{Telegram Open Network} \cite{durov2020telegram}, gde se svaki NFT implementira kao zaseban ugovor \cite{TEP62}, sa ograničenim skladišnim kapacitetom i uslovljenom asinhronom komunikacijom.
+\end{enumerate}
