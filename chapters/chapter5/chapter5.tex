@@ -759,22 +759,3 @@ uključen}} \\
 \end{figure}
 
 \end{description}
-
-\section{Arhitektonske strategije za proširivost NFT-zasnovane platforme}
-Pored osnovnih operacija kreiranja, prenosa i uništavanja, značajnu ulogu ima i funkcija odobravanja \eng{approve}, koja omogućava vlasniku NFT-a da ovlasti drugu adresu za prenos konkretnog tokena u njegovo ime. Time se uvodi mehanizam imenovanja prava raspolaganja, bez prenosa vlasništva. Zbog prilagodljive prirode pametnih ugovora, ova funkcionalnost može se proširiti ili modifikovati, na primer tako da ovlašćena adresa može izvršiti i operaciju uništavanja tokena u ime vlasnika, u skladu sa poslovnom logikom platforme.
-
-NFT standardi takođe predviđaju mehanizam tzv. zakačaljki \eng{hooks}, odnosno funkcija koje se pozivaju pre i nakon svake operacije prenosa, kroz interne funkcije \textit{\_beforeTokenTransfer} i \textit{\_afterTokenTransfer}. Ove funkcije su podrazumevano prazne, ali omogućavaju proširenje osnovnog ponašanja bez izmene standardne logike. Na primer, pre izvršenja prenosa može se implementirati dodatna provera autorizacije, kojom se potvrđuje da pošiljalac ili primalac pripada unapred definisanoj grupi korisnika.
-
-Korišćenjem ovih mehanizama pametnih ugovora, distribuirana platforma za e-trgovinu može obezbediti širok spektar funkcionalnosti, uz zadržavanje formalne konzistentnosti i sigurnosnih garancija javne blockchain mreže gde se poslovna pravila mogu se implementirati direktno na nivou ugovora.
-
-U arhitekturi platforme moguće je predvideti postojanje više međusobno povezanih pametnih ugovora. Posebnu ulogu može imati tzv. fabrički ugovor \eng{factory contract} \cite{xu2018pattern}, čija je funkcija upravljanje postojećim NFT kolekcijama i dinamičko kreiranje novih ugovora po potrebi. Kao centralna tačka interakcije, ovaj ugovor može prosleđivati pozive odgovarajućim implementacijama, čime se postiže modularnost i jasna podela odgovornosti.
-
-Iako je kod pametnog ugovora po svojoj prirodi neizmenljiv nakon postavljanja na mrežu, ovo ograničenje može se prevazići primenom nadogradivih arhitektura \cite{meisami2023comprehensive}. Uobičajen pristup podrazumeva razdvajanje skladišne i izvršne logike:
-\begin{enumerate}
-\item Zastupnički ugovor \eng{proxy contract}, koji čuva sve skladišne promenljive i ostaje neizmenjen \cite{PROXYeip1967}.
-\item Implementacioni ugovor \eng{implementation contract}, koji sadrži izvršni kod i može se zameniti prilikom nadogradnje.
-\end{enumerate}
-
-Za kompleksnije sisteme, u kojima je potrebno dalje modularizovati funkcionalnosti i prevazići ograničenje veličine bajtkoda, može se primeniti dijamantski obrazac \eng{diamond pattern} \cite{DIAMONDeip2535}, koji omogućava raspodelu funkcionalnosti na više međusobno povezanih komponenti.
-
-Ovakav arhitektonski pristup omogućava da pametni ugovor preuzme ulogu aplikativnog sloja platforme, pri čemu korisnici, nakon autentikacije putem kriptografskih ključeva, direktno komuniciraju sa blockchain infrastrukturom, bez potrebe za bekend sistemom.

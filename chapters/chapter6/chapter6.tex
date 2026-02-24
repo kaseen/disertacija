@@ -1,0 +1,39 @@
+\chapter{Arhitektonske strategije za proširivost NFT-zasnovane platforme}
+U prethodnom poglavlju predstavljen je koncept dizajniranja proizvoda ili usluga sa jedinstvenim identifikatorom u okviru e-trgovine, korišćenjem NFT standarda na javnoj blokčejn mreži. Poseban akcenat stavljen je na optimizaciju skladišnih operacija, sa ciljem minimizacije računarskog napora potrebnog za izvršavanje korisničkih transakcija. Time se neposredno smanjuju troškovi transakcionih naknada i unapređuje korisničko iskustvo.
+
+%U ovom poglavlju razmatraju se arhitektonske strategije koje omogućavaju implementaciju takvog sistema u realnom poslovnom okruženju. Fokus je na obrascima modularnog dizajna, nadogradivosti i organizacije pametnih ugovora, koji kompanijama i preduzećima omogućavaju izgradnju skalabilne, fleksibilne i ekonomski održive NFT-zasnovane platforme.
+
+Pored osnovnih operacija kreiranja, prenosa i uništavanja, NFT standardi predviđaju i funkciju odobravanja \eng{approve}, koja omogućava vlasniku NFT-a da ovlasti drugu adresu da prenese konkretan token u njegovo ime. Time se uvodi mehanizam imenovanja prava raspolaganja, bez prenosa vlasništva. Zbog prilagodljive prirode pametnih ugovora, ova funkcionalnost može se proširiti ili modifikovati, na primer tako da ovlašćena adresa može izvršiti i operaciju uništavanja tokena u ime vlasnika, u skladu sa poslovnom logikom platforme.
+
+NFT standardi takođe predviđaju mehanizam tzv. zakačaljki \eng{hooks}, odnosno funkcija koje se pozivaju pre i nakon svake operacije prenosa, kroz interne funkcije \textit{\_beforeTokenTransfer} i \textit{\_afterTokenTransfer}. Ove funkcije su podrazumevano prazne, ali omogućavaju proširenje osnovnog ponašanja bez izmene standardne logike. Na primer, pre izvršenja prenosa može se implementirati dodatna provera autorizacije, kojom se potvrđuje da pošiljalac ili primalac pripada unapred definisanoj grupi korisnika.
+
+Korišćenjem ovih mehanizama pametnih ugovora, distribuirana platforma za e-trgovinu može obezbediti širok spektar funkcionalnosti, uz zadržavanje formalne konzistentnosti i sigurnosnih garancija javne blockchain mreže gde se poslovna pravila mogu implementirati direktno na nivou ugovora.
+
+\section{Obrasci modularnog dizajna pametnih ugovora}
+U arhitekturi platforme moguće je predvideti postojanje više međusobno povezanih pametnih ugovora, pri čemu pojedini ugovori preuzimaju specifične sistemske uloge. Ugovor o registru \cite{xu2018pattern} \eng{registry contract} predstavlja pametni ugovor koji funkcioniše kao decentralizovana baza podataka, čuvajući mape između imena, identifikatora ili drugih podataka i odgovarajućih adresa pametnih ugovora. Na taj način omogućava centralizovano usmeravanje poziva ka postojećim NFT kolekcijama.
+
+Ukoliko je potrebno masovno kreiranje novih instanci kojima upravlja ugovor o registru, mogu se primeniti sledeći obrasci:
+\begin{enumerate}
+\item \textbf{Fabrički ugovor} \eng{factory contract} je pametni ugovor čija je osnovna funkcija postavljanje novih ugovora na mrežu. Njegova prednost ogleda se u mogućnosti dinamičkog kreiranja proizvoljnih instanci po potrebi, pri čemu je za postavljanje dovoljan bajtkod ugovora koji se implementira.
+
+\item \textbf{Minimalni zastupnički ugovor} \cite{CLONEeip1167} \eng{minimal proxy contract} predstavlja specifičan slučaj kada se kreiraju identične instance ugovora, poznate kao klonovi \eng{clones}. U ovom obrascu izvršna logika nalazi se u jedinstvenom implementacionom ugovoru \eng{implementation contract}, dok klonovi poseduju sopstveno skladište podataka. Izvršni kod se delegira ka implementacionom ugovoru, čija se adresa nalazi u bajtkodu klona. Budući da je izvršni deo bajtkoda minimalnog zastupničkog ugovora dugačak svega 45 bajtova, troškovi postavljanja značajno su niži u odnosu na potpuno postavljanje ugovora sa identičnom logikom.
+\end{enumerate}
+
+Iako je kod pametnih ugovora po svojoj prirodi neizmenljiv nakon njihovog postavljanja na mrežu, ovo ograničenje može se prevazići primenom nadogradivih arhitektura \cite{meisami2023comprehensive}. Uobičajeni pristup podrazumeva razdvajanje skladišne i izvršne logike kroz dva međusobno povezana ugovora:
+
+\begin{enumerate}
+\item \textbf{Zastupnički ugovor} \cite{PROXYeip1967}, koji čuva skladišne promenljive i predstavlja stabilnu tačku interakcije sa korisnicima.
+\item \textbf{Implementacioni ugovor}, koji sadrži izvršni kod i može se zameniti u procesu nadogradnje bez promene adrese zastupničkog ugovora.
+\end{enumerate}
+U zavisnosti od načina implementacije nadogradnje razlikuju se transparentni zastupnički ugovor \eng{Transparent Proxy} i univerzalni nadogradivi zastupnički ugovor \eng{Universal Upgradeable Proxy Standard, UUPS}.
+
+Kod kompleksnijih sistema mogu se primeniti dodatni obrasci:
+\begin{enumerate}
+\item U slučaju postojanja većeg broja zastupničkih ugovora, radi pojednostavljenja nadogradnje može se primeniti obrazac svetionika \eng{beacon}. U tom slučaju zastupnički ugovori u svom bajtkodu čuvaju adresu ugovora svetionika, koji centralno upravlja adresom aktuelne implementacije. Izmena implementacije na nivou ugovora svetionika automatski utiče na sve povezane zastupničke ugovore.
+    
+\item Kada je potrebno modularizovati implementacioni ugovor i prevazići ograničenje maksimalne veličine bajtkoda, može se primeniti dijamantski obrazac \cite{DIAMONDeip2535} \eng{diamond pattern}. Ovaj pristup omogućava razdvajanje funkcionalnosti na više međusobno povezanih komponenti \eng{facets}, pri čemu centralni ugovor \eng{diamond} delegira pozive odgovarajućim modulima. Time se omogućava nadogradnja pojedinačnih delova sistema i fleksibilno proširenje funkcionalnosti.
+\end{enumerate}
+
+Svaka od navedenih arhitektonskih odluka ima direktan uticaj na potrošnju gasa, veličinu bajtkoda i ukupne troškove postavljanja i održavanja platforme koje snose kompanije ili preduzeća. Stoga je pre dizajna sistema za e-trgovinu neophodno pažljivo proceniti stepen potrebne nadogradivosti i modularnosti, kao i njihov odnos prema složenosti implementacije i bezbednosnim rizicima.
+
+Ovakav arhitektonski pristup omogućava da pametni ugovori preuzmu ulogu aplikativnog sloja platforme, pri čemu korisnici, nakon autentikacije putem kriptografskih ključeva, neposredno komuniciraju sa blokčejn infrastrukturom, dok se logika sistema izvršava u determinističkom okruženju distribuirane mreže.
