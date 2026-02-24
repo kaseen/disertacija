@@ -553,7 +553,7 @@ Kao što je očekivano, standard ERC-721 ostvaruje najveće troškove gasa u por
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
-\caption{Potrošnja gasa NFT standarda prilikom višestrukog kreiranja kupona u jednoj transakciji}
+\caption{Potrošnja gasa različitih NFT standarda prilikom višestrukog kreiranja kupona u jednoj transakciji}
 \end{figure}
 
 \item \textbf{Prenos kupona u zavisnosti od udaljenosti od početka grupe}
@@ -570,9 +570,13 @@ Dalja analiza pokazuje da, analogno operaciji kreiranja, trošak prenosa opada z
 \begin{minipage}{0.48\textwidth}
 \centering
 
+\small
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{c|c c c}
- & \textbf{ERC-721} & \textbf{ERC-721A} & \textbf{ERC-721Psi} \\
+& 
+\textbf{\tikz{\draw[black, fill=gray!20] (0,0) rectangle (0.15,0.15);} ERC-721} &
+\textbf{\tikz{\draw[black, fill=gray!90] (0,0) rectangle (0.15,0.15);} ERC-721A} &
+\textbf{\tikz{\draw[black, fill=black!80] (0,0) rectangle (0.15,0.15);} ERC-721Psi} \\
 \hline
 \textbf{1} & 46.844 & 89.248 & 105.088 \\
 \textbf{2} & 46.844 & 91.488 & 105.108 \\
@@ -581,17 +585,48 @@ Dalja analiza pokazuje da, analogno operaciji kreiranja, trošak prenosa opada z
 \textbf{10} & 46.844 & 109.392 & 105.106 \\
 \textbf{20} & 46.844 & 131.869 & 105.065 \\
 \end{tabular}
-%\captionof{table}{TODO}
-%\label{tab:TODO}
 \end{minipage}
 \hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[height=4cm]{example-image}
-%\captionof{figure}{TODO}
-%\label{tab:TODO}
-\end{minipage}
+\begin{tikzpicture}
+\begin{axis}[
+    % Velicina
+    width=\textwidth,
+    height=4.8cm,
+    % Tip
+    ybar,
+    bar width=6pt,
+    % y osa
+    ymin=0,
+    ymax=180000,
+    ytick={0,20000,40000,60000,80000,100000,120000,140000,160000,180000},
+    scaled y ticks=false,
+    y tick label style={
+        font=\tiny,
+        /pgf/number format/fixed,
+        /pgf/number format/1000 sep={.}
+    },
+    ymajorgrids=true,
+    grid style={dashed,gray!40},
+    % x osa
+    symbolic x coords={1,2,3,5,10,20},
+    xtick=data,
+    xticklabel style={
+        font=\tiny,
+        yshift=5pt
+    },
+    xtick style={draw=none}
+]
 
+\addplot[fill=gray!20] coordinates {(1,46844) (2,46844) (3,46844) (5,46844) (10,46844) (20,46844)};
+\addplot[fill=gray!90] coordinates {(1,89248) (2,91488) (3,93708) (5,98213) (10,109392) (20,131869)};
+\addplot[fill=black!80] coordinates {(1,105088) (2,105108) (3,105108) (5,105064) (10,105106) (20,105065)};
+
+\end{axis}
+\end{tikzpicture}
+\end{minipage}
+\caption{Potrošnja gasa različitih NFT standarda prilikom prenosa kupona u zavisnosti od udaljenosti od početnog elementa grupe}
 \end{figure}
 
 \item \textbf{Uništavanje kupona u zavisnosti od udaljenosti od početka grupe}
@@ -610,9 +645,13 @@ Sa druge strane, standard ERC-721A ostvaruje najveće troškove, posebno pri ve�
 \begin{minipage}{0.48\textwidth}
 \centering
 
+\small
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{c|c c c}
- & \textbf{ERC-721} & \textbf{ERC-721A} & \textbf{ERC-721Psi} \\
+& 
+\textbf{\tikz{\draw[black, fill=gray!20] (0,0) rectangle (0.15,0.15);} ERC-721} &
+\textbf{\tikz{\draw[black, fill=gray!90] (0,0) rectangle (0.15,0.15);} ERC-721A} &
+\textbf{\tikz{\draw[black, fill=black!80] (0,0) rectangle (0.15,0.15);} ERC-721Psi} \\
 \hline
 \textbf{1} & 13.873 & 65.199 & 22.006 \\
 \textbf{2} & 13.873 & 67.485 & 22.007 \\
@@ -621,17 +660,48 @@ Sa druge strane, standard ERC-721A ostvaruje najveće troškove, posebno pri ve�
 \textbf{10} & 13.873 & 85.435 & 22.072 \\
 \textbf{20} & 13.873 & 107.822 & 22.050 \\
 \end{tabular}
-%\captionof{table}{TODO}
-%\label{tab:TODO}
 \end{minipage}
 \hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[height=4cm]{example-image}
-%\captionof{figure}{TODO}
-%\label{tab:TODO}
-\end{minipage}
+\begin{tikzpicture}
+\begin{axis}[
+    % Velicina
+    width=\textwidth,
+    height=4.8cm,
+    % Tip
+    ybar,
+    bar width=6pt,
+    % y osa
+    ymin=0,
+    ymax=180000,
+    ytick={0,20000,40000,60000,80000,100000,120000,140000,160000,180000},
+    scaled y ticks=false,
+    y tick label style={
+        font=\tiny,
+        /pgf/number format/fixed,
+        /pgf/number format/1000 sep={.}
+    },
+    ymajorgrids=true,
+    grid style={dashed,gray!40},
+    % x osa
+    symbolic x coords={1,2,3,5,10,20},
+    xtick=data,
+    xticklabel style={
+        font=\tiny,
+        yshift=5pt
+    },
+    xtick style={draw=none}
+]
 
+\addplot[fill=gray!20] coordinates {(1,13873) (2,13873) (3,13873) (5,13873) (10,13873) (20,13873)};
+\addplot[fill=gray!90] coordinates {(1,65199) (2,67485) (3,69745) (5,74209) (10,85435) (20,107822)};
+\addplot[fill=black!80] coordinates {(1,22006) (2,22007) (3,22008) (5,22006) (10,22072) (20,22050)};
+
+\end{axis}
+\end{tikzpicture}
+\end{minipage}
+\caption{Potrošnja gasa različitih NFT standarda prilikom uništavanja kupona u zavisnosti od udaljenosti od početnog elementa grupe}
 \end{figure}
 
 \item \textbf{Uništavanje više kupona u jednoj transakciji}
@@ -650,9 +720,13 @@ Standard ERC-721A ostvaruje najveće troškove u ovom scenariju, budući da se z
 \begin{minipage}{0.48\textwidth}
 \centering
 
+\small
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{c|c c c}
- & \textbf{ERC-721} & \textbf{ERC-721A} & \textbf{ERC-721Psi} \\
+& 
+\textbf{\tikz{\draw[black, fill=gray!20] (0,0) rectangle (0.15,0.15);} ERC-721} &
+\textbf{\tikz{\draw[black, fill=gray!90] (0,0) rectangle (0.15,0.15);} ERC-721A} &
+\textbf{\tikz{\draw[black, fill=black!80] (0,0) rectangle (0.15,0.15);} ERC-721Psi} \\
 \hline
 \textbf{1} & 13.786 & 45.770 & 22.051 \\
 \textbf{2} & 22.580 & 74.880 & 28.196 \\
@@ -660,17 +734,57 @@ Standard ERC-721A ostvaruje najveće troškove u ovom scenariju, budući da se z
 \textbf{4} & 43.332 & 133.149 & 40.627 \\
 \textbf{5} & 54.191 & 162.327 & 46.773 \\
 \end{tabular}
-%\captionof{table}{TODO}
-%\label{tab:TODO}
 \end{minipage}
 \hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[height=4cm]{example-image}
-%\captionof{figure}{TODO}
-%\label{tab:TODO}
-\end{minipage}
+\begin{tikzpicture}
+\begin{axis}[
+    % Velicina
+    width=\textwidth,
+    height=4.8cm,
+    % Tip
+    ybar,
+    bar width=6pt,
+    % y osa
+    ymin=0,
+    ymax=180000,
+    ytick={0,20000,40000,60000,80000,100000,120000,140000,160000,180000},
+    scaled y ticks=false,
+    y tick label style={
+        font=\tiny,
+        /pgf/number format/fixed,
+        /pgf/number format/1000 sep={.}
+    },
+    ymajorgrids=true,
+    grid style={dashed,gray!40},
+    % x osa
+    symbolic x coords={
+        1a,2a,3a,4a,5a,
+        gap1,
+        1b,2b,3b,4b,5b,
+        gap2,
+        1c,2c,3c,4c,5c
+    },
+    xtick=\empty,
+    xtick style={draw=none},
+    extra x ticks={2a,3b,4c},
+    extra x tick labels={\text{\phantom{ab}ERC-721}, ERC-721A, ERC-721Psi},
+    extra x tick style={
+        tick style={draw=none},
+        yshift=5pt,
+        font=\tiny
+    }
+]
 
+\addplot[fill=gray!20] coordinates {(1a,13786) (2a,22580) (3a,32493) (4a,43332) (5a,54191)};
+\addplot[fill=gray!90] coordinates {(1b,45770) (2b,74880) (3b,104079) (4b,133149) (5b,162327)};
+\addplot[fill=black!80] coordinates {(1c,22051) (2c,28196) (3c,34412) (4c,40627) (5c,46773)};
+
+\end{axis}
+\end{tikzpicture}
+\end{minipage}
+\caption{Potrošnja gasa različitih NFT standarda prilikom višestrukog uništavanja kupona u jednoj transakciji}
 \end{figure}
 
 \item \textbf{Ponašanje operacija ERC-721A i ERC-721Psi pri velikim grupnim operacijama}
@@ -683,9 +797,12 @@ Kao što je pokazano u formulama \ref{eq:erc721a} i \ref{eq:erc721psi}, prednost
 \begin{minipage}{0.48\textwidth}
 \centering
 
+\small
 \renewcommand{\arraystretch}{1.7}
 \begin{tabular}{c c|c c}
-&  & \textbf{ERC-721A} & \textbf{ERC-721Psi} \\
+&  & 
+\textbf{\tikz{\draw[black, fill=gray!20] (0,0) rectangle (0.15,0.15);} ERC-721} &
+\textbf{\tikz{\draw[black, fill=gray!90] (0,0) rectangle (0.15,0.15);} ERC-721A}\\
 \hline
 
 \multirow{3}{*}{\rotatebox{90}{\textbf{Kreiranje}}}
@@ -707,17 +824,77 @@ Kao što je pokazano u formulama \ref{eq:erc721a} i \ref{eq:erc721psi}, prednost
 \hline
 
 \end{tabular}
-%\captionof{table}{TODO}
-%\label{tab:TODO}
 \end{minipage}
 \hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[height=4cm]{example-image}
-%\captionof{figure}{TODO}
-%\label{tab:TODO}
-\end{minipage}
+\begin{tikzpicture}
+\begin{axis}[
+    % Velicina
+    width=\textwidth,
+    height=8.5cm,
+    % Tip
+    ybar,
+    bar width=5pt,
+    % y osa
+    ymin=0,
+    ymax=23000000,
+    ytick={0,1250000,2500000,3750000,5000000,6250000,7500000,8750000,10000000,11250000,12500000,13750000,15000000,16250000,17500000,18750000,20000000,21250000,22500000},
+    scaled y ticks=false,
+    y tick label style={
+        font=\tiny,
+        /pgf/number format/.cd,
+        sci,
+        sci zerofill,
+        precision=2
+    },
+    ymajorgrids=true,
+    grid style={dashed,gray!40},
+    % x osa
+    symbolic x coords={
+        m100,m1000,m10000,
+        gap1,
+        t100,t1000,t10000,
+        gap2,
+        b100,b1000,b10000,
+    },
+    xtick=\empty,
+    xtick style={draw=none},
+    extra x ticks={m100,m1000,m10000,t100,t1000,t10000,b100,b1000,b10000},
+    extra x tick labels={
+        $10^{2}$,
+        $10^{3}$\\\tiny Kreiranje,
+        $10^{4}$,
+        $10^{2}$,
+        $10^{3}$\\\tiny Prenos,
+        $10^{4}$,
+        $10^{2}$,
+        $10^{3}$\\\tiny Uništavanje,
+        $10^{4}$,
+    },
+    extra x tick style={
+        tick style={draw=none},
+        yshift=5pt,
+        font=\tiny,
+        align=center
+    },
+]
 
+\addplot[fill=gray!20] coordinates {
+    (m100,243154) (m1000,1980198) (m10000,19350153)
+    (t100,311083) (t1000,2328005) (t10000,22476835)
+    (b100,287103) (b1000,2304024) (b10000,22452766)
+};
+\addplot[fill=gray!90] coordinates {
+    (m100,251272) (m1000,1998171) (m10000,19467128)
+    (t100,105108) (t1000,130779) (t10000,194654)
+    (b100,22050) (b1000,46000) (b10000,128628)
+};
+
+\end{axis}
+\end{tikzpicture}
+\end{minipage}
+\caption{Poređenje potrošnje gasa standarda ERC-721A i ERC-721Psi prilikom velikih grupnih operacija}
 \end{figure}
 
 \item \textbf{Postavljanje pametnih ugovora na mrežu}
@@ -734,28 +911,64 @@ Kao što se može očekivati, standard ERC-721Psi ostvaruje najveći trošak pos
 \begin{minipage}{0.48\textwidth}
 \centering
 
+\small
 \renewcommand{\arraystretch}{1.4}
-\begin{tabular}{c|c c}
+\begin{tabular}{c|c@{\hspace{0cm}}c}
  & \textbf{\parbox{2.5cm}{\centering optimizator \\
 isključen}} & 
 \textbf{\parbox{2.5cm}{\centering optimizator \\
 uključen}} \\
 \hline
-\textbf{ERC-721} & 1.461.405 & 814.973 \\
-\textbf{ERC-721A} & 1.346.155 & 783.314 \\
-\textbf{ERC-721Psi} & 2.308.873 & 1.331.204 \\
+\textbf{\tikz{\draw[black, fill=gray!20] (0,0) rectangle (0.15,0.15);} ERC-721} & 1.461.405 & 814.973 \\
+\textbf{\tikz{\draw[black, fill=gray!90] (0,0) rectangle (0.15,0.15);} ERC-721A} & 1.346.155 & 783.314 \\
+\textbf{\tikz{\draw[black, fill=black!80] (0,0) rectangle (0.15,0.15);} ERC-721Psi} & 2.308.873 & 1.331.204 \\
 \end{tabular}
-%\captionof{table}{TODO}
-%\label{tab:TODO}
 \end{minipage}
 \hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\includegraphics[height=4cm]{example-image}
-%\captionof{figure}{TODO}
-%\label{tab:TODO}
-\end{minipage}
+\begin{tikzpicture}
+\begin{axis}[
+    % Velicina
+    width=\textwidth,
+    height=4.8cm,
+    % Tip
+    ybar,
+    bar width=6pt,
+    % y osa
+    ymin=0,
+    ymax=2350000,
+    ytick={0,250000,500000,750000,1000000,1250000,1500000,1750000,2000000,2250000},
+    scaled y ticks=false,
+    y tick label style={
+        font=\tiny,
+        /pgf/number format/fixed,
+        /pgf/number format/1000 sep={.}
+    },
+    ymajorgrids=true,
+    grid style={dashed,gray!40},
+    % x osa
+    symbolic x coords={1,2,gap1,1A,2A,gap2,1Psi,2Psi},
+    xtick=\empty,
+    xtick style={draw=none},
+    extra x ticks={1,1A,2Psi},
+    extra x tick labels={ERC-721, \phantom{abcd}ERC-721A, ERC-721Psi},
+    extra x tick style={
+        tick style={draw=none},
+        yshift=5pt,
+        font=\tiny
+    },
+    enlarge x limits=0.2
+]
 
+\addplot[fill=gray!20] coordinates {(1,1461405) (2,814973)};
+\addplot[fill=gray!90] coordinates {(1A,1346155) (2A,783314)};
+\addplot[fill=black!80] coordinates {(1Psi,2308873) (2Psi,1331204)};
+
+\end{axis}
+\end{tikzpicture}
+\end{minipage}
+\caption{Potrošnja gasa prilikom postavljanja NFT pametnog ugovora}
 \end{figure}
 
 \end{description}
