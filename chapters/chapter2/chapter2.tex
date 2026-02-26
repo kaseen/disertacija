@@ -456,7 +456,9 @@ Iz uspostavljenog zajedničkog tajnog materijala, primenom algoritama za derivac
 
 Međutim, aktivni napadač može presresti i čuvati sav saobraćaj, što dovodi do problema \textbf{tajnosti unapred} \cite{canetti2001analysis} \eng{forward secrecy}. Naime, ukoliko bi se u budućnosti kompromitovao glavni tajni materijal uspostavljen tokom početnog dogovora, sve ranije razmenjene poruke mogle bi biti dešifrovane. Stoga moderni protokoli koriste algoritme razmene ključeva koji obezbeđuju ovo svojstvo.
 
-Najrasprostranjeniji primer hibridne kriptografije jeste protokol TLS \cite{rescorla2018transport}. U TLS-u server šalje klijentu \textit{digitalni sertifikat} koji sadrži njegov javni ključ i druge verifikacione informacije. Klijent zatim generiše ili dogovara zajednički sesijski tajni materijal i asimetrično ga štiti tokom prenosa. Nakon uspešne razmene, dalja komunikacija se obavlja simetričnim šifrovanjem visoke efikasnosti.
+Najrasprostranjeniji primer hibridne kriptografije jeste protokol TLS \cite{rescorla2018transport} \eng{Transport Layer Security}, koji obezbeđuje poverljivost, integritet i autentičnost podataka tokom komunikacije između klijenta i servera. Prilikom uspostavljanja veze server klijentu dostavlja \textit{digitalni sertifikat} koji sadrži relevantne verifikacione informacije. Nakon verifikacije sertifikata, klijent i server dogovaraju zajednički sesijski tajni materijal, koji se tokom inicijalne razmene štiti asimetričnom kriptografijom. Po uspešnom završetku ovog procesa, dalja komunikacija odvija se primenom efikasnog simetričnog šifrovanja.
+
+Digitalni sertifikat potpisuje autoritet za sertifikate \eng{Certificate Authority}, koji predstavlja entitet od poverenja zadužen za povezivanje identiteta servera sa njegovim javnim ključem. Na taj način autoritet za sertifikate postaje centralna tačka poverenja u TLS modelu, jer kompromitacija tog entiteta može ugroziti bezbednost komunikacije.
 
 Kriptografski algoritmi za šifrovanje prvenstveno obezbeđuju \textbf{poverljivost} komunikacije. Međutim, poverljivost ne podrazumeva nužno i zaštitu integriteta podataka, pa je za to potrebno uvesti dodatne mehanizme.
 
