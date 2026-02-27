@@ -1,6 +1,7 @@
 \chapter{Arhitektonske strategije za proširivost NFT-zasnovane platforme}
 U prethodnom poglavlju predstavljen je koncept dizajniranja proizvoda ili usluga sa jedinstvenim identifikatorom u okviru e-trgovine, korišćenjem NFT standarda na javnoj blokčejn mreži. Poseban akcenat stavljen je na optimizaciju skladišnih operacija, sa ciljem minimizacije računarskog napora potrebnog za izvršavanje korisničkih transakcija. Time se neposredno smanjuju troškovi transakcionih naknada i unapređuje korisničko iskustvo.
 
+%TODO
 %U ovom poglavlju razmatraju se arhitektonske strategije koje omogućavaju implementaciju takvog sistema u realnom poslovnom okruženju. Fokus je na obrascima modularnog dizajna, nadogradivosti i organizacije pametnih ugovora, koji kompanijama i preduzećima omogućavaju izgradnju skalabilne, fleksibilne i ekonomski održive NFT-zasnovane platforme.
 
 \section{Proširene funkcionalnosti NFT standarda u sistemima e-trgovine}
@@ -14,7 +15,17 @@ S obzirom na to da je trajno skladištenje podataka na blokčejnu povezano sa vi
 
 Dodatno, ukoliko je NFT tržišno prenosiv, moguće je u sam pametni ugovor ugraditi mehanizam kojim se pri svakoj sekundarnoj prodaji ili pretprodaji automatski alocira određeni procenat sredstava ka unapred definisanoj adresi \cite{MARKETeip2981}. Ovakav pristup omogućava implementaciju modela trajnih autorskih naknada \eng{royalties}, čime se obezbeđuje kontinuirano finansiranje izdavaoca proizvoda. Time se finansijska logika distribucije prihoda ugrađuje direktno u izvršni kod pametnog ugovora, čime se eliminiše potreba za posrednicima i povećava transparentnost obračuna.
 
-Korišćenjem ovih mehanizama pametnih ugovora, distribuirana platforma za e-trgovinu može obezbediti širok spektar funkcionalnosti, uz zadržavanje formalne konzistentnosti i sigurnosnih garancija javne blockchain mreže gde se poslovna pravila mogu implementirati direktno na nivou ugovora.
+Za razliku od prethodno opisanih proširenja koja su specifično vezana za NFT standard, u praksi se široko primenjuju i generičke ekstenzije pametnih ugovora koje unapređuju bezbednost, kontrolu pristupa i upravljanje životnim ciklusom sistema. Ove komponente nisu ograničene na NFT logiku, već predstavljaju opšte obrasce modularnog dizajna primenljive na različite tipove pametnih ugovora. Biblioteka \textit{OpenZeppelin} obezbeđuje skup standardizovanih, bezbednosno proverenih i optimizovanih implementacija takvih ekstenzija, koje su postale industrijski standard.
+
+Najčešće korišćene ekstenzije ove vrste uključuju:
+\begin{enumerate}
+\item \textit{Pausable} - mehanizam koji omogućava privremenu obustavu izvršavanja odabranih funkcija ugovora u vanrednim okolnostima, bez trajne izmene stanja sistema.
+\item \textit{AccessControl} - model kontrole pristupa zasnovan na ulogama, kojim se precizno definišu privilegije i nadležnosti različitih uloga unutar sistema.
+\item \textit{ReentrancyGuard} - zaštitni mehanizam koji sprečava ponovni ulazak u funkciju pre završetka njenog prethodnog izvršavanja, čime se sprečavaju napadi zasnovani na rekurzivnim pozivima \cite{samreen2020reentrancy}.
+\item \textit{MultiSigner} - obrazac kolektivnog odlučivanja u kojem je za izvršavanje osetljivih operacija potrebno više nezavisnih ovlašćenih potpisa tzv. višepotpisnih novčanika, čime se smanjuje rizik centralizovanog upravljanja.
+\end{enumerate}
+
+Korišćenjem ovih mehanizama pametnih ugovora, distribuirana platforma za e-trgovinu može obezbediti širok spektar funkcionalnosti, uz zadržavanje formalne konzistentnosti i sigurnosnih garancija javne blokčejn mreže gde se poslovna pravila mogu implementirati direktno na nivou ugovora.
 
 \section{Obrasci modularnog dizajna pametnih ugovora}
 U arhitekturi platforme moguće je predvideti postojanje više međusobno povezanih pametnih ugovora, pri čemu pojedini ugovori preuzimaju specifične sistemske uloge. Ugovor o registru \cite{xu2018pattern} \eng{registry contract} predstavlja pametni ugovor koji funkcioniše kao decentralizovana baza podataka, čuvajući mape između imena, identifikatora ili drugih podataka i odgovarajućih adresa pametnih ugovora. Na taj način omogućava centralizovano usmeravanje poziva ka postojećim NFT kolekcijama.
@@ -37,11 +48,13 @@ U zavisnosti od načina implementacije nadogradnje razlikuju se transparentni za
 Kod kompleksnijih sistema mogu se primeniti dodatni obrasci:
 \begin{enumerate}
 \item U slučaju postojanja većeg broja zastupničkih ugovora, radi pojednostavljenja nadogradnje može se primeniti obrazac svetionika \eng{beacon}. U tom slučaju zastupnički ugovori u svom bajtkodu čuvaju adresu ugovora svetionika, koji centralno upravlja adresom aktuelne implementacije. Izmena implementacije na nivou ugovora svetionika automatski utiče na sve povezane zastupničke ugovore.
-    
+
 \item Kada je potrebno modularizovati implementacioni ugovor i prevazići ograničenje maksimalne veličine bajtkoda, može se primeniti dijamantski obrazac \cite{DIAMONDeip2535} \eng{diamond pattern}. Ovaj pristup omogućava razdvajanje funkcionalnosti na više međusobno povezanih komponenti \eng{facets}, pri čemu centralni ugovor \eng{diamond} delegira pozive odgovarajućim modulima. Time se omogućava nadogradnja pojedinačnih delova sistema i fleksibilno proširenje funkcionalnosti.
 \end{enumerate}
 
 Svaka od navedenih arhitektonskih odluka ima direktan uticaj na potrošnju gasa, veličinu bajtkoda i ukupne troškove postavljanja i održavanja platforme koje snose kompanije ili preduzeća. Stoga je pre dizajna sistema za e-trgovinu neophodno pažljivo proceniti stepen potrebne nadogradivosti i modularnosti, kao i njihov odnos prema složenosti implementacije i bezbednosnim rizicima.
+
+U praksi, proces nadogradnje i upravljanja implementacijama često se organizuje kroz višepotpisnih novčanika ili kroz DAO mehanizme, kako bi se smanjila centralizovana kontrola i povećala decentralizacija odluka o promenama koda, posebno u slučajevima kada promena utiče na velike korisničke baze.
 
 Ovakav arhitektonski pristup omogućava da pametni ugovori preuzmu ulogu aplikativnog sloja platforme, pri čemu korisnici, nakon autentikacije putem kriptografskih ključeva, neposredno komuniciraju sa blokčejn infrastrukturom, dok se logika sistema izvršava u determinističkom okruženju distribuirane mreže.
 

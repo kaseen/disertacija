@@ -267,6 +267,8 @@ Korisnici prilikom interakcije sa pametnim ugovorom u polje podataka transakcije
 
 Međutim, direktno pozivanje funkcija u obliku bajtkoda nije ni ljudski čitljivo niti praktično za upotrebu, zbog čega značajnu ulogu ima aplikacioni binarni interfejs \eng{Application Binary Interface, ABI}. ABI definiše imena funkcija, njihove potpise i tipove argumenata u strogo strukturisanom formatu, čime uspostavlja formalni dogovor između pametnog ugovora i spoljašnjih korisnika ili aplikacija. 
 
+ABI dodatno u istom formatu definiše i događaje \eng{events} koje ugovor emituje. Događaji predstavljaju log-zapise zabeležene tokom izvršenja transakcije u kontekstu pametnog ugovora, namenjene spoljašnjim sistemima za praćenje promena stanja, gde se ti logovi ne mogu čitati iz izvršnog konteksta samog ugovora.
+
 U suštini, ABI deluje kao prevodilački sloj između ljudski čitljivog interfejsa pametnog ugovora i njegove niskonivojske bajtovske reprezentacije koja se izvršava na blokčejnu, omogućavajući pouzdanu i transparentnu interakciju bez potrebe za ručnim enkodiranjem ili dekodiranjem transakcionih podataka.
 
 \section{Transakcije i njihova obrada u Eterijumu}
