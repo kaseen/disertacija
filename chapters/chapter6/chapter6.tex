@@ -84,7 +84,8 @@ Ipak, ključna prednost centralizovanih sistema ogleda se u visokom stepenu opti
 
 Međuplanetarni fajl sistem \eng{InterPlanetary File System, IPFS} \cite{benet2014ipfs} predstavlja distribuirani sistem zasnovan na mreži ravnopravnih čvorova, namenjen skladištenju i razmeni podataka bez centralne tačke upravljanja. 
 
-Prilikom postavljanja fajla na IPFS mrežu, sadržaj fajla se deli na manje blokove veličine 256KB-1MB. Dobijeni blokovi se zatim organizuju u strukturu podataka tipa \textit{Merkle Directed Acyclic Graph (Merkle DAG)} \cite{sanjuan2020merkle}, gde listovi grafa predstavljaju sirove blokove podataka koji sadrže isključivo segmente originalnog binarnog sadržaja. Koren grafa predstavlja čvor koji enkapsulira metapodatke o fajlu (npr. tip objekta i ukupnu veličinu), zajedno sa referencama ka podređenim čvorovima. Ukoliko broj blokova prevazilazi kapacitet korena, referenciranje se hijerarhijski organizuje kroz dodatne međučvorove, čime se formira balansirani Merkle DAG.
+\subsection{Strukturiranje i adresiranje sadržaja}
+Prilikom postavljanja fajla na IPFS mrežu, sadržaj fajla se deli na manje blokove veličine 256KB-1MB. Dobijeni blokovi se zatim organizuju u strukturu podataka tipa \textit{Merkle Directed Acyclic Graph (Merkle DAG)} \cite{sanjuan2020merkle}, gde listovi grafa predstavljaju sirove blokove podataka koji sadrže isključivo segmente originalnog binarnog sadržaja. Koren grafa predstavlja čvor koji enkapsulira metapodatke o fajlu (npr. tip objekta i ukupnu veličinu), zajedno sa referencama ka podređenim čvorovima. Ukoliko broj blokova prevazilazi kapacitet korenog čvora, referenciranje se hijerarhijski organizuje kroz dodatne međučvorove, čime se formira balansirani Merkle DAG.
 
 Jedinstveni identifikator sadržaja \eng{Content Identifier, CID} formira se kombinovanjem sledećih informacija:
 \begin{enumerate}
@@ -94,6 +95,13 @@ Jedinstveni identifikator sadržaja \eng{Content Identifier, CID} formira se kom
 \item Višebazno \eng{multibase} enkodiranje, koje se primenjuje samo prilikom prikaza CID-a u obliku tekstualne niske.
 \end{enumerate}
 
+\subsection{Distribuirano pribavljanje sadržaja}
 Na osnovu CID-a moguće je deterministički rekonstruisati celokupnu strukturu grafa, a time i originalni fajl, pod uslovom da su svi blokovi dostupni u mreži. Na taj način IPFS zamenjuje lokacijski zasnovano adresiranje sadržajnim adresiranjem \eng{content-based addressing}. Korisnik ne zahteva podatak sa određene fizičke ili mrežne lokacije, već specificira kriptografski identifikator željenog sadržaja. Time se konceptualni fokus pomera sa pitanja ,,gde se podatak nalazi'' na pitanje ,,koji podatak je potreban'', čime se postiže veća otpornost sistema na cenzuru i prekide rada pojedinačnih čvorova.
 
-Zahtev za preuzimanje podataka formuliše se korišćenjem navedenog identifikatora, pri čemu mreža pronalazi bilo koji čvor koji poseduje odgovarajuću kopiju i realizuje isporuku sadržaja.
+Za preuzimanje fajla korisnik lokalno pokreće IPFS servis u pozadini \eng{daemon}, koji funkcioniše kao \textbf{koordinacioni} čvor u procesu pribavljanja podataka. Ovaj čvor uspostavlja izlazne \eng{outbound} konekcije ka drugim čvorovima u mreži, dok istovremeno može prihvatati dolazne \eng{inbound} konekcije od njih.
+
+Razmena blokova podataka realizuje se korišćenjem protokola \textit{Bitswap}, koji predstavlja mehanizam za distribuiranu razmenu blokova između ravnopravnih čvorova. Prilikom zahteva za određenim sadržajem, lokalni čvor formira listu željenih blokova \eng{want-list}, koja sadrži identifikatore potrebnih blokova. Ova lista se razmenjuje \textbf{porukama} sa svim trenutno povezanim čvorovima, dok udaljeni čvorovi istovremeno prosleđuju sopstvene liste želja.
+
+Čvorovi koji poseduju tražene blokove odgovoraju porukom da \textit{imaju} traženi sadržaj, odnosno direktnim slanjem odgovarajućeg bloka, dok čvorovi koji ne raspolažu traženim sadržajem mogu, ali nisu obavezni, poslati poruku \textit{nemaju}, čime se smanjuje potreba za čekanjem isteka vremenskog ograničenja. Preuzimanje blokova realizuje se paralelno sa više čvorova, ukoliko je sadržaj dostupan na više lokacija, čime se postiže veći stepen paralelizacije i povećava efikasnost prenosa podataka.
+
+%Ukoliko traženi blokovi nisu dostupni među trenutno povezanim čvorovima, IPFS koristi distribuiranu heš tabelu zasnovanu na protokolu \textit{Kademlia DHT} \cite{maymounkov2002kademlia}...
