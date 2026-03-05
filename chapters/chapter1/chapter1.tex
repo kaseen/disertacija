@@ -183,7 +183,7 @@ Troslojna arhitektura donosi bolju organizaciju i fleksibilnost sistema u odnosu
 
 U praksi, svaki sloj može raditi kao poseban proces, pa imamo \textbf{tri procesa}: frontend (klijent) se izvršava kao jedan proces, aplikacioni server kao drugi, sistem za upravljanje bazom podataka kao treći.
 
-Prednost ove strukture je lakše održavanje, nezavisno testiranje i razvoj slojeva. Međutim, kompleksnost sistema raste, pa je neophodno pažljivo definisati granice između slojeva da bi se izbegla redundancija i usporavanje komunikacije.
+Prednost ove strukture je lakše održavanje, nezavisno testiranje i razvoj slojeva. Međutim, kompleksnost sistema raste, pa je neophodno pažljivo definisati granice između slojeva da bi se izbegla duplikacija i usporavanje komunikacije.
 
 \item \textbf{Četvoroslojna (ili višeslojna) arhitektura \cite{cao2013research}:}  
 Četvoroslojna arhitektura predstavlja proširenje troslojnog modela sa ciljem da se sistem otvori ka spoljnim servisima i aplikacijama. Uvođenjem dodatnog sloja, najčešće nazvanog sloj prenosa podataka \eng{data service} ili API sloj \eng{Application Programming Interface}, omogućava se komunikacija između više sistema i timova putem standardizovanih API-ja. Ovaj sloj enkapsulira poslovnu logiku i izlaže je ka spolja na kontrolisan način, nezavisno od prezentacionog sloja.
