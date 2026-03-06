@@ -84,6 +84,8 @@ Ipak, ključna prednost centralizovanih sistema ogleda se u visokom stepenu opti
 
 Međuplanetarni fajl sistem \eng{InterPlanetary File System, IPFS} \cite{benet2014ipfs} predstavlja distribuirani sistem zasnovan na mreži ravnopravnih čvorova, namenjen skladištenju i razmeni podataka bez centralne tačke upravljanja. 
 
+Podrazumevani način objavljivanja i pribavljanja sadržaja u IPFS mreži podrazumeva da korisnik lokalno pokrene IPFS servis u pozadini \eng{daemon}, koji funkcioniše kao \textbf{koordinacioni} čvor u procesu razmene podataka. Ovaj čvor uspostavlja izlazne \eng{outbound} konekcije ka drugim čvorovima u mreži, dok istovremeno može prihvatati dolazne \eng{inbound} konekcije. Alternativno, korisnik može koristiti spoljne servise koji omogućavaju pristup IPFS mreži bez pokretanja lokalnog čvora, o čemu će biti reči nakon objašnjenja osnovnih principa rada sistema u narednim pododeljcima.
+
 \subsection{Strukturiranje i adresiranje sadržaja}
 Prilikom postavljanja fajla na IPFS mrežu, sadržaj fajla se deli na manje blokove veličine 256KB-1MB. Dobijeni blokovi se zatim organizuju u strukturu podataka tipa \textit{Merkle Directed Acyclic Graph (Merkle DAG)} \cite{sanjuan2020merkle}, gde listovi grafa predstavljaju sirove blokove podataka koji sadrže isključivo segmente originalnog binarnog sadržaja. Koren grafa predstavlja čvor koji enkapsulira metapodatke o fajlu (npr. tip objekta i ukupnu veličinu), zajedno sa referencama ka podređenim čvorovima. Ukoliko broj blokova prevazilazi kapacitet korenog čvora, referenciranje se hijerarhijski organizuje kroz dodatne međučvorove, čime se formira balansirani Merkle DAG.
 
@@ -95,29 +97,41 @@ Jedinstveni identifikator sadržaja \eng{Content Identifier, CID} je nepromenlji
 \item Višebazno \eng{multibase} enkodiranje, koje se primenjuje samo prilikom prikaza CID-a u obliku tekstualne niske.
 \end{enumerate}
 
-Važno je napomenuti da identični fajlovi mogu imati različite CID identifikatore ukoliko su generisani korišćenjem različitih parametara kodiranja, kao što su drugačija verzija identifikatora, drugačiji tip formata ili drugačija heš funkcija.
-
-Jedna od ključnih posledica ovakvog pristupa jeste da identičan sadržaj uvek rezultuje istim identifikatorom. Ukoliko više korisnika u mreži dodaje isti fajl, generisaće se isti CID, što omogućava ponovnu upotrebu već postojećih blokova podataka, tj. implicitnu deduplikaciju sadržaja na nivou blokova.
+Važno je napomenuti da identični fajlovi mogu imati različite CID identifikatore ukoliko su generisani korišćenjem različitih parametara kodiranja, kao što su drugačija verzija identifikatora, drugačiji tip formata ili drugačija heš funkcija, ako se koriste isti parametri, tada isti sadržaj uvek rezultuje istim identifikatorom. Ukoliko više korisnika u mreži dodaje isti fajl, generisaće se isti CID, što omogućava ponovnu upotrebu već postojećih blokova podataka, tj. implicitnu deduplikaciju sadržaja na nivou blokova.
 
 Dodatno, sadržajno adresiranje omogućava kriptografsku proveru integriteta podataka. Pošto CID uključuje heš vrednost korenog čvora strukture podataka, svaka promena u sadržaju rezultuje drugačijom heš vrednošću, a samim tim i drugačijim identifikatorom. Na taj način korisnik može lokalno proveriti da li preuzeti sadržaj odgovara očekivanom identifikatoru.
 
-Međutim, u mnogim praktičnim scenarijima javlja se potreba za ažuriranjem sadržaja. Budući da je CID nepromenljiv identifikator koji direktno zavisi od sadržaja podataka, svaka izmena fajla rezultuje generisanjem novog CID-a. Zbog toga održavanje referenci na najnoviju verziju sadržaja može postati nepraktično.
+Međutim, u mnogim praktičnim scenarijima javlja se potreba za ažuriranjem sadržaja, na primer u slučaju web stranica hostovanih na IPFS-u. Budući da je CID nepromenljiv identifikator koji direktno zavisi od sadržaja podataka, svaka izmena fajla rezultuje generisanjem novog CID-a. Zbog toga održavanje referenci na najnoviju verziju sadržaja može postati nepraktično.
 
 Radi rešavanja ovog problema koristi se međuplanetarni sistem imena \eng{InterPlanetary Name System, IPNS}, koji predstavlja distribuirani sistem imenovanja zasnovan na kriptografskim ključevima. U okviru ovog sistema identitet prostora \textit{pokazivača} definiše se parom javnog i privatnog ključa, pri čemu javni ključ određuje jedinstveni prostor imena u kojem je moguće ažurirati promenljive reference ka nepromenljivim CID identifikatorima.
 
 Ažuriranje fajla u okviru IPNS zapisa zapravo predstavlja ažuriranje reference datog imena tako da pokazuje na željeni CID, pri čemu se autentičnost ažuriranja obezbeđuje privatnim ključem odgovarajućeg identiteta. Na taj način IPNS omogućava postojanje stabilnih i promenljivih identifikatora koji mogu referencirati različite verzije sadržaja tokom vremena.
 
+Važno je napomenuti da \textbf{replikacija} sadržaja objavljenog u IPFS mreži nije automatski zagarantovana. Podaci ostaju dostupni u mreži sve dok ih najmanje jedan čvor poseduje i aktivno deli sa ostalim učesnicima. U najjednostavnijem slučaju to je čvor korisnika koji je prvobitno objavio sadržaj. Ukoliko korisnik ne želi da održava sopstveni čvor stalno aktivnim, dugoročna dostupnost sadržaja može se obezbediti korišćenjem usluge kačenja \eng{pinning service}, koja trajno čuva određene blokove podataka na infrastrukturi treće strane. Ovakve usluge se u praksi najčešće komercijalno naplaćuju.
+
 \subsection{Distribuirano pribavljanje sadržaja}
 Na osnovu CID-a moguće je deterministički rekonstruisati strukturu grafa i time pribaviti originalni fajl, pod uslovom da su svi njegovi blokovi dostupni u mreži. Na ovaj način IPFS zamenjuje lokacijski zasnovano adresiranje sadržajnim adresiranjem \eng{content-based addressing}. Korisnik ne zahteva podatak sa određene fizičke ili mrežne lokacije, već specificira kriptografski identifikator željenog sadržaja. Time se konceptualni fokus pomera sa pitanja ,,gde se podatak nalazi'' na pitanje ,,koji podatak je potreban'', čime se povećava otpornost sistema na cenzuru i prekide rada pojedinačnih čvorova.
 
-Za preuzimanje fajla korisnik lokalno pokreće IPFS servis u pozadini \eng{daemon}, koji funkcioniše kao \textbf{koordinacioni} čvor u procesu pribavljanja podataka. Ovaj čvor uspostavlja izlazne \eng{outbound} konekcije ka drugim čvorovima u mreži, dok istovremeno može prihvatati dolazne \eng{inbound} konekcije od njih.
+Razmena blokova između povezanih čvorova realizuje se korišćenjem protokola \textit{Bitswap}, koji predstavlja mehanizam za distribuiranu razmenu blokova između ravnopravnih čvorova. Prilikom zahteva za određenim sadržajem lokalni čvor formira listu željenih blokova \eng{want-list}, koja sadrži identifikatore potrebnih blokova. Ova lista se \textbf{propagira} putem poruka sa svim trenutno povezanim čvorovima, dok povezani čvorovi razmenjuju sopstvene liste želja.
 
-Razmena blokova realizuje se korišćenjem protokola \textit{Bitswap}, koji predstavlja mehanizam za distribuiranu razmenu blokova između ravnopravnih čvorova. Prilikom zahteva za određenim sadržajem lokalni čvor formira listu željenih blokova \eng{want-list}, koja sadrži identifikatore potrebnih blokova. Ova lista razmenjuje se putem \textbf{poruka} sa svim trenutno povezanim čvorovima, dok povezani čvorovi istovremeno mogu prosleđivati sopstvene liste želja.
-
-Proces pribavljanja sadržaja započinje dodavanjem CID-a korenog čvora traženog sadržaja u listu željenih blokova. Nakon pribavljanja ovog bloka iz njegove strukture izdvajaju se reference na podređene blokove, koji se zatim dodaju u listu željenih blokova. Na taj način se postupno otkriva kompletna struktura grafa i proširuje skup blokova koje je potrebno pribaviti.
+Proces pribavljanja sadržaja započinje dodavanjem CID identifikatora korenog čvora traženog sadržaja u listu željenih blokova. Nakon pribavljanja ovog bloka iz njegove strukture izdvajaju se reference na podređene blokove, koji se zatim dodaju u listu željenih blokova. Na taj način se postupno otkriva kompletna struktura grafa i proširuje skup blokova koje je potrebno pribaviti.
 
 Preuzimanje blokova realizuje se paralelno sa više čvorova ukoliko je sadržaj dostupan na više lokacija u mreži, čime se povećava stepen paralelizacije i efikasnost prenosa podataka.
 
 Ukoliko traženi blokovi nisu dostupni među trenutno povezanim čvorovima, IPFS koristi distribuiranu heš tabelu zasnovanu na protokolu \textit{Kademlia DHT} \cite{maymounkov2002kademlia} radi pronalaženja čvorova koji mogu obezbediti traženi sadržaj. Pretraga u ovoj strukturi zasniva se na iterativnom pronalaženju čvorova čiji identifikatori imaju manju udaljenost u odnosu na traženi ključ. Ovakav pristup omogućava pronalaženje odgovarajućih čvorova uz logaritamsku složenost u odnosu na veličinu mreže.
 
 Nakon pronalaženja čvorova koji mogu obezbediti tražene blokove, lokalni čvor uspostavlja izlaznu konekciju ka njima, nakon čega se razmena blokova nastavlja korišćenjem protokola \textit{Bitswap}. Proces se ponavlja sve dok svi potrebni blokovi ne budu pribavljeni, čime se omogućava rekonstrukcija originalnog fajla.
+
+Blokovi podataka koji se preuzmu tokom procesa pribavljanja sadržaja privremeno se skladište na lokalnom čvoru, čime taj čvor može postati dodatni izvor podataka za druge učesnike u mreži. Na taj način IPFS mreža prirodno ostvaruje efekat distribuirane replikacije sadržaja kroz proces razmene blokova između ravnopravnih čvorova. Međutim, blokovi koji nisu eksplicitno zakačeni smatraju se privremenim i mogu biti uklonjeni tokom procesa prikupljanja otpatka \eng{garbage collection}. Ovaj proces periodično oslobađa prostor u lokalnom skladištu uklanjanjem blokova koji nisu dugo referencirani.
+
+Ukoliko korisnik ne želi da pokreće lokalni IPFS čvor, pristup sadržaju moguće je ostvariti putem IPFS pristupnika \eng{gateway}. Pristupnik predstavlja servis koji izlaže standardizovani HTTP interfejs za pribavljanje sadržaja adresiranog putem CID identifikatora. Na ovaj način IPFS sadržaj postaje dostupan kroz konvencionalni web protokol, što omogućava pristup podacima i korisnicima koji ne učestvuju direktno u mreži ravnopravnih korisnika.
+
+Pristupnik prima HTTP zahtev koji sadrži CID identifikator u URL adresi, nakon čega pokušava da pronađe odgovarajući sadržaj. Ukoliko pristupnik već poseduje tražene blokove u lokalnom skladištu, sadržaj se odmah vraća klijentu. U suprotnom, ponašanje zavisi od konfiguracije pristupnika:
+\begin{enumerate}
+\item rekurzivni pristupnik pokušava da pribavi traženi sadržaj iz IPFS mreže pre nego što ga prosledi korisniku.
+\item nerekurzivni pristupnik vraća poruku o nedostupnosti podataka.
+\end{enumerate}
+
+Oslanjanje na pristupnike trećih strana uvodi određene kompromise u pogledu decentralizacije sistema. Budući da pristupnike obično održava jedan administrativni entitet, oni mogu predstavljati tačke centralizovane kontrole nad pristupom sadržaju. Operateri pristupnika imaju tehničku mogućnost da evidentiraju zahteve korisnika i sadržaj koji se pribavlja, što može imati implikacije na privatnost. Pored toga, veliki broj korisnika može koristiti isti javni pristupnik, što potencijalno dovodi do zagušenja i smanjenja propusnosti.
+
+Kao potencijalno rešenje razvijaju se tzv. pristupnici bez poverenja \eng{trustless gateways}, koji omogućavaju verifikaciju sadržaja direktno na strani klijenta. U tom slučaju pregledač može kriptografski proveriti da li preuzeti sadržaj odgovara očekivanom CID identifikatoru, čime se smanjuje potreba za poverenjem u operatera pristupnika. Ipak, podrška za ovakav način rada još uvek nije široko implementirana u savremenim web pregledačima.
