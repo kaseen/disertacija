@@ -129,16 +129,18 @@ Program predstavlja statički, fizički zapis koda na uređaju (hardveru) koji s
 Proces je instanca aplikacije koja ima sopstveni memorijski prostor i kontekst izvršavanja.
 \end{definicija}
 
-Najčešće se softver izvršava na uređajima koji poseduju operativni sistem \cite{tanenbaum2015modern} čija je uloga da omogući istovremeno izvršavanje i upravljanje više procesa na istom uređaju: planiranje njihovog izvršavanja, dodelu resursa, sinhronizaciju i međuprocesnu komunikaciju \eng{Inter-Process Communication}. U zavisnosti od fizičke strukture procesora može se u istom trenutku izvršavati jedan ili više procesa, pri čemu operativni sistem ,,naizmenično'' dodeljuje procesor procesima tako što pauzira, čuva i vraća njihov kontekst izvršavanja.
+Najčešće se softver izvršava na uređajima koji poseduju operativni sistem \cite{tanenbaum2015modern} čija je uloga da omogući istovremeno izvršavanje i upravljanje više procesa na istom uređaju: planiranje njihovog izvršavanja, dodelu resursa, sinhronizaciju i međuprocesnu komunikaciju \eng{Inter-Process Communication, IPC}. 
 
-Proces tokom izvršavanja može pokrenuti dodatne podređene komponente koje omogućavaju konkurentno izvršavanje zadataka:
-\begin{enumerate}
-\item \textbf{Podređeni procesi} \eng{child processes} - predstavljaju nezavisne izvršne jedinice koje se pokreću iz glavnog procesa i imaju sopstveni memorijski prostor. Koriste se kada je potrebno izvršavanje izolovanih zadataka koji ne treba da dele memoriju sa glavnim procesom. Na primer, izvođenje sistemske komande može se realizovati kao podređeni proces. U ovu kategoriju spadaju i \textit{vremenski zakazani procesi} \eng{cron jobs}, koji se pokreću periodično u definisanim vremenskim intervalima (npr. svakog dana u ponoć).
+U zavisnosti od fizičke strukture procesora može se u istom trenutku izvršavati jedan ili više procesa, pri čemu operativni sistem ,,naizmenično'' dodeljuje procesor procesima tako što pauzira, čuva i vraća njihov kontekst izvršavanja.
+
+%Proces tokom izvršavanja može pokrenuti dodatne podređene komponente koje omogućavaju konkurentno izvršavanje zadataka:
+%\begin{enumerate}
+%\item \textbf{Podređeni procesi} \eng{child processes} - predstavljaju nezavisne izvršne jedinice koje se pokreću iz glavnog procesa i imaju sopstveni memorijski prostor. Koriste se kada je potrebno izvršavanje izolovanih zadataka koji ne treba da dele memoriju sa glavnim procesom. Na primer, izvođenje sistemske komande može se realizovati kao podređeni proces. U ovu kategoriju spadaju i \textit{vremenski zakazani procesi} \eng{cron jobs}, koji se pokreću periodično u definisanim vremenskim intervalima (npr. svakog dana u ponoć).
     
-\item \textbf{Niti} \eng{threads} - predstavljaju lakše izvršne jedinice koje dele isti memorijski prostor unutar procesa. Koriste se za paralelno izvršavanje više zadataka u okviru istog procesa. Na primer, jedna nit može slušati dolazne mrežne zahteve, druga obrađivati podatke, treća upisivati rezultate u bazu podataka, dok \textit{radne niti} \eng{worker threads} omogućavaju da se pojedini poslovi obavljaju u pozadini bez blokiranja glavnog toka programa.
-\end{enumerate}
+%\item \textbf{Niti} \eng{threads} - predstavljaju lakše izvršne jedinice koje dele isti memorijski prostor unutar procesa. Koriste se za paralelno izvršavanje više zadataka u okviru istog procesa. Na primer, jedna nit može slušati dolazne mrežne zahteve, druga obrađivati podatke, treća upisivati rezultate u bazu podataka, dok \textit{radne niti} \eng{worker threads} omogućavaju da se pojedini poslovi obavljaju u pozadini bez blokiranja glavnog toka programa.
+%\end{enumerate}
 
-Međutim, softver se može izvršavati i na uređajima bez klasičnog operativnog sistema, u tzv. \textit{bare-metal} okruženju, gde postoji samo jedan proces koji direktno radi na hardveru. Višestruki procesi i niti mogu postojati ukoliko je razvijeno posebno programsko okruženje koje to omogućava.
+Međutim, softver se može izvršavati i na uređajima bez klasičnog operativnog sistema, u tzv. \textit{bare-metal} okruženju, gde postoji samo jedan proces koji direktno radi na hardveru. Višestruki procesi mogu postojati ukoliko je razvijeno posebno programsko okruženje koje to omogućava. %Višestruki procesi i niti%
 
 \begin{definicija}
 Instanca informacionog sistema je skup pokrenutih procesa koji rade u koordinaciji kako bi obezbedili punu funkcionalnost aplikacije.
@@ -154,65 +156,67 @@ Stanje informacionog sistema predstavlja skup svih podataka i sistemskih paramet
 Napredovanje informacionog sistema predstavlja proces prelaska sistema iz jednog stanja u drugo kao posledicu njegovog izvršavanja i obrade zahteva.
 \end{definicija}
 
-Način na koji informacioni sistem ostvaruje svoje napredovanje, kao i složenost upravljanja njegovim stanjem, direktno zavise od organizacije procesa koji čine njegovu instancu. U zavisnosti od broja procesa, njihove međusobne zavisnosti i načina komunikacije, informacioni sistemi se mogu realizovati kroz različite arhitektonske pristupe. Ovi pristupi definišu kako su funkcionalne celine sistema raspoređene, kako se ostvaruje koordinacija između njih i na koji način se upravlja promenama stanja sistema.
+U zavisnosti od načina na koji su procesi i aktivnosti organizovani unutar instance informacionog sistema mogu se identifikovati različiti arhitektonski pristupi. Ovi pristupi određuju strukturu sistema, način raspodele odgovornosti između komponenti, njihove međusobne zavisnosti i mehanizme komunikacije putem kojih sistem ostvaruje svoje funkcionalno ponašanje.
+
+Najjednostavniji oblik organizacije informacionog sistema podrazumeva da se sve funkcionalne komponente izvršavaju na jednom uređaju, pri čemu moduli međusobno komuniciraju pozivima funkcija ili metoda unutar istog procesa.
 
 \begin{description}
+\item \textbf{Monolitna arhitektura \cite{levcovitz2016towards}.}
+Monolitna arhitektura predstavlja pristup u kome su sve funkcionalne komponente informacionog sistema objedinjene u jedinstvenu aplikacionu celinu. U okviru ovog pristupa korisnički interfejs (ulaz/izlaz), poslovna logika (obrada) i upravljanje podacima (baza podataka) implementirani su kao delovi jednog izvršnog sistema.
 
-\item \textbf{Monolitna arhitektura:}
-Glavna prednost monolitne arhitekture jeste njena jednostavnost, jer su monolitne aplikacije znatno lakše za testiranje, implementaciju, otklanjanje grešaka i nadgledanje. U okviru monolitnog pristupa, svi delovi sistema, korisnički interfejs (ulaz/izlaz), poslovna logika (obrada) i upravljanje podacima (baza), objedinjeni su u jednom izvršnom paketu i pokreću se kao \textbf{jedan proces}.
+Glavna prednost monolitne arhitekture ogleda se u njenoj jednostavnosti, što je čini pogodnom za manje i srednje aplikacije. Razvoj, testiranje, implementacija i nadgledanje sistema u takvom okruženju su relativno jednostavni jer se sve komponente nalaze u okviru jedinstvene aplikacije.
 
-Svi podaci se čuvaju u jednoj bazi, bez potrebe za sinhronizacijom, dok se sva interna komunikacija odvija unutar tog procesa, što omogućava visoke performanse i eliminiše probleme karakteristične za međuprocesnu komunikaciju. Aplikacija funkcioniše kao jedinstvena celina, gde se sva logika obrade zahteva izvršava u jednom kontekstu izvršavanja. U praksi, taj proces možemo posmatrati kao \textit{serversku instancu aplikacije}, jedinstveni program koji preuzima zahteve, obrađuje ih i vraća odgovore korisnicima.
+Međutim, sa rastom obima i složenosti sistema javljaju se poteškoće u održavanju, jer promene u jednom delu sistema mogu imati neočekivane posledice u drugim delovima aplikacije. Zbog toga se u praksi često primenjuje pristup \textit{modularnog monolita}, u kojem se unutar monolitne aplikacije jasno razdvajaju funkcionalni moduli kako bi se olakšalo održavanje i eventualna buduća migracija ka drugim arhitekturama.
 
-Međutim, sa rastom obima i složenosti aplikacije javljaju se poteškoće u održavanju: promene u kodu postaju rizične i nepredvidive, jer izmene u jednom modulu često utiču na druge. Velika veličina sistema usporava njegovo pokretanje, što otežava razvoj i sprečava brzu i čestu isporuku novih verzija. Vremenom se gubi modularnost i preglednost, dok povećanje broja programera dovodi do neravnomerne raspodele posla i pada ukupne produktivnosti tima.
+\item \textbf{Višeslojna arhitektura \cite{savolainen2009layered}.}
+Višeslojna arhitektura zasniva se na organizaciji sistema u više logičkih slojeva, pri čemu svaki sloj ima jasno definisanu funkciju i odgovornost. Ovakva struktura omogućava razdvajanje različitih aspekata sistema, čime se postižu apstrakcija i enkapsulacija funkcionalnosti.
 
-\item \textbf{Klijent-server arhitektura \cite{berson1992client}:} 
-Prednost klijent-server arhitekture je njena jasna podela odgovornosti između klijenta (ulaz/izlaz) i servera (obrada/baza). Arhitektura se zasniva na odnosu između servera, koji obezbeđuje resurse i usluge, i klijenta, koji te usluge zahteva putem mrežne komunikacije.
+Komunikacija između slojeva odvija se prema unapred definisanim pravilima, najčešće između susednih slojeva, čime se smanjuje međusobna zavisnost komponenti i olakšava održavanje sistema. Tipičan primer ovakve organizacije obuhvata sledeće slojeve:
 
-Sistem je podeljen na dva osnovna dela:\\
-(1) \textit{Klijentski sloj} - korisnički interfejs koji prikazuje podatke i omogućava interakciju sa korisnikom,\\
-(2) \textit{Serverski sloj} - koji sadrži poslovnu logiku i upravlja bazom podataka.\\
-Zbog takve podele, ovaj pristup se često naziva i dvoslojna arhitektura.
+\begin{enumerate}
+\item \textit{Prezentacioni sloj} - korisnički interfejs koji omogućava komunikaciju korisnika sa sistemom,
+\item \textit{Biznis sloj} - sloj koji implementira poslovnu logiku i pravila rada sistema,
+\item \textit{Perzistentni sloj} - sloj koji obezbeđuje preslikavanje objekata iz aplikacionog domena u strukture podataka,
+\item \textit{Sloj podataka} - baza podataka ili drugi mehanizmi za trajno skladištenje i pristup podacima.
+\end{enumerate}
 
-U ovoj arhitekturi sistem funkcioniše kroz \textbf{dva procesa}: jedan proces se izvršava na strani klijenta (npr. web pregledač ili desktop aplikacija), drugi na strani servera (npr. aplikacioni server).
+\item \textbf{Mikrokernel arhitektura \cite{michel2017microkernel}.}
+Mikrokernel arhitektura zasniva se na razdvajanju osnovne funkcionalnosti sistema od dodatnih modula. Centralni deo sistema čini jezgro \eng{kernel} koje obezbeđuje minimalni skup osnovnih funkcija, dok se dodatne funkcionalnosti implementiraju kroz nezavisne module ili dodatke \eng{plug-in}.
 
-Glavna mana klijent-server modela je ograničena skalabilnost i mogućnost preopterećenja servera, jer se svi zahtevi centralizuju na jednoj tački, što može smanjiti performanse i otpornost sistema na greške.
-
-\item \textbf{Troslojna arhitektura \cite{helal2001three}:} 
-Troslojna arhitektura donosi bolju organizaciju i fleksibilnost sistema u odnosu na dvoslojni model, jer uvodi poseban sloj za poslovnu logiku, čime se postiže veća nezavisnost između korisničkog interfejsa i baze podataka. Sistem je podeljen na tri dela:\\
-(1) \textit{Prezentacioni sloj} - korisnički interfejs koji omogućava komunikaciju korisnika sa sistemom,\\
-(2) \textit{Aplikacioni sloj} - sloj koji sadrži poslovnu logiku i pravila rada sistema,\\
-(3) \textit{Sloj podataka} - baza podataka ili drugi mehanizam za skladištenje i pristup podacima.
-
-U praksi, svaki sloj može raditi kao poseban proces, pa imamo \textbf{tri procesa}: frontend (klijent) se izvršava kao jedan proces, aplikacioni server kao drugi, sistem za upravljanje bazom podataka kao treći.
-
-Prednost ove strukture je lakše održavanje, nezavisno testiranje i razvoj slojeva. Međutim, kompleksnost sistema raste, pa je neophodno pažljivo definisati granice između slojeva da bi se izbegla duplikacija i usporavanje komunikacije.
-
-\item \textbf{Četvoroslojna (ili višeslojna) arhitektura \cite{cao2013research}:}  
-Četvoroslojna arhitektura predstavlja proširenje troslojnog modela sa ciljem da se sistem otvori ka spoljnim servisima i aplikacijama. Uvođenjem dodatnog sloja, najčešće nazvanog sloj prenosa podataka \eng{data service} ili API sloj \eng{Application Programming Interface}, omogućava se komunikacija između više sistema i timova putem standardizovanih API-ja. Ovaj sloj enkapsulira poslovnu logiku i izlaže je ka spolja na kontrolisan način, nezavisno od prezentacionog sloja.
-
-Funkcionalno, arhitektura obuhvata:\\
-(1) \textit{Prezentacioni sloj (ulaz/izlaz)} - korisnički interfejs,\\
-(2) \textit{Aplikacioni sloj (obrada)} - poslovna logika,\\
-(2) \textit{API sloj (međusloj komunikacije)} - interfejs prema spoljašnjim servisima,\\
-(3) \textit{Sloj podataka (baza)} - skladištenje i pristup podacima.
-
-U ovoj organizaciji, svaki sloj može funkcionisati kao samostalan proces, pa sistem može imati \textbf{četiri ili više procesa}, u zavisnosti od toga da li se API servis pokreće odvojeno.
-
-Prednost ovog pristupa je mogućnost integracije sa eksternim sistemima, ponovna upotreba servisa i lakša skalabilnost. Ipak, dodatni sloj povećava složenost infrastrukture i zahteva dodatne mehanizme za bezbednost, kontrolu pristupa i održavanje API-ja.
-
-\item \textbf{Mikroservisna arhitektura \cite{alshuqayran2016systematic}:}
-Mikroservisna arhitektura se zasniva na principu da svaka komponenta sistema ima jednu, jasno definisanu odgovornost \eng{single responsibility}. Sistem je sastavljen od više malih, samostalnih servisa, od kojih svaki obuhvata kompletan mini-sistem sa sopstvenim: ulazom/izlazom (API interfejsom), obradom (poslovnom logikom) i često sopstvenom bazom podataka (lokalno skladište). Svaki mikroservis je nezavisno implementiran, poseduje sve neophodne zavisnosti i u potpunosti je odgovoran za izvršavanje svog poslovnog procesa.
-
-Zbog toga se mikroservisi mogu zasebno razvijati, testirati, skalirati i ažurirati bez uticaja na ostatak sistema. U ovoj arhitekturi, svaki mikroservis se izvršava kao poseban proces, pa sistem u celini može obuhvatati \textbf{desetine ili stotine procesa}.
-
-Mikroservisi funkcionišu kao prvoklasni entiteti sistema, izlažu svoje funkcionalnosti putem javnih API-ja, dok su detalji njihove implementacije potpuno sakriveni. Ovaj pristup povećava fleksibilnost, mogućnost monetizacije pojedinih servisa i jednostavnije integrisanje sa drugim aplikacijama, ali ujedno donosi izazove u pogledu orkestracije, bezbednosti i praćenja distribuiranih komponenti.
+Svi moduli komuniciraju sa jezgrom sistema, koje posreduje u njihovoj međusobnoj koordinaciji. Ovakav pristup omogućava visok stepen proširivosti i fleksibilnosti, jer se nove funkcionalnosti mogu dodavati ili menjati bez potrebe za modifikacijom osnovne strukture sistema. Zbog toga se mikrokernel arhitektura često koristi u sistemima koji zahtevaju modularnost, prilagodljivost i dugoročno održavanje.
 \end{description}
 
-Kao što vidimo svaka instanca može predstavljati jedan proces ili skup međusobno povezanih procesa. Ako se svi procesi izvršavaju na jednom uređaju, sistem zadržava \textbf{centralizovanu} prirodu. Međutim, kada se više procesa izvršava na različitim fizičkim uređajima i međusobno koordiniše stanje, sistem prelazi u kategoriju \textbf{distribuiranih sistema}.
+Ukoliko se sve komponente sistema izvršavaju na jednom računarskom uređaju, sistem zadržava \textbf{centralizovanu} prirodu. Međutim, kada se pojedini moduli izvršavaju na različitim fizičkim uređajima koji međusobno koordiniraju svoje stanje, sistem prelazi u kategoriju \textbf{distribuiranih sistema}.
 
 \begin{definicija}
-Distribuiran informacioni sistem predstavlja skup nezavisnih računarskih uređaja (čvorova) koji nemaju zajedničku memoriju i komuniciraju isključivo razmenom poruka, a svoj rad koordinišu tako da prema korisniku deluju kao jedinstven, koherentan sistem \cite{van2017distributed}.
+Distribuiran informacioni sistem predstavlja skup nezavisnih računarskih uređaja (čvorova) koji ne dele zajedničku memoriju i međusobno komuniciraju razmenom poruka, pri čemu koordinacijom svog rada prema korisniku deluju kao jedinstven i koherentan sistem \cite{van2017distributed}.
 \end{definicija}
+
+Za razliku od centralizovanih sistema, u distribuiranim sistemima komunikacija između komponenti ne može se ostvariti direktnim pozivima funkcija, već se realizuje putem mrežnih komunikacionih mehanizama. Najčešći obrasci komunikacije uključuju:
+\begin{enumerate}
+\item Interfejs za programiranje aplikacija \cite{bloch2006design} \eng{Application Programming Interface, API} - skup definisanih pravila i interfejsa koji omogućavaju komunikaciju između aplikacija preko mreže,
+\item Udaljeni poziv procedure \cite{birrell1984implementing} \eng{Remote Procedure Call, RPC} - mehanizam koji omogućava pozivanje funkcija na udaljenim sistemima kao da su lokalne,
+\item Red poruka \cite{eugster2003many} \eng{Message Queue} - asinhroni mehanizam razmene poruka putem posredničkog sistema za razmenu poruka,
+\item Tok događaja \cite{eugster2003many} \eng{Event Streaming} - mehanizam kontinuirane razmene i obrade tokova događaja u realnom vremenu.
+\end{enumerate}
+
+\begin{description}
+\item \textbf{Arhitektura vođena događajima \cite{michelson2006event}.}
+Arhitektura vođena događajima zasniva se na razmeni informacija putem događaja koji nastaju u sistemu. Komponente koje generišu događaje nazivaju se proizvođači \eng{producers}, dok komponente koje ih obrađuju predstavljaju potrošače \eng{consumers}. Komunikacija između njih često se ostvaruje posredstvom sistema za posredovanje poruka \eng{broker}.
+
+Najčešće implementacije ovog pristupa zasnivaju se na sistemima redova poruka ili sistemima za tok događaja. Kod sistema redova poruka svaku poruku obrađuje jedan potrošač, dok kod sistema za tok događaja više potrošača može istovremeno primiti i obraditi isti događaj.
+
+Ovakav pristup povećava fleksibilnost sistema jer omogućava jednostavno dodavanje novih proizvođača i potrošača. Međutim, posrednik može postati usko grlo sistema, zbog čega se u praksi često koristi klaster \eng{cluster} posrednika koji raspodeljuje opterećenje između više instanci.
+
+\item \textbf{Mikroservisna arhitektura \cite{alshuqayran2016systematic}.}
+Mikroservisna arhitektura zasniva se na principu da svaka komponenta sistema ima jednu jasno definisanu odgovornost \eng{single responsibility}. Sistem je sastavljen od većeg broja malih, samostalnih servisa koji međusobno komuniciraju putem mreže, najčešće korišćenjem \textit{API}-ja ili \textit{RPC} mehanizama.
+
+Svaki mikroservis obično predstavlja kompletan mini-sistem sa sopstvenim ulaznim i izlaznim interfejsima, poslovnom logikom i često sopstvenim skladištem podataka. Zbog takve strukture mikroservisi se mogu nezavisno razvijati, testirati, skalirati i ažurirati.
+
+Ovaj pristup povećava fleksibilnost i skalabilnost sistema, kao i mogućnost integracije sa drugim aplikacijama. Međutim, istovremeno uvodi dodatnu složenost u pogledu orkestracije servisa, bezbednosti komunikacije i nadgledanja distribuiranih komponenti.
+\end{description}
+
+Navedene arhitekture predstavljaju najrasprostranjenije pristupe organizaciji savremenih informacionih sistema, iako u praksi postoje i drugi specijalizovani arhitektonski modeli namenjeni specifičnim domenima primene. Dodatno, navedene arhitekture koje se izvršavaju na jednom uređaju, moguće je dodatno pojačati tako što se pokrenu više instanci i uvede raspoređivanje opterećenja, gde se po potrebi bira način komunikacionih mehanizama između njih.
 
 \section{Računarstvo u oblaku i elastično skaliranje informacionih sistema}\label{sec:cloud}
 Razvoj informacionih sistema tradicionalno je zahtevao nabavku sopstvene fizičke infrastrukture (servera, mrežne opreme, skladišta podataka) i angažovanje stručnog osoblja za njeno održavanje. Takav pristup nosi visoke početne troškove, zahteva složeno planiranje i otežava brzo prilagođavanje promenama u obimu posla.
@@ -226,7 +230,7 @@ Kontejnerizacija predstavlja dominantan tehnološki pristup za raspoređivanje s
 Zahvaljujući ovim tehnologijama, arhitektonske organizacije informacionih sistema opisane u poglavlju \ref{sec:arhitektonska-organizacija} mogu se efikasno distribuirati i održavati u cloud infrastrukturi, uz značajno smanjenje tehničke složenosti i operativnih troškova u odnosu na tradicionalne modele upravljanja resursima.
 
 \section{Centralizacija u distribuiranim informacionim sistemima}
-Iako se savremeni informacioni sistemi često izvršavaju na velikom broju fizički distribuiranih čvorova, njihova dominantna arhitektonska paradigma i dalje ostaje klijent-server model. U takvim sistemima, uprkos fizičkoj raspodeli infrastrukture, poslovna logika, donošenje odluka i upravljanje stanjem sistema centralizovani su u okviru jedinstvene upravljačke instance ili skupa tesno koordinisanih autoriteta. Kao posledica toga, sistem se u operativnom smislu ponaša kao jedinstvena računarska celina sa jednim globalnim stanjem i jednim centrom poverenja.
+Iako se savremeni informacioni sistemi često izvršavaju na velikom broju fizički distribuiranih čvorova, njihova dominantna arhitektonska paradigma i dalje ostaje klijent-server model \cite{berson1992client}. U takvim sistemima, uprkos fizičkoj raspodeli infrastrukture, poslovna logika, donošenje odluka i upravljanje stanjem sistema centralizovani su u okviru jedinstvene upravljačke instance ili skupa tesno koordinisanih autoriteta. Kao posledica toga, sistem se u operativnom smislu ponaša kao jedinstvena računarska celina sa jednim globalnim stanjem i jednim centrom poverenja.
 
 \begin{teorema}
 Fizička distribuiranost čvorova ne implicira decentralizaciju informacionog sistema.
@@ -245,7 +249,7 @@ Prema standardnoj klasifikaciji \cite{buterin2017meaning}, decentralizacija se m
 Arhitektonska decentralizacija odnosi se pre svega na \textbf{hardverski sloj} sistema i ne predstavlja binarnu osobinu sistema, već kontinualni spektar koji zavisi od broja čvorova, njihove međusobne nezavisnosti, vlasničke strukture i fizičke raspodele.
 
 \begin{definicija}
-Arhitektonska decentralizacija podrazumeva postojanje fizičke infrastrukture sastavljene od čvorova koje pokreću međusobno nezavisni vlasnici, raspoređenih na različitim fizičkim lokacijama, bez centralizovanog mehanizma upravljanja infrastrukturom.
+Arhitektonska decentralizacija podrazumeva postojanje fizičke infrastrukture sastavljene od čvorova koje pokreću međusobno nezavisni vlasnici, raspoređenih na različitim fizičkim lokacijama, bez centralizovanog mehanizama upravljanja infrastrukturom.
 \end{definicija}
 
 Tipičan primer sistema u kome su prisutne sve tri forme centralizacije jesu tradicionalne korporativne infrastrukture, gde se sistem izvršava na više fizički i geografski razdvojenih lokacija, ali su svi ti resursi u vlasništvu ili pod kontrolom jednog administrativnog entiteta i podležu jedinstvenoj upravljačkoj politici. Ovi sistemi jasno ilustruju da \textbf{distribuiranost nije isto što i decentralizacija}, jer u pogledu kontrole infrastrukture ostaju arhitektonski centralizovani.
