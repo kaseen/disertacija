@@ -85,6 +85,12 @@ Radni sistem formuliše zahteve u domenu realnih poslovnih procesa, koje označa
 
 Preslikavanje skupa $Z_{RS}$ u formalni domen informacionog sistema ne predstavlja trivijalnu funkciju, već podrazumeva interpretaciju, razlaganje, preciziranje i formalizaciju poslovnih zahteva. Ovaj proces obuhvata identifikaciju, analizu, specifikaciju, validaciju i upravljanje zahtevima tokom životnog ciklusa sistema \cite{zave1997classification}.
 
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.98\textwidth]{chapter1_zahtev.png}
+    \caption{TODO}
+\end{figure}
+
 Međutim, samo oni zahtevi koji se mogu dovoljno precizno formalizovati, operacionalizovati i algoritamski izraziti mogu postati deo odgovarajućeg formalnog jezika informacionog sistema, te važi relacija:
 $$
 Z_{IS} \subseteq f(Z_{RS})
@@ -216,7 +222,7 @@ Svaki mikroservis obično predstavlja kompletan mini-sistem sa sopstvenim ulazni
 Ovaj pristup povećava fleksibilnost i skalabilnost sistema, kao i mogućnost integracije sa drugim aplikacijama. Međutim, istovremeno uvodi dodatnu složenost u pogledu orkestracije servisa, bezbednosti komunikacije i nadgledanja distribuiranih komponenti.
 \end{description}
 
-Navedene arhitekture predstavljaju najrasprostranjenije pristupe organizaciji savremenih informacionih sistema, iako u praksi postoje i drugi specijalizovani arhitektonski modeli namenjeni specifičnim domenima primene. Dodatno, navedene arhitekture koje se izvršavaju na jednom uređaju, moguće je dodatno pojačati tako što se pokrenu više instanci i uvede raspoređivanje opterećenja, gde se po potrebi bira način komunikacionih mehanizama između njih.
+Navedene arhitekture predstavljaju najrasprostranjenije pristupe organizaciji savremenih informacionih sistema, iako u praksi postoje i drugi specijalizovani arhitektonski modeli namenjeni specifičnim domenima primene. Dodatno, navedene arhitekture koje se izvršavaju na jednom uređaju, moguće je dodatno proširiti tako što se pokrenu više instanci i uvede raspoređivanje opterećenja, gde se po potrebi bira način komunikacionih mehanizama između njih.
 
 \section{Računarstvo u oblaku i elastično skaliranje informacionih sistema}\label{sec:cloud}
 Razvoj informacionih sistema tradicionalno je zahtevao nabavku sopstvene fizičke infrastrukture (servera, mrežne opreme, skladišta podataka) i angažovanje stručnog osoblja za njeno održavanje. Takav pristup nosi visoke početne troškove, zahteva složeno planiranje i otežava brzo prilagođavanje promenama u obimu posla.
@@ -225,16 +231,25 @@ Savremene organizacije sve češće usvajaju model računarstva u oblaku \eng{cl
 
 Okruženja u oblaku tipično se realizuju kao javna, privatna ili hibridna, dok se isporuka servisa organizuje kroz standardne modele: \textit{IaaS} (infrastruktura kao usluga), \textit{PaaS} (platforma kao usluga) i \textit{SaaS} (softver kao usluga). Ovi modeli određuju nivo kontrole koji zadržava korisnik i nivo odgovornosti koji preuzima provajder usluge.
 
-Kontejnerizacija predstavlja dominantan tehnološki pristup za raspoređivanje softverskih komponenti u oblaku. Kontejneri (npr. \textit{Docker}) omogućavaju izolovano, prenosivo i konzistentno pokretanje aplikacionih instanci, dok platforme za orkestraciju (npr. \textit{Kubernetes}) automatizuju njihovo raspoređivanje, oporavak i horizontalno skaliranje u dinamičkim okruženjima.
+Kontejnerizacija predstavlja dominantan tehnološki pristup za raspoređivanje softverskih komponenti u oblaku. Kontejneri (npr. \textit{Docker}) omogućavaju izolovano, prenosivo i konzistentno pokretanje aplikacionih instanci, dok platforme za orkestraciju (npr. \textit{Kubernetes}) automatizuju njihovo raspoređivanje i oporavak u dinamičkim okruženjima.
 
-Zahvaljujući ovim tehnologijama, arhitektonske organizacije informacionih sistema opisane u poglavlju \ref{sec:arhitektonska-organizacija} mogu se efikasno distribuirati i održavati u cloud infrastrukturi, uz značajno smanjenje tehničke složenosti i operativnih troškova u odnosu na tradicionalne modele upravljanja resursima.
+Zahvaljujući ovim tehnologijama, arhitektonske organizacije informacionih sistema opisane u poglavlju \ref{sec:arhitektonska-organizacija} mogu se efikasno distribuirati i održavati u \textit{cloud} infrastrukturi, uz značajno smanjenje tehničke složenosti i operativnih troškova u odnosu na tradicionalne modele upravljanja resursima.
 
 \section{Centralizacija u distribuiranim informacionim sistemima}
-Iako se savremeni informacioni sistemi često izvršavaju na velikom broju fizički distribuiranih čvorova, njihova dominantna arhitektonska paradigma i dalje ostaje klijent-server model \cite{berson1992client}. U takvim sistemima, uprkos fizičkoj raspodeli infrastrukture, poslovna logika, donošenje odluka i upravljanje stanjem sistema centralizovani su u okviru jedinstvene upravljačke instance ili skupa tesno koordinisanih autoriteta. Kao posledica toga, sistem se u operativnom smislu ponaša kao jedinstvena računarska celina sa jednim globalnim stanjem i jednim centrom poverenja.
+Savremeni informacioni sistemi često se izvršavaju na velikom broju fizički distribuiranih čvorova, mada njihova dominantna arhitektonska paradigma mrežne komunikacije i dalje ostaje topološki klijent-server model \cite{berson1992client}. U takvom modelu unapred je definisan raspored komunikacije između komponenti sistema, pri čemu pojedini čvorovi imaju ulogu servera koji pružaju usluge, dok drugi čvorovi nastupaju kao klijenti koji te usluge zahtevaju. Posledično, komunikaciona struktura sistema ima hijerarhijski karakter, jer čvorovi ne poseduju ravnopravan položaj u mreži.
 
-\begin{teorema}
-Fizička distribuiranost čvorova ne implicira decentralizaciju informacionog sistema.
-\end{teorema}
+Iako je infrastrukturno raspodeljen na više računarskih čvorova, ovakav sistem zadržava centralizovan model upravljanja. Poslovna logika, donošenje ključnih odluka i upravljanje stanjem sistema najčešće su koncentrisani u okviru jedinstvene upravljačke instance ili ograničenog broja međusobno koordinisanih autoriteta. Zbog toga se sistem, sa operativne tačke gledišta, ponaša kao jedinstvena računarska celina sa jednim globalnim stanjem i jednim centrom poverenja.
+
+Iz perspektive radnih sistema, informacioni sistemi trebalo bi da doprinose stvaranju vrednosti za sve učesnike sistema. Međutim, istorijski razvoj dominantnih modela digitalnih platformi bio je pre svega usmeren na optimizaciju poslovnih ciljeva i tržišne vrednosti organizacija koje njima upravljaju. Kao posledica takvog pristupa, kontrola nad podacima, pravilima interakcije i distribucijom vrednosti u velikoj meri ostaje koncentrisana u rukama centralnih upravljačkih entiteta.
+
+U savremenoj literaturi sve češće se ukazuje na to da centralizovana kontrola nad informacionim sistemima može dovesti do smanjenja autonomije korisnika i pojave različitih oblika asimetrije moći između platformi i njihovih korisnika. Među najčešće diskutovanim pojavama izdvajaju se:
+\begin{enumerate}
+\item \textbf{Nadzorni kapitalizam} \cite{zuboff2023age} - ekonomski model digitalnih platformi zasnovan na masovnom prikupljanju i analizi korisničkih podataka radi optimizacije poslovnih modela i ciljanog oglašavanja,
+\item \textbf{Algoritamska kontrola} \cite{bakshy2015exposure} - korišćenje algoritama za filtriranje, rangiranje i preporuku sadržaja, čime platforme indirektno utiču na informacione tokove kojima su korisnici izloženi,
+\item \textbf{Cenzura i kontrola pristupa} \cite{roberts2019behind} - centralizovano upravljanje sadržajem i pristupom platformama, koje omogućava uklanjanje sadržaja ili ograničavanje pristupa određenim korisnicima,
+\item \textbf{Zloupotreba ličnih podataka} \cite{acquisti2016economics} - koncentracija velikih količina korisničkih podataka u centralizovanim bazama povećava rizike od neovlašćenog pristupa, curenja podataka i drugih oblika narušavanja privatnosti,
+\item \textbf{Monopol i koncentracija moći} \cite{khan2016amazon} - koncentracija tržišne moći u okviru velikih digitalnih platformi može ograničiti konkurenciju i uticati na izbor proizvoda i usluga dostupnih korisnicima.
+\end{enumerate}
 
 Da bi se informacioni sistem mogao smatrati decentralizovanim, nije dovoljno da se izvršava na velikom broju čvorova. Neophodno je da njegova arhitektura bude projektovana bez centralne tačke kontrole ili jedinstvene tačke otkaza sistema \eng{single point of failure}, jer bi njen otkaz, uklanjanje ili kompromitovanje dovelo do poremećaja ili potpunog prekida rada sistema \cite{baran1964distributed}.
 
@@ -252,7 +267,10 @@ Arhitektonska decentralizacija odnosi se pre svega na \textbf{hardverski sloj} s
 Arhitektonska decentralizacija podrazumeva postojanje fizičke infrastrukture sastavljene od čvorova koje pokreću međusobno nezavisni vlasnici, raspoređenih na različitim fizičkim lokacijama, bez centralizovanog mehanizama upravljanja infrastrukturom.
 \end{definicija}
 
-Tipičan primer sistema u kome su prisutne sve tri forme centralizacije jesu tradicionalne korporativne infrastrukture, gde se sistem izvršava na više fizički i geografski razdvojenih lokacija, ali su svi ti resursi u vlasništvu ili pod kontrolom jednog administrativnog entiteta i podležu jedinstvenoj upravljačkoj politici. Ovi sistemi jasno ilustruju da \textbf{distribuiranost nije isto što i decentralizacija}, jer u pogledu kontrole infrastrukture ostaju arhitektonski centralizovani.
+Tipičan primer sistema u kome su prisutne sve tri forme centralizacije jesu tradicionalne korporativne infrastrukture, gde se sistem izvršava na više fizički i geografski razdvojenih lokacija, ali su svi ti resursi u vlasništvu ili pod kontrolom jednog administrativnog entiteta i podležu jedinstvenoj upravljačkoj politici. Ovi sistemi jasno ilustruju sledeću teoremu:
+\begin{teorema}
+Fizička distribuiranost čvorova ne implicira decentralizaciju informacionog sistema.
+\end{teorema}
 
 \subsection{Kontrolna decentralizacija}
 Kontrolna (politička) decentralizacija odnosi se na \textbf{ljudski i organizacioni sloj} sistema i podrazumeva odsustvo jedinstvenog entiteta koji poseduje ovlašćenje da izdaje naredbe, donosi konačne odluke ili menja globalno stanje sistema.
@@ -273,7 +291,7 @@ Iako ovakva topologija omogućava eliminisanje \textit{centralne tačke komunika
 Mreža ravnopravnih korisnika predstavlja potreban, ali ne i dovoljan uslov za ostvarivanje kontrolne decentralizacije.
 \end{teorema}
 
-Iz tog razloga, sam sistem mora formalno definisati procese i aktivnosti čijim se izvršavanjem omogućava da svi čvorovi, na osnovu lokalnih informacija i razmene poruka, dinamički odrede sledeće globalno stanje i kolektivno ga prihvate.
+Iz tog razloga, sam sistem mora formalno definisati procese i aktivnosti čijim se izvršavanjem omogućava da svi čvorovi, na osnovu lokalnih informacija i razmene poruka, dinamički odrede napredovanje sistema i kolektivno ga prihvate.
 
 Međutim, uklanjanje centralizovanog autoriteta u procesima odlučivanja implicitno uvodi mogućnost da se pojedini čvorovi ponašaju neispravno ili maliciozno, bilo usled tehničkih kvarova, bilo kao posledica kompromitovanja od strane napadača koji šalju lažne ili međusobno kontradiktorne poruke.
 
@@ -310,23 +328,17 @@ Primer sistema koji je logički decentralizovan, ali kontrolno centralizovan, pr
 
 Primer sistema koji ostvaruje i logičku i kontrolnu decentralizaciju predstavlja \textit{BitTorrent} protokol \cite{cohen2003incentives}. BitTorrent funkcioniše kao mreža ravnopravnih korisnika u kojoj se za svaki sadržaj formira posebna grupa čvorova koji učestvuju u njegovoj razmeni. Svaki čvor održava isključivo sopstveno lokalno stanje, koje se odnosi na delove sadržaja koje poseduje i razmenjuje. U ovom sistemu ne postoji globalno stanje koje bi objedinjavalo sve učesnike mreže. Različite grupe čvorova funkcionišu nezavisno jedna od druge, a podela sistema na više delova ne narušava njegovu osnovnu funkcionalnost. Svaki deo mreže i dalje omogućava pronalaženje, razmenu i preuzimanje sadržaja u okviru svojih lokalnih interakcija. Servisi za pretragu sadržaja (npr. \textit{The Pirate Bay}) mogu olakšati pronalaženje relevantnih grupa korisnika, ali nisu neophodni za osnovno funkcionisanje sistema i ne predstavljaju njegovu logičku komponentu.
 
-Za razliku od statičkih sistema, dinamički informacioni sistemi podrazumevaju postojanje eksplicitnog modela napredovanja sistema tokom vremena kao rezultat događaja ili akcija učesnika. Održavanje konzistentnog ponašanja takvih sistema zahteva definisanu semantiku promena stanja, determinističke tranzicije i mehanizme za usaglašavanje različitih lokalnih pogleda na sistem.
+\section{Granice i implikacije decentralizacije u distribuiranim informacionim sistemima}
+Od tri dimenzije decentralizacije, kontrolna decentralizacija u praksi obično ima najveću intuitivnu težinu. Kada se za neki sistem kaže da je ,,decentralizovan'', najčešće se pod tim podrazumeva da korisnici nisu podređeni jednom centralnom autoritetu i da nijedan pojedinačni subjekt nema potpunu kontrolu nad upravljanjem sistemom. 
 
-% TODO dinamicki -> napredovanje sistema
-\begin{teorema}
-Ne postoji dinamički informacioni sistem koji istovremeno ostvaruje punu arhitektonsku, kontrolnu i logičku decentralizaciju.
-\end{teorema}
+Zbog toga je moguće da sistem bude arhitektonski ili logički centralizovan, a da se i dalje smatra decentralizovanim ukoliko je kontrola nad njegovim funkcionisanjem raspodeljena između većeg broja učesnika. Međutim, arhitektonska centralizacija uvodi jedinstvenu tačku otkaza sistema, što predstavlja značajan rizik za pouzdanost i otpornost informacionih sistema.
 
-%TODO ZAKLJUČAK
+U praksi, većina savremenih distribuiranih informacionih sistema zadržava kontrolno centralizovan model upravljanja, dok se distribucija infrastrukture koristi prvenstveno radi povećanja dostupnosti, skalabilnosti i performansi sistema. Takvi sistemi uvode dodatnu složenost u odnosu na centralizovane arhitekture, jer zahtevaju mehanizme sinhronizacije stanja između čvorova, upravljanje konkurentnim izvršavanjem i rešavanje problema konzistentnosti podataka. Ovi mehanizmi neminovno utiču na performanse sistema, a samim tim i na korisničko iskustvo.
 
-%Decentralizacija se povećava sa brojem čvorova
+Uvođenje dodatnih oblika decentralizacije u takvim okruženjima dodatno povećava složenost sistema, jer zahteva razvoj novih mehanizama koordinacije koji mogu da obezbede pouzdano upravljanje zajedničkim stanjem sistema bez centralnog autoriteta.
 
-%\begin{definicija}
-%Decentralizovan informacioni sistem je sistem u kojem nijedan čvor nema privilegovanu kontrolu nad stanjem, već konzistentnost i napredovanje sistema obezbeđuju distribuirani protokoli.
-%\end{definicija}
+Iz tog razloga decentralizacija se može posmatrati kao proširenje sociotehničke perspektive informacionih sistema, primenjeno na domene distribuiranih algoritama, konsenzusa i upravljanja zajedničkim stanjem u mrežama nezavisnih učesnika.
 
-%Ovakvo tumačenje omogućava da se decentralizacija posmatra kao proširenje sociotehničke perspektive radnih sistema, primenjeno na domene distribuiranih algoritama, konsenzusa i upravljanja stanjem bez centralnog autoriteta.
+Analiza takvih sistema zahteva oslanjanje na teorijske osnove distribuiranih sistema, koje proučavaju ograničenja i kompromise između skalabilnosti, konzistentnosti, bezbednosti i otpornosti na otkaze u okruženjima bez centralne tačke kontrole.
 
-%Od tri vrste decentralizacije, kontrolna decentralizacija obično ima najveću intuitivnu težinu. Kada neko kaže da je sistem ,,decentralizovan'', on najčešće misli da korisnici nisu podređeni jednom centralnom autoritetu i da nijedan subjekt nema moć da samostalno upravlja sistemom. Zbog toga sistem može biti arhitektonski ili logički centralizovan, a i dalje smatran decentralizovanim ukoliko je kontrola raspodeljena. Skoro svi moderni distribuirani informacioni sistemi ostaju kontrolno centralizovani.
-
-%U nastavku rada, termin ,,sistem'' se koristi kao skraćenica za ,,informacioni sistem'', osim kada se izričito navodi drugačije.
+U narednom poglavlju biće predstavljeni osnovni koncepti i metrike teorije distribuiranih sistema koji omogućavaju formalnu analizu ovih ograničenja. Ovaj teorijski okvir poslužiće kao osnova za razumevanje blokčejn tehnologija, koje u kasnijim poglavljima posmatramo kao posebnu klasu distribuiranih informacionih sistema usmerenih ka uklanjanju centralnog autoriteta nad upravljanjem stanjem sistema.
