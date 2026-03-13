@@ -174,6 +174,12 @@ Glavna prednost monolitne arhitekture ogleda se u njenoj jednostavnosti, što je
 
 Međutim, sa rastom obima i složenosti sistema javljaju se poteškoće u održavanju, jer promene u jednom delu sistema mogu imati neočekivane posledice u drugim delovima aplikacije. Zbog toga se u praksi često primenjuje pristup \textit{modularnog monolita}, u kojem se unutar monolitne aplikacije jasno razdvajaju funkcionalni moduli kako bi se olakšalo održavanje i eventualna buduća migracija ka drugim arhitekturama.
 
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.65\textwidth]{chapter1_monolit.png}
+    \caption{TODO}
+\end{figure}
+
 \item \textbf{Višeslojna arhitektura \cite{savolainen2009layered}.}
 Višeslojna arhitektura zasniva se na organizaciji sistema u više logičkih slojeva, pri čemu svaki sloj ima jasno definisanu funkciju i odgovornost. Ovakva struktura omogućava razdvajanje različitih aspekata sistema, čime se postižu apstrakcija i enkapsulacija funkcionalnosti.
 
@@ -186,10 +192,23 @@ Komunikacija između slojeva odvija se prema unapred definisanim pravilima, naj�
 \item \textit{Sloj podataka} - baza podataka ili drugi mehanizmi za trajno skladištenje i pristup podacima.
 \end{enumerate}
 
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.55\textwidth]{chapter1_slojevita.png}
+    \caption{TODO}
+\end{figure}
+
 \item \textbf{Mikrokernel arhitektura \cite{michel2017microkernel}.}
 Mikrokernel arhitektura zasniva se na razdvajanju osnovne funkcionalnosti sistema od dodatnih modula. Centralni deo sistema čini jezgro \eng{kernel} koje obezbeđuje minimalni skup osnovnih funkcija, dok se dodatne funkcionalnosti implementiraju kroz nezavisne module ili dodatke \eng{plug-in}.
 
 Svi moduli komuniciraju sa jezgrom sistema, koje posreduje u njihovoj međusobnoj koordinaciji. Ovakav pristup omogućava visok stepen proširivosti i fleksibilnosti, jer se nove funkcionalnosti mogu dodavati ili menjati bez potrebe za modifikacijom osnovne strukture sistema. Zbog toga se mikrokernel arhitektura često koristi u sistemima koji zahtevaju modularnost, prilagodljivost i dugoročno održavanje.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.35\textwidth]{chapter1_microkernel.png}
+    \caption{TODO}
+\end{figure}
+
 \end{description}
 
 Ukoliko se sve komponente sistema izvršavaju na jednom računarskom uređaju, sistem zadržava \textbf{centralizovanu} prirodu. Međutim, kada se pojedini moduli izvršavaju na različitim fizičkim uređajima koji međusobno koordiniraju svoje stanje, sistem prelazi u kategoriju \textbf{distribuiranih sistema}.
@@ -214,12 +233,25 @@ Najčešće implementacije ovog pristupa zasnivaju se na sistemima redova poruka
 
 Ovakav pristup povećava fleksibilnost sistema jer omogućava jednostavno dodavanje novih proizvođača i potrošača. Međutim, posrednik može postati usko grlo sistema, zbog čega se u praksi često koristi klaster \eng{cluster} posrednika koji raspodeljuje opterećenje između više instanci.
 
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\textwidth]{chapter1_event.png}
+    \caption{TODO}
+\end{figure}
+
 \item \textbf{Mikroservisna arhitektura \cite{alshuqayran2016systematic}.}
 Mikroservisna arhitektura zasniva se na principu da svaka komponenta sistema ima jednu jasno definisanu odgovornost \eng{single responsibility}. Sistem je sastavljen od većeg broja malih, samostalnih servisa koji međusobno komuniciraju putem mreže, najčešće korišćenjem \textit{API}-ja ili \textit{RPC} mehanizama.
 
 Svaki mikroservis obično predstavlja kompletan mini-sistem sa sopstvenim ulaznim i izlaznim interfejsima, poslovnom logikom i često sopstvenim skladištem podataka. Zbog takve strukture mikroservisi se mogu nezavisno razvijati, testirati, skalirati i ažurirati.
 
 Ovaj pristup povećava fleksibilnost i skalabilnost sistema, kao i mogućnost integracije sa drugim aplikacijama. Međutim, istovremeno uvodi dodatnu složenost u pogledu orkestracije servisa, bezbednosti komunikacije i nadgledanja distribuiranih komponenti.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\textwidth]{chapter1_microservice.png}
+    \caption{TODO}
+\end{figure}
+
 \end{description}
 
 Navedene arhitekture predstavljaju najrasprostranjenije pristupe organizaciji savremenih informacionih sistema, iako u praksi postoje i drugi specijalizovani arhitektonski modeli namenjeni specifičnim domenima primene. Dodatno, navedene arhitekture koje se izvršavaju na jednom uređaju, moguće je dodatno proširiti tako što se pokrenu više instanci i uvede raspoređivanje opterećenja, gde se po potrebi bira način komunikacionih mehanizama između njih.

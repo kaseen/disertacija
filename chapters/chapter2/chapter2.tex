@@ -6,29 +6,18 @@ Da bi se obezbedio standardizovan okvir evaluacije, karakteristike informacionih
 \item \textbf{Performanse i efikasnost:} performanse, skalabilnost, efikasnost korišćenja resursa, troškovna efikasnost, operativno održavanje, fleksibilnost, energetska efikasnost.
 \item \textbf{Operativna svojstva:} dostupnost, integritet, sigurnost, pouzdanost, otpornost na greške, konzistentnost podataka.
 \item \textbf{Upotrebljivost:} korisničko iskustvo, lakoća učenja \eng{learnability}, operabilnost, pristupačnost.
-% TODO: Teoretsko računarstvo MLUR recenice
 \item \textbf{Funkcionalna ispravnost:} ispravnost funkcionalnih zahteva, potpunost funkcija, preciznost izvodenja funkcija, usklađenost sa specifikacijom.
 \end{enumerate}
-Poslednje dve kategorije ne pripadaju tehničkim atributima infrastrukture u užem smislu, te će radi jasnoće opsega istraživanja biti isključene iz daljeg razmatranja.
 
 Ovakva klasifikacija omogućava konzistentno i teorijski utemeljeno poređenje informacionih sistema na tehničkom nivou. Razmatranje ovih atributa jasno odvaja \textbf{tehnička svojstva sistema}, koja su primarni predmet istraživanja u ovoj disertaciji, od šireg organizacionog i poslovnog konteksta.
 
-% TODO
-U nastavku ovog poglavlja analiziraće se \textbf{prednosti i ograničenja kontrolno centralizovanih informacionih sistema}, pri čemu se tehnički atributi razmatraju nezavisno od toga da li se sistem izvršava na jednoj fizičkoj instanci ili na više fizičkih instanci.
-
 \section{CAP teorema}
-% TODO
-\begin{definicija}
-Kvalitativna analiza arhitektonskih ograničenja obuhvata identifikaciju i razumevanje fundamentalnih ograničenja distribuiranih sistema. 
-\end{definicija}
-
-Jedno od najznačajnijih ograničenja u distribuiranim sistemima proizilazi iz činjenice da su \textbf{mrežne particije} neizbežan događaj: pitanje nije ,,da li'' će se dogoditi, već ,,kada''. Ova činjenica je najjasnije formalizovana kroz \textit{CAP teoremu}, koja definiše osnovni skup arhitektonskih kompromisa u dizajnu distribuiranih sistema.
+Jedno od najznačajnijih kvalitativnih ograničenja u distribuiranim sistemima proizilazi iz činjenice da su \textbf{mrežne particije} neizbežan događaj: pitanje nije ,,da li'' će se dogoditi, već ,,kada''. Ova činjenica je najjasnije formalizovana kroz \textit{CAP teoremu}, koja definiše osnovni skup arhitektonskih kompromisa u dizajnu distribuiranih sistema.
 
 Mrežna particija može nastati u različitim situacijama, uključujući:
 \begin{enumerate}
-\item \textit{prekid mrežne povezanosti} - fizički prekid veze između udaljenih data-centara tj. čvorovi nastavljaju da rade, ali više ne mogu da komuniciraju,
-\item \textit{ekstremno povećanje vremena odaziva} - vreme odaziva čitavog sistema prelazi prag koji je prihvatljiv (npr. skok sa 50 ms na nekoliko minuta),
-\item \textit{preopterećen čvor} - čvor je operativan, ali njegov odgovor nije u predviđenom vremenu, pa ga ostatak sistema tretira kao nedostupan,
+\item \textit{prekid mrežne povezanosti} - fizički prekid veze između čvorova koji nastavljaju da rade, ali više ne mogu da komuniciraju,
+\item \textit{ekstremno povećanje vremena odaziva} - čvor je operativan ali vreme odaziva datog čvora prelazi prag koji je prihvatljiv (npr. skok sa 50 ms na nekoliko minuta), pa ga ostatak sistema tretira kao nedostupan,
 \item \textit{greške u mrežnoj konfiguraciji} - ispravni čvorovi ne vide jedni druge zbog pogrešne konfiguracije.
 \end{enumerate}
 
@@ -116,16 +105,14 @@ Optimizacija predstavlja proces unapređenja softverskog sistema sa ciljem da za
 
 Skaliranje se odnosi na način proširenja hardverskih resursa i optimizacije softverskih aplikacija, te uključuje i hardverske i softverske aspekte sistema. U praksi se, nakon sprovedene softverske optimizacije, razlikuju dva osnovna pristupa skaliranju hardvera:
 \begin{enumerate}
-\item \textbf{Vertikalno skaliranje (scale-up)} - povećavanje resursnih kapaciteta jedne instance aplikacije (CPU, memorija, skladište),
-\item \textbf{Horizontalno skaliranje (scale-out)} - dodavanje novih instanci informacionog sistema.
+\item \textbf{Vertikalno skaliranje (scale-up)} - povećavanje resursnih kapaciteta jedne instance sistema (CPU, memorija, skladište),
+\item \textbf{Horizontalno skaliranje (scale-out)} - dodavanje novih instanci (ili procesa) unutar istog informacionog sistema, čime se povećava ukupan broj aktivnih izvršnih jedinica.
 \end{enumerate}
 
-\TODO{mikroservisi, serverless}
-
-Horizontalno skaliranje podrazumeva pokretanje više instanci (ili procesa) istog informacionog sistema, čime se povećava ukupan broj aktivnih izvršnih jedinica. \textbf{Dijagonalno skaliranje} predstavlja kombinovanje vertikalnog i horizontalnog pristupa.
+U praksi se koristi i \textit{dijagonalno skaliranje} koje predstavlja kombinovanje vertikalnog i horizontalnog pristupa.
 
 \subsection{Vertikalno skaliranje}
-Vertikalno skaliranje podrazumeva povećavanje resursnih kapaciteta, tj. procesora, memorije, I/O podsistema ili skladišta jedne fizičke ili virtuelne instance informacionog sistema. Time se jedna izvršna jedinica osposobljava da obradi veći broj zahteva u jedinici vremena. Ovakvo skaliranje je idealno za jednostavnije sisteme, kao što su lični informacioni sistemi.
+Vertikalno skaliranje podrazumeva povećavanje resursnih kapaciteta, tj. procesorskih resursa, memorije, I/O podsistema ili skladišnog prostora jedne fizičke ili virtuelne instance informacionog sistema. Time se jedna izvršna jedinica osposobljava da obradi veći broj zahteva u jedinici vremena. Ovakvo skaliranje je idealno za jednostavnije sisteme, gde bi se koristila monolitna, slojevita ili mikrokernel arhitektura.
 
 Prednosti vertikalnog skaliranja obuhvataju:
 \begin{enumerate}
@@ -146,9 +133,9 @@ Međutim, postoje ozbiljna ograničenja:
 Da bi se makar delimično ublažile poslednje dve mane, jedno od poznatih rešenja jeste korišćenje rezerve \eng{hot standby}. To znači da postoji rezervna instanca spremna za aktivaciju u slučaju da glavna mašina zakaže ili postane neupotrebljiva. Ovo omogućava preuzimanje rada bez (ili uz minimalan) prekid za korisnike. Ipak, i ta rezerva nasleđuje sve prethodno navedene mane.
 
 \subsection{Lokacijski zasnovano adresiranje}\label{section:location-based}
-Kontrolno centralizovani informacioni sistemi omogućavaju jednostavnu komunikaciju između geografski raspoređenih klijenata i instance informacionog sistema, jer se ta komunikacija zasniva na modelu \textbf{lokacijski zasnovanog adresiranja} \eng{location-based addressing} \cite{ding2011location}. U ovom modelu svaki zahtev se eksplicitno upućuje na unapred poznatu lokaciju servera, tj. IP adresu, pri čemu se koristi DNS servis koji prevodi domen u adresu. Na taj način se celokupan radni tok obrade zahteva usmerava ka jednoj fizičkoj lokaciji.
+Većina informacionih sistema omogućava jednostavnu komunikaciju između geografski raspoređenih klijenata i instance informacionog sistema, budući da se ta komunikacija zasniva na modelu \textbf{lokacijski zasnovanog adresiranja} \eng{location-based addressing} \cite{ding2011location}. U ovom modelu svaki zahtev se eksplicitno upućuje na unapred poznatu lokaciju servera, odnosno IP adresu, pri čemu se koristi DNS servis koji prevodi domen u adresu. Na taj način se celokupan radni tok obrade zahteva usmerava ka jednoj fizičkoj lokaciji.
 
-Ovakav model adresiranja jednostavan je za implementaciju i predstavlja dominantnu paradigmu tradicionalnih internet servisa. Međutim, on ima ključna ograničenja u pogledu performansi kada se klijenti i server nalaze na različitim geografskim lokacijama. Brojna merenja globalne internet latencije pokazuju da pristup serverima lociranim na drugim kontinentima tipično uvodi latenciju od \textbf{80-150 ms} \cite{kufel2015network} po jednom zahtevu, što značajno utiče na \textit{korisničko iskustvo} kod aplikacija osetljivih na kašnjenje, kao što su interaktivne web aplikacije, sistemi za finansijsko trgovanje, igre u realnom vremenu i streaming servisi.
+Ovakav model adresiranja jednostavan je za implementaciju i predstavlja dominantnu paradigmu tradicionalnih internet servisa. Međutim, on ima ključna ograničenja u pogledu performansi kada se klijenti i server nalaze na različitim geografskim lokacijama. Brojna merenja globalne internet latencije pokazuju da pristup serverima lociranim na drugim kontinentima tipično uvodi latenciju od \textbf{80-150 ms} \cite{kufel2015network} po jednom zahtevu, što značajno utiče na \textit{korisničko iskustvo} kod aplikacija osetljivih na kašnjenje, kao što su interaktivne web aplikacije, sistemi za finansijsko trgovanje, igre u realnom vremenu i \textit{streaming} servisi.
 
 Usled ovih ograničenja, vertikalno skalirani centralizovani sistemi ne mogu da kompenzuju geografska kašnjenja, nezavisno od raspoloživog hardvera. Ovaj problem se prevazilazi primenom geografski distribuiranih instanci, čime se zahtevi rutiraju ka najbližem dostupnom čvoru i smanjuje ukupna \textit{end-to-end} latencija.
 
@@ -165,7 +152,7 @@ Prednosti horizontalnog skaliranja obično se klasifikuju na sledeći način:
 
 Uočavamo da se mnoge slabosti vertikalnog skaliranja u horizontalnom pristupu transformišu u njegove prednosti. Međutim, istovremeno se prednosti vertikalnog pristupa pretvaraju u izazove svojstvene distribuiranim sistemima. Ovo je posledica činjenice da održavanje većeg broja instanci nužno zahteva uvođenje složenijih softverskih mehanizama za distribuiranu koordinaciju.
 
-Zbog ovih dodatnih mehanizama, isti skup hardverskih resursa raspoređen na veći broj instanci ostvaruje nižu efektivnu performansu u poređenju sa konfiguracijom u kojoj se ti resursi nalaze u jednoj monolitnoj instanci. Ovaj efekat dovodi do pojave dodatnih troškova koje uvodi sama distribucija sistema.
+Zbog ovih dodatnih mehanizama, isti skup hardverskih resursa raspoređen na veći broj instanci ostvaruje nižu efektivnu performansu u poređenju sa konfiguracijom u kojoj se ti resursi nalaze u jednoj fizičkoj instanci. Ovaj efekat dovodi do pojave dodatnih troškova koje uvodi sama distribucija sistema.
 
 \begin{definicija}\label{def:overhead}
 Režijsko opterećenje \eng{overhead} predstavlja potrošnju resursa koju distribuirani informacioni sistem mora da izvrši radi održavanja zajedničke koordinacije, sinhronizacije i upravljanja svojim instancama, a koja nije direktno deo primarne obrade korisničkog zahteva.
