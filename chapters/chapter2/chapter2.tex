@@ -280,51 +280,62 @@ U praksi se primenjuju dva osnovna pristupa kontroli konkurentnog pristupa:
 \end{enumerate}
 
 \subsection{Konsenzus}
-Najviši stepen koordinacije postiže se primenom konsenzusnih protokola \cite{nguyen2002consensus}, jer oni omogućavaju snažnu konzistentnost i globalno determinističko uređenje upisa, čak i u prisustvu mrežnih kašnjenja, otkaza čvorova i particija mreže.
+Visok stepen koordinacije u distribuiranim sistemima postiže se primenom konsenzusnih protokola \cite{nguyen2002consensus}, jer oni omogućavaju snažnu konzistentnost i globalno uređenje upisa, čak i u prisustvu mrežnih kašnjenja, otkaza čvorova i particija mreže.
 
 \begin{definicija}
 Konsenzus rešava fundamentalni problem koordinisanog napredovanja sistema u distribuiranim sistemima, u kojem skup čvorova mora da se usaglasi oko jedne zajedničke vrednosti, pri čemu moraju biti zadovoljeni sledeći uslovi:\\
-Sporazum \eng{agreement} - svi ispravni čvorovi moraju doneti identičnu odluku,\\
-Validnost \eng{validity} - odlučena vrednost mora poticati od neke predložene vrednosti,\\
-Okončanje \eng{termination} - svaki ispravan čvor mora eventualno doneti odluku.
+(1) \textbf{sporazum} \eng{agreement} - svi ispravni čvorovi moraju doneti identičnu odluku,\\
+(2) \textbf{validnost} \eng{validity} - odlučena vrednost mora poticati od neke predložene vrednosti,\\
+(3) \textbf{okončanje} \eng{termination} - svaki ispravan čvor mora eventualno doneti odluku.
 \end{definicija}
 
-U proces konsenzusa ne moraju biti uključeni svi čvorovi u sistemu, već samo određeni podskup čvorova koji čine kvorum \eng{quorum}. Mehanizam formiranja kvoruma predstavlja \textbf{ključno mesto kontrolne decentralizacije}, jer stepen raspodele odlučivanja direktno zavisi od kriterijuma po kojima se određuje koji čvorovi mogu učestvovati u donošenju odluke.
+U proces konsenzusa ne moraju biti uključeni svi čvorovi u sistemu, već samo određeni podskup čvorova koji čine kvorum \eng{quorum}. Kako stepen raspodele odlučivanja direktno zavisi od kriterijuma za izbor čvorova koji učestvuju u donošenju odluke, sledi:
+\begin{posledica}
+Mehanizam formiranja kvoruma u konsenzusnom algoritmu predstavlja ključno mesto kontrolne decentralizacije.
+\end{posledica}
 
-Konsenzusni protokoli mogu biti organizovani sa glavnim čvorom \eng{leader-based} ili bez glavnog čvora \eng{leaderless}, u zavisnosti od arhitektonske strukture algoritma. Kada je glavni čvor formalno deo konsenzusnog procesa, sistem više nije u potpunosti kontrolno decentralizovan, budući da taj čvor preuzima ulogu centralne tačke koordinacije i serijalizacije predloga operacija.
+Konsenzusni protokoli mogu biti organizovani sa glavnim čvorom \eng{leader-based} ili bez glavnog čvora \eng{leaderless}, u zavisnosti od arhitektonske strukture algoritma. Odlučivanje o pravilnom redosledu i razrešavanje mogućih neslaganja među replikama i dalje obezbeđuje sam konsenzusni protokol, dok glavni čvor služi isključivo kao mehanizam za predlaganje kandidata za narednu odluku. Na taj način glavni čvor pruža stabilan izvor predloga, dok protokol konsenzusa garantuje da sve ispravne replike usvoje isti, jedinstveni rezultat.
 
-Proces postizanja konsenzusa u prisustvu takozvanih ,,vizantijskih'' čvorova često uključuje kombinaciju pristupa sa glavnim čvorom i bez glavnog čvora, pri čemu se komunikacija odvija u diskretnim rundama glasanja. Glavni čvor inicijalno predlaže vrednost, dok ostali učesnici proveravaju predlog, razmenjuju međurezultate i ažuriraju sopstvene odluke. Ukoliko većina učesnika prihvati predloženu vrednost bez potrebe za dodatnom koordinacijom, ona se potvrđuje. U slučaju nepostojanja jasne većine, proces se može dalje koordinisati preko glavnog čvora. Ove iteracije se ponavljaju sve dok se ne postigne saglasnost među svim ispravnim čvorovima. Takav kombinovani pristup omogućava sistemu da očuva konsenzus čak i u prisustvu čvorova koji pokušavaju da sabotiraju proces.
+Zbog posledice iznad, kada postoji fiksni nepromenljivi glavni čvor koji je deo konsenzusnog procesa, može dovesti do smanjenja stepena kontrolne decentralizacije, budući da taj čvor preuzima ulogu centralne tačke koordinacije i serijalizacije predloga operacija.
+
+Prva praktična implementacija konsenzusa u prisustvu takozvanih ,,vizantijskih'' čvorova \cite{castro1999practical} dala je ideju diskretnih rundama glasanja, gde se u svakoj rundi bira glavni čvor. Glavni čvor inicijalno predlaže vrednost, dok ostali učesnici proveravaju predlog, razmenjuju međurezultate i ažuriraju sopstvene odluke. Ukoliko dovoljan broj učesnika potvrdi predloženu vrednost kroz definisane faze protokola, ona se smatra prihvaćenom. U slučaju nepostojanja jasne većine, proces se može dalje koordinisati preko glavnog čvora. Ove iteracije se ponavljaju sve dok se ne postigne saglasnost među svim ispravnim čvorovima. Takav kombinovani pristup omogućava sistemu da očuva konsenzus čak i u prisustvu čvorova koji pokušavaju da sabotiraju proces.
 
 Nakon uvođenja osnovnih pojmova možemo precizirati tri fundamentalna obrasca propagacije poruka koji se javljaju u realnim distribuiranim sistemima:
 \begin{enumerate}
 \item \textbf{Jedan-ka-jedan 1-1 \eng{one-to-one}} - komunikacija u kojoj jedan čvor upućuje poruku tačno jednom drugom čvoru (npr. slanje izmene glavnom čvoru ili direktna replikacija između dva čvora),
 \item \textbf{Jedan-ka-više 1-N \eng{one-to-many}} - komunikacija u kojoj jedan čvor distribuira poruku većem broju čvorova (npr. glavni čvor replicira zapis svim replikama, ili čvor šalje predlog konsenzus protokolu koji ga prosleđuje svim učesnicima),
-\item \textbf{Više-ka-više N-N \eng{many-to-many}} - komunikacioni obrazac u kojem više čvorova paralelno razmenjuje poruke sa većim brojem drugih čvorova (npr. protokoli u kojima ne postoji glavni čvor ni konsenzus protokol, pa čvorovi međusobno razmenjuju poruke da bi postigli saglasnost).
+\item \textbf{Više-ka-više N-N \eng{many-to-many}} - komunikacioni obrazac u kojem više čvorova paralelno razmenjuje poruke sa većim brojem drugih čvorova (npr. protokoli bez centralnog koordinatora u kojima čvorovi međusobno razmenjuju poruke radi postizanja saglasnosti).
 \end{enumerate}
 
-Odlučivanje o pravilnom redosledu i razrešavanje mogućih neslaganja među replikama i dalje obezbeđuje sam konsenzusni protokol, dok glavni čvor služi isključivo kao mehanizam za predlaganje kandidata za narednu odluku. Na taj način glavni čvor pruža stabilan izvor predloga, dok protokol konsenzusa garantuje da sve ispravne replike usvoje isti, jedinstveni rezultat.
+Važno je istaći da distribuirani sistemi ne moraju nužno posedovati mehanizam konsenzusa. Kada konsenzus postoji, on se tipično primenjuje nad pojedinačnom vrednošću (npr. operacijom, predlogom ili zapisom u logu) o kojoj sistem treba da donese odluku. Svaka odluka konsenzusa predstavlja jedan korak globalnog napredovanja sistema.
 
-Važno je istaći da distribuirani sistemi ne moraju posedovati konsenzus. Kada konsenzus postoji, on se primenjuje nad jednom vrednošću (npr. nad jednom operacijom, predlogom ili log-zapisom), a ne nužno nad celokupnim redosledom svih operacija.
-
+Sekvenca konsenzusnih odluka omogućava implementaciju totalno uređenog prenosa poruka \eng{total order broadcast} \cite{defago2004total}, pri čemu svi čvorovi posmatraju isti redosled poruka. Iz toga sledi sledeći rezultat:
 \begin{teorema}
 Totalno uređen prenos poruka ekvivalentan je problemu konsenzusa \cite{chandra1996unreliable}.
 \end{teorema}
 
-Iz teoreme sledi da totalno uređen prenos ostvaruje deterministički globalni redosled isporuke poruka. CP sistemi mogu koristiti konsenzus kako bi obezbedili \textbf{determinističko totalno uređenje} za sve operacije koje prođu kroz konsenzus i budu potvrđene. Istovremeno, ovi sistemi mogu podržavati i operacije koje ne zahtevaju globalni redosled (npr. lokalna čitanja), pa stoga ne mora svaka operacija biti deo jedinstvenog totalnog uređenja.
+Totalno uređen prenos poruka predstavlja globalno svojstvo sistema koje obezbeđuje jedinstven redosled izvršavanja operacija na svim čvorovima. Na osnovu tog redosleda svaki čvor može lokalno izvršavati operacije, bez potrebe za logičkom centralizacijom.
 
-AP sistemi u prisustvu mrežnih particija prioritizuju dostupnost nad konzistentnošću, što znači da prihvataju operacije i u uslovima kada je komunikacija sa drugim čvorovima onemogućena. Budući da deterministički konsenzus zahteva pouzdanu i potpunu komunikaciju među čvorovima dok svi ne donesu identičnu odluku, ovaj zahtev je u suprotnosti sa principima AP sistema, odakle sledi:
+Ukoliko svaki čvor u sistemu beleži sve operacije u istom redosledu, sistem poseduje osobinu replikovanog log-zapisa \eng{replicated log} \cite{wang2015building}. U prisustvu konsenzusa, jedinstvenost i konzistentnost ovog zapisa su garantovane.
 
+Kada postoji totalno uređen prenos poruka i kada su čvorovi modelovani tako da deterministički izvršavaju operacije u istom redosledu, distribuirani sistem ostvaruje osobinu \textit{replikacije stanja mašine} \eng{state machine replication} \cite{schneider1990implementing}, čime se obezbeđuje jaka konzistentnost sistema.
+
+Međutim, u potpuno asinhronim distribuiranim sistemima javlja se fundamentalno ograničenje izraženo FLP teoremom:
 \begin{teorema}
-U AP sistemima deterministički konsenzus se ne može ostvariti.
+Ne postoji deterministički konsenzusni protokol koji garantuje okončanje u prisustvu makar jednog neispravnog čvora u potpuno asinhronom sistemu \cite{fischer1985impossibility}.
 \end{teorema}
 
-Ipak, AP sistemi mogu koristiti verovatnosni konsenzus \eng{probabilistic consensus}, u kojem čvorovi u svakoj iteraciji nasumično biraju podskup od $k$ drugih čvorova, čitaju njihove trenutne vrednosti i ažuriraju sopstvenu vrednost prema verovatnosnom pravilu (najčešće većini u uzorku). Verovatnoća neusaglašene ili pogrešne odluke opada, tipično eksponencijalno, sa brojem iteracija \cite{fagnani2008randomized}.
+S obzirom na to da replikacija stanja mašine zahteva totalno uređen prenos poruka, a time i konsenzus, CP sistemi se modeluju kao parcijalno sinhronizovani sistemi \cite{dwork1988consensus}, u kojima postoji gornja granica kašnjenja poruka i brzine izvršavanja, ali ona nije unapred poznata.
+
+Sa druge strane, deterministički konsenzus može dovesti do blokiranja sistema u slučaju kašnjenja ili otkaza čvorova, što je u suprotnosti sa principima AP sistema koji prioritizuju dostupnost. U takvim sistemima moguće je koristiti verovatnosni konsenzus \eng{probabilistic consensus}, u kojem čvorovi iterativno razmenjuju informacije sa nasumično odabranim podskupom drugih čvorova i ažuriraju svoja stanja prema određenom verovatnosnom pravilu. Verovatnoća neusaglašenosti opada, tipično eksponencijalno, sa brojem iteracija \cite{fagnani2008randomized}.
 
 \begin{definicija}
-Verovatnosni konsenzus je nedeterministički mehanizam postizanja dogovora u distribuiranim sistemima koji koristi slučajne procese i verovatosne procene kako bi čvorovi usaglasili zajedničku vrednost, pri čemu uslovi sporazuma, validnosti i okončanja konvergiraju u verovatnoći ka 1.
+Verovatnosni konsenzus je nedeterministički mehanizam postizanja dogovora u distribuiranim sistemima koji koristi slučajne procese, pri čemu verovatnoća zadovoljenja svojstava sporazuma, validnosti i terminacije konvergira ka 1.
 \end{definicija}
 
-CP sistemi zahtevaju determinističke garancije konzistentnosti, dok verovatnosni konsenzus obezbeđuje samo garancije u verovatnoći, što ostavlja mogućnost, makar i izuzetno malu, pojave neusaglašenosti. Zbog toga verovatnosni konsenzus ne može zadovoljiti formalne zahteve CP modela, naročito u pogledu determinističke sigurnosti.
+Verovatnosni konsenzus zaobilazi ograničenja FLP teoreme napuštanjem determinističkih garancija \cite{ben1983another}, čime postaje primenljiv u potpuno asinhronim sistemima.
+
+Ipak, ovakav pristup obezbeđuje samo probabilističke garancije konzistentnosti, što znači da postoji nenulta verovatnoća privremene neusaglašenosti. Zbog toga verovatnosni konsenzus ne može zadovoljiti stroge zahteve determinističke konzistentnosti, već zahteva dodatne mehanizme za razrešavanje konflikata i postizanje konačne saglasnosti.
 
 \subsection{Analiza troškova sinhronizacije i kontencije}
 \textbf{Trošak sinhronizacije} u distribuiranim sistemima prvenstveno je određen obimom i strukturom komunikacije potrebne da bi se održalo konzistentno i usaglašeno stanje među čvorovima. Na ovaj trošak najznačajnije utiču obrasci propagacije, posebno 1-N i N-N šemi, budući da generišu veći broj međusobnih razmena i povećavaju zahtev za koordinacijom. Dodatni doprinos potiče od mehanizama potvrđivanja operacija, pri čemu broj komunikacionih rundi i njihovo trajanje direktno zavise od vremena odaziva (RTT).

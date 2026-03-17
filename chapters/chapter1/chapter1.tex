@@ -343,7 +343,7 @@ Ako se u mreži ravnopravnih korisnika ostvaruje kontrolna decentralizacija, sis
 
 U slučaju prekoračenja ove granice, vizantijski učesnici mogu manipulacijom porukama, pravilima validacije ili procesom donošenja odluka proizvesti divergentna stanja sistema, onemogućiti postizanje konsenzusa ili nametnuti sopstvenu verziju globalnog stanja, čime se efektivno urušava kontrolna decentralizacija.
 
-U klasičnom modelu vizantijskih grešaka, dokazano je da je za postizanje determinističkog i sigurnog konsenzusa u prisustvu do $f$ vizantijskih čvorova neophodno da ukupan broj učesnika zadovoljava uslov $n \ge 3f + 1$, čime se obezbeđuje da ispravni čvorovi čine strogu većinu u odnosu na potencijalno zlonamerne učesnike.
+Postoji veliki broj algoritama za rešavanje problema vizantijskih generala \cite{lamport2019byzantine}. Međutim, pokazano je da je za postizanje determinističkog i sigurnog konsenzusa u prisustvu do $f$ vizantijskih čvorova neophodno da ukupan broj učesnika zadovoljava uslov $n \ge 3f + 1$. Ovaj uslov predstavlja donju granicu na broj čvorova potrebnih za tolerisanje $f$ proizvoljno neispravnih učesnika, čime se obezbeđuje da ispravni čvorovi čine strogu većinu u odnosu na potencijalno zlonamerne.
 
 \subsection{Logička decentralizacija}
 Logička decentralizacija odnosi se na \textbf{softverski i protokolarni sloj} sistema i opisuje način na koji je sistem konceptualno organizovan, odnosno kako se njegovo stanje modeluje, deli i koristi od strane učesnika.
