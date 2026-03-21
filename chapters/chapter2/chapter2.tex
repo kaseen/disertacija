@@ -485,23 +485,21 @@ Pored bezbednosti, savremene heš funkcije moraju biti dizajnirane za visoku efi
 Najčešće korišćene moderne heš funkcije uključuju: porodicu SHA-2 \cite{pub2012secure} (npr. SHA-256), porodicu SHA-3 \cite{dworkin2015sha} zasnovanu na Keccak konstrukciji, kao i RIPEMD-160 \cite{dobbertin1996ripemd}.
 
 % TODO SLIKA
-Kada Alisa šalje Bobu fajl proizvoljne veličine, najpre se izračunava heš sadržaja fajla. Zatim se izvršava potpisivanje fajla ili njegove heš vrednosti (ili kombinacija oba), pri čemu se potpis kreira korišćenjem Alisinog privatnog ključa (asimetrično) ili simetričnog sesijskog ključa, ukoliko postoji uspostavljena sesija. Po prijemu fajla, Bob izračunava heš primljenih podataka i verifikuje potpis koristeći odgovarajući ključ. Ukoliko se vrednosti podudaraju, Bob dobija garanciju da podaci nisu modifikovani tokom prenosa.
-
-Kada se potpis kreira privatnim ključem, ovaj postupak odgovara šemi digitalnog potpisa \cite{pub2000digital} \eng{Digital Signature Scheme, DSS}, dok se u slučaju potpisivanja sesijskim ključem primenjuje kod za autentifikaciju poruke \cite{krawczyk1997hmac} \eng{Message Authentication Code, MAC}. Ova razlika ima direktan uticaj na performanse protokola.
+Kada Alisa šalje Bobu fajl proizvoljne veličine, najpre se izračunava heš vrednost sadržaja fajla. U slučaju asimetrične kriptografije, nad dobijenom heš vrednošću se generiše digitalni potpis korišćenjem Alisinog privatnog ključa. Alternativno, u sistemima sa uspostavljenim deljenim tajnim ključem, integritet i autentičnost poruke mogu se obezbediti primenom mehanizma autentikacionog koda poruke \cite{krawczyk1997hmac} \eng{Message Authentication Code, MAC}. Po prijemu fajla, Bob ponovo izračunava heš vrednost primljenih podataka i verifikuje potpis ili MAC koristeći odgovarajući ključ. Ukoliko se vrednosti podudaraju, obezbeđuje se integritet podataka i potvrđuje njihovo poreklo.
 
 Na ovaj način, heš funkcije obezbeđuju \textbf{integritet} poruke.
 
 \subsection{Funkcionalni bezbednosni okvir}
-Raniji informacioni sistemi nisu posedovali jedinstvene mehanizme za upravljanje celokupnim okruženjem, već je svaki uređaj unutar mreže morao biti zasebno konfigurisan i održavan. Identitet korisnika nije bio dosledno verifikovan na svim tačkama pristupa, pravila pristupa bila su gruba i neprecizna, sistemi nisu mogli da vode celovite evidencije o aktivnostima korisnika, a ukupna zaštita zavisila je od individualnih podešavanja svakog pojedinačnog uređaja.
+Raniji informacioni sistemi nisu raspolagali jedinstvenim mehanizmima za upravljanje celokupnim okruženjem, već je svaki uređaj unutar mreže morao biti zasebno konfigurisan i održavan. Identitet korisnika nije bio dosledno verifikovan na svim tačkama pristupa, pravila pristupa bila su gruba i neprecizna, sistemi nisu mogli da vode celovite evidencije o aktivnostima korisnika, a ukupna zaštita zavisila je od individualnih podešavanja svakog pojedinačnog uređaja.
 
 \begin{definicija}
 AAA \cite{metz2002aaa} \eng{Authentication, Authorization, Accounting} predstavlja bezbednosni okvir za proveru identiteta, ograničavanje pristupa i praćenje upotrebe resursa.
 \end{definicija}
 
-Originalni AAA model u literaturi i praksi se često smatra izuzetno moćnim i funkcionalno nezamenljivim \cite{de2000generic}, jer se široko tretira kao minimalna i standardizovana arhitektura za kontrolu pristupa. On omogućava logičku centralizaciju bezbednosnih politika i efikasnu kontrolu pristupa celokupnom informacionom okruženju, što je posebno važno u velikim, složenim i distribuiranim sistemima, jer smanjuje rizik od neovlašćenog korišćenja resursa i zloupotrebe privilegija.
+Originalni AAA model se u literaturi i praksi često smatra izuzetno moćnim i funkcionalno nezamenljivim \cite{de2000generic}, jer se široko tretira kao minimalna i standardizovana arhitektura za kontrolu pristupa. On omogućava logičku centralizaciju bezbednosnih politika i efikasnu kontrolu pristupa celokupnom informacionom okruženju, što je posebno važno u velikim, složenim i distribuiranim sistemima, budući da smanjuje rizik od neovlašćenog korišćenja resursa i zloupotrebe privilegija.
 
 \subsubsection{Autentikacija}
-Autentikacija predstavlja inicijalni korak u procesu kontrole pristupa informacionim sistemima, budući da mehanizmi autorizacije i evidencije aktivnosti nemaju praktičnu vrednost ukoliko identitet subjekta nije pouzdano utvrđen.
+Autentikacija predstavlja inicijalni korak u procesu kontrole pristupa informacionim sistemima, jer mehanizmi autorizacije i evidencije nemaju praktičnu vrednost ukoliko identitet subjekta nije pouzdano utvrđen.
 
 \begin{definicija}
 Autentikacija je bezbednosni proces kojim se proverava i potvrđuje identitet entiteta (korisnika, sistema ili procesa) koji zahteva pristup resursima informacionog sistema.
@@ -509,10 +507,10 @@ Autentikacija je bezbednosni proces kojim se proverava i potvrđuje identitet en
 
 Autentikacioni mehanizmi se klasifikuju \cite{bonneau2012quest} kao odgovor na različite bezbednosne pretnje, operativna ograničenja i funkcionalne zahteve informacionih sistema:
 \begin{enumerate}
-\item \textbf{Autentikacija zasnovana na znanju \eng{Knowledge-based}} oslanja se na dokazivanje identiteta putem informacije poznate isključivo legitimnom korisniku, kao što su lozinke, PIN-ovi i tajne fraze. Ova klasa je pogodna za široku primenu zbog jednostavne implementacije i niskih infrastrukturnih zahteva. Međutim, podložna je napadima kao što su pecanje identiteta \cite{dhamija2006phishing} \eng{phishing} i beleženje pritisaka tastera \cite{rai2022systematic} \eng{keylogging}, kao i napadima grubom silom \eng{brute-force}, što značajno ograničava njen bezbednosni nivo.
-\item \textbf{Autentikacija zasnovana na posedovanju \eng{Possession-based}} zasniva se na dokazivanju identiteta posedovanjem fizičkog ili digitalnog objekta, poput pametnih kartica, hardverskih tokena ili kriptografskih ključeva. Ovakav pristup omogućava znatno viši nivo bezbednosti kroz upotrebu kriptografskih mehanizama. Glavna ograničenja ove klase predstavljaju rizik od gubitka ili krađe autentikacionog sredstva, kao i potreba za njegovim sigurnim skladištenjem i upravljanjem.
+\item \textbf{Autentikacija zasnovana na znanju \eng{Knowledge-based}} oslanja se na dokazivanje identiteta putem informacije poznate isključivo legitimnom korisniku, kao što su lozinke, PIN-ovi i tajne fraze. Ova klasa pogodna je za široku primenu zbog jednostavne implementacije i niskih infrastrukturnih zahteva. Međutim, podložna je napadima kao što su pecanje identiteta \cite{dhamija2006phishing} \eng{phishing} i beleženje pritisaka tastera \cite{rai2022systematic} \eng{keylogging}, kao i napadima grubom silom \eng{brute-force}, što značajno ograničava njen bezbednosni nivo.
+\item \textbf{Autentikacija zasnovana na posedovanju \eng{Possession-based}} zasniva se na dokazivanju identiteta posedovanjem fizičkog ili digitalnog objekta, poput pametnih kartica, hardverskih tokena ili kriptografskih ključeva. Ovakav pristup omogućava znatno viši nivo bezbednosti kroz upotrebu kriptografskih mehanizama. Glavna ograničenja ove klase su rizik od gubitka ili krađe autentikacionog sredstva, kao i potreba za njegovim sigurnim skladištenjem i upravljanjem.
 \item \textbf{Autentikacija zasnovana na biometriji \eng{Inherence-based}} realizuje se utvrđivanjem identiteta na osnovu fizičkih ili bihevioralnih karakteristika korisnika, kao što su otisak prsta, prepoznavanje lica ili glas. Ovaj pristup eliminiše potrebu za pamćenjem tajni ili posedovanjem dodatnih objekata, ali uvodi izazove u pogledu privatnosti, etičkih pitanja i otpornosti na napade imitacije, uključujući lažne biometrijske uzorke.
-\item \textbf{Autentikacija zasnovana na kriptografiji \eng{Cryptographic-based}} zasniva se na dokazivanju posedovanja kriptografskog ključa bez njegovog otkrivanja, korišćenjem mehanizama kao što su digitalni potpisi, izazov-odgovor protokoli \cite{bellare1993entity}, tokeni koji omogućavaju privremeni i ograničeni pristup resursima \cite{hardt2012oauth} \eng{OAuth} i protokoli zasnovani na dokazima nultog znanja \cite{goldwasser2019knowledge} \eng{zero-knowledge proofs}.
+\item \textbf{Autentikacija zasnovana na kriptografiji \eng{Cryptographic-based}} zasniva se na dokazivanju posedovanja kriptografskog ključa bez njegovog otkrivanja, primenom mehanizama kao što su digitalni potpisi, izazov-odgovor protokoli \cite{bellare1993entity}, tokeni koji omogućavaju privremeni i ograničeni pristup resursima \cite{hardt2012oauth} \eng{OAuth} i protokoli zasnovani na dokazima nultog znanja \cite{goldwasser2019knowledge} \eng{zero-knowledge proofs}.
 \end{enumerate}
 
 S obzirom na to da nijedna pojedinačna klasa autentikacije ne obezbeđuje potpunu zaštitu, u savremenim sistemima se primenjuje višefaktorska autentikacija \cite{ometov2018multi} \eng{Multi-Factor Authentication, MFA}, kojom se kombinovanjem dva ili više različitih faktora značajno povećava otpornost sistema na kompromitaciju.
@@ -525,10 +523,10 @@ Autentikacija primarno doprinosi ostvarivanju \textbf{autentičnosti} identiteta
 Autorizacija predstavlja naredni korak u procesu kontrole pristupa informacionim sistemima, koji se izvršava nakon uspešne autentikacije subjekta. Dok autentikacija odgovara na pitanje \textit{ko} je korisnik, autorizacija određuje \textit{šta} je tom korisniku dozvoljeno da radi unutar sistema.
 
 \begin{definicija}
-Autorizacija je bezbednosni proces kojim se određuju dozvoljene operacije koje autentifikovani entitet može izvršiti nad resursima informacionog sistema.
+Autorizacija je bezbednosni proces kojim se određuju dozvoljene operacije koje autentikovani entitet može izvršiti nad resursima informacionog sistema.
 \end{definicija}
 
-Kontrola pristupa \eng{Access Control} u literaturi i praksi predstavlja nezamenjiv bezbednosni mehanizam za sprovođenje odluka o autorizaciji u informacionim sistemima \cite{lampson1974protection}. Njena osnovna uloga ogleda se u doslednom ograničavanju upotrebe resursa u skladu sa unapred definisanim bezbednosnim politikama, čime se obezbeđuje zaštita sistema od neovlašćenog pristupa, prekoračenja ovlašćenja i zloupotrebe privilegija.
+Kontrola pristupa \eng{Access Control} predstavlja u literaturi i praksi nezamenjiv bezbednosni mehanizam za sprovođenje odluka o autorizaciji u informacionim sistemima \cite{lampson1974protection}. Njena osnovna uloga ogleda se u doslednom ograničavanju upotrebe resursa u skladu sa unapred definisanim bezbednosnim politikama, čime se obezbeđuje zaštita sistema od neovlašćenog pristupa, prekoračenja ovlašćenja i zloupotrebe privilegija.
 
 Odluke o autorizaciji ne donose se proizvoljno, već se zasnivaju na apstraktnim modelima kontrole pristupa \cite{sandhu2002access}, koji formalno opisuju način dodele, provere i sprovođenja prava pristupa nad resursima informacionog sistema. Ovi modeli omogućavaju sistematično i konzistentno upravljanje privilegijama, nezavisno od konkretne tehničke implementacije. U nastavku su prikazani najčešće korišćeni modeli kontrole pristupa, poređani od konceptualno najmanje restriktivnih ka strožim oblicima kontrole:
 \begin{enumerate}
@@ -538,18 +536,22 @@ Odluke o autorizaciji ne donose se proizvoljno, već se zasnivaju na apstraktnim
 \item \textbf{Kontrola pristupa zasnovana na atributima (ABAC)} predstavlja fleksibilan i dinamički model u kome se odluke o pristupu donose na osnovu kombinacije atributa subjekta, resursa, okruženja i zahteva. Ovaj model omogućava preciznu i kontekstno zavisnu autorizaciju i posebno je pogodan za složene, distribuirane i dinamične sisteme.
 \end{enumerate}
 
-Autorizacioni modeli u praksi često primenjuju princip najmanjih privilegija \cite{ceesay2010authentication}, kojim se entitetima dodeljuju isključivo prava neophodna za izvršavanje njihovih zadataka, čime se značajno umanjuje rizik od kompromitacije poverljivih podataka.
+Ukoliko sistem nije adekvatno konfigurisan, napadači mogu identifikovati i iskoristiti njegove ranjivosti kako bi neovlašćeno proširili svoja pristupna prava. Ovakvo ponašanje, poznato kao eskalacija privilegija \cite{provos2003preventing} \eng{privilege escalation}, omogućava napadaču da stekne viši nivo ovlašćenja od predviđenog. Posledice ovakvih napada mogu varirati od ograničenih funkcionalnih poremećaja do ozbiljnih bezbednosnih incidenata, uključujući kompromitaciju poverljivih podataka, kršenje regulatornih zahteva, narušavanje reputacije sistema i značajne ekonomske gubitke.
+
+Zbog toga, u cilju umanjenja ovakvih napada i povećanja bezbednosti, autorizacioni modeli u praksi često primenjuju princip najmanjih privilegija \cite{ceesay2010authentication}, kojim se entitetima dodeljuju isključivo prava neophodna za izvršavanje njihovih zadataka, čime se značajno smanjuje rizik od kompromitacije poverljivih podataka.
 
 Autorizacija ima ključnu ulogu u ostvarivanju \textbf{poverljivosti} i \textbf{integriteta} informacionih resursa, jer precizno definiše i dosledno sprovodi koje su operacije dozvoljene nad određenim podacima i funkcijama sistema.
 
 \subsubsection{Evidencija}
-Evidencija predstavlja završnu komponentu funkcionalnog bezbednosnog okvira i obuhvata sistematsko prikupljanje, čuvanje i analizu zapisa o aktivnostima autentifikovanih i autorizovanih entiteta u informacionom sistemu. Dok autentikacija i autorizacija definišu identitet i dozvole subjekata, evidencija omogućava uvid u to \textit{kako} se ta prava realizuju u praksi i na koji način su resursi korišćeni tokom rada sistema.
+Evidencija predstavlja završnu komponentu funkcionalnog bezbednosnog okvira i obuhvata sistematsko prikupljanje, čuvanje i analizu zapisa o aktivnostima autentifikovanih i autorizovanih entiteta u informacionom sistemu. Dok autentikacija i autorizacija definišu identitet i dozvole subjekata, evidencija omogućava uvid u način na koji se ta prava realizuju u praksi i na koji način su resursi korišćeni tokom rada sistema.
 
 \begin{definicija}
 Evidencija je bezbednosni proces kojim se beleže, čuvaju i analiziraju informacije o aktivnostima subjekata nad resursima informacionog sistema radi nadzora, revizije i ostvarivanja odgovornosti.
 \end{definicija}
 
-Primarna uloga evidencije ogleda se u povezivanju odluka o autentikaciji i autorizaciji sa konkretnim izvršenim radnjama. Ove informacije se najčešće evidentiraju u obliku dnevnika aktivnosti \eng{logs}, koji služe kao osnov za nadzor, detekciju anomalija, forenzičku analizu i reviziju sistema. U okruženjima sa visokim rizicima bezbednosti, dnevnici aktivnosti moraju biti dizajnirani tako da u slučaju kompromitacije sistema ne otkrivaju osetljive podatke koji bi mogli poslužiti napadaču za dalju eksploataciju \cite{schneier1999secure}.
+Primarna uloga evidencije ogleda se u povezivanju odluka o autentikaciji i autorizaciji sa konkretnim izvršenim radnjama. Ove informacije se najčešće evidentiraju u obliku dnevnika aktivnosti \eng{logs}, koji čine osnovu za nadzor, detekciju anomalija, forenzičku analizu i reviziju sistema. U okruženjima sa visokim rizicima bezbednosti, dnevnici aktivnosti moraju biti dizajnirani tako da u slučaju kompromitacije sistema ne otkrivaju osetljive podatke koji bi mogli poslužiti napadaču za dalju eksploataciju.
+
+U distribuiranim sistemima, evidencija dodatno komplikuje dizajn sistema, jer zahteva korelaciju zapisa sa više čvorova, često bez globalno sinhronizovanog vremena, što povećava skladišne i procesorske zahteve.
 
 Evidencija se može organizovati \cite{bishop2002art} u sledeće grupe:
 \begin{enumerate}
@@ -558,12 +560,7 @@ Evidencija se može organizovati \cite{bishop2002art} u sledeće grupe:
 \item \textbf{Ostala evidencija} - obuhvata podatke o aktivnostima i korišćenju resursa, bezbednosnim događajima i incidentima, sistemskim i konfiguracionim promenama, kao i zapise o integritetu samih evidencija.
 \end{enumerate}
 
-Evidencija omogućava nadzor ponašanja korisnika i sistema, procenu usklađenosti sa regulatornim i organizacionim zahtevima, kao i pravovremenu detekciju i analizu bezbednosnih incidenata. Ona predstavlja ključnu osnovu za forenzičku rekonstrukciju događaja nakon napada i za utvrđivanje odgovornosti u radu informacionih sistema. 
-
-U distribuiranim sistemima, evidencija dodatno komplikuje dizajn sistema, jer zahteva korelaciju zapisa sa više čvorova, često bez globalno sinhronizovanog vremena, što povećava skladišne i procesorske zahteve.
-
-Iako je evidencija prvenstveno uvedena kao bezbednosni mehanizam, u savremenim informacionim sistemima ona često dobija i sekundarne namene koje prevazilaze striktno tehnički domen kontrole pristupa. Velike količine podataka koje se prikupljaju kroz evidenciju aktivnosti korisnika mogu biti agregirane i analizirane u svrhe poslovne optimizacije, ali i komercijalno eksploatisane kroz deljenje ili prodaju trećim stranama, poput oglašivačkih i analitičkih platformi. Ovakva praksa otvara značajna pitanja privatnosti, transparentnosti i informacione odgovornosti, budući da se podaci prikupljeni u svrhe bezbednosti i nadzora mogu koristiti izvan originalnog konteksta u kome su prikupljeni \cite{acquisti2016economics}.
+Nakon kompromitovanja sistema, napadač može pokušati da izmeni postojeće zapise evidencije, što je poznato kao manipulacija dnevnicima aktivnosti \eng{log tampering}, ili da umetne zlonamerne ili lažne zapise u sistem \eng{log injection}. Ovakve aktivnosti imaju za cilj prikrivanje tragova napada ili narušavanje integriteta evidencije. Zbog toga je neophodno projektovati mehanizme koji omogućavaju detekciju neovlašćenih izmena, kao što su kriptografska zaštita zapisa, kontrola integriteta i analiza anomalija u evidenciji \cite{schneier1999secure}.
 
 Evidencija primarno doprinosi ostvarivanju \textbf{neporecivosti} izvršenih radnji, dok se kriptografskim mehanizmima obezbeđuju proverljivi i vremenski obeleženi dokazi o aktivnostima subjekata u sistemu.
 
-Iako se savremeni sigurnosni standardi i protokoli neprestano unapređuju radi povećanja otpornosti na nove pretnje, veliki broj bezbednosnih incidenata i dalje proističe iz ljudskih grešaka, poput korišćenja slabih lozinki ili nepažljivog rukovanja osetljivim podacima. Zbog toga se ljudski faktor u literaturi prepoznaje kao jedan od primarnih uzroka kompromitovanja čak i visoko zaštićenih sistema. Statistički podaci \cite{yeo2022human, theHumanFactor} dodatno potvrđuju da značajan procenat proboja uključuje element ljudske greške, često nezavisno od tehnološkog nivoa zaštite, što naglašava potrebu za kontinuiranom edukacijom korisnika, razvojem bezbednosne kulture i sistemskim pristupom upravljanju ljudskim faktorom.
