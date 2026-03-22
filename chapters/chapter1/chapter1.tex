@@ -201,7 +201,7 @@ Komunikacija između slojeva odvija se prema unapred definisanim pravilima, naj�
 \item \textbf{Mikrokernel arhitektura \cite{michel2017microkernel}.}
 Mikrokernel arhitektura zasniva se na razdvajanju osnovne funkcionalnosti sistema od dodatnih modula. Centralni deo sistema čini jezgro \eng{kernel} koje obezbeđuje minimalni skup osnovnih funkcija, dok se dodatne funkcionalnosti implementiraju kroz nezavisne module ili dodatke \eng{plug-in}.
 
-Svi moduli komuniciraju sa jezgrom sistema, koje posreduje u njihovoj međusobnoj koordinaciji. Ovakav pristup omogućava visok stepen proširivosti i fleksibilnosti, jer se nove funkcionalnosti mogu dodavati ili menjati bez potrebe za modifikacijom osnovne strukture sistema. Zbog toga se mikrokernel arhitektura često koristi u sistemima koji zahtevaju modularnost, prilagodljivost i dugoročno održavanje.
+Svi moduli komuniciraju sa jezgrom sistema, koje posreduje u njihovoj međusobnoj koordinaciji. Ovakav pristup omogućava visok stepen proširivosti i fleksibilnosti, jer se nove funkcionalnosti mogu dodavati ili menjati bez potrebe za modifikacijom osnovne strukture sistema. Zbog toga se mikrokernel arhitektura često primenjuje u sistemima koji zahtevaju visok stepen modularnosti, prilagodljivosti i dugoročne održivosti, kao što su operativni sistemi.
 
 \begin{figure}[ht]
     \centering
@@ -222,7 +222,8 @@ Za razliku od centralizovanih sistema, u distribuiranim sistemima komunikacija i
 \item Interfejs za programiranje aplikacija \cite{bloch2006design} \eng{Application Programming Interface, API} - skup definisanih pravila i interfejsa koji omogućavaju komunikaciju između aplikacija preko mreže,
 \item Udaljeni poziv procedure \cite{birrell1984implementing} \eng{Remote Procedure Call, RPC} - mehanizam koji omogućava pozivanje funkcija na udaljenim sistemima kao da su lokalne,
 \item Red poruka \cite{eugster2003many} \eng{Message Queue} - asinhroni mehanizam razmene poruka putem posredničkog sistema za razmenu poruka,
-\item Tok događaja \cite{eugster2003many} \eng{Event Streaming} - mehanizam kontinuirane razmene i obrade tokova događaja u realnom vremenu.
+\item Tok događaja \cite{eugster2003many} \eng{Event Streaming} - mehanizam kontinuirane razmene i obrade tokova događaja u realnom vremenu,
+\item Web komunikaciona veza \cite{fette2011websocket} \eng{Web Socket} - mehanizam koji omogućava stalno otvorenu, dvosmernu komunikaciju između klijenta i servera preko jedne konekcije.
 \end{enumerate}
 
 \begin{description}

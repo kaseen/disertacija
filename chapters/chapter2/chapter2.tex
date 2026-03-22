@@ -337,6 +337,8 @@ Verovatnosni konsenzus zaobilazi ograničenja FLP teoreme napuštanjem determini
 
 Ipak, ovakav pristup obezbeđuje samo probabilističke garancije konzistentnosti, što znači da postoji nenulta verovatnoća privremene neusaglašenosti. Zbog toga verovatnosni konsenzus ne može zadovoljiti stroge zahteve determinističke konzistentnosti, već zahteva dodatne mehanizme za razrešavanje konflikata i postizanje konačne saglasnosti.
 
+Dodatno, u procesu determinističkog konsenzusa postoji praktično ograničenje broja čvorova koji mogu efikasno učestvovati u kvorumu. Sa porastom broja učesnika dolazi do povećanja komunikacionog opterećenja, što, u skladu sa Teoremom \ref{teorema:gunter}, može dovesti do zagušenja mreže i degradacije performansi sistema, a u krajnjem slučaju i do njegovog blokiranja. Ova ograničenja predstavljaju značajan faktor pri projektovanju skalabilnih distribuiranih sistema.
+
 \subsection{Analiza troškova sinhronizacije i kontencije}
 \textbf{Trošak sinhronizacije} u distribuiranim sistemima prvenstveno je određen obimom i strukturom komunikacije potrebne da bi se održalo konzistentno i usaglašeno stanje među čvorovima. Na ovaj trošak najznačajnije utiču obrasci propagacije, posebno 1-N i N-N šemi, budući da generišu veći broj međusobnih razmena i povećavaju zahtev za koordinacijom. Dodatni doprinos potiče od mehanizama potvrđivanja operacija, pri čemu broj komunikacionih rundi i njihovo trajanje direktno zavise od vremena odaziva (RTT). U sistemima koji koriste konsenzusne protokole, ovaj trošak dodatno raste jer svaka odluka zahteva više komunikacionih faza i formiranje kvoruma, čime latencija pojedinačne operacije postaje zavisna od najsporijih učesnika u procesu odlučivanja.
 
@@ -397,8 +399,13 @@ Prvi praktično definisan simetrični kriptografski algoritam projektovan za ra�
 Simetrična kriptografija predstavlja kriptografski model u kojem se za šifrovanje i dešifrovanje podataka koristi identičan tajni ključ.
 \end{definicija}
 
-% TODO SLIKA
 Kada Alisa želi da Bobu prenese poverljivu poruku, ona primenjuje simetrični algoritam šifrovanja koristeći unapred usaglašeni tajni ključ. Nakon što Bob primi šifrat, on primenjuje isti tajni ključ kako bi izvršio dešifrovanje i rekonstruisao originalni sadržaj. Bez pristupa tom ključu, nijedna neovlašćena strana ne može rekonstruisati poruku.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.75\textwidth]{chapter2_simetricna.png}
+    \caption{TODO}
+\end{figure}
 
 Simetrični algoritmi mogu se podeliti na:
 \begin{enumerate}
@@ -424,8 +431,13 @@ Dalje, u radu \cite{rivest1978method}, u kojem je predstavljen asimetrični krip
 Asimetrična kriptografija predstavlja kriptografski model u kojem se za šifrovanje i dešifrovanje podataka koriste dva različita, ali matematički povezana ključa: javni ključ, koji može biti slobodno distribuiran, i privatni ključ, koji mora ostati tajan. Poruka se šifruje javnim ključem primaoca, dok se dešifrovanje vrši odgovarajućim privatnim ključem, čime se obezbeđuje poverljivost komunikacije.
 \end{definicija}
 
-% TODO SLIKA
 Kada Alisa želi da Bobu prenese poverljive podatke, ona ih šifruje Bobovim javnim ključem, čime obezbeđuje da jedino Bob, koristeći sopstveni privatni ključ, može da rekonstruiše originalnu poruku. Nasuprot tome, ukoliko Alisa primeni sopstveni privatni ključ nad nekom porukom, rezultujući šifrat može biti verifikovan korišćenjem njenog javnog ključa, što svakome omogućava da proveri da poruka potiče upravo od nje. Ovaj princip neposredno vodi ka formalizaciji digitalnog potpisa kao fundamentalnog mehanizma asimetrične kriptografije.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.75\textwidth]{chapter2_asimetricna.png}
+    \caption{TODO}
+\end{figure}
 
 \begin{definicija}
 Digitalni potpis predstavlja kriptografski mehanizam u kojem se privatni ključ koristi za generisanje proverljivog kriptografskog otiska nad porukom, dok se odgovarajući javni ključ koristi za verifikaciju tog otiska. Proces verifikacije potvrđuje autentičnost pošiljaoca, integritet poruke i obezbeđuje neporicivost autorstva.
@@ -564,3 +576,17 @@ Nakon kompromitovanja sistema, napadač može pokušati da izmeni postojeće zap
 
 Evidencija primarno doprinosi ostvarivanju \textbf{neporecivosti} izvršenih radnji, dok se kriptografskim mehanizmima obezbeđuju proverljivi i vremenski obeleženi dokazi o aktivnostima subjekata u sistemu.
 
+\subsection{Bezbednosne pretnje i napadi}
+Pored napada usmerenih na mehanizme autentikacije, autorizacije i evidencije, informacioni sistemi moraju obezbediti i zaštitu komunikacionih kanala. U suprotnom, napadač može presresti komunikaciju i lažno se predstaviti kao legitimni servis ili korisnik, pri čemu korisnik ostaje u uverenju da direktno komunicira sa pouzdanim entitetom, dok se poruke zapravo preusmeravaju kroz napadača \cite{mallik2019man, syverson1994taxonomy, baitha2018session}. Ovakvi napadi omogućavaju napadaču da u realnom vremenu prikupi osetljive podatke, kao što su lozinke, podaci naloga i finansijske informacije.
+
+Pored toga, direktni napadi na sistem mogu značajno ugroziti njegov rad, naročito u prisustvu zlonamernog softvera \eng{malware}. Ovakav softver može usporiti rad sistema, omogućiti neovlašćen nadzor nad aktivnostima korisnika, obezbediti napadaču direktan pristup uređaju, potpuno onemogućiti njegov rad ili se dalje širiti unutar mreže \cite{rains2020cybersecurity}.
+
+Iako se savremeni bezbednosni standardi i protokoli kontinuirano unapređuju radi povećanja otpornosti na nove pretnje, značajan broj bezbednosnih incidenata i dalje je posledica ljudskih grešaka, kao što su korišćenje slabih lozinki ili nepažljivo rukovanje osetljivim podacima.
+
+Jedan od najvećih izazova u oblasti bezbednosti mreža predstavlja \textit{socijalni inženjering} \cite{salahdine2019social}, koji često predstavlja početnu tačku različitih napada, budući da iskorišćava prirodnu ljudsku sklonost ka poverenju. Ova kategorija napada obuhvata tehnike kao što su pecanje \eng{phishing}, mamčenje \eng{baiting} i lažno predstavljanje \eng{pretexting}.
+
+Statistički podaci \cite{yeo2022human, theHumanFactor} potvrđuju da značajan procenat bezbednosnih incidenata uključuje ljudski faktor, često nezavisno od tehnološkog nivoa zaštite. Ovo naglašava potrebu za kontinuiranom edukacijom korisnika, razvojem bezbednosne kulture i sistemskim pristupom upravljanju ljudskim faktorom, zbog čega se ljudski faktor u literaturi prepoznaje kao jedan od ključnih uzroka kompromitovanja čak i visoko zaštićenih sistema.
+
+Dodatno, informacionim sistemima može biti uskraćena dostupnost usluge usled preopterećenja izazvanog velikim brojem zlonamernih zahteva \cite{lau2000distributed}, što je poznato kao napad uskraćivanja usluge \eng{Denial of Service, DoS}. Ovakvi napadi dovode do zagušenja sistema, pri čemu, u skladu sa Teoremom \ref{teorema:kapacitet}, dolazi do prekoračenja kapaciteta obrade zahteva.
+
+U naprednijim scenarijima, napadi mogu biti distribuirani, pri čemu više kompromitovanih uređaja, često geografski rasprostranjenih i inficiranih zlonamernim softverom, koordinisano generišu veliki broj zahteva prema ciljnom sistemu. Ovakav oblik napada poznat je kao distribuirani napad uskraćivanja usluge \eng{Distributed Denial of Service, DDoS}. Iako primarno utiču na dostupnost sistema i ne moraju nužno izazvati trajnu štetu, ovi napadi mogu dovesti do značajnih operativnih i ekonomskih posledica.
