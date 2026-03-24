@@ -16,7 +16,9 @@ Blokčejn sistemi mogu se posmatrati kao posebna klasa distribuiranih sistema u 
 Blokčejn predstavlja distribuiranu mrežu ravnopravnih čvorova koja održava zajedničku globalnu knjigu podataka evidentiranjem transakcija u blokove, povezane u strogo hronološki lanac pomoću kriptografskih heš referenci, čime se obezbeđuje nepromenljivost i proverljivost zapisa.
 \end{definicija}
 
-Iako se u izvornom obliku blokčejn definiše kao linearno uređen niz blokova povezanih u strogo hronološki lanac, u kasnijem razvoju pojavile su se i arhitekture zasnovane na usmerenim acikličnim grafovima (DAG), koje odstupaju od klasične blokčejn strukture. Iako ovakvi sistemi zadržavaju određene zajedničke osobine sa tradicionalnim blokčejn mrežama, njihovi mehanizmi konsenzusa, model upravljanja stanjem i struktura podataka su suštinski različiti, zbog čega se u daljem tekstu razmatra isključivo klasični blokčejn model zasnovan na linearnoj strukturi blokova.
+% TODO UBACI SLIKU
+
+Iako se u izvornom obliku blokčejn definiše kao linearno uređen niz blokova povezanih u strogo hronološki lanac, u kasnijem razvoju pojavile su se i paradigme zasnovane na usmerenim acikličnim grafovima (DAG), koje odstupaju od klasične blokčejn strukture \cite{benvcic2018distributed}. Ovakvi sistemi zadržavaju određene zajedničke osobine sa tradicionalnim blokčejn mrežama, ali su njihovi mehanizmi konsenzusa, model upravljanja stanjem i struktura podataka suštinski različiti, zbog čega se u daljem tekstu razmatra isključivo klasični blokčejn model zasnovan na linearnoj strukturi blokova.
 
 Bez obzira na konkretnu implementaciju, blokčejn sistemi se u literaturi često klasifikuju prema stepenu otvorenosti i modelu kontrole pristupa na dve osnovne kategorije \cite{solat2021permissioned}:
 \begin{enumerate}
@@ -24,8 +26,8 @@ Bez obzira na konkretnu implementaciju, blokčejn sistemi se u literaturi često
 
 \item \textbf{Dozvolom ograničeni} \eng{permissioned} - sistemi u kojima je učešće ograničeno na unapred definisan skup identifikovanih i kontrolisanih entiteta. U okviru ove kategorije razlikuju se:
 \begin{itemize}
-\item privatni \eng{private} blokčejn sistemi, u kojima jedna organizacija upravlja mrežom i kontroliše proces validacije, čime se ostvaruje centralizovan model upravljanja, i
-\item udruženi \eng{consortium} blokčejn sistemi, u kojima više organizacija zajednički učestvuje u upravljanju i validaciji, ostvarujući delimično distribuiran model kontrole.
+\item \textit{privatni} \eng{private} blokčejn sistemi, u kojima jedna organizacija upravlja mrežom i kontroliše proces validacije, čime se ostvaruje centralizovan model upravljanja, i
+\item \textit{udruženi} \eng{consortium} blokčejn sistemi, u kojima više organizacija zajednički učestvuje u upravljanju i validaciji, ostvarujući delimično decentralizovan model kontrole.
 \end{itemize}
 \end{enumerate}
 
@@ -34,8 +36,8 @@ Stanje blokčejn sistema se \textbf{replikuje} kod svih učesnika mreže, zbog �
 Replikacijom se obezbeđuje da svaki čvor mreže održava lokalnu kopiju distribuirane evidencije, čime se postiže visok stepen \textbf{dostupnosti} sistema, kao i otpornost na pojedinačne kvarove i privremenu nedostupnost čvorova. U zavisnosti od arhitektonskih odluka i organizacije sistema, replikacija stanja može biti realizovana u više oblika, među kojima se izdvajaju:
 \begin{enumerate}
 \item \textbf{potpuna replikacija stanja}, u kojoj svaki čvor održava celokupno stanje i kompletnu istoriju mreže, u skladu sa Definicijom \ref{def:replikacija}, što je karakteristično za većinu klasičnih javnih blokčejn sistema,
-\item \textbf{parcijalna replikacija}, u kojoj čvorovi održavaju i validiraju samo podskup stanja i transakcija, primenom tehnika razdeljivanja podataka, u skladu sa Definicijom \ref{def:sharding},
-\item \textbf{slojevita replikacija}, kod koje se različiti slojevi sistema oslanjaju na različite nivoe i oblike replikacije, u skladu sa funkcionalnom podelom odgovornosti unutar ukupne arhitekture sistema, kako je definisano u Definiciji \ref{def:layering}.
+\item \textbf{parcijalna replikacija} \cite{dang2019towards}, u kojoj čvorovi održavaju i validiraju samo podskup stanja i transakcija, primenom tehnika razdeljivanja podataka, u skladu sa Definicijom \ref{def:sharding},
+\item \textbf{slojevita replikacija} \cite{sguanci2021layer}, kod koje se različiti slojevi sistema oslanjaju na različite nivoe i oblike replikacije, u skladu sa funkcionalnom podelom odgovornosti unutar ukupne arhitekture sistema, kako je definisano u Definiciji \ref{def:layering}.
 \end{enumerate}
 
 \subsection{Transakcije i blokovi}
@@ -47,11 +49,10 @@ Iako su transakcije javno vidljive, sistem ne koristi eksplicitne identitete uč
 Transakcija predstavlja kriptografski zaštićen digitalni zapis kojim se prenosi vrednost ili podaci između učesnika distribuiranog sistema.
 \end{definicija}
 
-% TODO VAZNO
 U zavisnosti od načina na koji se potpisane transakcije distribuiraju mreži na dalje procesuiranje, mogu se razlikovati dva osnovna modela blokčejn sistema:
 \begin{enumerate}
-\item U sistemima bez unapred definisanog rasporeda učesnika koji predlažu sledeće stanje sistema nije poznato koji će čvor izvršiti naredno globalno napredovanje, pa se transakcije privremeno smeštaju u lokalni skup nepotvrđenih transakcija \eng{mempool}, gde čekaju da ih neki od učesnika uključi u naredni predlog stanja.
-\item U sistemima sa unapred definisanim rasporedom učesnika koji predlažu sledeće stanje sistema unapred je poznato koji čvor u kom trenutku ima pravo da izvrši globalno napredovanje, pa se transakcije direktno prosleđuju odgovarajućim čvorovima iz rasporeda na obradu i uključivanje u lanac.
+\item Transakcija se smešta u lokalni skup nepotvrđenih transakcija \eng{mempool} \cite{bai2025determining} i propagira kroz mrežu razmenom između čvorova, čime se postiže eventualna konvergencija globalnog skupa nepotvrđenih transakcija, u okviru kojeg čeka da bude uključena u naredni predlog stanja,
+\item Transakcija se direktno prosleđuje odgovarajućim čvorovima prema unapred definisanom rasporedu obrade \cite{yakovenko2018solana}, pri čemu se uključuje u naredni predlog stanja bez potrebe za čekanjem u globalnom skupu.
 \end{enumerate}
 
 U otvorenom i distribuiranom okruženju, obrada, validacija i potvrđivanje transakcija predstavljaju potrošnju zajedničkih računarskih i komunikacionih resursa. Iz tog razloga, javni blokčejn sistemi uvode mehanizam naplate korišćenja mreže u primarnu kriptovalutu blokčejna \eng{native cryptocurrency}, kojim se istovremeno ograničava mogućnost zloupotreba u vidu masovnog slanja beskorisnih transakcija i obezbeđuje ekonomski podsticaj učesnicima koji učestvuju u održavanju i bezbednosti mreže.
@@ -106,7 +107,9 @@ Kako bi se formirao kandidat za novi blok, neophodno je prethodno prikupiti nepo
 Predlagač bloka \eng{block proposer} je učesnik mreže koji, u skladu sa pravilima konsenzus protokola, ima pravo da predloži sledeći blok u lancu.
 \end{definicija}
 
-U blokčejn sistemima se polazi od pretpostavke da deo učesnika mreže može ispoljavati proizvoljno ili zlonamerno ponašanje, odnosno da sistem mora biti otporan na prisustvo \textbf{vizantijskih čvorova}. Iz tog razloga, konsenzus mehanizam predstavlja centralnu tačku \textbf{koordinacije} i \textbf{kontrolne decentralizacije}, jer definiše skup pravila prema kojima se obezbeđuje konzistentnost globalnog stanja mreže u uslovima nepoverenja među učesnicima.
+U blokčejn sistemima, svaki učesnik koji ispunjava protokolom definisane uslove, poput posedovanja odgovarajućih računarskih resursa i/ili primarne kriptovalute sistema, može pokrenuti instancu sistema i učestvovati u procesu predlaganja i validacije blokova. Implementacije blokčejn protokola mogu postojati u vidu više različitih klijentskih softvera, koji se međusobno razlikuju prema arhitektonskim pristupima, pri čemu su najzastupljeniji monolitni i višeslojni modeli. Ovi klijenti se najčešće izvršavaju u okruženjima računarstva u oblaku, ali se mogu pokretati i u \textit{bare-metal} okruženjima.
+
+Zbog toga se u blokčejn sistemima polazi od pretpostavke da deo učesnika mreže može ispoljavati proizvoljno ili zlonamerno ponašanje, odnosno da sistem mora biti otporan na prisustvo \textbf{vizantijskih čvorova}. Iz tog razloga, konsenzus mehanizam predstavlja centralnu tačku \textbf{koordinacije} i \textbf{kontrolne decentralizacije}, jer definiše skup pravila prema kojima se obezbeđuje konzistentnost globalnog stanja mreže u uslovima nepoverenja među učesnicima.
 
 Osnovno pravilo podrazumeva da se svaki predloženi blok nezavisno proverava od strane svih čvorova pre njegovog prihvatanja i uključivanja u lokalnu verziju lanca. Ovaj proces validacije obuhvata proveru ispravnosti svih transakcija i kriptografskih uslova sadržanih u bloku, čime se eliminišu pokušaji vizantijskih čvorova da nametnu nevalidne ili nekonzistentne promene stanja sistema.
 
@@ -294,10 +297,9 @@ Istovremeno, uklanjanje centralizovanog autoriteta uvodi potrebu za tolerancijom
 
 Kombinacija navedenih ograničenja dovodi do fundamentalnog kompromisa između \textbf{decentralizacije}, \textbf{sigurnosti} i \textbf{skalabilnosti}, poznatog kao \textit{blokčejn trilema} \cite{werth2023review}. Naime, sistem koji teži visokom stepenu kontrolne decentralizacije i snažnim sigurnosnim garancijama nužno trpi smanjenje efikasnosti i skalabilnosti, dok povećanje performansi zahteva kompromis u pogledu barem jedne od preostalih osobina. Ova trilema ne predstavlja implementacioni nedostatak konkretnih protokola, već je duboko ukorenjena u samim teorijskim osnovama blokčejn sistema.
 
-% TODO
-Jedan od načina za ublažavanje pomenutih kompromisa jeste primena privatnih ili dozvolom-ograničenih \eng{permissioned} blokčejn sistema, kod kojih je pristup mreži strogo kontrolisan, a broj učesnika unapred ograničen. Ovakav model omogućava postizanje višeg stepena efikasnosti uz snažne sigurnosne garancije zasnovane na poznatom skupu učesnika, međutim, istovremeno zahteva da organizacije samostalno uspostave, upravljaju i održavaju kompletnu infrastrukturnu osnovu sistema, bilo kroz sopstvene resurse ili korišćenjem usluga računarstva u oblaku, što podrazumeva značajne operativne i finansijske troškove, kako je razmatrano u odeljku \ref{sec:cloud}.
+Kod dozvolom ograničenih blokčejn sistema, pristup mreži je strogo kontrolisan, a broj učesnika unapred ograničen, zbog čega je stepen decentralizacije značajno smanjen. Ovakav model omogućava postizanje višeg stepena efikasnosti uz snažne sigurnosne garancije zasnovane na poznatom skupu učesnika. Međutim, on zahteva da organizacije samostalno uspostave, upravljaju i održavaju kompletnu infrastrukturnu osnovu sistema, bilo kroz sopstvene resurse ili korišćenjem usluga računarstva u oblaku, što podrazumeva značajne operativne i finansijske troškove, kako je razmatrano u odeljku \ref{sec:cloud}.
 
-Nasuprot tome, \textit{javne blokčejn mreže} oslanjaju se na već uspostavljenu globalnu infrastrukturu koju održava veliki broj nezavisnih učesnika, čime se eliminišu pomenuti troškovi održavanja sopstvene infrastrukture, ali se \textit{troškovi korišćenja mreže prenose na same korisnike kroz mehanizme transakcionih naknada}. Istovremeno, izražena decentralizacija ovih sistema unapređuje otpornost i sigurnost podataka na više nivoa, obuhvatajući kako infrastrukturni i aplikativni sloj, tako i krajnje korisnike, za razliku od prethodnih radova koji su se dominantno bavili bezbednošću platforme, zanemarujući korisničku perspektivu.
+Nasuprot tome, \textit{javni blokčejn sistemi} su dozvolom neograničeni i oslanjaju se na već uspostavljenu globalnu infrastrukturu koju održava veliki broj nezavisnih učesnika, čime se eliminišu troškovi održavanja sopstvene infrastrukture. Međutim, \textit{troškovi korišćenja mreže prenose se na korisnike kroz mehanizme transakcionih naknada}. Istovremeno, izražena decentralizacija ovih sistema unapređuje otpornost i sigurnost podataka na više nivoa, obuhvatajući kako infrastrukturni i aplikativni sloj, tako i krajnje korisnike.
 
 \subsection{Decentralizovanost blokčejn sistema}
 Uprkos svojoj distribuiranoj arhitekturi, svi čvorovi u blokčejn mreži teže usvajanju jedinstvene globalne verzije stanja sistema, čime se blokčejn može smatrati logički centralizovanim. Ova osobina omogućava konzistentno tumačenje istorije transakcija od strane svih učesnika.
