@@ -41,7 +41,9 @@ Replikacijom se obezbeđuje da svaki čvor mreže održava lokalnu kopiju distri
 \end{enumerate}
 
 \subsection{Transakcije i blokovi}
-Kada korisnici žele da ostvare interakciju sa mrežom, oni, u skladu sa Definicijom \ref{def:zahtev}, formiraju transakciju kao konkretnu instancu elementarnog zahteva sistema, kriptografski je potpisuju odgovarajućim privatnim ključem i prosleđuju mreži na dalju obradu. Na ovaj način ostvaruje se \textit{autentikacija zasnovana na kriptografiji}, čime se obezbeđuje \textbf{autentičnost} pošiljaoca i dokaz vlasništva nad sredstvima. Istovremeno, upotreba digitalnog potpisa obezbeđuje \textbf{neporecivost} transakcije, budući da se validan potpis ne može generisati bez posedovanja odgovarajućeg privatnog ključa.
+Kada korisnici žele da ostvare interakciju sa mrežom, oni, u skladu sa Definicijom \ref{def:zahtev}, formiraju transakciju kao konkretnu instancu elementarnog zahteva sistema, kriptografski je potpisuju odgovarajućim novčanikom i prosleđuju mreži na dalju obradu. U ovom kontekstu, novčanik \eng{wallet} predstavlja softverski mehanizam za upravljanje privatnim ključevima ili semenskim frazama \eng{seed phrase}, kao i za konstruisanje transakcija.
+
+Na ovaj način ostvaruje se \textit{autentikacija zasnovana na kriptografiji}, čime se obezbeđuje \textbf{autentičnost} pošiljaoca i dokaz vlasništva nad sredstvima. Istovremeno, upotreba digitalnog potpisa obezbeđuje \textbf{neporecivost} transakcije, budući da se validan potpis ne može generisati bez posedovanja odgovarajućeg privatnog ključa.
 
 Iako su transakcije javno vidljive, sistem ne koristi eksplicitne identitete učesnika, već kriptografske adrese, čime se ostvaruje ograničen oblik \textbf{poverljivosti} u vidu pseudonimnosti, dok se potpuna zaštita sadržaja transakcija ne obezbeđuje na osnovnom protokolskom nivou.
 
@@ -250,11 +252,31 @@ Bitcoin sistem na ovaj način omogućava izvršavanje jednostavnih, deterministi
 Pametni ugovori predstavljaju programibilne ugovore u kojima su uslovi sporazuma eksplicitno definisani u obliku koda, koji se automatski izvršava kada su ispunjeni unapred određeni uslovi.
 \end{definicija}
 
-Jedan od ključnih tehnoloških iskoraka u razvoju blokčejn sistema predstavlja uvođenje Tjuring-kompletne virtuelne mašine na nivou cele mreže, čime je omogućeno izvršavanje opštih pametnih ugovora. U takvom okruženju, adrese mogu predstavljati i pametne ugovore, dok transakcije, pored prenosa vrednosti, mogu sadržati i naziv funkcije i skup parametara koji se prosleđuju pametnom ugovoru radi njegovog izvršavanja. Budući da je stanje blokčejna nepromenljivo, kombinacija pametnih ugovora i distribuirane knjige podataka omogućava izgradnju pouzdanog, transparentnog i verifikabilnog izvršnog okruženja.
+Jedan od ključnih tehnoloških iskoraka u razvoju blokčejn sistema predstavlja uvođenje Tjuring-kompletne virtuelne mašine na nivou cele mreže, čime je omogućeno izvršavanje pametnih ugovora opšte namene. Ovi ugovori tokom svog izvršavanja mogu međusobno komunicirati i pozivati druge pametne ugovore, u potpuno decentralizovanom okruženju, čime se omogućava realizacija decentralizovanih aplikacija \eng{Decentralized Application, dApp}.
+
+U takvom okruženju, adrese mogu predstavljati kako korisničke naloge, tako i pametne ugovore, dok transakcije, pored prenosa vrednosti, mogu sadržati i poziv funkcije sa pripadajućim skupom parametara koji se prosleđuju pametnom ugovoru radi njegovog izvršavanja. Budući da je stanje blokčejna logički nepromenljivo, kombinacija pametnih ugovora i distribuirane knjige podataka omogućava izgradnju pouzdanog, transparentnog i verifikabilnog izvršnog okruženja.
 
 Virtuelna mašina nije strogi preduslov za realizaciju pametnih ugovora, ali značajno pojednostavljuje njihovu implementaciju i omogućava postojanje jedinstvenog izvršnog modela na nivou cele mreže, čime se blokčejn može posmatrati kao oblik \textbf{globalnog distribuiranog računara}.
 
 S obzirom na to da virtuelna mašina izvršava skup niskonivojskih \eng{low-level} instrukcija, u praksi se koriste viši programski jezici za pisanje pametnih ugovora, koji se potom prevode u odgovarajući bajtkod \eng{bytecode}. Tokom procesa prevođenja generišu se i programski interfejsi koji olakšavaju interakciju korisnika i drugih ugovora sa datim pametnim ugovorom.
+
+\subsubsection{Apstrakcija naloga}
+Jedan od ključnih izazova za šire usvajanje blokčejn tehnologija predstavlja složenost korisničkog iskustva, naročito u pogledu upravljanja privatnim ključevima i semenskim frazama. Ovakav model autentifikacije zasnovan na kriptografiji prenosi punu odgovornost na korisnika za bezbedno čuvanje poverljivih podataka, pri čemu njihov gubitak ili kompromitacija može dovesti do nepovratnog gubitka sredstava. Dodatno, model naplate transakcionih naknada predstavlja dodatni sloj složenosti za krajnje korisnike.
+
+S obzirom na to da većina korisnika ne poseduje napredno tehničko znanje, neophodno je da decentralizovane aplikacije apstrahuju ove složene mehanizme kako ne bi predstavljali prepreku njihovoj upotrebi. U tom kontekstu, apstrakcija naloga \eng{account abstraction} predstavlja pristup koji ima za cilj unapređenje interakcije između korisnika i blokčejn sistema, omogućavajući fleksibilnije modele autentifikacije i upravljanja nalozima \cite{wang2023account}.
+
+Za razliku od tradicionalnog modela u kojem je nalog direktno vezan za jedan privatni ključ, apstrakcija naloga omogućava implementaciju programabilnih naloga u vidu pametnih ugovora, čime se logika autorizacije i validacije transakcija može prilagoditi konkretnim potrebama korisnika. Na taj način, korisnici mogu definisati različite mehanizme potpisivanja transakcija, uključujući višestruke potpise, socijalni oporavak naloga, kao i integraciju sa drugim sistemima autentifikacije.
+
+Dodatno, ovakav pristup omogućava fleksibilnije modele plaćanja transakcionih naknada, uključujući scenarije u kojima treće strane (npr. same aplikacije) preuzimaju troškove izvršavanja transakcija, kao i korišćenje alternativnih tokena umesto primarne kriptovalute mreže.
+
+U literaturi i praksi razlikuju se dva osnovna pristupa implementaciji apstrakcije naloga:
+\begin{enumerate}
+\item \textbf{Apstrakcija naloga zasnovana na pametnim ugovorima} \cite{AAeip4337} - pristup koji omogućava implementaciju apstrakcije naloga bez izmene osnovnog protokola, pri čemu korisnici implementiraju sopstvene naloge kao pametne ugovore. U ovom modelu uvodi se alternativni mehanizam obrade transakcija (npr. \textit{UserOperation} strukture i alternativni skupovi nepotvrđenih transakcija), pri čemu se zahtevi agregiraju i izvršavaju putem specijalizovanog pametnog ugovora na mreži.
+    
+\item \textbf{Urođena apstrakcija naloga} - pristup u kojem je apstrakcija naloga integrisana direktno u protokol blokčejna, čime se eliminiše potreba za dodatnim slojevima i omogućava urođena podrška za fleksibilne modele autentifikacije i izvršavanja transakcija.
+\end{enumerate}
+
+Implementacija ovog pristupa i dalje predstavlja aktivnu oblast istraživanja, sa značajnim potencijalom da unapredi upotrebljivost blokčejn sistema i omogući njihovo šire usvajanje.
 
 \section{Upravljanje blokčejnom}
 U tradicionalnim organizacionim sistemima, odluke o promenama i razvoju sistema donosi ograničena i jasno definisana grupa ljudi, čime se upravljanje ostvaruje kroz centralizovanu ili hijerarhijski strukturisanu kontrolu. Nasuprot tome, jedan od osnovnih principa javnih blokčejn sistema jeste visok stepen kontrolne decentralizacije, pri čemu u proces odlučivanja mogu biti uključeni korisnici mreže, programeri pametnih ugovora, operatori čvorova, istraživači i drugi relevantni učesnici.
