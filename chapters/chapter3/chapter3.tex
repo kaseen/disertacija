@@ -8,15 +8,28 @@ Masovno slanje elektronske pošte bez značajnog troška omogućilo je ranu zlou
 Pokušaji realizacije elektronskog novca sa svojstvima fizičkog gotovinskog novca, kao što su privatnost i nepratljivost transakcija, zasnivali su se na upotrebi slepih potpisa i kriptografskih protokola koji omogućavaju izvršavanje plaćanja bez otkrivanja identiteta korisnika. Međutim, ovi sistemi suočili su se sa fundamentalnim problemom dvostruke potrošnje \eng{double spending}, odnosno mogućnošću da se isti digitalni token iskoristi više puta \cite{chaum1983blind}. Predložena rešenja uglavnom su se oslanjala na centralizovane entitete koji vode evidenciju o već potrošenim jedinicama, čime se implicitno uvodi potreba za poverenjem u treću stranu \cite{chaum1985security}. Kasniji predlozi \cite{szabo2005bit, dai1998b} nastojali su da redukuju ulogu centralnog autoriteta, ali nisu u potpunosti razrešili problem koordinacije i postizanja globalne saglasnosti u otvorenom distribuiranom okruženju. Ovi radovi jasno identifikuju dvostruku potrošnju kao centralni tehnički izazov u dizajnu digitalnih monetarnih sistema.
 
 \section{Geneza blokčejn tehnologije}
-Na navedenim teorijskim i tehničkim temeljima razvija se blokčejn tehnologija, koja svoju prvu široko prihvaćenu praktičnu realizaciju dobija kroz sistem \textit{Bitcoin} \cite{nakamoto2007bitcoin, crosby2016blockchain}. Njena ključna inovacija ogleda se u integraciji dotad nezavisnih kriptografskih i sistemskih koncepata, poput kriptografskog vremenskog obeležavanja, dokazivanja uloženog rada i javno proverljive evidencije događaja, u jedinstven, javan i dozvolom neograničen distribuirani mehanizam koji omogućava postizanje globalne saglasnosti među učesnicima mreže bez oslanjanja na centralni autoritet od poverenja.
+Na prethodno predstavljenim teorijskim i tehničkim osnovama razvija se blokčejn tehnologija, koja svoju prvu široko prihvaćenu praktičnu realizaciju dobija kroz elektronski sistem za plaćanje \textit{Bitcoin} \cite{nakamoto2007bitcoin, crosby2016blockchain}. Osnovna inovacija ovog pristupa ogleda se u \textit{objavljivanju svih transakcija kao javno dostupnih}, čime se napušta tradicionalni model privatnih knjiga evidencije \eng{ledger} kakve održavaju centralizovane finansijske institucije, čime se uvodi javno dostupna, distribuirana knjiga evidencije koju zajednički održavaju učesnici mreže.
 
-Blokčejn sistemi mogu se posmatrati kao posebna klasa distribuiranih sistema u kojima su mehanizmi replikacije, koordinacije i konsenzusa strogo definisani protokolskim pravilima i kriptografskim ograničenjima.
+U odsustvu centralnog autoriteta od poverenja, javlja se fundamentalni problem postizanja saglasnosti o stanju distribuirane knjige evidencije među međusobno nepoverljivim učesnicima mreže, kao i obezbeđivanja napredovanja ovako definisanog informacionog sistema. Rešenje ovog problema ostvareno je kroz \textit{Nakamoto konsenzus} \cite{stifter2018agreement}, koji integriše niz prethodno nezavisnih kriptografskih i sistemskih koncepata. 
+
+Ovaj mehanizam zasniva se na uvođenju oskudnog resursa \eng{scarce resource}, na osnovu kojeg učesnici mreže stiču pravo da učestvuju u određivanju narednog stanja sistema, kao i na hronološkoj upotrebi kriptografskog vremenskog obeležavanja svakog napredovanja, čime se implicitno obezbeđuje sigurnost i konzistentnost sistema kroz evidenciju korišćenja tog resursa.
+
+Na ovaj način Bitcoin predstavlja jedinstven, javni i dozvolom neograničen distribuirani sistem koji omogućava postizanje globalne saglasnosti o stanju mreže bez potrebe za centralizovanim autoritetom, uz očuvanje sigurnosti i integriteta podataka. Shodno tome, blokčejn sistemi mogu se posmatrati kao posebna klasa distribuiranih sistema u kojima su mehanizmi replikacije, koordinacije i konsenzusa strogo definisani protokolskim pravilima i kriptografskim ograničenjima.
 
 \begin{definicija}\label{def:blokcejn}
 Blokčejn predstavlja distribuiranu mrežu ravnopravnih čvorova koja održava zajedničku globalnu knjigu podataka evidentiranjem transakcija u blokove, povezane u strogo hronološki lanac pomoću kriptografskih heš referenci, čime se obezbeđuje nepromenljivost i proverljivost zapisa.
 \end{definicija}
 
 % TODO UBACI SLIKU
+
+Budući da se blokčejn posmatra kao distribuirana knjiga evidencije koju zajednički održavaju učesnici mreže, stanje sistema se \textbf{replicira} kod svih čvorova. Pri tome, svaki čvor ne samo da održava lokalnu kopiju trenutnog stanja, već i dosledno beleži sva njegova napredovanja u identičnom redosledu u formi lanca blokova. Na taj način blokčejn ostvaruje osobinu \textbf{replikovane mašine stanja}, što ga čini \textbf{logički centralizovanim} i omogućava determinističku rekonstrukciju stanja sistema u bilo kom trenutku njegove istorije.
+
+Replikacijom se obezbeđuje da svaki čvor mreže održava lokalnu kopiju distribuirane evidencije, čime se postiže visok stepen \textbf{dostupnosti} sistema, kao i otpornost na pojedinačne kvarove i privremenu nedostupnost čvorova. U zavisnosti od arhitektonskih odluka i organizacije sistema, replikacija stanja može biti realizovana u više oblika, među kojima se izdvajaju:
+\begin{enumerate}
+\item \textbf{potpuna replikacija stanja}, u kojoj svaki čvor održava celokupno stanje i kompletnu istoriju mreže, u skladu sa Definicijom \ref{def:replikacija}, što je karakteristično za većinu klasičnih javnih blokčejn sistema,
+\item \textbf{parcijalna replikacija} \cite{dang2019towards}, u kojoj čvorovi održavaju i validiraju samo podskup stanja i transakcija, primenom tehnika razdeljivanja podataka, u skladu sa Definicijom \ref{def:sharding},
+\item \textbf{slojevita replikacija} \cite{sguanci2021layer}, kod koje se različiti slojevi sistema oslanjaju na različite nivoe i oblike replikacije, u skladu sa funkcionalnom podelom odgovornosti unutar ukupne arhitekture sistema, kako je definisano u Definiciji \ref{def:layering}.
+\end{enumerate}
 
 Iako se u izvornom obliku blokčejn definiše kao linearno uređen niz blokova povezanih u strogo hronološki lanac, u kasnijem razvoju pojavile su se i paradigme zasnovane na usmerenim acikličnim grafovima (DAG), koje odstupaju od klasične blokčejn strukture \cite{benvcic2018distributed}. Ovakvi sistemi zadržavaju određene zajedničke osobine sa tradicionalnim blokčejn mrežama, ali su njihovi mehanizmi konsenzusa, model upravljanja stanjem i struktura podataka suštinski različiti, zbog čega se u daljem tekstu razmatra isključivo klasični blokčejn model zasnovan na linearnoj strukturi blokova.
 
@@ -29,15 +42,6 @@ Bez obzira na konkretnu implementaciju, blokčejn sistemi se u literaturi često
 \item \textit{privatni} \eng{private} blokčejn sistemi, u kojima jedna organizacija upravlja mrežom i kontroliše proces validacije, čime se ostvaruje centralizovan model upravljanja, i
 \item \textit{udruženi} \eng{consortium} blokčejn sistemi, u kojima više organizacija zajednički učestvuje u upravljanju i validaciji, ostvarujući delimično decentralizovan model kontrole.
 \end{itemize}
-\end{enumerate}
-
-Stanje blokčejn sistema se \textbf{replikuje} kod svih učesnika mreže, zbog čega se može posmatrati kao javna, distribuirana struktura podataka koja funkcioniše kao knjiga evidencije \eng{ledger} svih transakcija izvršenih u sistemu. Početni element lanca naziva se \textit{blok geneze} \eng{Genesis block} i on je jedini blok koji nema prethodnika, te se eksplicitno inicijalizuje kako bi sistem mogao započeti svoj rad.
-
-Replikacijom se obezbeđuje da svaki čvor mreže održava lokalnu kopiju distribuirane evidencije, čime se postiže visok stepen \textbf{dostupnosti} sistema, kao i otpornost na pojedinačne kvarove i privremenu nedostupnost čvorova. U zavisnosti od arhitektonskih odluka i organizacije sistema, replikacija stanja može biti realizovana u više oblika, među kojima se izdvajaju:
-\begin{enumerate}
-\item \textbf{potpuna replikacija stanja}, u kojoj svaki čvor održava celokupno stanje i kompletnu istoriju mreže, u skladu sa Definicijom \ref{def:replikacija}, što je karakteristično za većinu klasičnih javnih blokčejn sistema,
-\item \textbf{parcijalna replikacija} \cite{dang2019towards}, u kojoj čvorovi održavaju i validiraju samo podskup stanja i transakcija, primenom tehnika razdeljivanja podataka, u skladu sa Definicijom \ref{def:sharding},
-\item \textbf{slojevita replikacija} \cite{sguanci2021layer}, kod koje se različiti slojevi sistema oslanjaju na različite nivoe i oblike replikacije, u skladu sa funkcionalnom podelom odgovornosti unutar ukupne arhitekture sistema, kako je definisano u Definiciji \ref{def:layering}.
 \end{enumerate}
 
 \subsection{Transakcije i blokovi}
@@ -69,11 +73,11 @@ Transakcione naknade predstavljaju dominantan mehanizam \textit{implicitnog odre
 Blok predstavlja skup transakcija i odgovarajuće zaglavlje koje sadrži metapodatke neophodne za verifikaciju i povezivanje blokova, čime se formalizuje globalno napredovanje stanja celokupnog sistema.
 \end{definicija}
 
-Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu smatrati logički istovremenim, jer dele istu vremensku oznaku nastanka u zaglavlju bloka. Heširanjem zaglavlja bloka formira se kriptografska heš referenca celog bloka, pri čemu i najmanja izmena sadržaja dovodi do promene heš vrednosti.
+Početni element lanca naziva se \textit{blok geneze} \eng{Genesis block} i predstavlja jedini blok koji nema prethodnika, te se eksplicitno inicijalizuje kako bi sistem mogao započeti svoj rad, dok je dodavanje svakog narednog bloka definisano protokolom. Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu posmatrati kao logički istovremene, budući da dele istu vremensku oznaku zabeleženu u zaglavlju bloka.
 
-Kako zaglavlje bloka sadrži vremensku oznaku njegovog nastanka, kao i kriptografsku heš referencu na prethodni blok, formira se \textit{lanac međusobno zavisnih vremenskih zapisa}. Ovakva struktura predstavlja osnovu \textbf{integriteta} i hronološke konzistentnosti blokčejn sistema. U tom smislu, blokčejn se može posmatrati kao logički \textbf{sat} distribuiranog sistema, koji omogućava globalno \textbf{totalno uređenje} transakcija na nivou cele mreže, čime sistem postaje \textbf{logički centralizovan}. Svaka naknadna modifikacija sadržaja jednog bloka narušila bi konzistentnost svih narednih veza u lancu, čime bi bila kompromitovana celokupna sigurnost i validnost sistema.
+Sve transakcije u okviru bloka organizuju se u Merkleovo stablo, čiji koren predstavlja jedinstvenu heš vrednost koja sažima njihov sadržaj \cite{merkle1987digital}. Svaka izmena bilo koje transakcije dovela bi do promene odgovarajuće heš vrednosti, a time i korena stabla. Ova vrednost se uključuje u zaglavlje bloka, zajedno sa vremenskom oznakom (koja predstavlja \textbf{logički sat} distribuiranog sistema), kriptografskom heš referencom na prethodni blok i dodatnim protokolskim parametrima (verzijom protokola, parametrima konsenzusa i slično).
 
-S obzirom na to da se blokčejn struktura sastoji od niza međusobno povezanih blokova, blok predstavlja osnovnu strukturnu jedinicu sistema. \textbf{Kapacitet} blokčejna se u tom kontekstu posmatra kao propusna moć sistema, odnosno maksimalna brzina kojom mreža može da obradi i trajno potvrdi transakcije, pri čemu je ovaj kapacitet unapred definisan protokolom kroz skup strukturnih i konsenzusnih parametara.
+Heširanjem zaglavlja formira se jedinstvena kriptografska referenca bloka, čime se ostvaruje mehanizam \textit{kriptografskog vremenskog obeležavanja svakog napredovanja sistema}. Ovakva struktura predstavlja osnovu \textbf{integriteta} i hronološke konzistentnosti blokčejn sistema, jer bi svaka naknadna izmena sadržaja jednog bloka narušila validnost svih njegovih naslednika u lancu, čime bi bila kompromitovana celokupna sigurnost sistema.
 
 \begin{definicija}
 Kapacitet blokčejn sistema se kvantifikuje kao broj transakcija po sekundi \eng{transactions per second, TPS}, što predstavlja dugoročni prosečan broj transakcija koje mreža može da uključi u blokove i potvrdi u jedinici vremena, pod uslovom stabilnog stanja mreže.
@@ -87,18 +91,18 @@ Performanse blokčejn sistema su fundamentalno ograničene veličinom pojedinač
 
 U uslovima povećanog intenziteta dolaznih transakcija, kada stopa pristizanja transakcija prelazi kapacitete sistema definisane protokolom, dolazi do \textbf{zagušenja}. Kako se broj nepotvrđenih transakcija povećava, tako se pojačava konkurencija za uključivanje transakcija u blok, a s obzirom na to da su transakcije s većim naknadama poželjnije, ovo dodatno doprinosi rastu prosečnih transakcionih naknada, što je u skladu sa Teoremom \ref{teorema:kapacitet}.
 
-\subsubsection{Ograničenja protokola u Bitkoin mreži}
-U Bitkoinu, zaglavlje bloka ima fiksnu veličinu od 80 bajtova i sadrži skup metapodataka neophodnih za validaciju bloka i njegovo kriptografsko povezivanje sa ostatkom lanca. Ovi metapodaci uključuju:
+\subsubsection{Ograničenja protokola u Bitcoin mreži}
+U Bitcoin-u, zaglavlje bloka ima fiksnu veličinu od 80 bajtova i sadrži skup metapodataka neophodnih za validaciju bloka i njegovo kriptografsko povezivanje sa ostatkom lanca. Ovi metapodaci uključuju:
 \begin{enumerate}
 \item \textbf{Verzija} (4 bajta) - identifikator verzije bloka koji određuje skup protokolskih pravila i validacionih uslova koje čvorovi mreže treba da primenjuju prilikom njegove obrade,
 \item \textbf{Heš prethodnog bloka} (32 bajta) - kriptografska referenca na prethodni blok u lancu, kojom se obezbeđuje da bilo kakva izmena sadržaja prethodnog bloka nužno dovodi do promene zaglavlja tekućeg bloka,
-\item \textbf{Merkleov koren transakcija} (\textit{tx\_root}) (32 bajta) - heš vrednost korena Merkleovog stabla \cite{merkle1987digital} formiranog od svih transakcija uključenih u blok, svaka izmena makar jedne transakcije menja ovu vrednost,
+\item \textbf{Merkleov koren transakcija} (\textit{tx\_root}) (32 bajta) - heš vrednost korena Merkleovog stabla formiranog od svih transakcija uključenih u blok,
 \item \textbf{Vremenska oznaka} (4 bajta) - trenutak početka procesa heširanja bloka izražen u Unix formatu, blok se smatra validnim ukoliko ova vrednost ne odstupa značajno od lokalnog vremena ostalih čvorova u mreži,
 \item \textbf{\textit{nBits}} (4 bajta) - kompaktno kodirana reprezentacija ciljnog praga \eng{target hash}, kojom se određuje težina kriptografske zagonetke i dinamički reguliše tempo generisanja novih blokova u mreži,
 \item \textbf{Počasna promenljiva} \eng{nonce} (4 bajta) - slučajna ili iterativno menjana vrednost koja predstavlja rešenje prethodne kriptografske zagonetke, u slučaju iscrpljivanja njenog opsega, dodatno se modifikuje Merkleov koren \eng{extra nonce}.
 \end{enumerate}
 
-U Bitkoin protokolu, maksimalna veličina bloka je namerno ograničena na 1 MB \cite{croman2016scaling}, što predstavlja konzervativan dizajnerski izbor sa ciljem očuvanja decentralizacije i ograničavanja zahteva za skladištenje i propusni opseg čvorova mreže. Ovo ograničenje direktno utiče na performanse i dovodi do efektivnog kapaciteta od približno 7 TPS.
+U Bitcoin protokolu, maksimalna veličina bloka je namerno ograničena na 1 MB \cite{croman2016scaling}, što predstavlja konzervativan dizajnerski izbor sa ciljem očuvanja decentralizacije i ograničavanja zahteva za skladištenje i propusni opseg čvorova mreže. Ovo ograničenje direktno utiče na performanse i dovodi do efektivnog kapaciteta od približno 7 TPS.
 
 Pokušaji izmene ovog parametra kroz povećanje veličine bloka bili su predmet višegodišnjih tehničkih i ideoloških rasprava unutar zajednice \eng{Bitcoin scaling debate}, koje su u pojedinim slučajevima rezultovale trajnim podelama mreže i nastankom alternativnih protokolskih implementacija.
 
