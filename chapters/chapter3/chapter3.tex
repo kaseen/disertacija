@@ -75,21 +75,33 @@ Blok predstavlja skup transakcija i odgovarajuće zaglavlje koje sadrži metapod
 
 Početni element lanca naziva se \textit{blok geneze} \eng{Genesis block} i predstavlja jedini blok koji nema prethodnika, te se eksplicitno inicijalizuje kako bi sistem mogao započeti svoj rad, dok je dodavanje svakog narednog bloka definisano protokolom. Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu posmatrati kao logički istovremene, budući da dele istu vremensku oznaku zabeleženu u zaglavlju bloka.
 
-Sve transakcije u okviru bloka organizuju se u Merkleovo stablo, čiji koren predstavlja jedinstvenu heš vrednost koja sažima njihov sadržaj \cite{merkle1987digital}. Svaka izmena bilo koje transakcije dovela bi do promene odgovarajuće heš vrednosti, a time i korena stabla. Ova vrednost se uključuje u zaglavlje bloka, zajedno sa vremenskom oznakom (koja predstavlja \textbf{logički sat} distribuiranog sistema), kriptografskom heš referencom na prethodni blok i dodatnim protokolskim parametrima (verzijom protokola, parametrima konsenzusa i slično).
+Sve transakcije u okviru bloka organizuju se u Merkleovo stablo, čiji koren predstavlja jedinstvenu heš vrednost koja sažima njihov sadržaj \cite{merkle1987digital}. Svaka izmena bilo koje transakcije dovela bi do promene odgovarajuće heš vrednosti, a time i korena stabla.
+
+Ova vrednost se uključuje u zaglavlje bloka, zajedno sa vremenskom oznakom (koja predstavlja \textbf{logički sat} distribuiranog sistema), kriptografskom heš referencom na prethodni blok i dodatnim protokolskim parametrima (verzijom protokola, parametrima konsenzusa i slično).
 
 Heširanjem zaglavlja formira se jedinstvena kriptografska referenca bloka, čime se ostvaruje mehanizam \textit{kriptografskog vremenskog obeležavanja svakog napredovanja sistema}. Ovakva struktura predstavlja osnovu \textbf{integriteta} i hronološke konzistentnosti blokčejn sistema, jer bi svaka naknadna izmena sadržaja jednog bloka narušila validnost svih njegovih naslednika u lancu, čime bi bila kompromitovana celokupna sigurnost sistema.
 
+\subsubsection{Performanse blokčejn sistema}
+U naučnoj literaturi, performanse blokčejn sistema analiziraju se korišćenjem različitih metrika koje se razlikuju prema nivou apstrakcije i perspektivi posmatranja \cite{fan2020performance}. U zavisnosti od ciljne grupe i nivoa analize, najčešće se izdvajaju sledeće kategorije metrika:
+\begin{enumerate}
+\item \textbf{Makro metrike} - pružaju uvid u performanse sistema iz perspektive krajnjeg korisnika i aplikacionog sloja, posmatrajući sistem kao celinu. Najznačajnije makro metrike obuhvataju propusnost transakcija, izraženu kao broj uspešno potvrđenih transakcija u jedinici vremena, i latenciju, koja predstavlja vreme proteklo od trenutka slanja transakcije do njenog potvrđivanja u sistemu.
+
+\item \textbf{Mikro metrike} - odnose se na performanse pojedinačnih komponenti i podprocesa unutar blokčejn sistema, iz perspektive dizajnera i implementatora sistema. Ove metrike obuhvataju, između ostalog, vreme propagacije transakcija i blokova, vreme izvršavanja pametnih ugovora, vreme ažuriranja stanja, trajanje konsenzusnog procesa, kao i efikasnost kriptografskih operacija poput heširanja i digitalnog potpisivanja.
+\end{enumerate}
+
+Pored empirijskih merenja, blokčejn sistemi se mogu analizirati i kroz formalne i analitičke modele, sa ciljem izvođenja teorijskih ograničenja performansi bez potrebe za izvršavanjem sistema. Iako performanse obuhvataju više dimenzija, metrika broja transakcija po sekundi često se ističe kao ključni indikator praktične upotrebljivosti sistema, budući da direktno odražava njegov kapacitet za obradu zahteva u realnim uslovima.
+
 \begin{definicija}
-Kapacitet blokčejn sistema se kvantifikuje kao broj transakcija po sekundi \eng{transactions per second, TPS}, što predstavlja dugoročni prosečan broj transakcija koje mreža može da uključi u blokove i potvrdi u jedinici vremena, pod uslovom stabilnog stanja mreže.
+Performanse blokčejn sistema kvantifikuju se kao broj transakcija po sekundi \eng{transactions per second, TPS}, što predstavlja dugoročni prosečan broj transakcija koje mreža može uključiti u blokove i potvrditi u jedinici vremena, pod pretpostavkom stabilnog rada sistema.
 \end{definicija}
 
-Propusnost \eng{throughput} blokčejn sistema označava stvarni broj transakcija koje mreža efektivno obradi i potvrdi u jedinici vremena, pri konkretnim uslovima opterećenja, stanja mreže i ponašanja učesnika. Za razliku od kapaciteta, koji predstavlja protokolom definisanu gornju granicu, propusnost je operativna veličina i u praksi može varirati u vremenu, pri čemu važi da je njena vrednost uvek manja ili jednaka kapacitetu sistema.
+Propusnost \eng{throughput} blokčejn sistema označava stvarni broj transakcija koje mreža efektivno obradi i potvrdi u jedinici vremena, pri konkretnim uslovima opterećenja, stanja mreže i ponašanja učesnika. Za razliku od kapaciteta, koji predstavlja protokolom definisanu gornju granicu, propusnost je operativna veličina i u praksi može varirati tokom vremena, pri čemu važi da je njena vrednost uvek manja ili jednaka kapacitetu sistema.
 
-\begin{teorema}\label{teorema:performanse}
+U uslovima povećanog intenziteta dolaznih transakcija, kada stopa njihovog pristizanja prelazi kapacitet sistema definisan protokolom, dolazi do \textbf{zagušenja}. Kako se broj nepotvrđenih transakcija povećava, raste konkurencija za uključivanje u blok, a s obzirom na to da su transakcije sa višim naknadama prioritetne, dolazi do rasta prosečnih transakcionih naknada, u skladu sa Teoremom \ref{teorema:kapacitet}.
+
+\begin{posledica}\label{teorema:performanse}
 Performanse blokčejn sistema su fundamentalno ograničene veličinom pojedinačnog bloka $n$ i očekivanim vremenskim razmakom između generisanja uzastopnih blokova $T$, koji su određeni protokolom, nezavisno od dodatnih mehanizama kontrole opterećenja ili optimizacija na višim slojevima sistema.
-\end{teorema}
-
-U uslovima povećanog intenziteta dolaznih transakcija, kada stopa pristizanja transakcija prelazi kapacitete sistema definisane protokolom, dolazi do \textbf{zagušenja}. Kako se broj nepotvrđenih transakcija povećava, tako se pojačava konkurencija za uključivanje transakcija u blok, a s obzirom na to da su transakcije s većim naknadama poželjnije, ovo dodatno doprinosi rastu prosečnih transakcionih naknada, što je u skladu sa Teoremom \ref{teorema:kapacitet}.
+\end{posledica}
 
 \subsubsection{Ograničenja protokola u Bitcoin mreži}
 U Bitcoin-u, zaglavlje bloka ima fiksnu veličinu od 80 bajtova i sadrži skup metapodataka neophodnih za validaciju bloka i njegovo kriptografsko povezivanje sa ostatkom lanca. Ovi metapodaci uključuju:
