@@ -196,47 +196,55 @@ Nakamoto konsenzus obezbeđuje da je verovatnoća uspešne reorganizacije lanca 
 Interval između podnošenja transakcije u skup nepotvrđenih transakcija i njenog dostizanja praktične finalnosti može se posmatrati kao \textbf{vreme odaziva} sistema, koje takođe zavisi od opterećenja mreže i visine transakcione naknade.
 
 \subsection{Struktura i funkcionalnost blokčejn sistema}
-Razumevanje unutrašnje organizacije podataka u blokčejn sistemima predstavlja ključni preduslov za analizu njihovog funkcionisanja i bezbednosnih svojstava. Podaci u ovom kontekstu ne obuhvataju samo istoriju izvršenih transakcija, već i reprezentaciju trenutnog stanja mreže, odnosno način na koji se stanje sredstava i prava pojedinačnih učesnika definiše, ažurira i verifikuje. Različiti modeli upravljanja stanjem uslovljavaju načine potrošnje sredstava, pravila validacije transakcija, kao i skup funkcionalnosti koje sistem može ponuditi krajnjim korisnicima.
+Razumevanje unutrašnje organizacije podataka u blokčejn sistemima predstavlja ključni preduslov za analizu njihovog funkcionisanja i bezbednosnih svojstava. Podaci ne obuhvataju isključivo evidenciju istorije izvršenih transakcija, već i reprezentaciju trenutnog stanja mreže, odnosno način na koji se stanje sredstava i prava pojedinačnih učesnika definiše, ažurira i verifikuje. Različiti modeli upravljanja stanjem uslovljavaju načine potrošnje sredstava, pravila validacije transakcija, kao i skup funkcionalnosti koje sistem može ponuditi krajnjim korisnicima.
 
-Jedan od fundamentalnih bezbednosnih problema koje svaki blokčejn sistem mora da reši na protokolskom nivou jeste \textit{problem dvostruke potrošnje} sredstava. U decentralizovanom okruženju bez centralnog autoriteta, neophodno je obezbediti da se ista jedinica vrednosti ne može validno potrošiti više puta. U blokčejn arhitekturama ovaj problem se rešava kroz dva dominantna modela upravljanja stanjem \eng{data model}:
+Jedan od fundamentalnih bezbednosnih problema koje svaki blokčejn sistem mora da reši na protokolskom nivou jeste \textit{problem dvostruke potrošnje} sredstava. U decentralizovanom okruženju bez centralnog autoriteta, neophodno je obezbediti da se ista jedinica vrednosti ne može validno potrošiti više puta. U blokčejn arhitekturama ovaj problem se rešava kroz dva dominantna modela upravljanja stanjem \eng{data model}, koji direktno određuju način organizacije globalnog stanja:
 \begin{enumerate}
-\item \textbf{Model nepotrošenih izlaza transakcija} \eng{Unspent Transaction Output, UTXO}, u kojem se potrošnja sredstava proverava jedinstvenim trošenjem postojećih izlaza transakcija,
-\item \textbf{Model globalnog stanja zasnovan na nalozima} \eng{account-based model}, u kojem se za svaki nalog održava stanje i sekvencijalni brojač transakcija \textit{nonce} koji obezbeđuje jedinstven redosled i sprečava dvostruku potrošnju.
+\item \textbf{Model nepotrošenih izlaza transakcija} \eng{Unspent Transaction Output, UTXO}, globalno stanje predstavlja skup nepotrošenih izlaza transakcija, pri čemu se potrošnja svakog izlaza vrši u celosti, što omogućava ugrađenu zaštitu od dvostruke potrošnje,
+\item \textbf{Model globalnog stanja zasnovan na nalozima} \eng{account-based model}, globalno stanje predstavlja mapu naloga realizovanu odgovarajućom strukturom podataka, pri čemu se za svaki nalog vodi brojač izvršenih transakcija na protokolskom nivou \eng{protocol-level}, ili se kontrola izvršavanja implementira na nivou pametnih ugovora \eng{contract-level}, čime se sprečava dvostruka potrošnja
 \end{enumerate}
 
-Pored osnovne podele prema modelu upravljanja stanjem, oba pristupa se dodatno mogu klasifikovati prema načinu izvršavanja transakcione logike, odnosno prema stepenu sinhronosti izvršavanja:
+Pored osnovne podele prema modelu upravljanja stanjem, oba pristupa se dodatno mogu klasifikovati prema načinu izvršavanja transakcijske logike, odnosno prema stepenu sinhronizacije izvršavanja:
 \begin{enumerate}
-\item \textbf{Sinhroni modeli}, u kojima se celokupna transakciona logika izvršava atomično u okviru jedne transakcije, bez generisanja odloženih poruka, budućih poziva ili sporednih efekata koji bi se realizovali u kasnijim blokovima,
+\item \textbf{Sinhroni modeli}, u kojima se celokupna transakcijska logika izvršava atomično u okviru jedne transakcije, bez generisanja odloženih poruka, budućih poziva ili sporednih efekata koji bi se realizovali u kasnijim blokovima,
 \item \textbf{Asinhroni modeli}, u kojima izvršavanje transakcije može proizvesti poruke, događaje ili pozive ka drugim ugovorima ili adresama, čije se izvršavanje odvija u jednom od narednih blokova.
 \end{enumerate}
 
 \subsubsection{Bitcoin Script kao mehanizam kontrole pristupa}
-Bitcoin sistem koristi sinhroni UTXO model za predstavljanje i praćenje stanja sredstava u mreži. Po uspešnom dodavanju novog bloka u blokčejn, protokol automatski generiše posebnu transakciju bez ulaznih referenci, kojom se nova sredstva, zajedno sa prikupljenim transakcionim naknadama iz tog bloka, dodeljuju adresi učesnika koji je predložio i uspešno dodao novi blok. Ova transakcija, poznata kao \textit{blagajnička transakcija} \eng{coinbase transaction}, predstavlja jedini mehanizam kreiranja novih jedinica kriptovalute u obliku UTXO zapisa u Bitcoin sistemu, prema unapred definisanom monetarnom rasporedu.
+Bitcoin sistem koristi sinhroni UTXO model za predstavljanje i praćenje stanja sredstava u mreži. Po uspešnom dodavanju novog bloka u blokčejn, protokol automatski generiše posebnu transakciju bez ulaznih UTXO referenci, kojom se nova sredstva, zajedno sa prikupljenim transakcionim naknadama iz tog bloka, dodeljuju adresi učesnika koji je predložio i uspešno dodao novi blok. Ova transakcija, poznata kao \textit{blagajnička transakcija} \eng{coinbase transaction}, predstavlja jedini mehanizam kreiranja novih jedinica kriptovalute u obliku UTXO zapisa u Bitcoin sistemu, prema unapred definisanom monetarnom rasporedu.
 
 \begin{definicija}
 U okviru UTXO modela, svaka transakcija troši jedan ili više postojećih UTXO zapisa kao ulaze \eng{inputs} i generiše nove UTXO zapise kao izlaze \eng{outputs}.
 \end{definicija}
 
-Kako ulazi transakcije se odnose na prethodno kreirane, ali još uvek nepotrošene izlaze, prilikom formiranja transakcije korisnik mora eksplicitno navesti koje UTXO zapise namerava da potroši kao ulaze, kao i nove UTXO zapise koje transakcija generiše na svojim izlazima. Zbog ovoga UTXO zapisi se jednoznačno identifikuju kombinacijom identifikatora transakcije u kojoj su nastali (\textit{tx\_hash}) i indeksa izlaza (\textit{vout}).
+% SLIKA 3
+Budući da se ulazi transakcije odnose na prethodno kreirane, ali još uvek nepotrošene izlaze, prilikom formiranja transakcije korisnik mora eksplicitno navesti koje UTXO zapise namerava da potroši kao ulaze, kao i nove UTXO zapise koje transakcija generiše na svojim izlazima. Iz tog razloga UTXO zapisi se jednoznačno identifikuju kombinacijom identifikatora transakcije u kojoj su nastali (\textit{tx\_hash}) i indeksa izlaza (\textit{vout}).
 
-Broj i struktura ulaznih i izlaznih UTXO zapisa direktno određuju veličinu transakcije, odnosno količinu prostora (izraženu u bajtovima) koju ona zauzima u bloku. S obzirom na to da je transakciona naknada proporcionalna zauzetom prostoru, veličina transakcije neposredno utiče na transakcionu naknadu.
+% SLIKA 4
+Ukoliko korisnik želi da prenese samo deo vrednosti raspoloživog UTXO zapisa određenoj adresi, on kao ulaz koristi taj UTXO u celosti, dok se na izlazu generišu dva nova UTXO zapisa: jedan u iznosu namenjenom primaocu i drugi koji predstavlja ostatak sredstava i vraća se na adresu pošiljaoca \eng{change output}. 
 
-Ukoliko korisnik želi da prenese samo deo vrednosti raspoloživog UTXO zapisa, on kao ulaz koristi taj UTXO u celosti, dok se na izlazu generišu dva nova UTXO zapisa: jedan u iznosu namenjenom primaocu, i drugi koji predstavlja ostatak sredstava i vraća se na adresu pošiljaoca \eng{change output}. 
+% SLIKA 5
+Slično tome, u slučaju kada vrednost pojedinačnog UTXO zapisa nije dovoljna za izvršenje željene transakcije, korisnik može kombinovati više sopstvenih UTXO zapisa kao ulaze, čime se njihova zbirna vrednost koristi za formiranje proizvoljnog broja izlaza transakcije. 
 
-Slično tome, u slučaju kada vrednost pojedinačnog UTXO zapisa nije dovoljna za izvršenje željene transakcije, korisnik može kombinovati više sopstvenih UTXO zapisa kao ulaze, čime se njihova zbirna vrednost koristi za formiranje odgovarajućih izlaza transakcije.
+Međutim, broj i struktura ulaznih i izlaznih UTXO zapisa direktno određuju veličinu transakcije, odnosno količinu prostora (izraženu u bajtovima) koju ona zauzima u bloku. Zbog toga je potrebno platiti naknadu po jedinici iskorišćenog virtuelnog bajta (\textit{vByte}) \cite{zhang2024transaction}.
 
-Mehanizam kojim Bitcoin mreža obezbeđuje da samo ovlašćeni korisnik može potrošiti određeni UTXO zasniva se na skriptnom jeziku koji je sastavni deo transakcione strukture, poznatom kao \textit{Bitcoin Script}. Reč je o jednostavnom, ali izrazito robusnom skriptnom jeziku zasnovanom na steku \eng{stack based}, koji je namerno projektovan kao \textbf{netjuring-kompletan jezik} bez podrške za petlje i rekurziju, čime se garantuje konačnost izvršavanja svake skripte. Ovakav dizajn omogućava visoku predvidivost i formalnu proverljivost izvršavanja, dok se tokom procesa validacije transakcije putem skripte formalno proveravaju uslovi za potrošnju datog UTXO zapisa.
+Iznos transakcione naknade se izračunava kao proizvod dužine transakcije i dinamične stope naknade po bajtu izražene u primarnoj kriptovaluti, koja varira u zavisnosti od opterećenja mreže. Ukoliko je prioritet transakcije veći, korisnik će ponuditi višu cenu po bajtu.
+
+Prilikom trošenja UTXO-a transakciona naknada se implicitno definiše kao razlika između ukupne vrednosti ulaznih i izlaznih UTXO zapisa, što se formalno može izraziti sledećom relacijom:
+$$ tx\_fee = \sum_{x \in UTXO_{in}} value(x) - \sum_{y \in UTXO_{out}} value(y)$$
+
+Ovim se implicitno uvodi uslov da ukupna vrednost ulaza transakcije mora biti jednaka ili veća od zbira vrednosti izlaza. 
+
+Ovakvo korišćenje UTXO-a u celosti predstavlja \textit{atomičnu operaciju} kojom se obezbeđuje prevencija dvostruke potrošnje, jer se svaki UTXO, nakon što je iskorišćen kao ulaz i transakcija uspešno validirana, trajno uklanja iz skupa raspoloživih UTXO zapisa.
+
+Mehanizam kojim Bitcoin mreža obezbeđuje da samo ovlašćeni korisnik može potrošiti određeni UTXO zasniva se na skriptnom jeziku koji je sastavni deo transakcione strukture, poznatom kao \textit{Bitcoin Script}. Reč je o jednostavnom, ali izrazito robusnom skriptnom jeziku zasnovanom na steku \eng{stack-based}, koji je namerno projektovan kao \textbf{netjuring-kompletan jezik} bez podrške za petlje i rekurziju, čime se garantuje konačnost izvršavanja svake skripte. Ovakav dizajn omogućava visoku predvidivost i formalnu proverljivost izvršavanja, dok se tokom procesa validacije transakcije putem skripte formalno proveravaju uslovi za potrošnju datog UTXO zapisa.
 
 Ovaj skriptni jezik omogućava sprovođenje \textbf{autorizacije} nad sredstvima, budući da definiše skup formalnih uslova koji moraju biti ispunjeni kako bi pristup bio odobren. U tom smislu, može se posmatrati kao pojednostavljen oblik \textit{diskrecione kontrole pristupa}, pri čemu se istovremeno obezbeđuju \textbf{integritet} stanja sredstava i \textbf{autentičnost} zahteva za njihovu potrošnju.
 
+% SLIKA 7
 Svaki UTXO sadrži pridruženu skriptu zaključavanja \eng{scriptPubKey}, kojom se definišu uslovi pod kojima taj izlaz može biti potrošen. Da bi određena transakcija validno potrošila UTXO, njen ulaz mora da obezbedi odgovarajuće podatke u okviru skripte otključavanja \eng{scriptSig}, tako da kombinacija ove dve skripte, nakon izvršavanja nad stekom, rezultuje nenultom bajt-vrednošću (najčešće 0x01), što označava uspešnu validaciju. Potrošnja UTXO zapisa smatra se nevalidnom ukoliko tokom izvršavanja dođe do prekida skripte, ukoliko stek ostane prazan ili ukoliko se na vrhu steka nalazi negativna nula (0x80), koja se u Bitcoin skriptnoj semantici tretira kao netačna vrednost.
 
-Iako Bitcoin Script omogućava definisanje proizvoljno složenih uslova korišćenjem dostupnog skupa instrukcija, u praksi se najčešće koristi obrazac \textit{plaćanja na heš javnog ključa} \eng{Pay-to-Public-Key-Hash, P2PKH}. U ovom slučaju, pošiljalac prilaže digitalni potpis i odgovarajući javni ključ, dok skriptni mehanizam proverava da li heš dostavljenog javnog ključa odgovara vrednosti zaključanoj u referenciranom UTXO zapisu.
-
-S obzirom na to da se transakcija sastoji od više ulaza i izlaza, a da ukupna vrednost ulaza transakcije mora biti jednaka ili veća od zbira vrednosti izlaza, transakciona naknada se implicitno definiše kao razlika između ukupne vrednosti ulaznih i izlaznih UTXO zapisa, što se formalno može izraziti sledećom relacijom:
-$$ tx\_fee = \sum_{x \in UTXO_{in}} value(x) - \sum_{y \in UTXO_{out}} value(y)$$
-
-Kako se zahteva da ukupna vrednost ulaznih UTXO zapisa bude veća ili jednaka ukupnoj vrednosti izlaznih zapisa, pri čemu razlika između ovih vrednosti predstavlja transakcionu naknadu, UTXO model implicitno nameće pravilo potpunog trošenja izlaza. Naime, svaki UTXO se, nakon što je iskorišćen kao ulaz i transakcija uspešno validirana, trajno uklanja iz skupa raspoloživih UTXO zapisa.
+Iako Bitcoin Script omogućava definisanje proizvoljno složenih uslova korišćenjem dostupnog skupa instrukcija, u praksi se najčešće koristi obrazac \textit{plaćanja na heš javnog ključa} \eng{Pay-to-Public-Key-Hash, P2PKH} \cite{decker2014bitcoin}. U ovom slučaju, pošiljalac prilaže digitalni potpis i odgovarajući javni ključ, dok skriptni mehanizam proverava da li heš dostavljenog javnog ključa odgovara vrednosti zaključanoj u referenciranom UTXO zapisu.
 
 \subsubsection{Pametni ugovori}
 Posmatrano iz apstraktnog ugla, svaki UTXO zapis, zbog svog jedinstvenog identifikatora i determinističkog mehanizma validacije, može se interpretirati kao instanca jednostavnog programa koji se može izvršiti tačno jednom. Ovaj program poseduje jednu implicitnu funkciju čije telo čini skripta zaključavanja \textit{scriptPubKey}, dok se ulazni parametri prosleđuju putem skripte otključavanja \textit{scriptSig}. Nakon uspešnog izvršavanja, dati UTXO prestaje da postoji i ne može biti ponovo iskorišćen, čime se obezbeđuje njegova jednokratna potrošivost.
