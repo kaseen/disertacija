@@ -37,18 +37,18 @@ Na početku svake epohe, svi aktivni validatori raspoređuju se u odbore \eng{co
 
 Predlagač bloka je odgovoran za kreiranje novog bloka tako što, putem povezanog izvršnog klijenta, bira transakcije iz svog lokalnog skupa nepotvrđenih transakcija i uključuje ih u izvršni sadržaj bloka. Nakon interne provere izvršnog sadržaja i njegove integracije sa konsenzusnim podacima u jedinstvenu strukturu bloka, predloženi blok se distribuira ostalim validatorima u odgovarajućem odboru.
 
-Preostali validatori u odboru deluju kao glasači i u svakom slotu potvrđuju ispravnost konsenzusnog dela predloženog bloka emitovanjem najviše jedne atestacije \eng{attestation} tj. potvrde koja sadrži: 
+U ovoj fazi preostali validatori proveravaju validnost bloka najpre na konsenzusnom, a zatim na izvršnom sloju, i ukoliko su obe faze uspešne, glasaju za blok koji smatraju delom kanonske grane lanca emitovanjem najviše jedne atestacije \eng{attestation} odnosno potvrde koja sadrži sledeće podatke:
 \begin{enumerate}
 \item \textbf{slot} - broj slota na koji se atestacija odnosi,
-\item \textbf{indeks} - broj komiteta koji validator pripada u trenutnom slotu,
-\item \textbf{heš vrha lanca \eng{beacon block root}} - heš bloka koji validator trenutno smatra vrhom lanca,
+\item \textbf{indeks} - indeks komiteta kojem validator pripada u trenutnom slotu,
+\item \textbf{heš bloka na vrhu lanca \eng{beacon block root}} - heš bloka koji validator trenutno smatra vrhom lanca,
 \item \textbf{izvorna kontrolna tačka \eng{source}} - kontrolna tačka poslednje opravdane \eng{justified} kontrolne tačke koja je validatoru poznata,
 \item \textbf{ciljna kontrolna tačka \eng{target}} - kontrolna tačka trenutne epohe, odnosno prvi blok trenutne epohe.
 \end{enumerate}
 
-U ovoj fazi se ne proverava validnost transakcija niti izvršni sadržaj bloka, već isključivo usklađenost sa pravilima konsenzusnog protokola. Kako se svaki odbor sastoji od velikog broja validatora, direktna propagacija pojedinačnih atestacija bi dovela do zagušenja mreže, u skladu sa Teoremom \ref{teorema:gunter}. Iz tog razloga, svaki odbor je dodatno podeljen na manje komunikacione podmreže \eng{subnets}, pri čemu se svaki validator nalazi u tačno jednoj podmreži.
+Kako se svaki odbor sastoji od velikog broja validatora, direktna propagacija pojedinačnih atestacija dovela bi do zagušenja mreže, u skladu sa Teoremom \ref{teorema:gunter}. Iz tog razloga, svaki odbor je dodatno podeljen na manje komunikacione podmreže \eng{subnets}, pri čemu se svaki validator nalazi u tačno jednoj podmreži.
 
-Unutar svake podmreže, šesnaest validatora se bira u ulogu agregatora \eng{aggregators}, koji prikupljaju atestacije ostalih validatora i kombinuju njihove kriptografske potpise u jedan agregatni potpis primenom BLS šeme agregacije potpisa i emituju dobijeni agregatni potpis široj mreži. Ovakav mehanizam omogućava efikasnu verifikaciju velikog broja atestacija uz minimalan komunikacioni i računarski trošak.
+Unutar svake podmreže, šesnaest validatora se bira u ulogu agregatora \eng{aggregators}, koji prikupljaju atestacije ostalih validatora i kombinuju njihove kriptografske potpise u jedan agregatni potpis primenom BLS šeme agregacije potpisa \cite{boneh2001short} i emituju dobijeni agregatni potpis široj mreži. Ovakav mehanizam omogućava efikasnu verifikaciju velikog broja atestacija uz minimalan komunikacioni i računarski trošak.
 
 Validator koji je izabran za predlagača bloka uključuje u predloženi blok agregirane BLS atestacije iz svake komunikacione podmreže, pri čemu se za svaku podmrežu bira agregacija sa najvećom podrškom validatora. Ove agregirane atestacije se kombinuju u jedan konačni BLS potpis, koji postaje sastavni deo strukture bloka.
 
@@ -79,9 +79,9 @@ Nakon konfliktnog glasanja kad se ne finalizuje poslednja opravdana tačka, Casp
 
 Ukoliko u konsenzusnom sloju protekne više od četiri uzastopnih epoha bez finalizacije kontrolnih tačaka, protokol automatski ulazi u režim \textit{curenja neaktivnosti} \eng{inactivity leak}. Cilj ovog mehanizma je uspostavljanje uslova neophodnih za povratak konačnosti lanca, čime se obezbeđuje otpornost sistema na ovakav tip poremećaja.
 
-Protokol curenja neaktivnosti postepeno umanjuje ulog nedostupnih validatora i validatora koji kontinuirano šalju atestacije koje ne doprinose velikoj većini, sve dok iskreni validatori ne ostvare dovoljnu težinu uloga što će im omogućiti da finalizuju lanac. Ovaj mehanizam istovremeno podstiče i iskrene, ali neaktivne validatore da se što pre ponovo uključe u protokol, jer iako nisu podložni sečenju, njihov ulog biva ekonomski umanjen.
+Protokol curenja neaktivnosti postepeno umanjuje ulog nedostupnih validatora i validatora koji kontinuirano šalju atestacije koje ne doprinose formiranju većine, pri čemu je visina kazne jednaka nagradi koju bi validator ostvario da je atestaciju poslao, sve dok iskreni validatori ne ostvare dovoljnu težinu uloga što im omogućava da finalizuju lanac. Ovaj mehanizam istovremeno podstiče i iskrene, ali neaktivne validatore da se što pre ponovo uključe u protokol, jer se njihov ulog ekonomski umanjuje.
 
-Funkcionalnost protokola curenja neaktivnosti uspešno je demonstrirana na testnoj mreži \textit{Medalla}, gde su iskreni validatori uspeli da se ponovo usaglase oko aktuelnog vrha lanca i povrate finalizaciju.
+Funkcionalnost protokola curenja neaktivnosti uspešno je demonstrirana na testnoj mreži \textit{Medalla} \cite{solmonteanalysis}, gde su iskreni validatori uspeli da se ponovo usaglase oko aktuelnog vrha lanca i povrate finalizaciju.
 
 \subsection{Bezbednosni mehanizmi konsenzusa}
 Sve dok u procesu generisanja slučajnosti tokom jedne epohe postoji makar jedan iskren validator koji pravilno doprinosi RANDAO mehanizmu, dobijena pseudonasumična vrednost ostaje nepredvidiva za potencijalnog napadača, čime se obezbeđuje nepredvidivo raspoređivanje validatora u odbore.
@@ -95,13 +95,15 @@ Istovremeno, ova predvidivost otvara prostor za ciljane napade na predlagače bl
 Međutim, izbor trajanja epohe od 32 slota, odnosno 6 minuta i 24 sekunde, predstavlja inženjerski kompromis kojim se balansiraju bezbednost i efikasnost sistema. Ovakvo vremensko ograničenje značajno smanjuje prostor za koordinisane napade, budući da napadač raspolaže ograničenim vremenom za identifikaciju cilja, orkestraciju napada i njegovo sprovođenje pre promene raspodele uloga u narednoj epohi.
 
 \subsubsection{Mehanizam sečenja zlonamernih validatora}
-Kako je za učešće u konsenzusnom procesu neophodno zaključati depozit od najmanje 32 ETH, \textbf{bezbednost Eterijum sistema} se u velikoj meri oslanja na pažljivo dizajnirane ekonomske podsticaje. Validatori ostvaruju nagrade za korektno izvršavanje protokola, pri čemu predlagač bloka dobija nagradu za uspešno uključivanje bloka u lanac, dok validatori koji šalju validne atestacije za taj blok dobijaju proporcionalno manji deo ukupne nagrade.
+Kako je za učešće u konsenzusnom procesu neophodno zaključati depozit od najmanje 32 ETH, \textbf{bezbednost Eterijum sistema} se u velikoj meri oslanja na pažljivo dizajnirane ekonomske podsticaje vezane za oskudan resurs. 
 
-Vizantijsko ponašanje validatora je eksplicitno kažnjivo jer direktno utiče na smanjenje zaključanog uloga i snažno destimuliše odstupanje od protokolom definisanih pravila. Pored toga, protokol predviđa kazne za nemarno ponašanje, uključujući propuštanje slanja atestacija za izvornu i ciljnu kontrolnu tačku, pri čemu je visina kazne jednaka nagradi koju bi validator ostvario da je atestaciju poslao. Nasuprot tome, izostanak predlaganja bloka ne povlači direktnu finansijsku kaznu, već predstavlja propuštenu priliku za ostvarivanje odgovarajuće nagrade.
+Validatori ostvaruju nagrade za korektno izvršavanje protokola, pri čemu predlagač bloka dobija nagradu za uspešno uključivanje bloka u lanac, dok validatori koji šalju validne atestacije za taj blok dobijaju proporcionalno manji deo ukupne nagrade sistema.
+
+Nasuprot tome, izostanak predlaganja bloka ili predlaganje nevalidnog bloka ne povlači direktnu finansijsku kaznu, već predstavlja propuštenu priliku za ostvarivanje odgovarajuće nagrade. Pored toga, protokol predviđa kazne za nemarno ponašanje u obliku curenja neaktivnosti, ukoliko su za to ispunjeni uslovi, kao što je prethodno objašnjeno
 
 Za razliku od Bitkoinovog konsenzus mehanizma zasnovanog na dokazu uloženog rada, Eterijumov konsenzus zasnovan na dokazu uloženog uloga uvodi složenije mehanizme glasanja i finalizacije, što povećava površinu potencijalnih napada, ali istovremeno omogućava preciznije i strože bezbednosne garancije.
 
-Bezbednost se obezbeđuje kroz kazneni mehanizam poznat kao sečenje \eng{slashing}, kojim se detektuje i sankcioniše ponašanje validatora koje ugrožava ispravnost konsenzusa. Validator koji prekrši pravila biva isključen iz skupa aktivnih validatora, a deo ili celokupan njegov zaključani depozit se trajno oduzima.
+Bezbednost se obezbeđuje kroz kazneni mehanizam poznat kao sečenje \eng{slashing}, kojim se detektuje i sankcioniše ponašanje validatora koje ugrožava ispravnost konsenzusa. Validator koji prekrši pravila biva isključen iz skupa aktivnih validatora, a deo njegovog zaključanog depozita se trajno oduzima, čime se snažno destimuliše odstupanje od protokolom definisanih pravila.
 
 Sečenje se primenjuje u sledećim slučajevima, koji se svode na zlonamerno predlaganje blokova ili neispravno glasanje:
 \begin{enumerate}
