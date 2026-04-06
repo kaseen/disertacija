@@ -167,9 +167,9 @@ Na ovaj način ostvaruje se determinističko, izolovano i bezbedno izvršavanje 
 
 Sa apstraktnog stanovišta, Eterijum virtuelna mašina može se posmatrati kao sistem sastavljen od sledeće tri osnovne komponente:
 \begin{enumerate}
-\item \textbf{Skladište naloga} koje predstavlja trajno stanje sistema i koje svi čvorovi čuvaju lokalno. Ono obuhvata trenutno stanje svih naloga u mreži, uključujući stanja pametnih ugovora, i čini sastavni deo globalnog stanja Eterijum sistema.
-\item \textbf{Stanje mašine}, koje predstavlja izvršno okruženje u kome se izvršava bajtkod pametnih ugovora. Ono se može posmatrati kao apstraktni virtuelni procesor koji, pored samog izvršavanja, meri i računarski napor neophodan za izvršenje transakcije.
-\item \textbf{Virtuelna memorija samo za čitanje \eng{Virtual ROM}}, koja je nepromenljiva i u kojoj se smešta izvršni bajtkod pametnih ugovora u trenutku njihovog izvršavanja.
+\item \textbf{Skladište naloga} koje predstavlja trajno stanje sistema i koje svi čvorovi čuvaju lokalno. Ono obuhvata trenutno stanje svih naloga u mreži, uključujući stanje korisnika i pametnih ugovora, i čini sastavni deo globalnog stanja Eterijum sistema.
+\item \textbf{Stanje mašine}, koje predstavlja izvršno okruženje u kome se izvršava bajtkod pametnih ugovora i može se posmatrati kao apstraktni virtuelni procesor koji, pored samog izvršavanja, meri i kvantifikuje računarski napor neophodan za izvršenje transakcije.
+\item \textbf{Virtuelna prostor samo za čitanje \eng{Virtual ROM}}, koji predstavlja prostor u kojem se smešta izvršni bajtkod pametnih ugovora u trenutku njihovog izvršavanja.
 \end{enumerate}
 
 \subsection{Skladište naloga}
@@ -217,7 +217,7 @@ Eterijum virtuelna mašina, posmatrana apstraktno, pruža pametnim ugovorima meh
 Stanje mašine Eterijum virtuelne mašine inicijalizuje se na početku izvršavanja transakcije i uništava se po njenom završetku, zbog čega ima isključivo privremeni karakter. Ono obuhvata sledeće komponente:
 \begin{enumerate}
 \item \textbf{Brojač programa \eng{Program Counter, PC}} - označava adresu sledeće bajt-instrukcije koja će biti izvršena.
-\item \textbf{Stek} - struktura podataka koja dozvoljava pristup isključivo elementu na vrhu \eng{last in, first out (LIFO)}, maksimalne dubine od 1024 elementa, pri čemu je svaki element veličine jedne skladišne reči.
+\item \textbf{Stek} - struktura podataka koja dozvoljava pristup isključivo elementu na vrhu \eng{last in first out, LIFO}, maksimalne dubine od 1024 elementa, pri čemu je svaki element veličine jedne skladišne reči.
 \item \textbf{Privremena memorija} - linearni niz bajtova sa nasumičnim pristupom elementima, koji služi kao pomoćni prostor za izvođenje proračuna tokom izvršavanja transakcije.
 \item \textbf{Preostali gas} - kvantitativna mera raspoloživih računarskih resursa, koja određuje da li transakcija poseduje dovoljno sredstava za svoje kompletno izvršavanje.
 \end{enumerate}
@@ -240,6 +240,7 @@ Ukoliko je iskorišćenost gasa u prethodnom bloku veća od 50\%, osnovna naknad
 
 \begin{table}[ht]
 \centering
+\caption{Eksponencionalni rast cene osnovne naknade prilikom velike opterećenosti mreže}
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{llll}
 \hline
@@ -256,7 +257,9 @@ Ukoliko je iskorišćenost gasa u prethodnom bloku veća od 50\%, osnovna naknad
 100 & 100\% & 12,5\% & 10302608.6 gwei \\
 \hline
 \end{tabular}
-\caption{Eksponencionalni rast cene osnovne naknade prilikom velike opterećenosti mreže}
+\begin{flushleft}
+\centering \footnotesize Izvor: \url{https://ethereum.org/developers/docs/gas/}
+\end{flushleft}
 \label{tabelaExp}
 \end{table}
 
@@ -265,9 +268,11 @@ $$ \textit{Ukupna transakciona naknada} = \textit{Količina gasa} \cdot (\textit
 gde je prioritetna naknada opcioni bakšiš za transakcije višeg prioriteta.
 
 \subsection{Virtuelna memorija samo za čitanje}
-Pametni ugovor napisan u programskom jeziku višeg nivoa prevodi se postupkom kompajliranja u bajtkod za kreiranje \eng{creation bytecode}, koji obuhvata konstruktorski bajtkod \eng{constructor code} i bajtkod za izvršavanje \eng{runtime bytecode}. Prilikom postavljanja ugovora na mrežu \eng{deployment}, transakcija sadrži instrukciju \texttt{CREATE}, čijim se izvršavanjem inicijalizuje stanje ugovora kroz izvršavanje konstruktorskog bajtkoda. Po završetku ove faze, konstruktorski bajtkod se odbacuje, dok se bajtkod za izvršavanje trajno smešta u nepromenljivi i logički izdvojeni segment sistema.
+Pametni ugovor napisan u programskom jeziku višeg nivoa prevodi se postupkom kompajliranja u bajtkod za kreiranje \eng{creation bytecode}, koji obuhvata konstruktorski bajtkod \eng{constructor code} i bajtkod za izvršavanje \eng{runtime bytecode}. Prilikom postavljanja ugovora na mrežu \eng{deployment}, transakcija sadrži instrukciju \texttt{CREATE} ili \texttt{CREATE2} \cite{CREATE2eip1014}, čijim se izvršavanjem inicijalizuje stanje ugovora kroz izvršavanje konstruktorskog bajtkoda. Po završetku ove faze, konstruktorski bajtkod se odbacuje, dok se izvršni bajtkod trajno smešta u nepromenljivi i logički izdvojeni segment sistema, a njegov heš smešta u stanje naloga pametnog ugovora kao referenca na taj kod.
 
-Izvršni bajtkod ostaje trajno vezan za nalog pametnog ugovora i ne može se menjati tokom njegovog životnog veka. Pristup ovom bajtkodu omogućen je isključivo putem \textit{heša izvršnog koda} koji je deo stanja naloga pametnog ugovora, pa se prilikom izvršavanja transakcije ovaj bajtkod logički posmatra kao da se nalazi u virtuelnoj memoriji samo za čitanje \eng{Virtual ROM}, kojoj se pristupa kroz dalju sekvencu instrukcija tokom izvršavanja transakcije.
+Prilikom analize postavljanja pametnih ugovora na mrežu, na osnovu heša izvršnog koda uočeno je da približno četvrtina ugovora koristi identičan bajtkod kao već postojeći ugovori \cite{khan2022code}. Ova pojava ukazuje na potrebu za deduplikacijom koda \eng{code deduplication}, budući da klijenti u praksi ne dupliraju bajtkod u skladištu, dok korisnici i dalje snose pun trošak njegovog postavljanja kao da se radi o jedinstvenom kodu. U cilju rešavanja ovog problema, predloženi su mehanizmi kojima se prilikom postavljanja ugovora eksplicitno referencira već postojeći bajtkod u mreži, čime se izbegavaju suvišni troškovi skladištenja, što je trenutno predmet otvorenih diskusija o unapređenju protokola \cite{DEDUPLICATIONeip8058}.
+
+Dobijen izvršni bajtkod ostaje trajno vezan za nalog pametnog ugovora i ne može se menjati tokom njegovog životnog veka, pri čemu je pristup ovom bajtkodu omogućen isključivo putem heša izvršnog koda u stanju pametnog ugovora. Prilikom izvršavanja transakcije pametnog ugovora, ovaj bajtkod se učitava u virtuelnu memoriju samo za čitanje \eng{Virtual ROM}, kojoj se pristupa tokom daljeg izvršavanja instrukcija transakcije.
 
 Korisnici prilikom interakcije sa pametnim ugovorom u polje podataka transakcije enkodiraju potpis funkcije koju žele da izvrše, kao i pripadajuće argumente u odgovarajućoj bajtovskoj reprezentaciji. Na početku izvršavanja, kontrola toka prolazi kroz dispečersku logiku \eng{dispatcher}, ugrađenu u sam bajtkod ugovora, koja na osnovu prosleđenog potpisa funkcije postavlja \textit{brojač programa} na adresu odgovarajuće funkcije u virtuelnoj memoriji samo za čitanje, čiji se kod dalje izvršava.
 
@@ -293,7 +298,7 @@ Prilikom slanja transakcije, korisnik je dužan da kriptografski potpiše skup s
 \item \textbf{cena gasa} - cena koju je korisnik spreman da plati po jedinici gasa.
 \end{enumerate}
 
-Eterijum je u početku podržavao samo jedan format transakcija, ali je sistem vremenom evoluirao kako bi omogućio uvođenje novih funkcionalnosti bez narušavanja kompatibilnosti sa postojećim formatima. Ova je ostvareno uvođenjem tipiziranih transakcija, pri čemu se tipu transakcije dodeljuje numerička oznaka u opsegu od 0 do 128, koja prethodi ostatku transakcionih podataka \cite{TXTYPEeip2718}.
+Eterijum je inicijalno podržavao samo jedan format transakcija, ali je sistem vremenom evoluirao kako bi omogućio uvođenje novih funkcionalnosti bez narušavanja kompatibilnosti sa postojećim formatima. Ovo je postignuto uvođenjem tipiziranih transakcija, pri čemu se svakom tipu dodeljuje numerička oznaka u opsegu od 0 do 127, koja prethodi ostatku transakcionih podataka \cite{TXTYPEeip2718}.
 
 U zavisnosti od vrednosti tipa, transakcije se klasifikuju na sledeći način:
 \begin{enumerate}
@@ -301,7 +306,7 @@ U zavisnosti od vrednosti tipa, transakcije se klasifikuju na sledeći način:
 \item \textbf{Tip 1} - transakcije koje uvode dodatno polje sa listama ugovora i skladišnih jedinica kojima će se pristupati tokom izvršavanja \cite{TXTYPE1eip2930}, čime se omogućava smanjenje troškova gasa,
 \item \textbf{Tip 2} - transakcije koje uvode mehanizam osnovne naknade i dodatna polja za maksimalnu prioritetnu naknadu \eng{maxPriorityFeePerGas} i maksimalnu ukupnu naknadu \eng{maxFeePerGas}, čime se postiže veća efikasnost i fleksibilnost,
 \item \textbf{Tip 3} - transakcije koje omogućavaju privremeno skladištenje velikih binarnih objekata \cite{TXTYPE3eip4844} \eng{Binary Large Objects, BLOB}, čime se značajno unapređuje dostupnost podataka i skalabilnost mreže,
-\item \textbf{Tip 4} - transakcije koje omogućavaju da se nalog u spoljnom vlasništvu privremeno ponaša kao pametan ugovor \cite{TXTYPE4eip7702}, bez narušavanja njegove osnovne funkcionalnosti, što predstavlja važan korak ka dugoročnim razvojnim ciljevima Eterijum sistema.
+\item \textbf{Tip 4} - transakcije koje omogućavaju da se nalog u spoljnom vlasništvu privremeno ponaša kao pametan ugovor \cite{TXTYPE4eip7702}, bez narušavanja njegove osnovne funkcionalnosti, što predstavlja važan korak ka dugoročnim ciljevima razvoja apstrakcije naloga u Eterijum sistemu.
 \end{enumerate}
 
 Imajući u vidu prethodno opisane komponente sistema, sada se može sagledati kompletan tok jedne transakcije u Eterijum mreži:
