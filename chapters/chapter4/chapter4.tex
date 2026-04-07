@@ -278,8 +278,6 @@ Korisnici prilikom interakcije sa pametnim ugovorom u polje podataka transakcije
 
 Međutim, direktno pozivanje funkcija u obliku bajtkoda nije ni ljudski čitljivo niti praktično za upotrebu, zbog čega značajnu ulogu ima aplikacioni binarni interfejs \eng{Application Binary Interface, ABI}. ABI definiše imena funkcija, njihove potpise i tipove argumenata u strogo strukturisanom formatu, čime uspostavlja formalni dogovor između pametnog ugovora i spoljašnjih korisnika ili aplikacija. 
 
-ABI dodatno u istom formatu definiše i događaje \eng{events} koje ugovor emituje. Događaji predstavljaju log-zapise zabeležene tokom izvršenja transakcije u kontekstu pametnog ugovora, namenjene spoljašnjim sistemima za praćenje promena stanja, gde se ti logovi ne mogu čitati iz izvršnog konteksta samog ugovora.
-
 U suštini, ABI deluje kao prevodilački sloj između ljudski čitljivog interfejsa pametnog ugovora i njegove niskonivojske bajtovske reprezentacije koja se izvršava na blokčejnu, omogućavajući pouzdanu i transparentnu interakciju bez potrebe za ručnim enkodiranjem ili dekodiranjem transakcionih podataka.
 
 \section{Transakcije i njihova obrada u Eterijumu}
@@ -297,6 +295,10 @@ Prilikom slanja transakcije, korisnik je dužan da kriptografski potpiše skup s
 \item \textbf{ograničenje gasa} \eng{gasLimit} - maksimalna količina gasa koju transakcija može potrošiti tokom izvršavanja,
 \item \textbf{cena gasa} - cena koju je korisnik spreman da plati po jedinici gasa.
 \end{enumerate}
+
+Nakon uspešnog izvršavanja transakcije generiše se priznanica transakcije \eng{transaction receipt}, koja sadrži informacije o ishodu izvršavanja. Priznanice svih transakcija u okviru jednog bloka organizuju se u Merkle-Patricia strukturu, pri čemu se u zaglavlju bloka čuva isključivo njen korenski heš \eng{receiptsRoot}. Same priznanice se ne skladište eksplicitno u strukturi bloka, već ih čvorovi čuvaju u lokalnim bazama podataka, uz mogućnost pristupa na osnovu identifikatora transakcije.
+
+Tokom izvršavanja transakcije u kontekstu pametnog ugovora, ugovor može emitovati događaje \eng{events} koji opisuju relevantne promene nastale tokom izvršavanja. Ovi događaji nisu dostupni za korišćenje unutar izvršnog modela blokčejn sistema, već su namenjeni spoljnim aplikacijama za praćenje i/ili pretplaćivanje. Svaki događaj može sadržati i skup indeksera \eng{topics}, koji omogućavaju efikasno filtriranje i pretraživanje događaja u okviru istorije izvršavanja pametnog ugovora.
 
 Eterijum je inicijalno podržavao samo jedan format transakcija, ali je sistem vremenom evoluirao kako bi omogućio uvođenje novih funkcionalnosti bez narušavanja kompatibilnosti sa postojećim formatima. Ovo je postignuto uvođenjem tipiziranih transakcija, pri čemu se svakom tipu dodeljuje numerička oznaka u opsegu od 0 do 127, koja prethodi ostatku transakcionih podataka \cite{TXTYPEeip2718}.
 
