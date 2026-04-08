@@ -11,6 +11,10 @@
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\makeatletter
+\@addtoreset{algorithm}{chapter}
+\makeatother
+\renewcommand{\thealgorithm}{\thechapter.\arabic{algorithm}}
 
 \floatname{algorithm}{Algoritam}
 \algblockdefx{Constructor}{EndConstructor}[1]{\textbf{constructor}(#1)}{\textbf{end constructor}}
@@ -27,9 +31,9 @@
 \algnewcommand{\Neq}{$\neq$ }
 \algnewcommand{\EqEq}{\texttt{==} }
 \algnewcommand{\PlusEq}{\texttt{+=} }
-\algnewcommand{\Ll}{$\textless$ }
+\algnewcommand{\Ll}{\textbf{\textless}\text{ }}
 \algnewcommand{\Leq}{$\leq$ }
-\algnewcommand{\Gg}{$\textgreater$ }
+\algnewcommand{\Gg}{\textbf{\textgreater}\text{ }}
 \algnewcommand{\Geq}{$\geq$ }
 \algnewcommand{\OrEq}{|\Eq }
 \newcommand{\coldSLOAD}{\hfill \textit{\textbf{cold \texttt{SLOAD}}}}
@@ -46,6 +50,13 @@
 
 \usepackage{setspace}
 \setstretch{1.2}
+
+\usepackage{float}
+
+\newfloat{rezultati}{htbp}{lor}
+\floatname{rezultati}{Rezultati}
+\floatstyle{plain}
+\restylefloat{rezultati}
 
 \usepackage{tikz}
 \usepackage{pgfplots}
@@ -96,7 +107,7 @@
 \include{chapters/chapter2/chapter2}
 \include{chapters/chapter3/chapter3}
 \include{chapters/chapter4/chapter4}
-%\include{chapters/chapter5/chapter5}
+\include{chapters/chapter5/chapter5}
 %\include{chapters/chapter6/chapter6}
 
 \bibliographystyle{unsrturl}

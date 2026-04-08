@@ -1,11 +1,11 @@
 \chapter{Metodologija optimizacije pametnih ugovora za e-trgovinu}
-Sumirajući prethodno izloženo, neoptimizovane funkcije pametnih ugovora \cite{chen2017under} mogu značajno povećati količinu gasa potrebnu za njihovo izvršavanje usled uvećanog računarskog napora, naročito u uslovima povećanog opterećenja mreže. Ovakvo ponašanje negativno utiče na korisničko iskustvo, ali i na ukupne performanse blokčejn sistema, s obzirom na to da je veličina blokova ograničena ukupnom količinom gasa koja se može potrošiti u jednom napredovanju sistema. Stoga se kao primarni cilj nameće minimizacija potrošnje gasa tokom izvršavanja funkcija pametnih ugovora.
+Neoptimizovane funkcije pametnih ugovora mogu značajno povećati količinu gasa potrebnu za njihovo izvršavanje usled uvećanog računarskog napora, naročito u uslovima povećanog opterećenja mreže \cite{chen2017under}. Ovakvo ponašanje negativno utiče na korisničko iskustvo, ali i na ukupne performanse blokčejn sistema, s obzirom na to da je veličina blokova ograničena ukupnom količinom gasa koja se može potrošiti u jednom napredovanju sistema. Stoga se kao primarni cilj nameće minimizacija potrošnje gasa tokom izvršavanja funkcija pametnih ugovora.
 
-Posebno značajan faktor u tom kontekstu predstavlja trajno skladištenje podataka na blokčejnu. Svaki podatak upisan u skladište mora biti lokalno sačuvan od strane svih čvorova mreže, čime se direktno povećava ukupna količina podataka koje blokčejn sistem održava. Na primer, upis jedne skladišne jedinice veličine 32 bajta, u sistemu sa približno milion validatora i dodatnim dobavljačkim čvorovima, rezultuje ukupnim replikovanim prostorom od približno
+Posebno značajan faktor u tom kontekstu predstavlja trajno skladištenje podataka na blokčejnu. Svaki podatak upisan u skladište mora biti lokalno sačuvan od strane svih čvorova mreže, čime se direktno povećava ukupna količina podataka koju sistem mora da održava. Na primer, upis jedne skladišne jedinice veličine 32 bajta u sistemu sa milion čvorova rezultuje ukupnim replikovanim prostorom od približno
 $$ 32 \text{ bytes} \cdot 1{,}000{,}000 \approx 30 \text{ MB} $$
-što ilustruje značajan prostorni i infrastrukturni trošak čak i za minimalne upise.
+što ilustruje značajne prostorne i infrastrukturne troškove čak i za minimalne upise.
 
-Iz navedenih razloga, metodologija optimizacije pametnih ugovora u ovom radu primarno je usmerena na smanjenje upotrebe trajnog skladišta. Kako su operacije čitanja i pisanja u skladište među najskupljim operacijama u pogledu potrošnje gasa, fokus optimizacije stavljen je na njihovu minimizaciju. Sve ostale operacije koje se izvršavaju unutar funkcije tokom njenog trajanja imaju znatno manji uticaj na ukupnu potrošnju gasa i u daljoj analizi biće modelovane aproksimativno radi pojednostavljenja formalnog zapisa.
+Kako su operacije čitanja i pisanja u skladište među najskupljim operacijama u pogledu potrošnje gasa, fokus optimizacije usmeren je na njihovu minimizaciju. Sve ostale operacije koje se izvršavaju tokom izvršavanja funkcije imaju znatno manji uticaj na ukupnu potrošnju gasa i u daljoj analizi biće aproksimativno modelovane radi pojednostavljenja formalnog zapisa. Iz navedenih razloga, metodologija optimizacije pametnih ugovora u ovom radu primarno je usmerena na smanjenje upotrebe trajnog skladišta u cilju smanjenja troškova koje snose korisnici.
 
 \section{Troškovi pristupa skladištu i njihov uticaj na cenu izvršavanja}
 U Eterijum sistemu svaka transakcija koju korisnik podnosi poseduje osnovni, tzv. unutrašnji gas \eng{intrinsic gas}, koji predstavlja minimalni trošak obrade transakcije nezavisno od njenog izvršnog sadržaja. Ova osnovna cena iznosi 21.000 jedinica gasa, uz dodatni trošak koji zavisi od veličine ulaznih podataka prosleđenih u okviru transakcije.
@@ -249,7 +249,7 @@ Operacija prenosa kupona zadržava istu funkcionalnu logiku kao u ERC-721 modelu
 Kako je vlasništvo implicitno definisano, standard uvodi funkciju \textit{\_packedOwnershipOf}, koja na početku izvršavanja proverava validnost identifikatora na osnovu uslova:
 \begin{equation}
 \label{eq:erc721a_check}
-\_startTokenId() \leq tokenId\text{ }\&\&\text{ }tokenId \textless \_currentIndex
+\_startTokenId() \leq tokenId\text{ }\&\&\text{ }tokenId < \_currentIndex
 \end{equation}
 
 Nakon toga se pronalazi eksplicitno evidentirani zapis vlasništva pretragom unazad kroz mapu \textit{\_packedOwnerships}, počevši od prosleđenog identifikatora tokena, sve dok se ne pronađe inicijalizovana skladišna jedinica, kao što je prikazano u Algoritmu \ref{alg:erc721a_implicit}. Nakon toga se, u okviru iste funkcije, proverava da li je token iskorišten proverom binarne promenljive koja označava stanje iskorišćenosti tokena, pre vraćanja rezultata.
@@ -491,7 +491,7 @@ Pretpostavlja se da adrese korisnika imaju nulta početna stanja pre operacije k
 
 Kao što je očekivano, standard ERC-721 ostvaruje najveće troškove gasa u poređenju sa standardima ERC-721A i ERC-721Psi, jer podrazumeva eksplicitno čuvanje informacija o vlasništvu za svaki pojedinačni kupon. Nasuprot tome, standardi ERC-721A i ERC-721Psi postižu značajno niže troškove zahvaljujući implicitnom modelovanju vlasništva u okviru sekvencijalno dodeljenih identifikatora, pri čemu je ERC-721Psi neznatno skuplji zbog dodatnog troška ažuriranja bitmape.
 
-\begin{figure}[H]
+\begin{rezultati}[H]
 \centering
 
 \begin{minipage}{0.46\textwidth}
@@ -554,7 +554,7 @@ Kao što je očekivano, standard ERC-721 ostvaruje najveće troškove gasa u por
 \end{tikzpicture}
 \end{minipage}
 \caption{Potrošnja gasa različitih NFT standarda prilikom višestrukog kreiranja kupona u jednoj transakciji}
-\end{figure}
+\end{rezultati}
 
 \item \textbf{Prenos kupona u zavisnosti od udaljenosti od početka grupe}
 
@@ -564,7 +564,7 @@ Za standard ERC-721A uočava se da je trošak prenosa manji za kupone koji su bl
 
 Dalja analiza pokazuje da, analogno operaciji kreiranja, trošak prenosa opada za 17.100 jedinica gasa ukoliko adresa primaoca već poseduje nenultu vrednost u mapi stanja. Takođe, kod standarda ERC-721A i ERC-721Psi, ukoliko preneti kupon predstavlja početak grupe ili, u slučaju ERC-721A, ima postavljenu binarnu promenljivu \textit{\_nextInitialized}, izbegava se dodatna \Sj\ operacija, čime se ostvaruje dodatno smanjenje troškova. Konačno, jedino standard ERC-721 ostvaruje povraćaj gasa u slučaju kada se nakon prenosa stanje pošiljaoca smanjuje na nulu, što rezultuje smanjenjem ukupnog troška prenosa za 4.800 jedinica gasa.
 
-\begin{figure}[H]
+\begin{rezultati}[H]
 \centering
 
 \begin{minipage}{0.48\textwidth}
@@ -627,7 +627,7 @@ Dalja analiza pokazuje da, analogno operaciji kreiranja, trošak prenosa opada z
 \end{tikzpicture}
 \end{minipage}
 \caption{Potrošnja gasa različitih NFT standarda prilikom prenosa kupona u zavisnosti od udaljenosti od početnog elementa grupe}
-\end{figure}
+\end{rezultati}
 
 \item \textbf{Uništavanje kupona u zavisnosti od udaljenosti od početka grupe}
 
@@ -639,7 +639,7 @@ Kod standarda ERC-721Psi trošak uništavanja ostaje približno konstantan pod p
 
 Sa druge strane, standard ERC-721A ostvaruje najveće troškove, posebno pri većim udaljenostima od početka grupe, usled potrebe za pronalaženjem implicitno definisanog vlasništva. Dodatno, operacija uništavanja dovodi do razdvajanja prethodno jedinstvene grupe na dva segmenta, pri čemu je neophodno eksplicitno evidentirati granice novonastalih segmenata, što generiše dodatne troškove.
 
-\begin{figure}[H]
+\begin{rezultati}[H]
 \centering
 
 \begin{minipage}{0.48\textwidth}
@@ -702,7 +702,7 @@ Sa druge strane, standard ERC-721A ostvaruje najveće troškove, posebno pri ve�
 \end{tikzpicture}
 \end{minipage}
 \caption{Potrošnja gasa različitih NFT standarda prilikom uništavanja kupona u zavisnosti od udaljenosti od početnog elementa grupe}
-\end{figure}
+\end{rezultati}
 
 \item \textbf{Uništavanje više kupona u jednoj transakciji}
 
@@ -714,7 +714,7 @@ Kod standarda ERC-721Psi ne postoji mehanizam povraćaja gasa, ali se tokom uzas
 
 Standard ERC-721A ostvaruje najveće troškove u ovom scenariju, budući da se za svaki uništeni kupon eksplicitno ažuriraju informacije o vlasništvu, bez ostvarivanja dodatnog povraćaja gasa, što dovodi do rasta ukupne potrošnje.
 
-\begin{figure}[H]
+\begin{rezultati}[H]
 \centering
 
 \begin{minipage}{0.48\textwidth}
@@ -785,13 +785,13 @@ Standard ERC-721A ostvaruje najveće troškove u ovom scenariju, budući da se z
 \end{tikzpicture}
 \end{minipage}
 \caption{Potrošnja gasa različitih NFT standarda prilikom višestrukog uništavanja kupona u jednoj transakciji}
-\end{figure}
+\end{rezultati}
 
 \item \textbf{Ponašanje operacija ERC-721A i ERC-721Psi pri velikim grupnim operacijama}
 
 Kao što je pokazano u formulama \ref{eq:erc721a} i \ref{eq:erc721psi}, prednost standarda ERC-721Psi dolazi do izražaja prilikom grupnih kreiranja. U nastavku se analizira ponašanje svake od osnovnih operacija za $n \in \{100, 1.000, 10.000\}$. Troškovi operacije kreiranja za navedene vrednosti parametra $n$ gotovo su identični kod oba standarda, dok se kod operacija prenosa i uništavanja uočavaju značajne razlike u potrošnji gasa.
 
-\begin{figure}[H]
+\begin{rezultati}[H]
 \centering
 
 \begin{minipage}{0.48\textwidth}
@@ -895,7 +895,7 @@ Kao što je pokazano u formulama \ref{eq:erc721a} i \ref{eq:erc721psi}, prednost
 \end{tikzpicture}
 \end{minipage}
 \caption{Poređenje potrošnje gasa standarda ERC-721A i ERC-721Psi prilikom velikih grupnih operacija}
-\end{figure}
+\end{rezultati}
 
 \item \textbf{Postavljanje pametnih ugovora na mrežu}
 
@@ -905,7 +905,7 @@ Svi prethodno prikazani rezultati dobijeni su sa isključenim optimizatorom komp
 
 Kao što se može očekivati, standard ERC-721Psi ostvaruje najveći trošak postavljanja, budući da sadrži dodatnu logiku za održavanje bitmap strukture, uključujući implementaciju de Brujinovog ciklusa i prateće pretraživačke heš strukture, koje su uključene u bajtkod pri postavljanju ugovora.
 
-\begin{figure}[H]
+\begin{rezultati}[H]
 \centering
 
 \begin{minipage}{0.48\textwidth}
@@ -969,7 +969,7 @@ uključen}} \\
 \end{tikzpicture}
 \end{minipage}
 \caption{Potrošnja gasa prilikom postavljanja NFT pametnog ugovora}
-\end{figure}
+\end{rezultati}
 
 \end{description}
 
