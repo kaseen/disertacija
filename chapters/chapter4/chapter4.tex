@@ -168,8 +168,8 @@ Na ovaj način ostvaruje se determinističko, izolovano i bezbedno izvršavanje 
 Sa apstraktnog stanovišta, Eterijum virtuelna mašina može se posmatrati kao sistem sastavljen od sledeće tri osnovne komponente:
 \begin{enumerate}
 \item \textbf{Skladište naloga} koje predstavlja trajno stanje sistema i koje svi čvorovi čuvaju lokalno. Ono obuhvata trenutno stanje svih naloga u mreži, uključujući stanje korisnika i pametnih ugovora, i čini sastavni deo globalnog stanja Eterijum sistema.
+\item \textbf{Virtuelna memorija samo za čitanje \eng{Virtual ROM}}, koji predstavlja prostor u kojem se smešta izvršni bajtkod pametnih ugovora u trenutku njihovog izvršavanja.
 \item \textbf{Stanje mašine}, koje predstavlja izvršno okruženje u kome se izvršava bajtkod pametnih ugovora i može se posmatrati kao apstraktni virtuelni procesor koji, pored samog izvršavanja, meri i kvantifikuje računarski napor neophodan za izvršenje transakcije.
-\item \textbf{Virtuelna prostor samo za čitanje \eng{Virtual ROM}}, koji predstavlja prostor u kojem se smešta izvršni bajtkod pametnih ugovora u trenutku njihovog izvršavanja.
 \end{enumerate}
 
 \subsection{Skladište naloga}
@@ -213,18 +213,39 @@ Shodno tome, svaka promena stanja pametnog ugovora dovodi do promene njegovog sk
 
 Eterijum virtuelna mašina, posmatrana apstraktno, pruža pametnim ugovorima mehanizam trajnog skladištenja putem instrukcije \texttt{SSTORE} \cite{SSTOREeip2929}, koji se realizuje kao skup nezavisnih skladišnih lokacija fiksne veličine od 32 bajta, kao i mehanizam čitanja skladišta pametnog ugovora instrukcijom \texttt{SLOAD} \cite{SLOADeip1559}. Način na koji se prosti ili složeni tipovi podataka mapiraju na ove skladišne slotove nije definisan samim EVM-om, već zavisi od kompajlera i njegovih odluka prilikom prevođenja koda iz programskog jezika višeg nivoa u odgovarajuće EVM instrukcije.
 
+\subsection{Virtuelna memorija samo za čitanje}
+Pametni ugovor napisan u programskom jeziku višeg nivoa prevodi se postupkom kompajliranja u bajtkod za kreiranje \eng{creation bytecode}, koji obuhvata konstruktorski bajtkod \eng{constructor code} i bajtkod za izvršavanje \eng{runtime bytecode}. 
+
+Prilikom postavljanja ugovora na mrežu \eng{deployment}, transakcija sadrži instrukciju \texttt{CREATE} ili \texttt{CREATE2} \cite{CREATE2eip1014}, čijim se izvršavanjem inicijalizuje stanje ugovora kroz izvršavanje konstruktorskog bajtkoda. Po završetku ove faze, konstruktorski bajtkod se odbacuje, dok se izvršni bajtkod trajno smešta u nepromenljivi i logički izdvojeni segment sistema, a njegov heš smešta u stanje naloga pametnog ugovora kao referenca na taj kod.
+
+Prilikom analize postavljanja pametnih ugovora na mrežu, na osnovu heša izvršnog koda uočeno je da približno četvrtina ugovora koristi identičan bajtkod kao već postojeći ugovori \cite{khan2022code}. Ova pojava ukazuje na potrebu za deduplikacijom koda \eng{code deduplication}, budući da klijenti u praksi ne dupliraju bajtkod u skladištu, dok korisnici i dalje snose pun trošak njegovog postavljanja kao da se radi o jedinstvenom kodu. U cilju rešavanja ovog problema, predloženi su mehanizmi kojima se prilikom postavljanja ugovora eksplicitno referencira već postojeći bajtkod u mreži, čime se izbegavaju suvišni troškovi skladištenja, što je trenutno predmet otvorenih diskusija o unapređenju protokola \cite{DEDUPLICATIONeip8058}.
+
+Dobijen izvršni bajtkod ostaje trajno vezan za nalog pametnog ugovora i ne može se menjati tokom njegovog životnog veka, pri čemu je pristup ovom bajtkodu omogućen isključivo putem heša izvršnog koda u stanju pametnog ugovora. Prilikom izvršavanja transakcije pametnog ugovora, ovaj bajtkod se učitava u virtuelnu memoriju samo za čitanje \eng{Virtual ROM}, kojoj se pristupa tokom daljeg izvršavanja instrukcija transakcije.
+
+Korisnici prilikom interakcije sa pametnim ugovorom u polje podataka transakcije enkodiraju potpis funkcije koju žele da izvrše, kao i pripadajuće argumente u odgovarajućoj bajtovskoj reprezentaciji.  Ukoliko tražena funkcija ne postoji, a definisana je podrazumevana funkcija \eng{fallback}, ona se poziva umesto nje i najčešće se koristi za obradu neočekivanih poziva i očuvanje konteksta pri delegiranju izvršavanja između pametnih ugovora \cite{DELEGATEeip7}. U suprotnom, ukoliko ni takva funkcija nije definisana, izvršavanje transakcije rezultuje neuspehom.
+
+Pre početka izvršavanja, kontrola toka prolazi kroz dispečersku logiku \eng{dispatcher}, ugrađenu u sam bajtkod ugovora, koja na osnovu prosleđenog potpisa funkcije postavlja pokazivač na adresu bajt-instrukcije u virtuelnoj memoriji samo za čitanje koja odgovara funkciji koja treba da se izvrši, čime se omogućava početak izvršavanja pametnog ugovora.
+
+Međutim, direktno pozivanje funkcija u obliku bajtkoda nije ni ljudski čitljivo niti praktično za upotrebu, zbog čega značajnu ulogu ima aplikacioni binarni interfejs \eng{Application Binary Interface, ABI}. ABI definiše imena funkcija, njihove potpise i tipove argumenata u strogo strukturisanom formatu, čime uspostavlja formalni dogovor između pametnog ugovora i spoljašnjih korisnika ili aplikacija. 
+
+U suštini, ABI deluje kao prevodilački sloj između ljudski čitljivog interfejsa pametnog ugovora i njegove niskonivojske bajtovske reprezentacije koja se izvršava na blokčejnu, omogućavajući pouzdanu i transparentnu interakciju bez potrebe za ručnim enkodiranjem ili dekodiranjem transakcionih podataka.
+
 \subsection{Stanje mašine}
-Stanje mašine Eterijum virtuelne mašine inicijalizuje se na početku izvršavanja transakcije i uništava se po njenom završetku, zbog čega ima isključivo privremeni karakter. Ono obuhvata sledeće komponente:
+Postavljanjem pokazivača u virtuelnoj memoriji samo za čitanje na adresu bajt-instrukcije od koje započinje izvršavanje funkcije pametnog ugovora implicitno se određuje odgovarajući segment koda \eng{code segment} iz kojeg se dalje odvija izvršavanje date transakcije. U tom trenutku inicijalizuje se stanje mašine Eterijum virtuelne mašine, koje se uništava po završetku izvršavanja transakcije, zbog čega ima isključivo privremeni karakter.
+
+Stanje Eterijum virtuelne mašine obuhvata sledeće komponente:
 \begin{enumerate}
 \item \textbf{Brojač programa \eng{Program Counter, PC}} - označava adresu sledeće bajt-instrukcije koja će biti izvršena.
-\item \textbf{Stek} - struktura podataka koja dozvoljava pristup isključivo elementu na vrhu \eng{last in first out, LIFO}, maksimalne dubine od 1024 elementa, pri čemu je svaki element veličine jedne skladišne reči.
-\item \textbf{Privremena memorija} - linearni niz bajtova sa nasumičnim pristupom elementima, koji služi kao pomoćni prostor za izvođenje proračuna tokom izvršavanja transakcije.
-\item \textbf{Preostali gas} - kvantitativna mera raspoloživih računarskih resursa, koja određuje da li transakcija poseduje dovoljno sredstava za svoje kompletno izvršavanje.
+\item \textbf{Stek} - struktura podataka koja omogućava pristup isključivo elementu na vrhu \eng{last in first out, LIFO}, maksimalne dubine od 1024 elementa, pri čemu je svaki element veličine jedne skladišne reči.
+\item \textbf{Privremena memorija} - linearni niz bajtova sa direktnim pristupom elementima, koji služi kao pomoćni prostor za izvođenje proračuna tokom izvršavanja transakcije.
+\item \textbf{Preostali gas} - kvantitativna mera raspoloživih računarskih resursa izraženih u jedinicama gasa, koja određuje da li transakcija poseduje dovoljno sredstava za svoje kompletno izvršavanje.
 \end{enumerate}
 
-U slučaju da transakcija sadrži više internih poziva, odnosno interakciju sa više pametnih ugovora, za svaki takav poziv inicijalizuje se zasebno stanje mašine. Međutim, radi očuvanja konteksta izvršavanja unutar iste transakcije, uvedeno je i \textbf{privremeno skladište} \cite{TRANSIENTeip1153} \eng{transient storage}, čiji je životni vek ograničen na trajanje transakcije.
+S obzirom na to da je bajtkod pametnog ugovora predstavljen kao niz bajtova, pri čemu svaki bajt označava jednu operaciju koju EVM prepoznaje, izvršavanje koda može se modelovati kao iterativni proces. U svakom koraku izvršava se instrukcija na adresi na koju pokazuje brojač programa, proverava se da li je raspoloživa dovoljna količina gasa za njeno izvršenje, nakon čega se brojač ažurira. 
 
-S obzirom na to da je bajtkod pametnog ugovora predstavljen kao niz bajtova, gde svaki bajt označava jednu operaciju koju EVM prepoznaje, izvršavanje koda može se modelovati kao iterativni proces. U svakom koraku izvršava se instrukcija na adresi na koju pokazuje brojač programa, nakon čega se brojač ažurira. Proces se nastavlja sve dok se ne dođe do kraja koda, dok se ne izvrši instrukcija \texttt{STOP} ili \texttt{RETURN}, ili dok ne nastupi greška.
+Neke instrukcije zahtevaju ulazne parametre, koje se prethodno postavljaju na stek, nakon čega se instrukcija izvršava, pri čemu je moguće pristupati privremenoj memoriji ili trajnom skladištu. Proces se nastavlja sve dok se ne dostigne kraj koda, dok se ne izvrši instrukcija \texttt{STOP} ili \texttt{RETURN}, ili dok ne nastupi greška u toku izvršavanja.
+
+U slučaju da transakcija sadrži više internih poziva, odnosno interakciju sa više pametnih ugovora, za svaki takav poziv inicijalizuje se zasebno stanje mašine. Međutim, radi očuvanja konteksta izvršavanja unutar iste transakcije, uvedeno je i \textbf{privremeno skladište} \cite{TRANSIENTeip1153} \eng{transient storage}, čiji je životni vek ograničen na trajanje transakcije.
 
 \textbf{Gas} predstavlja obračunsku jedinicu kojom se meri količina računarskih resursa potrebnih za izvršavanje transakcije u Eterijum mreži. Ukupna transakciona naknada, u smislu Definicije \ref{def:txfee}, određuje se na osnovu ukupne potrošnje gasa tokom izvršavanja transakcije i cene gasa koju korisnik navodi prilikom njenog slanja. Na taj način se obezbeđuje da upotreba računarskih resursa mreže ima eksplicitnu ekonomsku cenu.
 
@@ -267,21 +288,7 @@ Izračunavanje ukupne naknade za gas transakcije se vrši pomoću sledeće formu
 $$ \textit{Ukupna transakciona naknada} = \textit{Količina gasa} \cdot (\textit{Osnovna naknada} + \textit{Prioritetna naknada}) $$
 gde je prioritetna naknada opcioni bakšiš za transakcije višeg prioriteta.
 
-\subsection{Virtuelna memorija samo za čitanje}
-Pametni ugovor napisan u programskom jeziku višeg nivoa prevodi se postupkom kompajliranja u bajtkod za kreiranje \eng{creation bytecode}, koji obuhvata konstruktorski bajtkod \eng{constructor code} i bajtkod za izvršavanje \eng{runtime bytecode}. Prilikom postavljanja ugovora na mrežu \eng{deployment}, transakcija sadrži instrukciju \texttt{CREATE} ili \texttt{CREATE2} \cite{CREATE2eip1014}, čijim se izvršavanjem inicijalizuje stanje ugovora kroz izvršavanje konstruktorskog bajtkoda. Po završetku ove faze, konstruktorski bajtkod se odbacuje, dok se izvršni bajtkod trajno smešta u nepromenljivi i logički izdvojeni segment sistema, a njegov heš smešta u stanje naloga pametnog ugovora kao referenca na taj kod.
-
-Prilikom analize postavljanja pametnih ugovora na mrežu, na osnovu heša izvršnog koda uočeno je da približno četvrtina ugovora koristi identičan bajtkod kao već postojeći ugovori \cite{khan2022code}. Ova pojava ukazuje na potrebu za deduplikacijom koda \eng{code deduplication}, budući da klijenti u praksi ne dupliraju bajtkod u skladištu, dok korisnici i dalje snose pun trošak njegovog postavljanja kao da se radi o jedinstvenom kodu. U cilju rešavanja ovog problema, predloženi su mehanizmi kojima se prilikom postavljanja ugovora eksplicitno referencira već postojeći bajtkod u mreži, čime se izbegavaju suvišni troškovi skladištenja, što je trenutno predmet otvorenih diskusija o unapređenju protokola \cite{DEDUPLICATIONeip8058}.
-
-Dobijen izvršni bajtkod ostaje trajno vezan za nalog pametnog ugovora i ne može se menjati tokom njegovog životnog veka, pri čemu je pristup ovom bajtkodu omogućen isključivo putem heša izvršnog koda u stanju pametnog ugovora. Prilikom izvršavanja transakcije pametnog ugovora, ovaj bajtkod se učitava u virtuelnu memoriju samo za čitanje \eng{Virtual ROM}, kojoj se pristupa tokom daljeg izvršavanja instrukcija transakcije.
-
-Korisnici prilikom interakcije sa pametnim ugovorom u polje podataka transakcije enkodiraju potpis funkcije koju žele da izvrše, kao i pripadajuće argumente u odgovarajućoj bajtovskoj reprezentaciji. Na početku izvršavanja, kontrola toka prolazi kroz dispečersku logiku \eng{dispatcher}, ugrađenu u sam bajtkod ugovora, koja na osnovu prosleđenog potpisa funkcije postavlja \textit{brojač programa} na adresu odgovarajuće funkcije u virtuelnoj memoriji samo za čitanje, čiji se kod dalje izvršava.
-
-Međutim, direktno pozivanje funkcija u obliku bajtkoda nije ni ljudski čitljivo niti praktično za upotrebu, zbog čega značajnu ulogu ima aplikacioni binarni interfejs \eng{Application Binary Interface, ABI}. ABI definiše imena funkcija, njihove potpise i tipove argumenata u strogo strukturisanom formatu, čime uspostavlja formalni dogovor između pametnog ugovora i spoljašnjih korisnika ili aplikacija. 
-
-U suštini, ABI deluje kao prevodilački sloj između ljudski čitljivog interfejsa pametnog ugovora i njegove niskonivojske bajtovske reprezentacije koja se izvršava na blokčejnu, omogućavajući pouzdanu i transparentnu interakciju bez potrebe za ručnim enkodiranjem ili dekodiranjem transakcionih podataka.
-
 \section{Transakcije i njihova obrada u Eterijumu}
-
 U Eterijum sistemu transakcije mogu inicirati isključivo nalozi kojima upravljaju korisnici. Pametni ugovori ne mogu samostalno inicirati transakcije, već se njihovo izvršavanje pokreće isključivo kao posledica transakcije koju inicira korisnik. Tokom izvršavanja pametnog ugovora moguće je generisati interne pozive ka drugim ugovorima ili nalozima, ali se oni ne smatraju nezavisnim transakcijama već delom izvršavanja iste transakcije.
 
 Prilikom slanja transakcije, korisnik je dužan da kriptografski potpiše skup sledećih polja:
