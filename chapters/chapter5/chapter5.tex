@@ -8,9 +8,9 @@ $$ 32 \text{ bytes} \cdot 1{,}000{,}000 \approx 30 \text{ MB} $$
 Kako su operacije čitanja i pisanja u skladište među najskupljim operacijama u pogledu potrošnje gasa, fokus optimizacije usmeren je na njihovu minimizaciju. Sve ostale operacije koje se izvršavaju tokom izvršavanja funkcije imaju znatno manji uticaj na ukupnu potrošnju gasa i u daljoj analizi biće aproksimativno modelovane radi pojednostavljenja formalnog zapisa. Iz navedenih razloga, metodologija optimizacije pametnih ugovora u ovom radu primarno je usmerena na smanjenje upotrebe trajnog skladišta u cilju smanjenja troškova koje snose korisnici.
 
 \section{Troškovi pristupa skladištu i njihov uticaj na cenu izvršavanja}
-U Eterijum sistemu svaka transakcija koju korisnik podnosi poseduje osnovni, tzv. unutrašnji gas \eng{intrinsic gas}, koji predstavlja minimalni trošak obrade transakcije nezavisno od njenog izvršnog sadržaja. Ovaj trošak obuhvata računarske resurse potrebne za uključivanje transakcije u blok, uključujući verifikaciju potpisa, validaciju transakcije, ažuriranje stanja, upis u blok i propagaciju kroz mrežu. Osnovna cena iznosi 21.000 jedinica gasa, uz dodatni trošak koji zavisi od veličine ulaznih podataka prosleđenih u okviru transakcije.
+U Eterijum sistemu svaka transakcija koju korisnik podnosi poseduje osnovni, tzv. unutrašnji gas \eng{intrinsic gas}, koji predstavlja minimalni trošak obrade transakcije nezavisno od njenog izvršnog sadržaja. S obzirom na to da dužina ulaznih podataka može varirati, potrošnja gasa direktno je povezana sa količinom podataka i računarskim naporom potrebnim za njihovu obradu.
 
-S obzirom na to da dužina ulaznih podataka za poziv može varirati, potrošnja gasa direktno je povezana sa količinom podataka i računarskim naporom potrebnim za njihovu obradu. Za svaki bajt ulaznih podataka plaća se 4 jedinice gasa ukoliko je bajt jednak nuli, odnosno 16 jedinica gasa za svaki nenulti bajt.
+Osnovna cena transakcije iznosi 21.000 jedinica gasa i obuhvata računarske resurse potrebne za uključivanje transakcije u blok, uključujući verifikaciju potpisa, validaciju transakcije, ažuriranje stanja, upis u blok i propagaciju kroz mrežu. Dodatni trošak zavisi od veličine ulaznih podataka prosleđenih u okviru transakcije, pri čemu se za svaki bajt ulaznih podataka plaćaju 4 jedinice gasa ukoliko je bajt jednak nuli, odnosno 16 jedinica gasa za svaki nenulti bajt \cite{CALLDATAeip2028}.
 
 Tokom izvršavanja transakcije, Eterijum virtuelna mašina izvršava instrukcije pametnog ugovora, pri čemu operacije koje čitaju ili menjaju stanje ugovora značajno doprinose ukupnoj ceni izvršavanja koju snosi korisnik. Radi optimizacije, sistem uvodi mehanizam keširanja skladišnih lokacija u okviru jedne transakcije \cite{SSTOREeip2929}, čime se umanjuje trošak višestrukih pristupa istom skladišnom slotu. Ovaj mehanizam uveden je kao odgovor na ranije napade uskraćivanja usluge, imajući u vidu da su operacije pristupa stanju dominantno određene troškom ulazno-izlaznih operacija \cite{perez2019broken}.
 
@@ -28,7 +28,14 @@ U daljoj analizi, prve dve navedene cene označavaćemo kao \Sj\ i \Sd, dok će 
 
 Zbog postojanja mehanizma povraćaja gasa prilikom oslobađanja skladišnih lokacija, programeri su podstaknuti da razvijaju pametne ugovore koji primenjuju praksu efikasnog upravljanja stanjem \cite{SELFDESTRUCTeip3529}, odnosno da uklanjaju podatke koji više nisu potrebni. Ovakav pristup doprinosi smanjenju ukupnih troškova izvršavanja, čime se posredno unapređuje korisničko iskustvo.
 
-Kako troškove izvršavanja transakcija u potpunosti snose korisnici mreže, vlasnici pametnih ugovora, poput kompanija i preduzeća, snose isključivo trošak njihovog inicijalnog postavljanja na mrežu. Tokom transakcije za postavljanje ugovora, nakon naplate unutrašnjeg gasa, izvršava se instrukcija \texttt{CREATE}, čiji osnovni trošak iznosi 32.000 jedinica gasa. Zatim se izvršava konstruktorski bajtkod, pri čemu se naplaćuje svaka instrukcija, kao i operacije upisa u skladište po ceni SSTORE(1) sa toplim pristupom. Na kraju, dodatno se naplaćuje 200 jedinica gasa za svaki bajt izvršnog bajtkoda trajno smeštenog na mreži.
+S obzirom na to da troškove izvršavanja transakcija snose korisnici koji ih iniciraju, trošak postavljanja pametnog ugovora na mrežu snosi nalog koji vrši njegovo inicijalno kreiranje. Tokom transakcije za postavljanje ugovora obračunavaju se sledeće komponente:
+\begin{enumerate}
+\item Osnovna cena unutrašnjeg gasa transakcije,
+\item Trošak instrukcije \texttt{CREATE} ili \texttt{CREATE2}, sa osnovnom cenom od 32.000 jedinica gasa,
+\item Dodatni trošak inicijalizacionog bajtkoda od 2 jedinice gasa po svakoj grupi od 32 bajta \cite{DEPLOYMENTeip3860},
+\item Trošak izvršavanja konstruktorskog bajtkoda, pri čemu se operacije upisa u skladište naplaćuju prema ceni \Sj\ sa toplim pristupom,
+\item Trošak trajnog smeštanja izvršnog bajtkoda na mreži, po ceni od 200 jedinica gasa po bajtu.
+\end{enumerate}
 
 Usled ranijih zloupotreba mehanizma povraćaja gasa putem tzv. tokena za gas \cite{luo2022understanding}, Eterijum protokol je onemogućio povraćaj gasa prilikom uništavanja izvršnog bajtkoda pametnog ugovora instrukcijom \texttt{SELFDESTRUCT}.
 
