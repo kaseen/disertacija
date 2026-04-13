@@ -24,7 +24,7 @@ Operacija upisa u skladište, realizovana instrukcijom \texttt{SSTORE}, ima razl
 \item Ukoliko se skladišna jedinica sa nenultom vrednošću postavi na nultu vrednost, korisniku se odobrava povraćaj od 4.800 jedinica gasa, čime se umanjuje cena trenutne transakcije.
 \end{enumerate}
 
-U daljoj analizi, prve dve navedene cene označavaćemo kao \Sj\ i \Sd, dok će se izraz ,,ako nije nula'' odnositi na slučaj kada se primenjuje cena \Sd, jer će se u većini slučajeva desiti da skladišna jedinica pre početka transakcije sadrži nenultu vrednost. U suprotnom, kada skladišna jedinica sadrži nultu vrednost, primenjuje se cena \Sj. Prikazane cene podrazumevaju topli pristup skladištu, dok u slučaju hladnog pristupa ukupni troškovi iznose 22.100, odnosno 5.000 jedinica gasa.
+U daljoj analizi, prve dve navedene cene označavaćemo kao \Sj\ i \Sd, dok će se izraz ,,ako nije nula'' odnositi na slučaj kada skladišna jedinica pre početka transakcije sadrži nenultu vrednost, pa se primenjuje cena \Sd, jer bi se u suprotnom primenjivala cena \Sj. Prikazane cene podrazumevaju topli pristup skladištu, dok u slučaju hladnog pristupa ukupni troškovi iznose 22.100, odnosno 5.000 jedinica gasa.
 
 Zbog postojanja mehanizma povraćaja gasa prilikom oslobađanja skladišnih lokacija, programeri su podstaknuti da razvijaju pametne ugovore koji primenjuju praksu efikasnog upravljanja stanjem \cite{SELFDESTRUCTeip3529}, odnosno da uklanjaju podatke koji više nisu potrebni. Ovakav pristup doprinosi smanjenju ukupnih troškova izvršavanja, čime se posredno unapređuje korisničko iskustvo.
 
@@ -44,9 +44,9 @@ Nezamenljivi tokeni \eng{non-fungible token, NFT} predstavljaju digitalne tokene
 
 Eterijum je standardizovao koncept nezamenljivih tokena kroz ERC-721 standard \cite{ERC721}, kojim se definišu struktura i osnovna funkcionalnost NFT-ova u okviru jednog pametnog ugovora. Ovaj standard uspostavlja šemu za kreiranje jedinstvenih i nedeljivih tokena, čime je omogućena njihova masovna primena i interoperabilnost unutar ekosistema. Do maja 2024. godine ukupna tržišna vrednost NFT projekata dostigla je približno 69 milijardi američkih dolara \cite{ma2025sok}, što potvrđuje njihov značaj i široku prihvaćenost.
 
-Osnovni NFT standard optimizovan je u skladu sa troškovnim modelom Eterijum mreže i kontinuirano se prilagođava kroz unapređenja protokola. Vremenom su razvijeni i alternativni standardi koji zadržavaju koncept jedinstvenog identifikatora, ali uvode implicitne modele reprezentacije vlasništva radi smanjenja troškova skladištenja i izvršavanja transakcija.
+Osnovni NFT standard optimizovan je u skladu sa troškovnim modelom Eterijum mreže i kontinuirano se prilagođava kroz unapređenja protokola. Vremenom su razvijeni i alternativni standardi koji zadržavaju koncept jedinstvenog identifikatora, ali uvode implicitne modele reprezentacije vlasništva radi smanjenja troškova skladištenja i izvršavanja transakcija, kao i standardi koji kombinuju zamenljive i nezamenljive tokene u okviru jedinstvenog modela.
 
-U nastavku rada razmatraju se isključivo standardi koji čuvaju eksplicitni jedinstveni identifikator tokena. U tipičnoj implementaciji ERC-721 standarda, vlasništvo se modeluje mapiranjem identifikatora tokena na adresu vlasnika:
+U nastavku rada razmatraju se isključivo standardi za nezamenljive tokene koji počivaju na eksplicitnoj reprezentaciji vlasništva, gde se svaki token jednoznačno povezuje sa adresom vlasnika putem jednostrukog mapiranja:
 $$ mapping(\textit{uint256 tokenId} \Rightarrow address)\textit{ private }\_owners; $$
 
 Ovakva struktura pogodna je za primenu u sistemima e-trgovine, gde svaki proizvod ili usluga mora posedovati jedinstveni identifikator. Imajući u vidu da EVM operiše nad skladišnim jedinicama veličine 256 bita, dok adrese zauzimaju 160 bita, preostalih 96 bita moguće je iskoristiti za kompaktno enkodiranje dodatnih informacija o proizvodu ili usluzi unutar iste skladišne jedinice.
@@ -82,8 +82,8 @@ Svi razmatrani NFT standardi dele istu osnovnu logiku za ključne operacije. Alg
 \label{alg:nft}
 \begin{algorithmic}[1]
 \Function{mint}{to, quantity, startTimestamp, giftable, percentage, numOfBlocks}
-    \RequireState{quantity \Gg 0}
     \RequireState{to \Neq address(0)}
+    \RequireState{quantity \Gg 0}
     \RequireState{percentage \Gg 0 \Andd percentage \Leq  100}
     \RequireState{numOfBlocks \Gg 0 \Andd numOfBlocks \Ll $2^{16}$}
     \State owners[currentIndex] \Eq Coupon(to, startTimestamp, giftable, percentage, numOfBlocks)
@@ -128,10 +128,10 @@ Prilikom postavljanja pametnog ugovora na mrežu, NFT standardi čuvaju metapoda
 \end{algorithmic}
 \end{algorithm}
 
-U narednim podpoglavljima, objašnjen je hronološki pregled razvoja NFT standarda. Sistematski su opisani nedostaci identifikovani u svakom standardu, koji su poslužili kao podsticaji za razvoj narednih. Za svaki standard predstavljena je logika operacija kreiranja, prenosa i sagorevanja, sa detaljnom analizom o instukcijama koje pristupaju skladištu, jer su to glavni faktori koji utiču na potrošnju gasa. Uticaj ostalih operacija je minimalan i biće procenjen po potrebi. Na kraju svakoj standarda, demonstrirane su modifikacije datog NFT standarda za implementaciju kuponskoh rešenja koji se dalje korsiti u merenju.
+U narednim pododeljcima dat je hronološki pregled razvoja NFT standarda. Sistematski su opisani nedostaci identifikovani u svakom standardu, koji su poslužili kao podsticaji za razvoj narednih. Za svaki standard predstavljena je logika operacija kreiranja, prenosa i uništavanja, sa detaljnom analizom instrukcija koje pristupaju skladištu, jer one predstavljaju glavne faktore koji utiču na potrošnju gasa. Uticaj ostalih operacija je minimalan i biće aproksimiran po potrebi. Na kraju svakog standarda demonstrirane su modifikacije datog NFT standarda za implementaciju kuponskog rešenja koje se dalje koristi u merenju.
 
 \subsection{ERC-721}
-ERC-721 predstavlja osnovni standard za implementaciju nezamenljivih tokena, definišući interfejs i minimalni skup funkcionalnosti neophodnih za njihovo kreiranje, praćenje vlasništva i prenos. Osnovna logika operacija kreiranja, prenosa i uništavanja ostaje konceptualno identična opštem modelu prikazanom u Algoritmu \ref{alg:nft}, te se u ovom potpoglavlju fokus stavlja isključivo na specifičnosti implementacije i njihove implikacije na pristup skladištu i potrošnju gasa. 
+ERC-721 predstavlja osnovni standard za implementaciju nezamenljivih tokena, definišući interfejs i minimalni skup funkcionalnosti neophodnih za njihovo kreiranje, praćenje vlasništva i prenos. Osnovna logika operacija kreiranja, prenosa i uništavanja ostaje konceptualno identična opštem modelu prikazanom u Algoritmu \ref{alg:nft}, te se u ovom pododeljku fokus stavlja isključivo na specifičnosti implementacije i njihove implikacije na pristup skladištu i potrošnju gasa. 
 
 Standard uspostavlja model u kojem se vlasništvo nad tokenima evidentira putem mape vlasnika \textit{\_owners}, koja preslikava jedinstveni identifikator tokena na adresu njegovog vlasnika, dok se ukupan broj tokena u vlasništvu određene adrese prati putem mape stanja \textit{\_balances}. Na osnovu ovih struktura moguće je efikasno odrediti vlasnika proizvoljnog tokena, kao i ukupan broj tokena koje određeni korisnik poseduje.
 
@@ -140,7 +140,7 @@ Originalni ERC-721 standard omogućava kreiranje tokena sa proizvoljno zadatim i
 \subsubsection{Kreiranje}
 Proces kreiranja kupona je pojedinačan, odnosno u svakom pozivu funkcije kreira se tačno jedan token. Pored dodele vlasništva nad novim tokenom, funkcija prihvata dodatne parametre koji definišu funkcionalna svojstva kupona.
 
-Mapa vlasnika modifikovana je tako da umesto adrese vlasnika direktno preslikava identifikator tokena u strukturu \textit{CouponInfo}, koja enkodira sve relevantne informacije o kuponu unutar jedne skladišne jedinice, kao što je opisano u prethodnom potpoglavlju. Iz tog razloga funkcija, pored adrese primaoca, prima i početnu vremensku oznaku, indikator prenosivosti, vrednost popusta i broj vremenskih intervala validnosti.
+Mapa vlasnika modifikovana je tako da umesto adrese vlasnika direktno preslikava identifikator tokena u strukturu \textit{CouponInfo}, koja enkodira sve relevantne informacije o kuponu unutar jedne skladišne jedinice, kao što je prethodno opisano. Iz tog razloga funkcija, pored adrese primaoca, prima i početnu vremensku oznaku, indikator prenosivosti, vrednost popusta i broj vremenskih intervala validnosti.
 
 Na početku izvršavanja funkcije vrši se validacija ulaznih parametara kako bi se obezbedila njihova konzistentnost sa definisanim modelom enkodiranja, posebno u pogledu ograničenja reprezentacije procentualne vrednosti i maksimalnog trajanja važenja kupona. Nakon uspešne validacije, strukturirani podaci o kuponu upisuju se u mapu vlasnika na poziciji definisanoj promenljivom \textit{\_currentIndex}, nakon čega se ova promenljiva inkrementira.
 
@@ -158,12 +158,12 @@ Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \begin{enumerate}
 \item Učitavanje vlasnika u memoriju radi validacije generiše trošak hladne \Sl\ operacije.
 \item Stanje pošiljaoca se smanjuje za jedan, što uzrokuje trošak hladne \Sd\ operacije, uz mogućnost povraćaja gasa ukoliko nova vrednost postane nula.
-\item Stanje primaoca se povećava za jedan, što uzrokuje trošak hladne \Sd operacije, ako nije nula.
+\item Stanje primaoca se povećava za jedan, što uzrokuje trošak hladne \Sd\ operacije, ako nije nula.
 \item Vlasništvo nad tokenom ažurira se izmenom odgovarajuće skladišne jedinice u mapi vlasnika, pri čemu se operacija realizuje uz trošak tople \Sd\ operacije, jer je skladišna jedinica već učitana tokom validacije.
 \end{enumerate}
 
 \subsubsection{Uništavanje}
-Operacija uništavanja omogućava uklanjanje kupona iz sistema nakon isteka perioda validnosti. Kao i kod prenosa, na početku se učitava vlasnik radi validacije. Implementacija kupona uvodi dodatnu proveru zasnovanu na enkodiranim vremenskim parametrima, čime se osigurava da je kupon istekao. Ova provera formalno se izražava uslovom:
+Operacija uništavanja omogućava uklanjanje kupona iz sistema ukoliko period njegove validnosti nije istekao. Kao i kod prenosa, na početku se učitava vlasnik radi validacije. Implementacija kupona uvodi dodatnu proveru zasnovanu na kodiranim vremenskim parametrima, čime se osigurava da je kupon istekao. Ova provera formalno se izražava uslovom:
 \begin{equation}
 \label{eq:erc721_burn}
 startTimestamp + \_BLOCK\_DURATION \cdot numOfBlocks \leq block.timestamp
@@ -261,7 +261,9 @@ Kako je vlasništvo implicitno definisano, standard uvodi funkciju \textit{\_pac
 \_startTokenId() \leq tokenId\text{ }\&\&\text{ }tokenId < \_currentIndex
 \end{equation}
 
-Nakon toga se pronalazi eksplicitno evidentirani zapis vlasništva pretragom unazad kroz mapu \textit{\_packedOwnerships}, počevši od prosleđenog identifikatora tokena, sve dok se ne pronađe inicijalizovana skladišna jedinica, kao što je prikazano u Algoritmu \ref{alg:erc721a_implicit}. Nakon toga se, u okviru iste funkcije, proverava da li je token iskorišten proverom binarne promenljive koja označava stanje iskorišćenosti tokena, pre vraćanja rezultata.
+Nakon toga se pronalazi eksplicitno evidentirani zapis vlasništva pretragom unazad kroz mapu \textit{\_packedOwnerships}, počevši od prosleđenog identifikatora tokena, sve dok se ne pronađe inicijalizovana skladišna jedinica, kao što je prikazano u Algoritmu \ref{alg:erc721a_implicit}. 
+
+Dodatno, pre vraćanja rezultata, u okviru iste funkcije proverava se da li je token iskorišćen, proverom binarne promenljive koja označava stanje iskorišćenosti tokena.
 
 \begin{algorithm}
 \caption{Algoritam za pronalaženje implicitnog vlasništva u ERC-721A standardu}
@@ -304,7 +306,7 @@ Nakon pronalaženja vlasnika, ažuriraju se odgovarajući podaci o vlasništvu i
 \begin{algorithmic}[1]
 \Function{transferFrom}{from,to,tokenId}
     \State prevOwnershipPacked \Eq \_packedOwnerships[tokenId]
-    \RequireState{owner \EqEq from}
+    \RequireState{address(uint160(prevOwnershipPacked)) \EqEq from}
     \RequireState{to \Neq address(0)}
     \RequireState{owners[id].giftable \EqEq true}
     \State \_packedAddressData[from]\MinusMinus
@@ -376,7 +378,9 @@ Proces kreiranja kupona prima iste ulazne argumente kao odgovarajuća funkcija u
 
 Informacije o vlasništvu se zatim eksplicitno upisuju samo za prvi token u grupi, korišćenjem formule \ref{eq:erc721_packed}, gde je binarna promenljiva \textit{nextInitialized} izostavljena, jer se u ovom standardu ne koristi. Time se omogućava proširenje dostupnog prostora za jedan bit unutar upakovane strukture vlasničkih podataka u odnosu na standard ERC-721A.
 
-Tokom kreiranja neophodno je postaviti odgovarajući bit u bitmapi \textit{\_batchHead}, kojim se označava prvi token u grupi. Kako skladišna jedinica u EVM-u ima veličinu od 256 bita, bitmapa je organizovana kao mapa uzastopnih blokova \eng{bucket} od po 256 bita. U ovoj reprezentaciji, vrednost \textit{1} na određenoj poziciji označava da identifikator tokena koji odgovara toj poziciji predstavlja početak grupe. Postupak postavljanja odgovarajućeg bita sastoji se od određivanja indeksa bloka kojem pripada dati identifikator, nakon čega se postavlja odgovarajući bit unutar tog bloka, kao što je prikazano u Algoritmu \ref{alg:erc721psi_set}.
+Tokom kreiranja neophodno je postaviti odgovarajući bit u bitmapi \textit{\_batchHead}, kojim se označava prvi token u grupi. Kako skladišna jedinica u EVM-u ima veličinu od 256 bita, bitmapa je organizovana kao mapa uzastopnih blokova \eng{bucket} od po 256 bita. U ovoj reprezentaciji, vrednost \textit{1} na određenoj poziciji označava da identifikator tokena koji odgovara toj poziciji predstavlja početak grupe. 
+
+Postupak postavljanja odgovarajućeg bita sastoji se od određivanja indeksa bloka kojem pripada dati identifikator, nakon čega se postavlja odgovarajući bit unutar tog bloka, kao što je prikazano u Algoritmu \ref{alg:erc721psi_set}.
 
 \begin{algorithm}
 \caption{Postavljanje prvog u grupi u bitmapi standarda ERC-721Psi}
@@ -409,7 +413,7 @@ Za razliku od standarda ERC-721A, gde se pretraga realizuje sekvencijalnim prove
 Algoritam \ref{alg:erc721psi_implicit} za pronalaženje prvog tokena u grupi sastoji se iz sledećih koraka:
 \begin{enumerate}
 \item Određuje se indeks skladišnog bloka u bitmapi kome pripada posmatrani identifikator, kao i njegova relativna pozicija unutar tog bloka.
-\item \label{BH-2} Pronađeni identifikator u datom bloku pomera se na krajnju desnu poziciju unutar bloka bitmape primenom bitovskog pomeranja udesno. Ovim postupkom razmak između prvog tokena u grupi i prosleđenog identifikatora postaje ekvivalentan poziciji najmanje značajnog postavljenog bita \eng{least significant set bit, LS1B}, za koji je poznat efikasan algoritam \cite{leiserson1998using}, razvijen za procesore koji ne poseduju instrukcije za brojanje vodećih ili završnih nula.
+\item \label{BH-2} Pronađeni identifikator u datom bloku pomera se na krajnju desnu poziciju unutar bloka bitmape primenom bitovskog pomeranja udesno. Ovim postupkom razmak između prvog tokena u grupi i prosleđenog identifikatora postaje ekvivalentan poziciji najmanje značajnog postavljenog bita \eng{least significant one bit, LS1B}, za koji je poznat efikasan algoritam \cite{leiserson1998using}, razvijen za procesore koji ne poseduju instrukcije za brojanje vodećih ili završnih nula.
 \item Primenom De Bruijnovog preslikavanja i odgovarajuće pretraživačke heš-tabele, koja je ugrađena u bajtkod pametnog ugovora, određuje se pozicija najmanje značajnog postavljenog bita.
 \item Na osnovu dobijene pozicije rekonstruiše se pozicija u bitmapi identifikatora prvog tokena u grupi, pomoću koje može da se odredi skladišna jedinica koja sadrži eksplicitno definisane informacije o vlasništvu.
 \end{enumerate}
@@ -420,7 +424,7 @@ Važno je napomenuti da tokom izvršavanja Koraka \ref{BH-2} može doći do slu�
 \caption{Algoritam za pronalaženje implicitnog vlasništva u ERC-721Psi standardu}
 \label{alg:erc721psi_implicit}
 \begin{algorithmic}[1]
-\Function{bitmap\_scan\_forward}{id}
+\Function{\_getBatchHead}{id}
     \State bucket \Eq id $\gg$ 8
     \State bucketIndex \Eq (id \& 0xff)
     \State bb \Eq bitmap[bucket]\coldSLOAD
@@ -987,7 +991,7 @@ U okviru predložene metodologije, za reprezentaciju proizvoda ili usluga sa jed
 
 Međutim, predstavljeni koncept može se primeniti i na druge blokčejn sisteme, pod uslovom da pametni ugovori nemaju ograničen skladišni kapacitet, jer u takvom slučaju svi tokeni mogu biti modelovani u okviru jedinstvenog ugovora, čime se otvara mogućnost primene identične NFT logike. Dodatno, ukoliko je skladišna jedinica tih sistema veće dužine u odnosu na EVM model, dodatni prostor se može iskoristiti za zapis većeg broja podataka unutar jednog skladišnog slota.
 
-Iako je analiza sprovedena nad javnim blokčejn sistemima, koncept optimalnog pakovanja podataka nije ograničen isključivo na njih. Pristup je primenljiv i u privatnim ili dozvolom ograničenim blokčejn mrežama, jer se zasniva na opštem principu racionalnog korišćenja skladišnog prostora. Ovaj pristup doprinosi smanjenju ukupne količine podataka koje čuvaju čvorovi mreže, smanjenju veličine blokova i povećanju ekonomske održivosti celokupnog ekosistema.
+Iako je analiza sprovedena nad javnim blokčejn sistemima, koncept optimalnog pakovanja podataka nije ograničen isključivo na njih. Pristup je primenljiv i u dozvolom ograničenim blokčejn mrežama, jer se zasniva na opštem principu racionalnog korišćenja skladišnog prostora. Ovaj pristup doprinosi smanjenju ukupne količine podataka koje čuvaju čvorovi mreže, smanjenju veličine blokova i povećanju ekonomske održivosti celokupnog ekosistema.
 
 Predloženi metodološki okvir može se integrisati u šire studije koje se bave konkretnim domenima primene. U slučajevima kada je potrebno koristiti više skladišnih jedinica za zapis složenijih struktura podataka, predstavljeni šematski model omogućava relativno jednostavno proširenje analize i kvantifikaciju efikasnosti takvog pristupa.
 
