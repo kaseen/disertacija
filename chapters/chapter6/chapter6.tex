@@ -1,15 +1,18 @@
-\chapter{Arhitektonske strategije za proširivost NFT-zasnovane platforme}
-U prethodnom poglavlju predstavljen je koncept dizajniranja proizvoda ili usluga sa jedinstvenim identifikatorom u okviru e-trgovine, korišćenjem NFT standarda na javnoj blokčejn mreži. Poseban akcenat stavljen je na optimizaciju skladišnih operacija, sa ciljem minimizacije računarskog napora potrebnog za izvršavanje korisničkih transakcija. Time se neposredno smanjuju troškovi transakcionih naknada i unapređuje korisničko iskustvo.
+\chapter{Diskusija}
+U prethodnom poglavlju predstavljen je koncept dizajna proizvoda ili usluga sa jedinstvenim identifikatorom u okviru sistema elektronske trgovine, zasnovan na primeni NFT standarda na Eterijum blokčejnu kao najzastupljenijoj platformi za razvoj decentralizovanih aplikacija. Poseban akcenat stavljen je na optimizaciju operacija nad skladištem podataka, pri čemu se model mape vlasništva NFT standarda proširuje enkodiranjem dodatnih informacija o proizvodima ili uslugama u preostali prostor skladišne jedinice, sa ciljem minimizacije računarskog napora potrebnog za izvršavanje korisničkih transakcija.
 
-%TODO
-%U ovom poglavlju razmatraju se arhitektonske strategije koje omogućavaju implementaciju takvog sistema u realnom poslovnom okruženju. Fokus je na obrascima modularnog dizajna, nadogradivosti i organizacije pametnih ugovora, koji kompanijama i preduzećima omogućavaju izgradnju skalabilne, fleksibilne i ekonomski održive NFT-zasnovane platforme.
+S obzirom na to da Eterijum predstavlja javnu blokčejn mrežu sa visokim nivoom decentralizacije, koja obezbeđuje povećanu otpornost sistema i distribuiranu kontrolu, neminovno se javlja problem transakcionih troškova za krajnje korisnike. Ovaj problem je u radu detaljno analiziran, pri čemu su predložene odgovarajuće metode optimizacije sa ciljem smanjenja troškova transakcionih naknada, čime se direktno unapređuje korisničko iskustvo.
+
+U ovom poglavlju razmatraju se mogućnosti za dalje unapređenje i proširenje funkcionalnosti pametnih ugovora u okviru NFT-zasnovane platforme za elektronsku trgovinu. Diskusija obuhvata dodatne funkcionalnosti NFT standarda koje nisu od primarnog značaja, kao i primenu postojećih, testiranih i optimizovanih modula. Takođe se analiziraju obrasci modularnog dizajna pametnih ugovora u kontekstu razvoja kompleksnih decentralizovanih aplikacija koje treba da budu dugoročno održive, kao i integracija sa spoljnim izvorima podataka, imajući u vidu da blokčejn sistemi inherentno funkcionišu kao zatvoreni sistemi.
+
+Na kraju se analiziraju ograničenja predložene metodologije obrađene u prethodnom poglavlju, kao i dodatna razmatranja proistekla iz ove diskusije.
 
 \section{Proširene funkcionalnosti NFT standarda u sistemima e-trgovine}
 NFT standardi takođe predviđaju mehanizam tzv. zakačaljki \eng{hooks}, odnosno funkcija koje se pozivaju pre i nakon svake osnovne operacije, kroz interne funkcije \textit{\_beforeTokenTransfer} i \textit{\_afterTokenTransfer}. Ove funkcije su podrazumevano prazne, ali omogućavaju proširenje osnovnog ponašanja bez izmene standardne logike. Na primer, pre izvršenja prenosa može se implementirati dodatna provera autorizacije, kojom se potvrđuje da pošiljalac ili primalac pripada unapred definisanoj grupi korisnika.
 
 Pored osnovnih operacija kreiranja, prenosa i uništavanja, NFT standardi predviđaju i funkciju odobravanja \eng{approve}, koja omogućava vlasniku NFT-a da ovlasti drugu adresu da prenese konkretan token u njegovo ime. Time se uvodi mehanizam imenovanja prava raspolaganja, bez prenosa vlasništva. Zbog prilagodljive prirode pametnih ugovora, ova funkcionalnost može se proširiti ili modifikovati, na primer tako da ovlašćena adresa može izvršiti i operaciju uništavanja tokena u ime vlasnika, u skladu sa poslovnom logikom platforme.
 
-NFT aplikacije se oslanjaju na mehanizam metapodataka, pri čemu se dodatne informacije o tokenu čuvaju na eksternim servisima u JSON formatu, pri čemu ti podaci nisu direktno dostupni unutar same blokčejn mreže. Pristup tim podacima za određeni identifikator ostvaruje se putem funkcije \textit{tokenURI(uint256 tokenId)}, koja vraća referencu (najčešće URL) ka resursu dostupnom van mreže. U zavisnosti od arhitekture sistema, servisi za skladištenje mogu biti centralizovani (npr. baze podataka) ili decentralizovani (npr. IPFS) \cite{salem2025hidden}.
+NFT aplikacije se oslanjaju na mehanizam metapodataka, pri čemu se dodatne informacije o tokenu čuvaju na eksternim servisima u JSON formatu, pri čemu ti podaci nisu direktno dostupni unutar same blokčejn mreže. Pristup tim podacima za određeni identifikator ostvaruje se putem funkcije \textit{tokenURI(uint256 tokenId)}, koja vraća referencu (najčešće URL) ka resursu dostupnom van mreže \cite{salem2025hidden}. U zavisnosti od arhitekture sistema, servisi za skladištenje mogu biti centralizovani (npr. baze podataka) ili decentralizovani (npr. IPFS).
 
 Budući da se transakcione naknade plaćaju u primarnoj kriptovaluti blokčejn mreže, korisnik se može naći u situaciji da poseduje NFT, ali nema dovoljno sredstava za pokrivanje troškova izvršavanja transakcije. Ovaj problem moguće je ublažiti fleksibilnijim modelom interakcije primenom ekstenzije za \textit{dozvolu} \cite{NFTPERMITeip4494} \eng{permit}, koja je još u fazi standardizacije. Navedeni mehanizam omogućava vlasniku tokena da van mreže potpiše kriptografsku poruku kojom odobrava određenu operaciju, prosledi je drugoj strani, koja na osnovu tog potpisa može izvršiti odobrenu operaciju u njegovo ime i snositi troškove transakcione naknade.
 
@@ -24,6 +27,8 @@ Najčešće korišćene ekstenzije ove vrste uključuju:
 \item \textit{ReentrancyGuard} - zaštitni mehanizam koji sprečava ponovni ulazak u funkciju pre završetka njenog prethodnog izvršavanja, čime se sprečavaju napadi zasnovani na rekurzivnim pozivima \cite{samreen2020reentrancy}.
 \item \textit{MultiSigner} - obrazac kolektivnog odlučivanja u kojem je za izvršavanje osetljivih operacija potrebno više nezavisnih ovlašćenih potpisa tzv. višepotpisnih novčanika, čime se smanjuje rizik centralizovanog upravljanja.
 \end{enumerate}
+
+Pored toga, moguće je delimično ili u određenim slučajevima u potpunosti ograničiti transparentnost javnih blokčejn mreža primenom potpuno homomorfnog šifrovanja \eng{fully homomorphic encryption}, koje omogućava izvršavanje operacija direktno nad šifrovanim podacima bez potrebe za njihovim dešifrovanjem \cite{fhevm}. U ovom modelu pametni ugovori primaju šifrovane ulaze, izvršavaju operacije nad njima i održavaju šifrovano stanje, bez pristupa originalnim vrednostima, koje mogu biti selektivno dekriptovane od strane ovlašćenih aktera. Tokom obrade transakcija u okviru konsenzusnog mehanizma operacije se izvršavaju nad šifrovanim vrednostima, pri čemu svi čvorovi deterministički dolaze do istog rezultata. Ovakav pristup predstavlja značajan korak ka širem usvajanju blokčejn tehnologije, iako se i dalje nalazi u fazi aktivnog razvoja.
 
 Korišćenjem ovih mehanizama pametnih ugovora, distribuirana platforma za e-trgovinu može obezbediti širok spektar funkcionalnosti, uz zadržavanje formalne konzistentnosti i sigurnosnih garancija javne blokčejn mreže gde se poslovna pravila mogu implementirati direktno na nivou ugovora.
 
@@ -52,8 +57,6 @@ Kod kompleksnijih sistema mogu se primeniti dodatni obrasci:
 \item Kada je potrebno modularizovati implementacioni ugovor i prevazići ograničenje maksimalne veličine bajtkoda, može se primeniti dijamantski obrazac \cite{DIAMONDeip2535} \eng{diamond pattern}. Ovaj pristup omogućava razdvajanje funkcionalnosti na više međusobno povezanih komponenti \eng{facets}, pri čemu centralni ugovor \eng{diamond} delegira pozive odgovarajućim modulima. Time se omogućava nadogradnja pojedinačnih delova sistema i fleksibilno proširenje funkcionalnosti.
 \end{enumerate}
 
-Svaka od navedenih arhitektonskih odluka ima direktan uticaj na potrošnju gasa, veličinu bajtkoda i ukupne troškove postavljanja i održavanja platforme koje snose kompanije ili preduzeća. Stoga je pre dizajna sistema za e-trgovinu neophodno pažljivo proceniti stepen potrebne nadogradivosti i modularnosti, kao i njihov odnos prema složenosti implementacije i bezbednosnim rizicima.
-
 U praksi, proces nadogradnje i upravljanja implementacijama često se organizuje kroz višepotpisnih novčanika ili kroz DAO mehanizme, kako bi se smanjila centralizovana kontrola i povećala decentralizacija odluka o promenama koda, posebno u slučajevima kada promena utiče na velike korisničke baze.
 
 Ovakav arhitektonski pristup omogućava da pametni ugovori preuzmu ulogu aplikativnog sloja platforme, pri čemu korisnici, nakon autentikacije putem kriptografskih ključeva, neposredno komuniciraju sa blokčejn infrastrukturom, dok se logika sistema izvršava u determinističkom okruženju distribuirane mreže.
@@ -77,3 +80,44 @@ Nadogradnja TLS protokola, poznata kao zkTLS \cite{kireieva2024zktls}, uvodi meh
 
 Ipak, bezbednosni model ostaje uslovljen pretpostavkom ispravnosti i integriteta eksternih servisa koji generišu podatke, kao i poverenjem u autoritete za sertifikate u okviru TLS infrastrukture. Stoga se sigurnost sistema delimično oslanja na spoljne entitete, što predstavlja dodatnu tačku rizika u ukupnoj arhitekturi.
 
+\section{Ograničenja predložene metodologije}
+U okviru predložene metodologije, za reprezentaciju proizvoda ili usluga sa jedinstvenim identifikatorom na javnim EVM-kompatibilnim blokčejn mrežama korišćeni su postojeći NFT standardi. 
+
+\begin{ograničenje}
+Efikasnost predloženog pristupa direktno zavisi od trenutnog modela obračuna gasa, posebno odnosa između \texttt{SLOAD} i \texttt{SSTORE} i aritmetičkih operacija. Promene u protokolu mogu smanjiti relativnu prednost optimizacije.
+\end{ograničenje}
+
+Predloženi metodološki okvir može se integrisati u šire studije koje se bave konkretnim domenima primene. U slučajevima kada je potrebno koristiti više skladišnih jedinica za zapis složenijih struktura podataka, predstavljeni šematski model omogućava relativno jednostavno proširenje analize i kvantifikaciju efikasnosti takvog pristupa.
+
+\begin{ograničenje}
+Analiza je fokusirana na statičke modele proizvoda i usluga, kod kojih se atributi ne menjaju često ili ne zahtevaju složene dinamičke interakcije. Postoje poslovni modeli sa izraženom dinamikom podataka koji nisu obuhvaćeni ovom analizom, a koji bi zahtevali dodatne mehanizme ažuriranja i potencijalno drugačiju strukturu skladištenja.
+\end{ograničenje}
+
+Optimizacija je ostvarena iskorišćavanjem neiskorišćenih bitova unutar mapiranja vlasništva, čime je omogućeno pakovanje dodatnih atributa proizvoda ili usluge u okviru jedne skladišne jedinice. Na taj način smanjen je broj operacija čitanja i upisa u skladište, što direktno utiče na smanjenje potrošnje gasa.
+
+\begin{ograničenje}
+Prilikom pakovanja više promenljivih u jednu skladišnu jedinicu polazi se od pretpostavke da je veličina adrese u EVM okruženju 160 bita. S obzirom na dinamičan razvoj blokčejn tehnologije, ne postoji garancija da će ova veličina ostati nepromenjena. Eventualna promena mogla bi smanjiti raspoloživi prostor unutar skladišnog slota, čime bi bilo neophodno prilagoditi predloženi model optimizacije, pri čemu bi osnovni koncept metodologije ostao nepromenjen.
+\end{ograničenje}
+
+Predstavljeni koncept može se primeniti i na druge blokčejn sisteme čime se otvara mogućnost primene identične NFT logike. Dodatno, ukoliko je skladišna jedinica tih sistema veće dužine u odnosu na EVM model, dodatni prostor se može iskoristiti za zapis većeg broja podataka unutar jednog skladišnog slota. 
+
+\begin{ograničenje}
+Upotreba implicitnog vlasništva uvodi ograničenje u kontekstu grupnog kreiranja NFT-ova. Kada se više tokena kreira u okviru iste transakcije, podaci se eksplicitno čuvaju samo za prvi token, dok ostali implicitno nasleđuju iste vrednosti. Ovakav pristup je efikasan u slučaju identičnih instanci, ali postaje ograničavajući u scenarijima koji zahtevaju veću raznovrsnost atributa unutar jedne serije.
+\end{ograničenje}
+
+Primena identične NFT logike na Eterijum blokčejnu podrazumeva postojanje mape vlasništva u okviru pametnog ugovora, što implicira model u kojem je moguće skladištiti sve tokene unutar jednog ugovora sa praktično neograničenim skladišnim kapacitetom.
+
+\begin{ograničenje}
+Predloženi pristup primenljiv je na blokčejn sisteme u kojima NFT standard funkcioniše u okviru jednog pametnog ugovora sa praktično neograničenim skladištem. Suprotan primer predstavlja arhitektura kakva je primenjena na asinhronoj mreži blokčejna \textit{Telegram Open Network} \cite{durov2020telegram}, gde se svaki NFT implementira kao zaseban ugovor \cite{TEP62}, sa ograničenim skladišnim kapacitetom i uslovljenom asinhronom komunikacijom.
+\end{ograničenje}
+
+Iako je analiza sprovedena nad javnim blokčejn sistemima, koncept optimalnog pakovanja podataka nije ograničen isključivo na njih. Pristup je primenljiv i u dozvolom ograničenim blokčejn mrežama, jer se zasniva na opštem principu racionalnog korišćenja skladišnog prostora. Ovaj pristup doprinosi smanjenju ukupne količine podataka koju čuvaju čvorovi mreže, smanjenju veličine blokova i povećanju ekonomske održivosti celokupnog ekosistema.
+
+Pre dizajna sistema za e-trgovinu neophodno pažljivo proceniti stepen potrebne nadogradivosti i modularnosti, kao i njihov odnos prema složenosti implementacije i bezbednosnim rizicima.
+
+\begin{ograničenje}
+Svaka od navedenih arhitektonskih odluka ima direktan uticaj na potrošnju gasa, veličinu bajtkoda i ukupne troškove postavljanja i održavanja platforme koje snose kompanije ili preduzeća kao i izvršavanje transakcija krajnjih korisnika.
+\end{ograničenje}
+
+
+% Svaka od navedenih arhitektonskih odluka ima direktan uticaj na potrošnju gasa, veličinu bajtkoda i ukupne troškove postavljanja i održavanja platforme koje snose kompanije ili preduzeća. Stoga je pre dizajna sistema za e-trgovinu neophodno pažljivo proceniti stepen potrebne nadogradivosti i modularnosti, kao i njihov odnos prema složenosti implementacije i bezbednosnim rizicima.

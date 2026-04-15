@@ -441,7 +441,7 @@ Jedinstveni identifikator sadržaja \eng{Content Identifier, CID} je nepromenlji
 \item Višebazno \eng{multibase} enkodiranje, koje se primenjuje samo prilikom prikaza CID-a u obliku tekstualne niske.
 \end{enumerate}
 
-Važno je napomenuti da identični fajlovi mogu imati različite CID identifikatore ukoliko su generisani korišćenjem različitih parametara kodiranja, kao što su drugačija verzija identifikatora, drugačiji tip formata ili drugačija heš funkcija, ako se koriste isti parametri, tada isti sadržaj uvek rezultuje istim identifikatorom. Ukoliko više korisnika u mreži dodaje isti fajl, generisaće se isti CID, što omogućava ponovnu upotrebu već postojećih blokova podataka, tj. implicitnu deduplikaciju sadržaja na nivou blokova.
+Važno je napomenuti da identični fajlovi mogu imati različite CID identifikatore ukoliko su generisani korišćenjem različitih parametara kodiranja, kao što su drugačija verzija identifikatora, drugačiji tip formata ili drugačija heš funkcija, a ako se koriste isti parametri, tada isti sadržaj uvek rezultuje istim identifikatorom. Ukoliko više korisnika u mreži dodaje isti fajl, generisaće se isti CID, što omogućava ponovnu upotrebu već postojećih blokova podataka, tj. implicitnu deduplikaciju sadržaja na nivou blokova.
 
 Dodatno, sadržajno adresiranje omogućava kriptografsku proveru integriteta podataka. Pošto CID uključuje heš vrednost korenog čvora strukture podataka, svaka promena u sadržaju rezultuje drugačijom heš vrednošću, a samim tim i drugačijim identifikatorom. Na taj način korisnik može lokalno proveriti da li preuzeti sadržaj odgovara očekivanom identifikatoru.
 
