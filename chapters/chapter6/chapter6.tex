@@ -91,17 +91,18 @@ U cilju obezbeđivanja decentralizovanog pristupa pametnim ugovorima, platforme 
 \item Hladni novčanik \eng{cold wallet}, odnosno hardverski uređaj koji čuva privatne ključeve izolovano od mreže (npr. \textit{Ledger, Trezor}), gde se transakcija potpisuje na samom uređaju, a zatim se potpisana transakcija prosleđuje mreži putem posredničkog kanala (npr. USB ili QR kod).
 \item Hibridni novčanik \eng{hybrid wallet} koji kombinuje karakteristike toplih i hladnih novčanika, gde se deo funkcionalnosti, poput interakcije sa aplikacijom i pripreme transakcije, izvršava u softverskom okruženju, dok se kritične operacije potpisivanja obavljaju u sigurnom, izolovanom modulu, čime se postiže balans između upotrebljivosti i bezbednosti.
 \end{enumerate}
+
 Hardverski novčanici se mogu posmatrati kao najsigurnija varijanta, budući da privatni ključevi nikada ne napuštaju namenski uređaj. Na taj način se smanjuje rizik od kompromitacije usled prisustva zlonamernog softvera na korisničkom računaru, koji bi u suprotnom mogao omogućiti neovlašćeno potpisivanje transakcija ili pristup privatnim ključevima.
 
 Iako se pametni ugovori izvršavaju na javnom blokčejnu, postojanje centralizovanog prezentacionog sloja uvodi jedinstvenu tačku otkaza i kontrole. U takvom modelu, operater prezentacionog sloja može ograničiti ili u potpunosti onemogućiti pristup aplikaciji, čime se korisnici dovode u situaciju da samostalno pronalaze alternativne načine interakcije sa pametnim ugovorima javne blokčejn mreže.
 
-Dodatno, savremeni internet u velikoj meri zavisi od centralizovanih provajdera infrastrukture. Kompanije poput \textit{Cloudflare} deluju kao posrednici između korisnika i veb servera, pružajući usluge kao što su optimizacija isporuke sadržaja, zaštita od napada i upravljanje mrežnim saobraćajem. Ovakva arhitektura, iako efikasna, uvodi sistemski rizik, jer kvar ili prekid rada jednog takvog entiteta može imati široke posledice po dostupnost velikog broja internet servisa.
+Dodatno, savremeni internet u velikoj meri zavisi od centralizovanih provajdera infrastrukture, poput mreža za isporuku sadržaja. Kompanije poput \textit{Cloudflare} deluju kao posrednici između korisnika i veb servera, pružajući usluge kao što su optimizacija isporuke sadržaja, zaštita od napada i upravljanje mrežnim saobraćajem. Ovakva arhitektura, iako efikasna, uvodi sistemski rizik, jer kvar ili prekid rada jednog takvog entiteta može imati široke posledice po dostupnost velikog broja internet servisa.
 
 U praksi, incidenti u radu centralizovanih provajdera pokazali su da poremećaji ovog tipa mogu značajno uticati na dostupnost finansijskih sistema, zdravstvenih usluga i državnih servisa, što ukazuje na strukturnu ranjivost interneta kao sistema \cite{youvan2025internet}.
 
 Jedan od uzroka ovog problema leži u činjenici da se savremeni internet zasniva na lokacijski orijentisanom adresiranju. Kao alternativa, predlaže se upotreba sadržajno orijentisanih sistema, poput IPFS, gde se podaci adresiraju na osnovu njihovog sadržaja, a ne njihove lokacije. U takvom modelu, prezentacioni sloj može biti distribuiran i kriptografski verifikovan, čime se eliminiše potreba za centralizovanim posrednikom \cite{olofsson2022decentralized}.
 
-Korišćenjem decentralizovanih veb aplikacija, korisnici mogu direktno pristupati pametnim ugovorima, čime se ostvaruje vizija otvorenog i cenzuri otpornog interneta. Međutim, ovakav pristup može dovesti do povećanog latencijskog kašnjenja i degradacije korisničkog iskustva u poređenju sa centralizovanim rešenjima.
+Korišćenjem decentralizovanih veb aplikacija, korisnici mogu direktno pristupati pametnim ugovorima, čime se ostvaruje vizija otvorenog i cenzuri otpornog interneta. Međutim, ovakav pristup može dovesti do povećanog latencijskog kašnjenja i degradacije korisničkog iskustva u poređenju sa centralizovanim rešenjima, usled distribuirane prirode izvršavanja i pristupa podacima.
 
 Dalje, s obzirom na to da su adrese u sistemima poput Eterijuma i IPFS-a predstavljene kao heksadecimalni nizovi ili kriptografski identifikatori, njihova upotreba je nepogodna za krajnje korisnike. Iz tog razloga razvijeni su sistemi imenovanja, među kojima se izdvaja usluga imenovanja Eterijuma \eng{Ethereum naming service, ENS} \cite{xia2021ethereum} kao decentralizovani sistem koji mapira ljudima čitljiva imena na blokčejn adrese ili lokacije sadržaja.
 
@@ -113,7 +114,7 @@ ENS se oslanja na dva osnovna tipa pametnih ugovora za upravljanje domenima:
 
 Proces razrešavanja ENS domena podrazumeva slanje zahteva ugovoru o registru, koji vraća adresu odgovarajućeg ugovora o razrešavanju, nakon čega se putem tog ugovora dobija konkretan resurs povezan sa datim domenom.
 
-Korišćenjem ovako definisane arhitekture omogućava se prenos kontrole nad celokupnom platformom putem jedne transakcije na blokčejnu. Time se značajno smanjuje potreba za tradicionalnim administrativnim procedurama, koje u klasičnim sistemima mogu trajati nedeljama. Ipak, praktična primena ovakvog pristupa i dalje zavisi od regulatornog okvira i pravnog priznavanja blokčejn transakcija u različitim pravnim sistemima, što predstavlja jedno od ključnih otvorenih pitanja i pravaca budućih istraživanja \cite{finck2018blockchain}.
+Korišćenjem ovako definisane arhitekture omogućava se funkcionalnost prenosa kontrole nad celokupnom platformom putem jedne transakcije na blokčejnu. Time se značajno smanjuje potreba za tradicionalnim administrativnim procedurama, koje u klasičnim sistemima mogu trajati nedeljama. Ipak, praktična primena ovakvog pristupa i dalje zavisi od regulatornog okvira i pravnog priznavanja blokčejn transakcija u različitim pravnim sistemima, što predstavlja jedno od ključnih otvorenih pitanja i pravaca budućih istraživanja \cite{finck2018blockchain}.
 
 \section{Ograničenja predložene metodologije}
 U okviru predložene metodologije, za reprezentaciju proizvoda ili usluga sa jedinstvenim identifikatorom na javnim EVM-kompatibilnim blokčejn mrežama korišćeni su postojeći NFT standardi. 
@@ -140,13 +141,11 @@ Predstavljeni koncept može se primeniti i na druge blokčejn sisteme čime se o
 Upotreba implicitnog vlasništva uvodi ograničenje u kontekstu grupnog kreiranja NFT-ova. Kada se više tokena kreira u okviru iste transakcije, podaci se eksplicitno čuvaju samo za prvi token, dok ostali implicitno nasleđuju iste vrednosti. Ovakav pristup je efikasan u slučaju identičnih instanci, ali postaje ograničavajući u scenarijima koji zahtevaju veću raznovrsnost atributa unutar jedne serije.
 \end{ograničenje}
 
-Primena identične NFT logike na Eterijum blokčejnu podrazumeva postojanje mape vlasništva u okviru pametnog ugovora, što implicira model u kojem je moguće skladištiti sve tokene unutar jednog ugovora sa praktično neograničenim skladišnim kapacitetom.
+Primena identične NFT logike na drugim blokčejn sistemima, kao što je slučaj sa Eterijum blokčejnom, podrazumeva postojanje mape vlasništva u okviru pametnog ugovora, što implicira model u kojem je moguće skladištiti sve tokene unutar jednog ugovora sa praktično neograničenim skladišnim kapacitetom.
 
 \begin{ograničenje}
 Predloženi pristup primenljiv je na blokčejn sisteme u kojima NFT standard funkcioniše u okviru jednog pametnog ugovora sa praktično neograničenim skladištem. Suprotan primer predstavlja arhitektura kakva je primenjena na asinhronoj mreži blokčejna \textit{Telegram Open Network} \cite{durov2020telegram}, gde se svaki NFT implementira kao zaseban ugovor \cite{TEP62}, sa ograničenim skladišnim kapacitetom i uslovljenom asinhronom komunikacijom.
 \end{ograničenje}
-
-Iako je analiza sprovedena nad javnim blokčejn sistemima, koncept optimalnog pakovanja podataka nije ograničen isključivo na njih. Pristup je primenljiv i u dozvolom ograničenim blokčejn mrežama, jer se zasniva na opštem principu racionalnog korišćenja skladišnog prostora. Ovaj pristup doprinosi smanjenju ukupne količine podataka koju čuvaju čvorovi mreže, smanjenju veličine blokova i povećanju ekonomske održivosti celokupnog ekosistema.
 
 Pre dizajna sistema za e-trgovinu neophodno pažljivo proceniti stepen potrebne nadogradivosti i modularnosti, kao i njihov odnos prema složenosti implementacije i bezbednosnim rizicima.
 
@@ -154,5 +153,4 @@ Pre dizajna sistema za e-trgovinu neophodno pažljivo proceniti stepen potrebne 
 Svaka od navedenih arhitektonskih odluka ima direktan uticaj na potrošnju gasa, veličinu bajtkoda i ukupne troškove postavljanja i održavanja platforme koje snose kompanije ili preduzeća kao i izvršavanje transakcija krajnjih korisnika.
 \end{ograničenje}
 
-
-% Svaka od navedenih arhitektonskih odluka ima direktan uticaj na potrošnju gasa, veličinu bajtkoda i ukupne troškove postavljanja i održavanja platforme koje snose kompanije ili preduzeća. Stoga je pre dizajna sistema za e-trgovinu neophodno pažljivo proceniti stepen potrebne nadogradivosti i modularnosti, kao i njihov odnos prema složenosti implementacije i bezbednosnim rizicima.
+Iako je analiza sprovedena nad javnim blokčejn sistemima, koncept optimalnog pakovanja podataka nije ograničen isključivo na njih. Pristup je primenljiv i u dozvolom ograničenim blokčejn mrežama, jer se zasniva na opštem principu racionalnog korišćenja skladišnog prostora. Ovaj pristup doprinosi smanjenju ukupne količine podataka koju čuvaju čvorovi mreže, smanjenju veličine blokova i povećanju ekonomske održivosti celokupnog ekosistema.
