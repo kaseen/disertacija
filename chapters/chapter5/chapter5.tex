@@ -59,7 +59,8 @@ Iako su eksperimentalna merenja sprovedena nad modelom elektronskih kupona, pred
 
 Predložena metodologija primenljiva je na svim blokčejn sistemima zasnovanim na Eterijum virtuelnoj mašini, imajući u vidu njenu široku zastupljenost i standardizovan model skladišta. Dodatno, koncept je prilagodljiv i drugim sinhronim blokčejn sistemima koji koriste sličan model izvršavanja i upravljanja stanjem.
 
-\section{Kompaktno modelovanje podataka u jednoj skladišnoj jedinici}
+%\section{Kompaktno modelovanje podataka u jednoj skladišnoj jedinici}
+\section{Enkodirana reprezentacija entiteta sa jedinstvenim identifikatorom u okviru jedne skladišne jedinice}
 Kako bi se elektronski kuponi prilagodili NFT funkcionalnostima, sve relevantne informacije o kuponu enkodirane su tako da zauzimaju tačno jednu skladišnu jedinicu. Ovo se postiže primenom bitskih operacija ili pažljivim pakovanjem podataka u složenu strukturu \cite{marchesi2020design}. Kada susedna polja unutar strukture zahtevaju ukupno 256 bita ili manje, kompajler vrši optimizaciju i kombinuje više vrednosti u jednu skladišnu reč od 256 bita.
 
 Na ovaj način obezbeđuje se da se prilikom upisa podataka izvršava samo jedna \texttt{SSTORE} operacija, dok je za čitanje svih atributa kupona dovoljna jedna \Sl\ operacija, čime se minimizuje broj pristupa trajnom skladištu.

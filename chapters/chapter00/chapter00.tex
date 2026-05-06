@@ -1,0 +1,224 @@
+\chapter{Metodološki okvir disertacije}
+
+\section{Obrazloženje predložene teze}
+Elektronska trgovina definiše se kao proces kupovine i prodaje dobara i usluga putem elektronskih mreža, pre svega interneta. U osnovi svakog sistema elektronske trgovine nalazi se reprezentacija entiteta putem jedinstvenih, grupnih ili implicitnih identifikatora, kojima se definiše stanje sistema, skup operacija nad entitetima koji omogućavaju promene stanja, pravila koja ograničavaju dozvoljene transformacije, kao i prezentacioni interfejs putem koga korisnici komuniciraju sa sistemom. Bez navedenih elemenata nije moguće obezbediti konzistentnost, integritet i skalabilnost sistema, te oni zajedno čine minimalni tehnički model implementacije platformi elektronske trgovine u okviru informacionih sistema.
+
+Savremeni informacioni sistemi, uključujući sisteme elektronske trgovine, dominantno su zasnovani na centralizovanom modelu u kojem se poverenje delegira trećoj strani. Ovakav pristup, iako funkcionalan, uvodi određena ograničenja, budući da primarni fokus sistema nije nužno usmeren na interese krajnjih korisnika. Centralizacija podrazumeva da treća strana upravlja podacima korisnika i posreduje u obradi plaćanja, čime preuzima ključnu ulogu u sistemu i održava privatnu knjigu evidencije. Iako ovakav pristup pojednostavljuje korisničko iskustvo, naročito u domenu plaćanja, on uvodi dodatne troškove posredovanja koji nisu uvek transparentni krajnjim korisnicima. Pored toga, oslanjanje na centralizovane entitete može dovesti do problema kao što su zloupotreba podataka, netransparentnost i sistemski rizici.
+
+Pojava \textit{Bitcoin} (Bitkoin) tehnologije predstavlja značajan iskorak u ovom domenu, jer uvodi model elektronskog plaćanja zasnovan na kriptografskom dokazu umesto poverenja. Na taj način omogućava se direktno izvršavanje transakcija između učesnika, bez potrebe za centralnim posrednicima. Sistem se zasniva na javnoj dostupnosti zapisa o transakcijama kroz decentralizovanu mrežu čvorova koji održavaju distribuiranu knjigu evidencije svih izvršenih transakcija na mreži, čime se obezbeđuju transparentnost i verifikabilnost.
+
+Eliminacijom centralnog posrednika javlja se problem koordinacije i postizanja konsenzusa o stanju sistema u otvorenom okruženju koje može uključivati zlonamerne aktere. Ovaj problem rešava se Nakamoto konsenzusnim mehanizmom, koji uvodi oskudan resurs potreban za predlaganje novog stanja mreže. Time se uspostavlja asimetrija računarske složenosti, jer pronalaženje rešenja zahteva značajan napor zasnovan na metodama grube sile, dok je verifikacija pronađenog rešenja brza i deterministička, čime se obezbeđuje sigurnost sistema.
+
+Prilikom kreiranja transakcije korisnik dokazuje vlasništvo nad sredstvima u skladu sa uslovima definisanim u samoj transakciji. Ovo se ostvaruje putem skriptnog jezika \textit{Bitcoin Script}, koji predstavlja sastavni deo transakcione strukture i omogućava definisanje jednostavnih, determinističkih uslova izvršavanja bez potrebe za pouzdanim posrednicima. Ovakav pristup konceptualno je blizak ideji samostalno izvršavajućih ugovornih uslova, koju je još 1994. godine formalno definisao Nick Szabo.
+
+Dalji razvoj blokčejn tehnologija doveo je do pojave platforme \textit{Ethereum} (Eterijum), koja integriše koncept distribuirane knjige i pametnih ugovora, uvodeći Tjuring-kompletnu virtuelnu mašinu. Pametni ugovor predstavlja program na blokčejnu u obliku niza bajtnih instrukcija raspoređenih na određenoj adresi, čijim se međusobnim izvršavanjem omogućava razvoj decentralizovanih aplikacija, koje omogućavaju automatizaciju poslovne logike i direktnu interakciju među korisnicima. Na taj način distribuirana knjiga evidencije evoluira u globalno distribuiranu računarsku platformu.
+
+Primena decentralizovanih aplikacija na javnim blokčejn mrežama zadovoljava minimalni tehnički model elektronske trgovine i predstavlja značajan potencijal u ovom domenu. Ovakvi sistemi obezbeđuju visok nivo transparentnosti, integriteta, dostupnosti, autentičnosti i neporecivosti. Dodatno, omogućena su direktna plaćanja između korisnika bez potrebe za posrednicima, čime se smanjuju operativni troškovi, uključujući troškove održavanja infrastrukture. Pametni ugovori predstavljaju autonomne programe koji se izvršavaju u distribuiranom okruženju i omogućavaju formalizaciju i automatizaciju pravila sistema.
+
+\section{Predmet istraživanja}
+Predmet ovog istraživanja obuhvata analizu blokčejn sistema kao specifične klase distribuiranih sistema, sa ciljem utvrđivanja da li oni mogu da zadovolje operativna svojstva savremenih informacionih sistema. Poseban fokus stavlja se na ispitivanje uticaja decentralizacije, kao proširenja sociotehničke perspektive, na složenost sistema i potrebu za novim mehanizmima koordinacije koji omogućavaju pouzdano upravljanje zajedničkim stanjem bez centralnog autoriteta.
+
+U radu se razmatra geneza blokčejn tehnologije, kao i klasifikacija blokčejn sistema prema različitim kriterijumima, uključujući model replikacije, otvorenost sistema, kontrolu pristupa, konsenzusni mehanizam, model upravljanja stanjem, stepen sinhronizacije izvršavanja i model upravljanja sistemom, što ima značajan uticaj na dizajn platforme. Posebna pažnja posvećena je analizi osnovnih svojstava, kao što su decentralizacija, sigurnost i performanse, koja predstavljaju ključne kriterijume i ograničenja za evaluaciju sistema.
+
+Platforma Eterijum koristi se kao reprezentativan slučaj za analizu i implementaciju predloženih rešenja, budući da predstavlja jednu od najrazvijenijih platformi za razvoj decentralizovanih aplikacija. S obzirom na to da ova mreža standardizuje modelovanje entiteta putem identifikatora i definisanje osnovnih operacija nad njima u okviru jedinstvenog pametnog ugovora, ovakav pristup je posebno relevantan za sisteme elektronske trgovine, gde svaki proizvod ili usluga mora biti jednoznačno identifikovan.
+
+Jedan od centralnih aspekata eksperimentalnog istraživanja odnosi se na troškovni model javnih blokčejn sistema, koji uvode eksplicitne transakcione naknade. U tom kontekstu analiziraju se predvidivi troškovi povezani sa reprezentacijom entiteta i izvršavanjem osnovnih operacija nad njima, kao i nepredvidivi troškovi koji proizlaze iz dodatnih funkcionalnosti i složenosti sistema definisanih pravilima sistema.
+
+Fokus istraživanja usmeren je na entitete sa jedinstvenim identifikatorima, koji predstavljaju opštiji model objekata sa identitetom, vlasništvom i atributima, pri čemu se istražuju mogućnosti optimizacije skladištenja mape vlasništva u postojećim standardima za nezamenljive tokene, radi efikasnije reprezentacije podataka. Grupni identifikatori se posmatraju kao degenerisan slučaj ovog modela, u kome više instanci sa jedinstvenim identifikatorom deli identitet, atributi su uniformni, a u mapi vlasništva prati se količina umesto pojedinačnih instanci, te se stoga ne razmatraju.
+
+Analiza obuhvata evaluaciju različitih pristupa enkodiranju atributa, gde kuponi predstavljaju reprezentativan studijski slučaj, kao i ograničenja u pogledu gubitka informacija kod takvih enkodiranja. Posebna pažnja posvećena je analizi osnovnih operacija nad entitetima, kao što su kreiranje, prenos i uništavanje, uz poređenje troškova izvršavanja u različitim scenarijima, sa ciljem unapređenja efikasnosti sistema.
+
+Pravila sistema elektronske trgovine mogu se formalizovati kroz različite zahteve, čija se troškovna procena ne može unapred u potpunosti odrediti zbog njihove složenosti i brojnosti. Imajući u vidu da je Eterijum virtuelna mašina Tjuring-kompletna, u radu se analiziraju proširenja pametnih ugovora za podršku funkcionalnostima elektronske trgovine, kao i primena modularnog dizajna koji omogućava nadogradnju postojeće platforme i proširenje funkcionalnosti.
+
+Na kraju, razmatra se uloga prezentacionog sloja koji posreduje između korisnika i pametnih ugovora, sa ciljem pojednostavljenja interakcije i očuvanja korisničkog suvereniteta nad kriptografskim identitetom, uz mogućnost njegove decentralizacije i kriptografske verifikacije.
+
+\section{Problem istraživanja}
+Uprkos navedenim prednostima, primena javnih blokčejn mreža u elektronskoj trgovini suočava se sa značajnim ograničenjima. Ključni problem ogleda se u činjenici da troškovi sistema, koji su u tradicionalnim modelima implicitno uključeni kroz korišćenje posredničkih servisa, u ovom slučaju postaju eksplicitni kroz transakcione naknade koje snose korisnici prilikom izvršavanja operacija, što uvodi dodatnu složenost iz perspektive korisnika i negativno utiče na ukupni kvalitet korisničkog iskustva.
+
+Ovo ograničava primenu blokčejn tehnologija u elektronskoj trgovini, budući da korisnici nisu navikli na eksplicitno plaćanje naknada za korišćenje usluga. Dodatni problem predstavlja nepredvidivost ovih naknada, s obzirom na to da zavise od nivoa opterećenja mreže. Blokčejn se u tom smislu može posmatrati kao sistem zasnovan na odnosu ponude i potražnje, gde ponudu čini raspoloživa količina računarskih resursa mreže, dok potražnja odgovara ukupnom zahtevu za njihovim korišćenjem. Ovo čini da neoptimizovan bajtkod pametnih ugovora dovodi do povećane potrošnje gasa, usled čega korisnici plaćaju veće naknade za izvršavanje funkcionalno identičnih operacija, naročito u uslovima visoke iskorišćenosti mreže.
+
+Posebno značajan faktor u ovom kontekstu predstavlja trajno skladištenje podataka, budući da svaki podatak upisan u skladište mora biti lokalno sačuvan od strane svih čvorova mreže, čime se povećava ukupna količina podataka koju sistem mora da održava. Dodatno, operacije pristupa skladištu zahtevaju ulazno-izlazne operacije, što uvodi dodatno režijsko opterećenje i čini operacije čitanja i pisanja među najskupljim operacijama u pogledu potrošnje gasa.
+
+U kontekstu reprezentacije proizvoda i usluga elektronske trgovine korišćenjem standarda za nezamenljive tokene, moguće je iskoristiti raspoloživi prostor u mapi vlasništva za enkodiranje dodatnih atributa. Međutim, ovaj pristup je ograničen karakteristikama virtuelne mašine, pre svega veličinom skladišnih jedinica. Ograničen broj raspoloživih bitova nameće potrebu za kompromisom između količine i preciznosti informacija koje se enkodiraju, što može dovesti do gubitka informacija ili nemogućnosti reprezentacije složenijih struktura podataka.
+
+Dodatno, primena standarda za nezamenljive tokene koji koriste model implicitnog vlasništva uvodi specifične troškovne karakteristike. U ovim modelima, vlasništvo se ne čuva eksplicitno za svaki pojedinačni entitet, već se razrešava tokom operacija prenosa i uništavanja tokena, što dovodi do dinamičke prirode troškova izvršavanja. Konkretno, trošak ovih operacija zavisi od pozicije prvog eksplicitno definisanog tokena u okviru sekvence, što rezultuje promenljivim troškovima u zavisnosti od ulaznih parametara.
+
+Ovakvo ponašanje implicira da izbor standarda direktno utiče na ekonomsku isplativost u različitim scenarijima upotrebe. Dodatno, modeli zasnovani na implicitnom vlasništvu nameću ograničenje da entiteti kreirani u okviru iste sekvence dele zajedničke atribute, što smanjuje fleksibilnost u modelovanju proizvoljnih objekata.
+
+Prilikom proširenja funkcionalnosti pametnih ugovora kroz modularni dizajn uvode se novi izazovi, pri čemu svaka dodatna funkcionalnost povećava složenost sistema i troškove postavljanja pametnih ugovora za kompanije i preduzeća. Takođe, uvođenje novih funkcionalnosti često zahteva dodatne provere i pristup skladištu, kao i povećanje broja izvršnih instrukcija, što direktno utiče na povećanje troškova u odnosu na model iz eksperimentalnog dela, što otežava preciznu procenu ukupnih troškova unapred.
+
+S obzirom na to da blokčejn sistemi funkcionišu kao zatvorena i deterministička izvršna okruženja, neophodno je uvesti dodatne mehanizme za integraciju sa spoljašnjim izvorima podataka. Ove informacije mogu biti javne ili privatne i često su neophodne za izvršavanje složenijih poslovnih procesa, uključujući validaciju eksternih događaja ili generisanje nasumičnih vrednosti. Međutim, oslanjanje na spoljašnje izvore uvodi dodatne bezbednosne rizike, jer kompromitovan ili nepouzdan izvor može negativno uticati na izvršavanje pametnih ugovora.
+
+Jedan od fundamentalnih izazova blokčejn sistema predstavlja kompromis između decentralizacije, sigurnosti i skalabilnosti, poznat kao blokčejn trilema. Javne blokčejn mreže u pravilu daju prioritet decentralizaciji i sigurnosti, što dovodi do ograničenja u pogledu skalabilnosti. Ovaj problem postaje posebno izražen u scenarijima masovne primene, zbog čega je neophodno analizirati postojeće pristupe njegovom rešavanju i pravce daljeg razvoja.
+
+Na kraju, dodatni izazov predstavlja dinamičan razvoj blokčejn tehnologija, koji otežava dugoročno predviđanje pravaca razvoja. Ipak, moguće je definisati opšti okvir za integraciju blokčejn tehnologija u sisteme elektronske trgovine na osnovu trenutno dostupnih tehnoloških rešenja i saznanja.
+
+Iz navedenog proizlazi da osnovni problem istraživanja predstavlja pronalaženje modela elektronske trgovine zasnovanog na blokčejn tehnologiji koji omogućava efikasno upravljanje troškovima, uz očuvanje funkcionalnosti, sigurnosti i prihvatljivog korisničkog iskustva.
+
+\section{Ciljevi istraživanja}
+Opšti cilj ovog istraživanja jeste razvoj modela i dizajna distribuirane platforme za elektronsku trgovinu zasnovane na javnoj blokčejn mreži, koja omogućava efikasno upravljanje troškovima izvršavanja uz očuvanje funkcionalnih zahteva, sigurnosti sistema i prihvatljivog korisničkog iskustva.
+
+Tok i sadržaj rada neposredno su uslovljeni definisanim ciljevima istraživanja, pri čemu se opšti cilj razlaže na sledeće specifične ciljeve:
+\begin{enumerate}
+\item Formalizacija minimalnog tehničkog modela elektronske trgovine u kontekstu blokčejn sistema, kroz identifikaciju ključnih elemenata sistema, uključujući reprezentaciju entiteta, skup operacija nad njima, pravila transformacije stanja i prezentacioni interfejs za korisnike.
+\item Analiza savremenih informacionih sistema elektronske trgovine u okviru centralizovanog modela, sa ciljem identifikacije njihovih ograničenja i implicitnih pretpostavki u pogledu poverenja i upravljanja podacima.
+\item Uvođenje i formalizacija pojma decentralizacije kao proširenja klasične sociotehničke paradigme informacionih sistema.
+\item Definisanje analitičkog okvira za evaluaciju informacionih sistema, koji uključuje metrike za procenu tehničkih atributa infrastrukture, performansi i operativnih svojstava sistema.
+\item Analiza javnih blokčejn sistema kao posebne klase distribuiranih informacionih sistema, u okviru prethodno definisanog analitičkog okvira, sa posebnim osvrtom na uticaj decentralizacije na složenost sistema i ograničenja koja iz toga proizlaze.
+\item Detaljna analiza konsenzusnog i izvršnog sloja Eterijum platforme, sa naglaskom na ispitivanje decentralizacije, sigurnosti i performansi, kao i formalizaciju pojma gasa kao osnovne jedinice troškovnog modela za utrošen računarski napor.
+\item Analiza troškovnog modela skladištenja podataka na Eterijum blokčejnu.
+\item Analiza enkodirane reprezentacije entiteta sa maksimalnom veličinom od jedne skladišne jedinice u bajtovima unutar jedinstvenog identifikatora mape vlasništva u okviru standarda za nezamenljive tokene.
+\item Komparativna analiza modifikovanih standarda ERC-721, ERC-721A i ERC-721Psi za rad sa e-kuponima kao reprezentativnim studijskim slučajem, sa fokusom na troškove skladišnih operacija nad entitetima prilikom izvršavanja osnovnih funkcija, uključujući kreiranje, prenos i uništavanje.
+\item Analiza mehanizma razrešavanja implicitnog vlasništva u standardima ERC-721 i ERC-721Psi, koji nastaje tokom operacija prenosa i uništavanja tokena, uz izvođenje formula za njegovo određivanje u zavisnosti od prvog tokena u grupi.
+\item Eksperimentalna evaluacija performansi ovako definisanih e-kupona, uz merenje troškova izvršavanja osnovnih operacija u različitim standardima i scenarijima parametara.
+\item Ispitivanje mogućnosti prilikom dizajna platforme za e-trgovinu kroz proširenje funkcionalnosti standarda za nezamenljive tokene, uključujući modularni dizajn pametnih ugovora i integraciju sa spoljašnjim izvorima podataka, u cilju projektovanja potpuno decentralizovane poslovne logike sistema elektronske trgovine na javnoj blokčejn mreži, čime se uvode dodatni nepredvidivi troškovi.
+\item Analiza potpune decentralizacije sistema kroz očuvanje suvereniteta nad kriptografskim identitetom i primenu sadržajno adresiranih sistema za realizaciju distribuiranog prezentacionog sloja.
+\end{enumerate}
+
+Ovako definisani ciljevi omogućavaju projektovanje arhitektonskog modela distribuirane platforme za elektronsku trgovinu zasnovane na javnoj blokčejn mreži, sa posebnim fokusom na optimizaciju transakcionih naknada korisnika prilikom izvršavanja osnovnih operacija nad entitetima sa jedinstvenim identifikatorima, uključujući njihovo kreiranje, prenos i uništavanje.
+
+Tako uspostavljen analitički i eksperimentalni okvir predstavlja osnovu za sistematsku evaluaciju performansi i troškova predloženog rešenja, kao i za njegovu primenu i dalja unapređenja na drugim blokčejn platformama.
+
+\section{Hipoteze istraživanja}
+U okviru ovog istraživanja postavljena je opšta hipoteza koja glasi:
+
+\begin{quote}
+\textit{Moguće je dizajnirati distribuiranu platformu elektronske trgovine zasnovanu na javnoj blokčejn mreži, koja primenom optimizovanih modela skladištenja i obrade podataka u pametnim ugovorima omogućava značajno smanjenje transakcionih troškova korisnika, uz očuvanje funkcionalnih i bezbednosnih svojstava sistema.}
+\end{quote}
+
+Iz tako definisane opšte hipoteze proizilaze posebne hipoteze koje detaljnije razrađuju pojedinačne aspekte posmatranog problema, kroz formalizaciju ključnih svojstava blokčejn sistema, njihovih ograničenja i mogućnosti primene u elektronskoj trgovini:
+\begin{enumerate}
+\item Javni blokčejn sistemi sa podrškom pametnih ugovora mogu formalno zadovoljiti minimalni tehnički model elektronske trgovine.
+\item Decentralizacija uvodi dodatnu složenost i zahteva specifične mehanizme koordinacije.
+\item Troškovni model zasnovan na gasu omogućava kvantifikaciju računarskih operacija.
+\item Optimizacija reprezentacije entiteta primenom standarda za nezamenljive tokene značajno smanjuje troškove izvršavanja operacija.
+\item Model implicitnog vlasništva uvodi promenljive troškove u zavisnosti od načina razrešavanja vlasništva.
+\item Proširenje funkcionalnosti povećava troškove na nelinearan i teško predvidiv način.
+\item Moguće je realizovati decentralizovan prezentacioni sloj bez narušavanja suvereniteta korisnika.
+\end{enumerate}
+
+Pojedinačne hipoteze koje su dalje razmatrane u disertaciji odnose se na kvantitativnu analizu troškova izvršavanja osnovnih operacija modifikovanih nezamenljivih tokena za rad sa reprezentovanim entitetima u okviru jedne skladišne jedinice:
+\begin{enumerate}
+\item Trošak operacije grupnog kreiranja u standardima sa implicitnim vlasništvom je znatno manji nego u standardu ERC-721.
+\item Trošak razrešavanja implicitnog vlasništva raste sa udaljenošću od prvog eksplicitno definisanog tokena u grupi.
+\item Troškovi operacija prenosa i uništavanja u standardima sa implicitnim vlasništvom su znatno veći nego u standardu ERC-721 zbog eksplicitnog razrešavanja vlasništva.
+\item Trošak operacije prenosa u standardu ERC-721Psi postaje isplatljiviji od ERC-721A nakon određenog rastojanja između prvog tokena u grupi i posmatranog tokena.
+\item Trošak operacija uništavanja u standardu ERC-721 ostaje konstantan i najmanji je jer jedini omogućava eksplicitan povraćaj gasa usled oslobađanja skladišne jedinice.
+\item Trošak uništavanja više tokena u jednoj transakciji u standardu ERC-721Psi počevši od određenog broja uništenih kupona postaje troškovno najpovoljniji.
+\item Trošak razrešavanja implicitnog vlasništva u standardu ERC-721A teži vrednosti približno 256 puta većoj nego u standardu ERC-721Psi kad broj kupona kreiranih u jednoj transakciji teži beskonačnosti.  
+\item Trošak postavljanja pametnog ugovora koji implementira ERC-721Psi standard je najveći u odnosu na ostale posmatrane standarde.
+\end{enumerate}
+
+\section{Metodološki pristup}
+Metodologija istraživanja zasniva se na kombinaciji teorijsko-analitičkog, konstruktivnog i eksperimentalnog pristupa, sa ciljem sistematske evaluacije mogućnosti primene blokčejn tehnologija u razvoju platformi elektronske trgovine.
+
+Validacija postavljenih hipoteza vrši se u skladu sa njihovom prirodom. Posebne hipoteze koje se odnose na formalna svojstva sistema i konceptualne modele validiraju se teorijsko-analitičkim pristupom. Hipoteze koje podrazumevaju dizajn i implementaciju sistema validiraju se konstruktivno, kroz demonstraciju izvodljivosti predloženih rešenja. Pojedinačne hipoteze, koje se odnose na kvantitativne aspekte troškova izvršavanja, validiraju se eksperimentalno, na osnovu merenja potrošnje gasa i komparativne analize dobijenih rezultata.
+
+\begin{description}
+\item \textbf{Teorijsko-analitički pristup} obuhvata formalizaciju minimalnog tehničkog modela elektronske trgovine, kao i analitički okvir za evaluaciju informatičkih sistema.
+
+U tom kontekstu analiziraju se osnovna svojstva javnih blokčejn sistema kao specifične klase distribuiranih sistema, koji omogućavaju korišćenje već uspostavljene mrežne i bezbednosne infrastrukture. Analiza obuhvata ključne aspekte kao što su decentralizacija, sigurnost i performanse, uz poseban osvrt na uticaj ovih svojstava na složenost sistema i mehanizme koordinacije. 
+
+Dodatno, fokus istraživanja, u pogledu reprezentacije entiteta, operacija nad njima i pravila sistema, usmeren je na Eterijum mrežu kao jednu od najzastupljenijih platformi za razvoj decentralizovanih aplikacija, pri čemu se analiziraju njene ključne karakteristike kroz konsenzusni i izvršni sloj. Za prezentacioni sloj razmatra se distribuirana arhitektura \textit{IPFS} mreže, pri čemu se analiziraju ključne karakteristike postavljanja i pribavljanja sadržaja.
+
+\item \textbf{Konstruktivni pristup} koristi se za projektovanje arhitektonskog modela distribuirane platforme elektronske trgovine.
+
+U okviru ovog pristupa razvija se model reprezentacije entiteta zasnovan na standardima za nezamenljive tokene u okviru ograničenja Eterijum mreže, pri čemu elektronski kuponi predstavljaju reprezentativan studijski slučaj. 
+
+Dodatno, razmatra se modularni dizajn pametnih ugovora kojim se omogućava implementacija pravila i ograničenja neophodnih za potpuno decentralizovano funkcionisanje sistema, ali koji može uvoditi dodatne nepredvidive troškove u korisničkim transakcijama.
+
+Takođe, definiše se arhitektura prezentacionog sloja zasnovana na decentralizovanim tehnologijama, sa ciljem očuvanja suvereniteta korisnika nad kriptografskim identitetom i omogućavanja verifikabilne interakcije sa sistemom.
+
+\item \textbf{Eksperimentalni pristup} primenjuje se u cilju kvantitativne evaluacije transakcionih troškova korisnika prilikom izvršavanja osnovnih operacija nad entitetima sa jedinstvenim identifikatorima, kroz analizu troškovnog modela zasnovanog na gasu u okviru Eterijum platforme.
+
+U okviru eksperimentalne analize implementirana je enkodirana reprezentacija entiteta elektronske trgovine unutar jedne skladišne jedinice u okviru standarda za nezamenljive tokene, uključujući standarde ERC-721, ERC-721A i ERC-721Psi, pri čemu se vrši poređenje troškova operacija kreiranja, prenosa i uništavanja tokena u kontrolisanim uslovima, sa posebnim naglaskom na broj i tip pristupa skladištu kao dominantnom faktoru troškova, koji predstavlja primarni predmet optimizacije.
+
+Preostale operacije koje se izvršavaju u okviru funkcija imaju znatno manji uticaj na ukupnu potrošnju gasa i u daljoj analizi biće aproksimativno modelovane radi pojednostavljenja formalnog zapisa.
+
+Kod standarda koji koriste implicitni model vlasništva, posebna pažnja posvećena je analizi algoritama za njegovo razrešavanje. Ovi algoritmi se formalno modeluju, a njihova složenost i trošak izražavaju se kroz aproksimativne funkcije u zavisnosti od rastojanja između posmatranog tokena i prvog tokena u grupnom kreiranju.
+\end{description}
+
+Eksperimenti su sprovedeni u kontrolisanom okruženju, uz korišćenje istih ulaznih parametara i uslova izvršavanja za sve posmatrane standarde, kako bi se obezbedila uporedivost rezultata.
+
+Na ovaj način uspostavlja se integrisan metodološki okvir koji omogućava sveobuhvatnu evaluaciju predloženog modela kroz kombinaciju formalne analize, dizajna sistema i empirijskih rezultata.
+
+Predloženi metodološki okvir može se integrisati u šire studije koje se bave konkretnim domenima primene. U slučajevima kada je potrebno koristiti više skladišnih jedinica za zapis složenijih struktura podataka, predstavljeni šematski model omogućava relativno jednostavno proširenje analize i kvantifikaciju efikasnosti takvog pristupa.
+
+Iako je analiza sprovedena nad javnim blokčejn sistemima, koncept optimalnog pakovanja podataka nije ograničen isključivo na njih. Pristup je primenljiv i u dozvolom ograničenim blokčejn mrežama, jer se zasniva na opštem principu racionalnog korišćenja skladišnog prostora. Ovaj pristup doprinosi smanjenju ukupne količine podataka koju čuvaju čvorovi mreže, smanjenju veličine blokova i povećanju ekonomske održivosti celokupnog ekosistema.
+
+\section{Eksperimentalni metod}
+Eksperimentalni metod zasniva se na kvantitativnoj analizi potrošnje gasa tokom izvršavanja ključnih operacija nad entitetima elektronske trgovine pri čemu je za merenje gasa korišćen razvojni okvir \textit{Foundry}, koji predstavlja široko prihvaćen alat za razvoj i testiranje pametnih ugovora, čime je obezbeđena determinističnost i ponovljivost rezultata. Ovaj razvojni okvir obuhvata alate:
+\begin{enumerate}
+\item Alat \textit{forge} (v0.2.0), koji se koristi za izgradnju, testiranje i implementaciju pametnih ugovora, kao i za izvršavanje osnovnih operacija i očitavanje vrednosti potrošenog gasa po transakciji.
+\item Alat \textit{anvil} (v0.2.0), koji obezbeđuje lokalni čvor Eterijum testne mreže i koristi se za sprovođenje eksperimenata, čime je eliminisan uticaj spoljašnjih faktora.
+\end{enumerate}
+
+U okviru ovog okruženja implementirani su pametni ugovori enkodirane reprezentacije elektronskih kupona za sve posmatrane standarde, pri čemu je merena potrošnja gasa za izvršavanje operacija nad elektronskim kuponima.
+
+U cilju preciznog poređenja efikasnosti implementacija, analizirana je isključivo potrošnja gasa posmatranih operacija nad kuponima, bez uključivanja osnovnog troška transakcije od 21.000 jedinica gasa, koji je konstantan i nezavisan od implementacije standarda. Pre sprovođenja eksperimenata izvršena je inicijalizacija svih relevantnih internih promenljivih stanja, uključujući promenljivu za identifikaciju narednog tokena za kreiranje, promenljivu za praćenje ukupno uništenih tokena kod ERC-721A standarda, kao i obe bitmape kod ERC-721Psi standarda.
+
+U eksperimentalnom delu analizirana je zavisnost potrošnje gasa od broja kupona kreiranih u jednoj transakciji. Testovi su sprovedeni pozivanjem funkcije za kreiranje sa različitim vrednostima parametra $n \in \{1, 2, 3, 5, 10, 20\}$, pri čemu je za svaku vrednost izmerena ukupna potrošnja gasa. Važno je napomenuti da je broj kreiranih kupona jedini parametar koji utiče na potrošnju gasa ove operacije, dok ostali parametri imaju konstantan uticaj.
+
+Analogno tome, za analizu operacija prenosa i uništavanja korišćen je identifikator kupona oblika $n+1$, koji predstavlja rastojanje između prvog tokena u grupi i posmatranog tokena. Na ovaj način simuliran je najgori slučaj određivanja implicitnog vlasništva u okviru grupe. U slučaju analize uništavanja više kupona u jednoj transakciji, funkcija uništavanja pozivana je uzastopno za različite identifikatore kupona, čime je obezbeđeno da se u svakom pozivu obrađuje različit kupon.
+
+Svako merenje izvršeno je više puta, a prikazane vrednosti predstavljaju srednje vrednosti dobijenih rezultata. Dobijeni rezultati upoređeni su između navedenih standarda, pri čemu je referentna tačka bila implementacija zasnovana na ERC-721 modelu. Na osnovu ove komparativne analize izvedeni su zaključci o efikasnosti predloženih pristupa optimizaciji.
+
+Radi obezbeđivanja doslednosti i uporedivosti rezultata, svi pametni ugovori kompajlirani su korišćenjem kompajlera \textit{solc} v0.8.22, sa onemogućenom optimizacijom. Za implementaciju ERC-721 standarda korišćena je referentna implementacija biblioteke \textit{OpenZeppelin} v4.9.0, dok su za standarde ERC-721A i ERC-721Psi korišćene implementacije v4.2.3, odnosno v0.7.0.
+
+Za svaki od posmatranih standarda implementirane su osnovne funkcije za kreiranje, prenos i uništavanje tokena, nakon čega je izvršeno sistematsko merenje potrošnje gasa pri različitim vrednostima ulaznih parametara. Posebno su analizirani:
+\begin{enumerate}
+\item Potrošnja gasa navedenih NFT standarda prilikom višestrukog kreiranja kupona u jednoj transakciji.
+\item Potrošnja gasa navedenih NFT standarda prilikom prenosa kupona u zavisnosti od udaljenosti od početnog elementa grupe.
+\item Potrošnja gasa navedenih NFT standarda prilikom uništavanja kupona u zavisnosti od udaljenosti od početnog elementa grupe.
+\item Potrošnja gasa navedenih NFT standarda prilikom višestrukog uništavanja kupona u jednoj transakciji.
+\item Komparativna analiza potrošnje gasa standarda ERC-721A i ERC-721Psi prilikom velikih grupnih operacija.
+\item Potrošnja gasa prilikom postavljanja pametnih ugovora za navedene NFT standarde.
+\end{enumerate}
+
+\section{Ograničenja predložene metodologije}
+U okviru predložene metodologije, za reprezentaciju proizvoda ili usluga sa jedinstvenim identifikatorom na javnim EVM-kompatibilnim blokčejn mrežama korišćeni su postojeći standardi za nezamenljive tokene, modifikovani za potrebe ovog istraživanja, dok standardi za zamenljive tokene sa grupnim identifikatorima nisu razmatrani, budući da se posmatraju kao degenerisan slučaj.
+
+Kada je reč o metodologiji reprezentacije entiteta u okviru standarda za nezamenljive tokene, optimizacija je ostvarena iskorišćavanjem neiskorišćenih bitova unutar mapiranja vlasništva, čime je omogućeno pakovanje dodatnih atributa proizvoda ili usluge u okviru jedne skladišne jedinice. Na taj način smanjen je broj operacija čitanja i upisa u skladište, što direktno utiče na smanjenje potrošnje gasa. Međutim, efikasnost predloženog pristupa direktno zavisi od trenutnog modela obračuna gasa, posebno odnosa između \texttt{SLOAD}, \texttt{SSTORE} i aritmetičkih operacija. Promene u protokolu naplate skladišnih operacija mogu smanjiti relativnu prednost ove optimizacije.
+
+Prilikom pakovanja više promenljivih u jednu skladišnu jedinicu polazi se od pretpostavke da je veličina adrese u EVM okruženju 160 bita. S obzirom na dinamičan razvoj blokčejn tehnologije, ne postoji garancija da će ova veličina ostati nepromenjena. Eventualna promena mogla bi smanjiti raspoloživi prostor unutar skladišnog slota, čime bi bilo neophodno prilagoditi predloženi model optimizacije, pri čemu bi osnovni koncept metodologije ostao nepromenjen.
+
+Upotreba implicitnog vlasništva uvodi ograničenja u kontekstu grupnog kreiranja NFT-ova. Kada se više tokena kreira u okviru iste transakcije, podaci se eksplicitno čuvaju samo za prvi token, dok ostali implicitno nasleđuju iste vrednosti. Ovakav pristup je efikasan u slučaju identičnih instanci, ali postaje ograničavajući u scenarijima koji zahtevaju veću raznovrsnost atributa unutar jedne serije.
+
+Analiza je fokusirana na statičke modele proizvoda i usluga, kod kojih se atributi ne menjaju često ili ne zahtevaju složene dinamičke interakcije. Poslovni modeli sa izraženom dinamikom podataka nisu obuhvaćeni ovom analizom, a njihova podrška bi zahtevala dodatne mehanizme ažuriranja i potencijalno drugačiju strukturu skladištenja.
+
+Pre dizajna sistema za elektronsku trgovinu neophodno je pažljivo proceniti stepen potrebne nadogradivosti i modularnosti, kao i njihov odnos prema složenosti implementacije i bezbednosnim rizicima. Svaka od navedenih arhitektonskih odluka ima direktan uticaj na potrošnju gasa, veličinu bajtkoda i ukupne troškove postavljanja i održavanja platforme, kao i na troškove izvršavanja transakcija krajnjih korisnika, što nije eksplicitno analizirano u okviru predložene metodologije zbog složenosti sistema.
+
+Dodatno, u okviru date metodologije nije detaljno analizirana bezbednost integracije blokčejn sistema sa spoljašnjim izvorima podataka, kao ni uticaj na performanse predloženih rešenja. Takođe, nisu sprovedena merenja latencijskog kašnjenja prilikom upotrebe sadržajno adresiranih sistema za decentralizaciju prezentacionog sloja, što može imati značajan uticaj na korisničko iskustvo.
+
+Predstavljeni koncept može se primeniti i na druge, ne-EVM blokčejn sisteme, uz ograničenje da se razmatraju blokčejn arhitekture zasnovane na linearnom nizu blokova povezanih u strogo hronološki lanac, dok paradigme zasnovane na usmerenim acikličnim grafovima nisu obuhvaćene ovim istraživanjem.
+
+U ovom slučaju dodatno ograničenje predstavlja pretpostavka da izabrani blokčejn sistem podržava postojanje mape vlasništva u okviru jednog pametnog ugovora, kao što je slučaj sa Eterijum blokčejnom. Ovakav model podrazumeva mogućnost skladištenja svih tokena unutar jednog ugovora sa praktično neograničenim skladišnim kapacitetom, čime se omogućava primena identične NFT logike. Dodatno, pretpostavlja se da veličina adrese ne zauzima celu skladišnu jedinicu, kako bi se omogućilo iskorišćavanje preostalih bitova za reprezentaciju dodatnih informacija o entitetu.
+
+Suprotan primer predstavlja arhitektura kakva je primenjena na asinhronoj blokčejn mreži \textit{Telegram Open Network}, gde se svaki NFT implementira kao zaseban pametni ugovor, sa ograničenim skladišnim kapacitetom i uslovljenom asinhronom komunikacijom. U takvom modelu nije moguće primeniti model implicitnog vlasništva na način korišćen u analiziranim NFT standardima.
+
+\section{Naučni doprinos}
+Naučni doprinos ove disertacije ogleda se u sistematskom povezivanju teorijskih, konstruktivnih i eksperimentalnih aspekata primene blokčejn tehnologija u domenu elektronske trgovine, kroz razvoj integrisanog modela koji omogućava kvantitativno i kvalitativno sagledavanje ograničenja i mogućnosti ovakvih sistema. Na osnovu sprovedenog istraživanja i dobijenih rezultata, izdvajaju se sledeći naučni doprinosi:
+
+\begin{enumerate}
+\item Formalizacija minimalnog tehničkog modela elektronske trgovine u kontekstu javnih blokčejn sistema, čime se uspostavlja jasan teorijski okvir za analizu i poređenje različitih arhitektonskih pristupa.
+\item Definisanje analitičkog okvira za evaluaciju blokčejn sistema kao posebne klase distribuiranih informacionih sistema, kojim se omogućava strukturisano razmatranje odnosa između decentralizacije, sigurnosti i performansi, kao i njihovog uticaja na složenost i operativna svojstva sistema.
+\item Formalizacija optimizovanog modela reprezentacije entiteta elektronske trgovine sa jedinstvenim identifikatorima unutar jedne skladišne jedinice, zasnovanog na standardima za nezamenljive tokene, čime se smanjuje broj pristupa skladištu kao dominantnog faktora troškova.
+\item Formalna analiza i modelovanje mehanizama implicitnog vlasništva u standardima za nezamenljive tokene, uključujući izvođenje aproksimativnih funkcija troška eksplicitnog razrešavanja vlasništva u zavisnosti od udaljenosti od početnog elementa grupe.
+\item Komparativna analiza troškovne efikasnosti osnovnih operacija standarda ERC-721, ERC-721A i ERC-721Psi u različitim operativnim scenarijima, zasnovana na eksperimentalnim merenjima potrošnje gasa.
+\item Predlog arhitektonskog modela distribuirane platforme elektronske trgovine zasnovane na javnoj blokčejn mreži, koji integriše optimizovane modele skladištenja, modularni dizajn pametnih ugovora i decentralizovan prezentacioni sloj kroz primenu sadržajno adresiranih sistema, uz očuvanje suvereniteta korisnika nad kriptografskim identitetom.
+\end{enumerate}
+
+\section{Struktura disertacije}
+Rad je strukturiran kroz više međusobno povezanih celina koje prate logički tok od teorijskih osnova, preko analitičkog i metodološkog okvira, do konstruktivne realizacije i eksperimentalne evaluacije predloženog rešenja, pri čemu se u uvodnom poglavlju sistematski definišu predmet, ciljevi, hipoteze i metodološki pristup istraživanja.
+
+U drugoj glavi uspostavlja se konceptualni okvir za analizu savremenih sistema elektronske trgovine. Razmatraju se radni i informacioni sistemi, kao i formalna izražajnost poslovnih zahteva koje takvi sistemi treba da podrže. Dalje se analiziraju osnovni arhitektonski obrasci organizacije informacionih sistema, uz naglasak da većina savremenih rešenja zadržava centralizovan model upravljanja, nezavisno od toga da li su implementirana na jednom ili više računarskih čvorova, kao i ograničenja takvog pristupa. U tom kontekstu uvodi se pojam decentralizacije kroz različite dimenzije, kao ključni teorijski okvir za razumevanje potencijala unapređenja autonomije i korisničkog iskustva. Ova osnova služi kao polazište za dalju analizu izgradnje platforme za e-trgovinu na javnim blokčejn tehnologijama, sa ciljem povećanja otpornosti i distribuirane kontrole, čime se uvodi problem transakcionih troškova za korisnike i definiše centralni istraživački fokus ovog doktorskog rada.
+
+Treća glava uspostavlja analitički okvir za evaluaciju informacionih sistema kroz njihova tehnička svojstva i kompromis između performansi, skalabilnosti, dostupnosti i bezbednosti. Analiza obuhvata fundamentalne principe i ograničenja distribuiranih sistema, uključujući CAP teoremu, skalabilnost, zagušenje, režijsko opterećenje, koordinaciju, propagaciju, replikaciju, konsenzus i kontrolu konkurentnog pristupa, kao i njihove posledice po performanse i operativnu stabilnost sistema. Posebna pažnja posvećena je operativnim svojstvima informacionih sistema kroz bezbednosne modele, kriptografske mehanizme, autentikaciju, autorizaciju i evidenciju, čime se pokazuje da tehnička arhitektura sistema istovremeno određuje i njegove mogućnosti i njegova ograničenja.
+
+Četvrta glava rada razmatra blokčejn kao infrastrukturni sloj distribuiranih sistema. Polazeći od teorijskih osnova, uključujući kriptografsko vremensko obeležavanje, dokaz uloženog rada i rane modele elektronskog novca, uvodi se kontekst nastanka savremenih blokčejn mreža. Posebno se analizira Bitkoin kao prvi praktično realizovan sistem, koji kroz javno dostupnu evidenciju transakcija i Nakamoto konsenzus omogućava postizanje saglasnosti u okruženju bez međusobnog poverenja. Dalje se razmatraju ključne arhitektonske komponente blokčejn sistema, uključujući strukturu blokova i transakcija, modele upravljanja stanjem i kontrole pristupa, pametne ugovore, apstrakciju naloga i međulančanu komunikaciju. Posebna pažnja posvećena je blokčejn trilemi između decentralizovanosti, sigurnosti i skalabilnosti, ukorenjenoj u samim teorijskim osnovama blokčejn sistema. Na kraju, imajući u vidu da se blokčejn često kombinuje sa spoljašnjim sistemima za skladištenje podataka, uvodi se IPFS kao distribuirani sistem za skladištenje sadržaja, sa fokusom na sadržajno adresiranje, integritet i dostupnost podataka.
+
+Peta glava pruža pregled arhitekture Eterijum blokčejna kroz analizu konsenzusnog i izvršnog sloja. Detaljno se razmatraju mehanizmi zasnovani na dokazu uloga, uključujući raspodelu validatora, proces glasanja, kao i algoritme izbora kanonske grane i finalizacije, čime se omogućava analiza bezbednosnih mehanizama, ekonomskih modela i potencijalnih pretnji stabilnosti mreže. U nastavku se obrađuju unutrašnja struktura izvršnog sloja sistema, model globalnog stanja, rad Eterijum virtuelne mašine (EVM) i proces obrade transakcija, čime se pruža integrisan i celovit prikaz funkcionisanja Eterijuma kao decentralizovanog računarskog sistema.
+
+Šesta glava rada posvećena je metodološkoj optimizaciji pametnih ugovora za potrebe elektronske trgovine, sa ciljem smanjenja potrošnje gasa i unapređenja korisničkog iskustva. U prethodnom radu razmatrano je modelovanje elektronskih kupona kao specifične instance digitalnih entiteta, što predstavlja reprezentativan studijski slučaj za širu primenu nezamenljivih tokena u elektronskoj trgovini. Analiza je usmerena na operacije pristupa trajnom skladištu kao ključni faktor optimizacije, budući da one dominantno određuju ukupnu cenu izvršavanja na blokčejn sistemima, uz predlog kompaktnog pakovanja više informacija u jednu skladišnu jedinicu i korišćenja postojećih NFT standarda. Imajući u vidu široku primenu Eterijum virtuelne mašine, razmatraju se standardi ERC-721, ERC-721A i ERC-721Psi kroz detaljnu analizu troškova operacija kreiranja, prenosa i uništavanja. Predloženi pristupi evaluirani su eksperimentalnim merenjima potrošnje gasa, čime se omogućava objektivno poređenje njihove efikasnosti i praktične primenljivosti.
+
+Sedma glava predstavlja diskusiju o mogućnostima daljeg unapređenja i proširenja funkcionalnosti pametnih ugovora u okviru NFT-zasnovane platforme za elektronsku trgovinu. Analizirane su dodatne funkcionalnosti NFT standarda, uključujući mehanizme autorizacije, metapodataka i raspodele prihoda, kao i bezbednosni i upravljački obrasci pametnih ugovora. Poseban akcenat stavljen je na modularni dizajn i nadogradive arhitekture, koje omogućavaju razvoj složenih i dugoročno održivih sistema. Takođe je obrađena integracija sa spoljašnjim izvorima podataka putem proročišta, kao i izazovi decentralizacije prezentacionog sloja. Na kraju se analiziraju ograničenja predložene metodologije, čime su definisani potencijalni pravci daljeg unapređenja i istraživanja.

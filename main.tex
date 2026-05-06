@@ -41,13 +41,9 @@
 \usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\newtheorem{definicija}{Definicija}
-\newtheorem{teorema}{Teorema}
+\newtheorem{definicija}{Definicija}\numberwithin{definicija}{chapter}
+\newtheorem{teorema}{Teorema}\numberwithin{teorema}{chapter}
 \newtheorem*{posledica}{Posledica}
-\newtheorem{ograničenje}{Ograničenje}
-
-\numberwithin{definicija}{chapter}
-\numberwithin{teorema}{chapter}
 
 \usepackage{setspace}
 \setstretch{1.2}
@@ -104,6 +100,7 @@
 \include{chapters/chapter0/chapter0}
 
 \mainmatter
+\include{chapters/chapter00/chapter00}
 \include{chapters/chapter1/chapter1}
 \include{chapters/chapter2/chapter2}
 \include{chapters/chapter3/chapter3}
