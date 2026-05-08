@@ -1,481 +1,593 @@
-\chapter{Blokčejn kao infrastrukturni sloj distribuiranih sistema}
+\chapter{Analitički okvir za evaluaciju informacionih sistema}
+Cilj ovog poglavlja jeste da uspostavi metodologiju za analizu tehničkih prednosti i ograničenja informacionih sistema, nezavisno od toga da li su oni centralizovani, distribuirani ili decentralizovani. Fokus je isključivo na njihovim \textbf{tehničkim atributima infrastrukture}, dok se menadžerski, organizacioni i ekonomski faktori pominju samo okvirno, jer ne predstavljaju predmet detaljne analize ove disertacije.
 
-%\section{Kriptografske i sistemske osnove blokčejn tehnologije}
-Digitalni dokumenti u tekstualnom, audio, slikovnom i video formatu podložni su lakoj i često neprimetnoj izmeni, što nameće problem pouzdanog utvrđivanja vremena njihovog nastanka ili poslednje modifikacije. Ovaj izazov verifikabilnog vremenskog obeležavanja digitalnih podataka u nepouzdanom okruženju rešen je kroz koncepte kriptografskog vremenskog obeležavanja, pri čemu se sadržaj dokumenata najpre kriptografski hešira bez njegovog otkrivanja, a zatim povezuje sa prethodnim zapisima putem heš vrednosti, čime se formira lanac kriptografski zavisnih vremenskih oznaka \cite{haber1990time, bayer1993improving, massias2002timestamp}. Ovakva struktura omogućava detekciju svake naknadne izmene, budući da bi promena jednog zapisa narušila konzistentnost svih narednih veza u lancu. Ključni doprinos ovih radova ogleda se u demonstraciji da se integritet i hronološki redosled podataka mogu garantovati oslanjanjem na kriptografske mehanizme i javno proverljive dokaze, bez potrebe za potpunim poverenjem u centralni autoritet.
-
-Masovno slanje elektronske pošte bez značajnog troška omogućilo je ranu zloupotrebu otvorenih računarskih sistema kroz nepoželjne poruke \eng{spam}. Kao odgovor na ovaj problem, predloženi su mehanizmi u kojima se izvršavanje operacija od značaja uslovljava rešavanjem računski zahtevnih, ali lako proverljivih zadataka. Ovaj pristup uvodi ekonomsku barijeru pristupu resursima, stvarajući asimetriju u kojoj legitimni korisnici snose zanemarljiv dodatni trošak, dok napadači koji pokušavaju da generišu veliki broj zahteva moraju da plate proporcionalno visoku cenu u vidu procesorskog vremena i potrošnje energije \cite{Dwork1992PricingVP, back2002hashcash}. Ovi radovi formalizuju koncept dokazivanja uloženog rada kao mehanizma za regulaciju ponašanja u distribuiranim sistemima i pokazuju da se bezbednost sistema može postići korišćenjem ekonomskog troška, bez oslanjanja na identitet učesnika ili centralnu kontrolu.
-
-Pokušaji realizacije elektronskog novca sa svojstvima fizičkog gotovinskog novca, kao što su privatnost i nepratljivost transakcija, zasnivali su se na upotrebi slepih potpisa i kriptografskih protokola koji omogućavaju izvršavanje plaćanja bez otkrivanja identiteta korisnika. Međutim, ovi sistemi suočili su se sa fundamentalnim problemom dvostruke potrošnje \eng{double spending}, odnosno mogućnošću da se isti digitalni token iskoristi više puta \cite{chaum1983blind}. Predložena rešenja uglavnom su se oslanjala na centralizovane entitete koji vode evidenciju o već potrošenim jedinicama, čime se implicitno uvodi potreba za poverenjem u treću stranu \cite{chaum1985security}. Kasniji predlozi \cite{szabo2005bit, dai1998b} nastojali su da redukuju ulogu centralnog autoriteta, ali nisu u potpunosti razrešili problem koordinacije i postizanja globalne saglasnosti u otvorenom distribuiranom okruženju. Ovi radovi jasno identifikuju dvostruku potrošnju kao centralni tehnički izazov u dizajnu digitalnih monetarnih sistema.
-
-\section{Geneza blokčejn tehnologije}
-Na prethodno predstavljenim teorijskim i tehničkim osnovama razvija se blokčejn tehnologija, koja svoju prvu široko prihvaćenu praktičnu realizaciju dobija kroz elektronski sistem za plaćanje \textit{Bitcoin} (Bitkoin) \cite{nakamoto2008bitcoin, crosby2016blockchain}. Osnovna inovacija ovog pristupa ogleda se u \textit{objavljivanju svih transakcija kao javno dostupnih}, čime se napušta tradicionalni model privatnih knjiga evidencije \eng{ledger} kakve održavaju centralizovane finansijske institucije, čime se uvodi javno dostupna, distribuirana knjiga evidencije koju zajednički održavaju učesnici mreže.
-
-U odsustvu centralnog autoriteta od poverenja, javlja se fundamentalni problem postizanja saglasnosti o stanju distribuirane knjige evidencije među međusobno nepoverljivim učesnicima mreže, kao i obezbeđivanja napredovanja ovako definisanog informacionog sistema. Rešenje ovog problema ostvareno je kroz \textit{Nakamoto konsenzus} \cite{stifter2018agreement}, koji integriše niz prethodno nezavisnih kriptografskih i sistemskih koncepata. 
-
-Ovaj mehanizam zasniva se na uvođenju oskudnog resursa \eng{scarce resource}, na osnovu kojeg učesnici mreže stiču pravo da učestvuju u određivanju narednog stanja sistema, kao i na hronološkoj upotrebi kriptografskog vremenskog obeležavanja svakog napredovanja, čime se implicitno obezbeđuje sigurnost i konzistentnost sistema kroz evidenciju korišćenja tog resursa.
-
-Na ovaj način Bitkoin predstavlja jedinstven, javni i dozvolom neograničen distribuirani sistem koji omogućava postizanje globalne saglasnosti o stanju mreže bez potrebe za centralizovanim autoritetom, uz očuvanje sigurnosti i integriteta podataka. Shodno tome, blokčejn sistemi mogu se posmatrati kao posebna klasa distribuiranih sistema u kojima su mehanizmi replikacije, koordinacije i konsenzusa strogo definisani protokolskim pravilima i kriptografskim ograničenjima.
-
-\begin{definicija}\label{def:blokcejn}
-Blokčejn predstavlja distribuiranu mrežu ravnopravnih čvorova koja održava zajedničku globalnu knjigu podataka evidentiranjem transakcija u blokove, povezane u strogo hronološki lanac pomoću kriptografskih heš referenci, čime se obezbeđuje nepromenljivost i proverljivost zapisa.
-\end{definicija}
-
-% TODO UBACI SLIKU
-
-Budući da se blokčejn posmatra kao distribuirana knjiga evidencije koju zajednički održavaju učesnici mreže, stanje sistema se \textbf{replicira} kod svih čvorova. Pri tome, svaki čvor ne samo da održava lokalnu kopiju trenutnog stanja, već i dosledno beleži sva njegova napredovanja u identičnom redosledu u formi lanca blokova. Na taj način blokčejn ostvaruje osobinu \textbf{replikovane mašine stanja}, što ga čini \textbf{logički centralizovanim} i omogućava determinističku rekonstrukciju stanja sistema u bilo kom trenutku njegove istorije.
-
-Replikacijom se obezbeđuje da svaki čvor mreže održava lokalnu kopiju distribuirane evidencije, čime se postiže visok stepen \textbf{dostupnosti} sistema, kao i otpornost na pojedinačne kvarove i privremenu nedostupnost čvorova. U zavisnosti od arhitektonskih odluka i organizacije sistema, replikacija stanja može biti realizovana u više oblika, među kojima se izdvajaju:
+Da bi se obezbedio standardizovan okvir evaluacije, karakteristike informacionih i softverskih arhitektura formalizuju se kroz \textbf{atribute kvaliteta} prema IEEE i ISO standardima \cite{bass2021software, 2013ISOI}. Za potrebe ove disertacije atributi kvaliteta biće grupisani u sledeće kategorije:
 \begin{enumerate}
-\item \textbf{potpuna replikacija stanja}, u kojoj svaki čvor održava celokupno stanje i kompletnu istoriju mreže, u skladu sa Definicijom \ref{def:replikacija}, što je karakteristično za većinu klasičnih javnih blokčejn sistema,
-\item \textbf{parcijalna replikacija} \cite{dang2019towards}, u kojoj čvorovi održavaju i validiraju samo podskup stanja i transakcija, primenom tehnika razdeljivanja podataka, u skladu sa Definicijom \ref{def:sharding},
-\item \textbf{slojevita replikacija} \cite{sguanci2021layer}, pri čemu se uvode dodatni slojevi kao proširenja iznad osnovnog blokčejna, koji obuhvataju skup protokolskih mehanizama za komunikaciju i verifikaciju stanja u odnosu na osnovni sloj, u skladu sa Definicijom \ref{def:layering}.
+\item \textbf{Performanse i efikasnost:} performanse, skalabilnost, efikasnost korišćenja resursa, troškovna efikasnost, operativno održavanje, fleksibilnost, energetska efikasnost.
+\item \textbf{Operativna svojstva:} dostupnost, integritet, sigurnost, pouzdanost, otpornost na greške, konzistentnost podataka.
+\item \textbf{Upotrebljivost:} korisničko iskustvo, lakoća učenja \eng{learnability}, operabilnost, pristupačnost.
+\item \textbf{Funkcionalna ispravnost:} ispravnost funkcionalnih zahteva, potpunost funkcija, preciznost izvodenja funkcija, usklađenost sa specifikacijom.
 \end{enumerate}
 
-Iako se u izvornom obliku blokčejn definiše kao linearno uređen niz blokova povezanih u strogo hronološki lanac, u kasnijem razvoju pojavile su se i paradigme zasnovane na usmerenim acikličnim grafovima (DAG), koje odstupaju od klasične blokčejn strukture \cite{benvcic2018distributed}. Ovakvi sistemi zadržavaju određene zajedničke osobine sa tradicionalnim blokčejn mrežama, ali su njihovi mehanizmi konsenzusa, model upravljanja stanjem i struktura podataka suštinski različiti, zbog čega se u daljem tekstu razmatra isključivo klasični blokčejn model zasnovan na linearnoj strukturi blokova.
+Ovakva klasifikacija omogućava konzistentno i teorijski utemeljeno poređenje informacionih sistema na tehničkom nivou. Razmatranje ovih atributa jasno odvaja \textbf{tehnička svojstva sistema}, koja su primarni predmet istraživanja u ovoj disertaciji, od šireg organizacionog i poslovnog konteksta.
 
-Bez obzira na konkretnu implementaciju, blokčejn sistemi se u literaturi često klasifikuju prema stepenu otvorenosti i modelu kontrole pristupa na dve osnovne kategorije \cite{solat2021permissioned}:
+\section{CAP teorema}
+Jedno od najznačajnijih kvalitativnih ograničenja u distribuiranim sistemima proizilazi iz činjenice da su \textbf{mrežne particije} neizbežan događaj: pitanje nije ,,da li'' će se dogoditi, već ,,kada''. Ova činjenica je najjasnije formalizovana kroz \textit{CAP teoremu}, koja definiše osnovni skup arhitektonskih kompromisa u dizajnu distribuiranih sistema.
+
+Mrežna particija može nastati u različitim situacijama, uključujući:
 \begin{enumerate}
-\item \textbf{Dozvolom neograničeni} \eng{permissionless} - \textit{javni blokčejn sistemi} otvoreni za sve učesnike, u kojima ne postoji potreba za prethodnom autorizacijom. U ovim mrežama svaki korisnik može slati transakcije i, uz ispunjenje protokolom definisanih uslova, učestvovati u procesu predlaganja i validacije blokova.
-
-\item \textbf{Dozvolom ograničeni} \eng{permissioned} - sistemi u kojima je učešće ograničeno na unapred definisan skup identifikovanih i kontrolisanih entiteta. U okviru ove kategorije razlikuju se:
-\begin{itemize}
-\item \textit{privatni} \eng{private} blokčejn sistemi, u kojima jedna organizacija upravlja mrežom i kontroliše proces validacije, čime se ostvaruje centralizovan model upravljanja, i
-\item \textit{udruženi} \eng{consortium} blokčejn sistemi, u kojima više organizacija zajednički učestvuje u upravljanju i validaciji, ostvarujući delimično decentralizovan model kontrole.
-\end{itemize}
+\item \textit{prekid mrežne povezanosti} - fizički prekid veze između čvorova koji nastavljaju da rade, ali više ne mogu da komuniciraju,
+\item \textit{ekstremno povećanje vremena odaziva} - čvor je operativan ali vreme odaziva datog čvora prelazi prag koji je prihvatljiv (npr. skok sa 50 ms na nekoliko minuta), pa ga ostatak sistema tretira kao nedostupan,
+\item \textit{greške u mrežnoj konfiguraciji} - ispravni čvorovi ne vide jedni druge zbog pogrešne konfiguracije.
 \end{enumerate}
 
-Predviđa se da će budući razvoj blokčejn tehnologije dovesti do okruženja u kojem postoji veliki broj međusobno povezanih, specijalizovanih blokčejn sistema, umesto jedinstvenog dominantnog lanca \cite{vo2018internet}, te će se elektronska trgovina u sve većoj meri proširiti na različite blokčejn platforme \cite{herlihy2019cross}.
+Ponašanje sistema u ovakvim uslovima najpreciznije je opisano CAP teoremom, koju je prvi formulisao Eric Brewer \cite{brewer2000towards}, a formalno dokazali Gilbert i Lynch \cite{gilbert2002brewer}. Teorema definiše osnovni kompromis sa kojim se suočavaju svi distribuirani sistemi koji upravljaju deljenim stanjem.
 
-Dodatni slojevi u okviru slojevite arhitekture ne poseduju nezavisan konsenzus mehanizam, već se konačna odluka o validnosti stanja delegira osnovnom lancu, koji ima mogućnost da potvrdi ili ospori rezultate izvršavanja. Iz tog razloga, viši slojevi svoju bezbednost zasnivaju na bezbednosnim garancijama osnovnog sloja. U tom kontekstu, slojevita replikacija uvodi određena ograničenja u pogledu fleksibilnosti, budući da dodatni slojevi moraju biti kompatibilni sa pravilima osnovnog lanca.
-
-Kao alternativni pristup, uvode se \textit{bočni lanci} \eng{sidechains} \cite{back2014enabling}, koji omogućavaju uspostavljanje nezavisnih blokčejn sistema povezanih sa osnovnim lancem, bez ograničenja koja nameće slojevita arhitektura, ali uz potencijalnu zavisnost u pogledu vrednosti i dodatni prostor za napade u međulančanoj komunikaciji. Na taj način omogućava se paralelno funkcionisanje raznovrsnih blokčejn sistema sa različitim pravilima izvršavanja i performansnim karakteristikama.
-
-U cilju omogućavanja komunikacije između proizvoljnih blokčejn sistema, uvode se protokoli interoperabilnosti \eng{interoperability} \cite{belchior2021survey}, koji omogućavaju razmenu vrednosti i podataka između lanaca posredstvom \textit{relejnih} čvorova \eng{relayers}. Ovi protokoli mogu omogućiti atomično izvršavanje definisano uslovima zapisanim u pametnim ugovorima na oba blokčejna \cite{tsabary2021mad}. 
-
-U zavisnosti od nivoa poverenja i složenosti, često se uvode posrednički \textit{mostovi} \eng{bridges} za povezivanje lanaca, koji mogu predstavljati centralnu tačku otkaza i potencijalni vektor napada, uključujući međulančno dvostruko trošenje \cite{mukherjee2025double}. Dodatno, povećana složenost ovakvih sistema može negativno uticati na korisničko iskustvo i povećati rizik od implementacionih grešaka koje mogu dovesti do kompromitacije sistema \cite{zhang2024security}.
-
-\subsection{Transakcije i blokovi}
-Kada korisnici žele da ostvare interakciju sa mrežom, oni, u skladu sa Definicijom \ref{def:zahtev}, formiraju transakciju kao konkretnu instancu elementarnog zahteva sistema, kriptografski je potpisuju odgovarajućim novčanikom i prosleđuju mreži na dalju obradu. U ovom kontekstu, novčanik \eng{wallet} predstavlja softverski mehanizam za upravljanje privatnim ključevima ili semenskim frazama \eng{seed phrase}, kao i za konstruisanje transakcija.
-
-Na ovaj način ostvaruje se \textit{autentikacija zasnovana na kriptografiji}, čime se obezbeđuje \textbf{autentičnost} pošiljaoca i dokaz vlasništva nad sredstvima. Istovremeno, upotreba digitalnog potpisa obezbeđuje \textbf{neporecivost} transakcije, budući da se validan potpis ne može generisati bez posedovanja odgovarajućeg privatnog ključa.
-
-Iako su transakcije javno vidljive, sistem ne koristi eksplicitne identitete učesnika, već kriptografske adrese, čime se ostvaruje ograničen oblik \textbf{poverljivosti} u vidu pseudonimnosti, dok se potpuna zaštita sadržaja transakcija ne obezbeđuje na osnovnom protokolskom nivou.
-
-\begin{definicija}
-Transakcija predstavlja kriptografski zaštićen digitalni zapis kojim se prenosi vrednost ili podaci između učesnika distribuiranog sistema.
-\end{definicija}
-
-U zavisnosti od načina na koji se potpisane transakcije distribuiraju mreži na dalje procesuiranje, mogu se razlikovati dva osnovna modela blokčejn sistema:
-\begin{enumerate}
-\item Transakcija se smešta u lokalni skup nepotvrđenih transakcija \eng{mempool} \cite{bai2025determining} i propagira kroz mrežu razmenom između čvorova, čime se postiže eventualna konvergencija globalnog skupa nepotvrđenih transakcija, u okviru kojeg čeka da bude uključena u naredni predlog stanja,
-\item Transakcija se direktno prosleđuje odgovarajućim čvorovima prema unapred definisanom rasporedu obrade \cite{yakovenko2018solana}, pri čemu se uključuje u naredni predlog stanja bez potrebe za čekanjem u globalnom skupu.
-\end{enumerate}
-
-U otvorenom i distribuiranom okruženju, obrada, validacija i potvrđivanje transakcija predstavljaju potrošnju zajedničkih računarskih i komunikacionih resursa. Iz tog razloga, javni blokčejn sistemi uvode mehanizam naplate korišćenja mreže u primarnu kriptovalutu blokčejna \eng{native cryptocurrency}, kojim se istovremeno ograničava mogućnost zloupotreba u vidu masovnog slanja beskorisnih transakcija i obezbeđuje ekonomski podsticaj učesnicima koji učestvuju u održavanju i bezbednosti mreže.
-
-\begin{definicija}\label{def:txfee}
-Transakciona naknada \eng{transaction fee, tx fee} predstavlja iznos koji korisnik prilaže uz transakciju kao nadoknadu za korišćenje mrežnih resursa i njeno eventualno uključivanje u blokčejn.
-\end{definicija}
-
-Transakcione naknade predstavljaju dominantan mehanizam \textit{implicitnog određivanja prioriteta transakcija} u javnim blokčejn sistemima. One stvaraju ekonomski podsticaj za učesnike zadužene za formiranje blokova, koji su motivisani da prilikom selekcije nepotvrđenih transakcija favorizuju one sa većim priloženim naknadama. Na ovaj način ostvaruje se tržišno zasnovan mehanizam raspodele ograničenog kapaciteta blokova, bez potrebe za centralizovanom kontrolom ili eksplicitnim pravilima prioritizacije.
-
-\begin{definicija}
-Blok predstavlja skup transakcija i odgovarajuće zaglavlje koje sadrži metapodatke neophodne za verifikaciju i povezivanje blokova, čime se formalizuje globalno napredovanje stanja celokupnog sistema.
-\end{definicija}
-
-Početni element lanca naziva se \textit{blok geneze} \eng{Genesis block} i predstavlja jedini blok koji nema prethodnika, te se eksplicitno inicijalizuje kako bi sistem mogao započeti svoj rad, dok je dodavanje svakog narednog bloka definisano protokolom. Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu posmatrati kao logički istovremene, budući da dele istu vremensku oznaku zabeleženu u zaglavlju bloka.
-
-Sve transakcije u okviru bloka organizuju se u Merkleovo stablo, čiji koren predstavlja jedinstvenu heš vrednost koja sažima njihov sadržaj \cite{merkle1987digital}. Svaka izmena bilo koje transakcije dovela bi do promene odgovarajuće heš vrednosti, a time i korena stabla.
-
-Ova vrednost se uključuje u zaglavlje bloka, zajedno sa vremenskom oznakom (koja predstavlja \textbf{logički sat} distribuiranog sistema), kriptografskom heš referencom na prethodni blok i dodatnim protokolskim parametrima (verzijom protokola, parametrima konsenzusa i slično).
-
-Heširanjem zaglavlja formira se jedinstvena kriptografska referenca bloka, čime se ostvaruje mehanizam \textit{kriptografskog vremenskog obeležavanja svakog napredovanja sistema}. Ovakva struktura predstavlja osnovu \textbf{integriteta} i hronološke konzistentnosti blokčejn sistema, jer bi svaka naknadna izmena sadržaja jednog bloka narušila validnost svih njegovih naslednika u lancu, čime bi bila kompromitovana celokupna sigurnost sistema.
-
-\subsubsection{Performanse blokčejn sistema}
-U naučnoj literaturi, performanse blokčejn sistema analiziraju se korišćenjem različitih metrika koje se razlikuju prema nivou apstrakcije i perspektivi posmatranja \cite{fan2020performance}. U zavisnosti od ciljne grupe i nivoa analize, najčešće se izdvajaju sledeće kategorije metrika:
-\begin{enumerate}
-\item \textbf{Makro metrike} - pružaju uvid u performanse sistema iz perspektive krajnjeg korisnika i aplikacionog sloja, posmatrajući sistem kao celinu. Najznačajnije makro metrike obuhvataju propusnost transakcija, izraženu kao broj uspešno potvrđenih transakcija u jedinici vremena, i latenciju, koja predstavlja vreme proteklo od trenutka slanja transakcije do njenog potvrđivanja u sistemu.
-
-\item \textbf{Mikro metrike} - odnose se na performanse pojedinačnih komponenti i podprocesa unutar blokčejn sistema, iz perspektive dizajnera i implementatora sistema. Ove metrike obuhvataju, između ostalog, vreme propagacije transakcija i blokova, vreme izvršavanja pametnih ugovora, vreme ažuriranja stanja, trajanje konsenzusnog procesa, kao i efikasnost kriptografskih operacija poput heširanja i digitalnog potpisivanja.
-\end{enumerate}
-
-Pored empirijskih merenja, blokčejn sistemi se mogu analizirati i kroz formalne i analitičke modele, sa ciljem izvođenja teorijskih ograničenja performansi bez potrebe za izvršavanjem sistema. Iako performanse obuhvataju više dimenzija, metrika broja transakcija po sekundi često se ističe kao ključni indikator praktične upotrebljivosti sistema, budući da direktno odražava njegov kapacitet za obradu zahteva u realnim uslovima.
-
-\begin{definicija}
-Performanse blokčejn sistema kvantifikuju se kao broj transakcija po sekundi \eng{transactions per second, TPS}, što predstavlja dugoročni prosečan broj transakcija koje mreža može uključiti u blokove i potvrditi u jedinici vremena, pod pretpostavkom stabilnog rada sistema.
-\end{definicija}
-
-Propusnost \eng{throughput} blokčejn sistema označava stvarni broj transakcija koje mreža efektivno obradi i potvrdi u jedinici vremena, pri konkretnim uslovima opterećenja, stanja mreže i ponašanja učesnika. Za razliku od kapaciteta, koji predstavlja protokolom definisanu gornju granicu, propusnost je operativna veličina i u praksi može varirati tokom vremena, pri čemu važi da je njena vrednost uvek manja ili jednaka kapacitetu sistema.
-
-U uslovima povećanog intenziteta dolaznih transakcija, kada stopa njihovog pristizanja prelazi kapacitet sistema definisan protokolom, dolazi do \textbf{zagušenja}. Kako se broj nepotvrđenih transakcija povećava, raste konkurencija za uključivanje u blok, a s obzirom na to da su transakcije sa višim naknadama prioritetne, dolazi do rasta prosečnih transakcionih naknada, u skladu sa Teoremom \ref{teorema:kapacitet}.
-
-\begin{posledica}\label{teorema:performanse}
-Performanse blokčejn sistema su fundamentalno ograničene veličinom pojedinačnog bloka $n$ i očekivanim vremenskim razmakom između generisanja uzastopnih blokova $T$, koji su određeni protokolom, nezavisno od dodatnih mehanizama kontrole opterećenja ili optimizacija na višim slojevima sistema.
-\end{posledica}
-
-\subsubsection{Ograničenja protokola u Bitkoin mreži}
-U Bitkoinu, zaglavlje bloka ima fiksnu veličinu od 80 bajtova i sadrži skup metapodataka neophodnih za validaciju bloka i njegovo kriptografsko povezivanje sa ostatkom lanca. Ovi metapodaci uključuju:
-\begin{enumerate}
-\item \textbf{Verzija} (4 bajta) - identifikator verzije bloka koji određuje skup protokolskih pravila i validacionih uslova koje čvorovi mreže treba da primenjuju prilikom njegove obrade,
-\item \textbf{Heš prethodnog bloka} (32 bajta) - kriptografska referenca na prethodni blok u lancu, kojom se obezbeđuje da bilo kakva izmena sadržaja prethodnog bloka nužno dovodi do promene zaglavlja tekućeg bloka,
-\item \textbf{Merkleov koren transakcija} (\textit{tx\_root}) (32 bajta) - heš vrednost korena Merkleovog stabla formiranog od svih transakcija uključenih u blok,
-\item \textbf{Vremenska oznaka} (4 bajta) - trenutak početka procesa heširanja bloka izražen u \textit{Unix} formatu, blok se smatra validnim ukoliko ova vrednost ne odstupa značajno od lokalnog vremena ostalih čvorova u mreži,
-\item \textbf{\textit{nBits}} (4 bajta) - kompaktno kodirana reprezentacija ciljnog praga \eng{target hash}, kojom se određuje težina kriptografske zagonetke i dinamički reguliše tempo generisanja novih blokova u mreži,
-\item \textbf{Počasna promenljiva} \eng{nonce} (4 bajta) - slučajna ili iterativno menjana vrednost koja predstavlja rešenje prethodne kriptografske zagonetke, u slučaju iscrpljivanja njenog opsega, dodatno se modifikuje Merkleov koren \eng{extra nonce}.
-\end{enumerate}
-
-U Bitkoin protokolu, maksimalna veličina bloka je namerno ograničena na 1 MB \cite{croman2016scaling}, što predstavlja konzervativan dizajnerski izbor sa ciljem očuvanja decentralizacije i ograničavanja zahteva za skladištenje i propusni opseg čvorova mreže. Ovo ograničenje direktno utiče na performanse i dovodi do efektivnog kapaciteta od približno 7 TPS.
-
-Pokušaji izmene ovog parametra kroz povećanje veličine bloka bili su predmet višegodišnjih tehničkih i ideoloških rasprava unutar zajednice \eng{Bitcoin scaling debate}, koje su u pojedinim slučajevima rezultovale trajnim podelama mreže i nastankom alternativnih protokolskih implementacija.
-
-\subsection{Sistem postizanja konsenzusa i validacija novih blokova}
-Kako bi se formirao kandidat za novi blok, potrebno je najpre prikupiti nepotvrđene transakcije, pri čemu je maksimalna veličina bloka unapred definisana protokolskim parametrima. U blokčejn sistemima, svaki učesnik koji ispunjava uslove u pogledu posedovanja oskudnog resursa definisanog protokolom, poput posedovanja odgovarajućih računarskih resursa i/ili primarne kriptovalute sistema, može pokrenuti instancu sistema i učestvovati u procesu predlaganja i validacije blokova. Implementacije blokčejn protokola realizuju se kroz različite klijentske softvere, koji se međusobno razlikuju prema arhitektonskim pristupima, pri čemu su najzastupljeniji monolitni i višeslojni modeli.
-
-\begin{definicija}
-Predlagač bloka \eng{block proposer} je učesnik mreže koji, u skladu sa pravilima konsenzus protokola, ima pravo da predloži sledeći blok u lancu.
-\end{definicija}
-
-U blokčejn sistemima polazi se od pretpostavke da deo učesnika mreže može ispoljavati proizvoljno ili zlonamerno ponašanje, odnosno da sistem mora biti otporan na prisustvo \textbf{vizantijskih čvorova}. Iz tog razloga, konsenzus mehanizam predstavlja centralnu tačku \textbf{koordinacije} i \textbf{kontrolne decentralizacije}, jer definiše skup pravila prema kojima se obezbeđuje konzistentnost globalnog stanja mreže u uslovima nepoverenja među učesnicima.
-
-Osnovno pravilo podrazumeva da se svaki predloženi blok nezavisno proverava od strane svih čvorova pre njegovog prihvatanja i uključivanja u lokalnu verziju lanca. Ovaj proces validacije obuhvata proveru ispravnosti svih transakcija i kriptografskih uslova sadržanih u bloku, čime se eliminišu pokušaji vizantijskih čvorova da nametnu nevalidne ili nekonzistentne promene stanja sistema. Iz toga sledi da je korektno funkcionisanje sistema uslovljeno pretpostavkom da većina resursa koji učestvuju u konsenzusu pripada poštenim učesnicima mreže.
-
-\begin{definicija}
-Konsenzus mehanizam u blokčejn sistemima predstavlja skup protokola i pravila kojima se, u prisustvu potencijalno vizantijskih učesnika, obezbeđuje koordinisano prihvatanje novih blokova i održavanje jedinstvenog stanja distribuirane evidencije.
-\end{definicija}
-
-U zavisnosti od načina rešavanja izbora predlagača bloka, tolerancije grešaka i postizanja saglasnosti, konsenzus mehanizmi u blokčejn sistemima \cite{zhou2023systematic} mogu se klasifikovati u tri osnovne kategorije:
-\begin{enumerate}
-\item \textbf{Nakamoto konsenzus mehanizmi}, koji omogućavaju otvoreno i dozvolom neograničeno učešće u procesu predlaganja blokova uvodeći oskudan resurs, oslanjaju se na verovatnosno određivanje predlagača bloka i obezbeđuju verovatnosnu finalnost jer može doći do račvanja \eng{fork} blokčejna,
-\item \textbf{Konsenzus mehanizmi sa tolerancijom vizantijskih grešaka \eng{Byzantine fault tolerance, BFT}}, koji se zasnivaju na eksplicitnom glasanju unutar unapred definisanog skupa validatora u granicama dozvoljenog broja vizantijskih čvorova i obezbeđuju determinističku finalnost, čime se eliminiše mogućnost trajnih račvanja,
-\item \textbf{Hibridni konsenzus mehanizmi}, koji kombinuju elemente Nakamoto-stil i BFT pristupa, tipično koristeći verovatnosni mehanizam za proizvodnju blokova i BFT protokole za postizanje konačne finalnosti.
-\end{enumerate}
-
-Opisani proces nezavisne validacije, koordinacije i replikacije svakog novog bloka kod svih čvorova mreže predstavlja značajan izvor \textbf{režijskog opterećenja} blokčejn sistema. Ovo režijsko opterećenje obuhvata, između ostalog, kriptografsku proveru transakcija, verifikaciju konsenzusnih uslova, razmenu poruka neophodnih za koordinaciju među čvorovima, kao i propagaciju blokova kroz mrežu i održavanje konzistentne lokalne kopije lanca. Iako nijedna od navedenih aktivnosti neposredno ne doprinosi izvršavanju korisničkih transakcija, one predstavljaju nužan preduslov za očuvanje sigurnosti, konzistentnosti i integriteta distribuirane evidencije.
+\begin{teorema}\label{teorema:cap}
+U distribuiranom sistemu koji čuva podatke moguće je istovremeno garantovati najviše dve od sledeće tri osobine:\\
+(1) \textbf{konzistentnost (C)} - svaki čvor vidi isto stanje sistema, tj. operacija čitanja uvek vraća poslednju potvrđenu upisanu vrednost,\\
+(2) \textbf{dostupnost (A)} - sistem garantuje odgovor na svaki zahtev u konačnom vremenu,\\
+(3) \textbf{toleranciju na particije (P)} - sistem nastavlja da radi i u slučaju mrežnih particija (poruke se mogu izgubiti ili stići nakon arbitrarnog kašnjenja).
+\end{teorema}
 
 \begin{posledica}
-Režijsko opterećenje javnih blokčejn sistema predstavlja sistemski trošak decentralizovanog modela rada, izražen kroz dodatnu potrošnju resursa koja je neizbežna posledica tolerancije vizantijskih grešaka i odsustva centralnog autoriteta od poverenja.
+Kada dođe do mrežne particije, distribuiran sistem ne može istovremeno garantovati punu konzistentnost i punu dostupnost. Stoga je prinuđen da da prioritet ili \textbf{konzistentnosti} (CP sistemi) ili \textbf{dostupnosti} (AP sistemi).
 \end{posledica}
 
-\subsubsection{Algoritam dokazivanja uloženog rada}
-Algoritam dokazivanja uloženog rada \eng{Proof of Work, PoW} zasniva se na rešavanju kriptografske zagonetke definisane nad zaglavljem kandidata za novi blok, pri čemu \textit{ciljni prag} predstavlja gornju granicu dozvoljene heš vrednosti tog zaglavlja. Ovaj zadatak je konstruisan sa ciljem uspostavljanja \textit{asimetrije računarske složenosti}, budući da ne postoji poznata efikasnija strategija od nasumičnog isprobavanja mogućih vrednosti metodom grube sile, dok je validacija pronađenog rešenja brza i deterministička.
+\section{Performanse i efikasnost}
+U radnim sistemima različitih tipova (poslovnim, javnim, neprofitnim i ličnim) \textit{procesi i aktivnosti} sastoje se od niza elementarnih procesnih jedinica, koje predstavljaju najmanje nedeljive korake rada unutar sistema. Svaka takva jedinica stvara potrebu za izvršenjem određene funkcije nad informacijama, čime nastaje \textbf{zahtev} koji se upućuje informacionom sistemu.
 
-Da bi novi blok bio prihvaćen, njegova heš vrednost mora biti manja ili jednaka unapred definisanom ciljnom pragu, čime se omogućava da svaki učesnik mreže ravnopravno učestvuje u procesu predlaganja novih blokova, bez oslanjanja na centralizovani autoritet ili unapred dodeljeni identitet.
+Da bi se precizno razlikovala perspektiva radnog sistema od perspektive informacionog sistema, uvodi se razlika između:
+\begin{enumerate}
+\item \textbf{elementarnih procesnih jedinica} - najmanjih jedinica rada u okviru radnog sistema, i
+\item \textbf{elementarnih operacija informacionog sistema} - osnovnih računskih, logičkih ili ulazno-izlaznih operacija koje softverska infrastruktura izvršava radi obrade zahteva.
+\end{enumerate}
 
-U Bitkoin mreži, oskudan resurs na kojem se zasniva Nakamoto konsenzus predstavlja računarska snaga koja se meri brojem izvršenih heš operacija u jedinici vremena, poznatim kao \eng{hashpower}, koji se u praksi najčešće izražava u terahašima u sekundi ($10^{12}$). Ovaj proces zahteva značajnu količinu električne energije i procenjuje se da konzumira oko 0.43\% globalne godišnje potrošnje električne energije \cite{kaneko2025comparing}. 
+Procesna jedinica generiše zahtev, dok informacioni sistem realizuje taj zahtev kroz skup tehničkih operacija, čime se ostvaruje napredovanje informacionog sistema sa svakim uspešno izvršenim zahtevom.
 
-Zbog značajnog računarskog i energetskog napora potrebnog za izvršavanje ovog procesa, učesnici koji obavljaju ovu funkciju nazivaju se rudari \eng{miners}, i verovatnoća da određeni rudar doda novi blok može se izračunati kao odnos njegove računarske snage, izražene u heševima, prema ukupnoj računarskoj snazi mreže, takođe izraženoj u heševima.
-
-Svaki rudar nezavisno konstruiše kandidat za novi blok, pri čemu samostalno bira skup transakcija koje će u njega uključiti. Tokom izvršavanja algoritma dokazivanja uloženog rada, jedina promenljiva koja se sistematski menja u zaglavlju bloka jeste \textit{nonce}, dok je dominantna i računski najzahtevnija operacija višestruko kriptografsko heširanje kompletnog zaglavlja bloka, koje se vrši sve dok se ne dobije rezultat koji zadovoljava postavljeni uslov (Algoritam \ref{alg:proof_of_work}). 
-
-\begin{algorithm}
-\caption{Proces rudarenja}
-\label{alg:proof_of_work}
-\begin{algorithmic}[1]
-\While{currentHash > targetHash}
-    \State currentHash = hash(...block header, nonce)
-    \If{currentHash $\leq$ targetHash}
-        \State Propagiraj blok
-    \Else
-        \State Uvećaj \textit{nonce}
-    \EndIf
-\EndWhile
-\end{algorithmic}
-\end{algorithm}
-
-Ova fundamentalna asimetrija između visokog troška generisanja novog bloka i zanemarljivog troška njegove verifikacije predstavlja ključni razlog zbog kojeg je računarska snaga izabrana za deo Nakamoto konsenzusa, što predstavlja ključni preduslov bezbednog funkcionisanja sistema u otvorenom i nepouzdanom distribuiranom okruženju.
-
-Kako bi se očuvalo približno konstantno prosečno vreme generisanja bloka od deset minuta, Bitkoin protokol periodično prilagođava težinu ciljne heš vrednosti u zavisnosti od ukupne heš snage dostupne u sistemu. Ovo prilagođavanje se vrši na svakih 2016 blokova, čime se omogućava stabilno funkcionisanje sistema uprkos promenama u broju i kapacitetu učesnika koji učestvuju u procesu rudarenja.
-
-\subsubsection{Verovatnosni konsenzus i praktična finalnost transakcija}
-Nakon pronalaska odgovarajuće vrednosti \textit{počasne promenljive} predloženi blok se \textbf{propagira} ostalim čvorovima u mreži, koji nezavisno proveravaju validnost dokaza uloženog rada i usklađenost bloka sa protokolskim pravilima, čime se ostvaruje \textbf{replikacija} globalnog stanja kod svih učesnika. Ukoliko su svi uslovi zadovoljeni, blok se prihvata kao naredni blok u lancu. 
-
-Moguće je, međutim, da dva ili više predlagača blokova u približno istom vremenskom intervalu pronađu i propagiraju različite, ali međusobno validne kandidate za $(n+1)$-ti blok koji se nadovezuju na isti prethodni $n$-ti blok. U tom slučaju, različiti podskupovi čvorova mogu privremeno prihvatiti različite verzije lanca kao važeće, što dovodi do kratkotrajnog račvanja stanja mreže u više verzija, čime se javlja privremeni \textbf{konflikt} u distribuiranom okruženju. Ovo stanje se razrešava pronalaženjem narednog $(n+2)$-og bloka, budući da se svaki novi blok može nadovezati isključivo na jedan od postojećih kandidata.
-
-U Bitkoin sistemu ne postoji centralni čvor, međutim, pravilo najdužeg lanca \eng{longest chain rule} Nakamoto konsenzusa efektivno preuzima njegovu ulogu, budući da je za njegovu izgradnju utrošeno najviše računarskih resursa za algoritam dokazivanja uloženog rada. Grana lanca koja se prva produži i postane duža od ostalih prihvata se kao kanonska verzija istorije sistema. Čvorovi koji su prethodno sledili kraću granu odbacuju je i sinhronizuju se sa najdužim važećim lancem, čime se mreža ponovo dovodi u konzistentno stanje. Kako se nad određenim blokom nadograđuje sve veći broj novih blokova, verovatnoća da alternativna grana nadmaši postojeći lanac opada eksponencijalno.
-
-\begin{definicija}
-Finalnost \eng{finality} transakcije označava trenutak nakon kojeg se transakcija smatra trajno zabeleženom u blokčejnu i ne može biti poništena, čime se ostvaruje praktična neporecivost.
+\begin{definicija}\label{def:zahtev}
+Zahtev predstavlja elementarnu funkcionalnu operaciju koju informacioni sistem treba da obradi. Finalizacija zahteva označava trenutak kada informacioni sistem završi kompletnu obradu zahteva.
 \end{definicija}
 
-Čvorovi koji su prethodno sledili kraću granu prelaze na najduži važeći lanac kroz proces reorganizacije \eng{re-org}. Transakcije koje su bile uključene u blokove odbačene grane, a koje se ne pojavljuju u prihvaćenom lancu, ponovo se smatraju nepotvrđenim i vraćaju u proces daljeg distribuiranja i validacije, pri čemu prolaze istu proceduru kao i sve nove transakcije.
-
-Opisani mehanizam dokazivanja uloženog rada pokazuje da Bitkoin ne postiže konsenzus u strogo determinističkom smislu, već u obliku verovatnosne saglasnosti. U praksi se transakcija smatra prihvaćenom kada se nalazi u najdužem lancu i kada je nad njenim blokom izgrađen dovoljan broj narednih blokova, \textit{najčešće šest}. Ovo pravilo predstavlja inženjerski kompromis između vremena čekanja i prihvatljivog nivoa rizika, pri čemu je verovatnoća reorganizacije lanca nakon tog broja \textbf{potvrda} zanemarljiva u realnim uslovima rada mreže.
-
-Nakamoto konsenzus obezbeđuje da je verovatnoća uspešne reorganizacije lanca od strane napadača uslovljena količinom kumulativnog rada koji bi morao da nadoknadi. Konkretno, napadač bi morao da ponovi dokaz uloženog rada za ciljani blok i sve njegove naslednike, a zatim da sustigne i nadmaši ukupni rad poštenih čvorova. Kako broj blokova koji se nadovezuju na posmatrani blok raste, verovatnoća uspeha takvog napada opada eksponencijalno.
-
-Interval između podnošenja transakcije u skup nepotvrđenih transakcija i njenog dostizanja praktične finalnosti može se posmatrati kao \textbf{vreme odaziva} sistema, koje takođe zavisi od opterećenja mreže i visine transakcione naknade.
-
-\subsection{Struktura i funkcionalnost blokčejn sistema}
-Razumevanje unutrašnje organizacije podataka u blokčejn sistemima predstavlja ključni preduslov za analizu njihovog funkcionisanja i bezbednosnih svojstava. Podaci ne obuhvataju isključivo evidenciju istorije izvršenih transakcija, već i reprezentaciju trenutnog stanja mreže, odnosno način na koji se stanje sredstava i prava pojedinačnih učesnika definiše, ažurira i verifikuje. Različiti modeli upravljanja stanjem uslovljavaju načine potrošnje sredstava, pravila validacije transakcija, kao i skup funkcionalnosti koje sistem može ponuditi krajnjim korisnicima.
-
-Jedan od fundamentalnih bezbednosnih problema koje svaki blokčejn sistem mora da reši na protokolskom nivou jeste \textit{problem dvostruke potrošnje} sredstava. U decentralizovanom okruženju bez centralnog autoriteta, neophodno je obezbediti da se ista jedinica vrednosti ne može validno potrošiti više puta. U blokčejn arhitekturama ovaj problem se rešava kroz dva dominantna modela upravljanja stanjem \eng{data model}, koji direktno određuju način organizacije globalnog stanja:
+Zahtev može da inicira:
 \begin{enumerate}
-\item \textbf{Model nepotrošenih izlaza transakcija} \eng{Unspent Transaction Output, UTXO}, globalno stanje predstavlja skup nepotrošenih izlaza transakcija, pri čemu se potrošnja svakog izlaza vrši u celosti, što omogućava ugrađenu zaštitu od dvostruke potrošnje,
-\item \textbf{Model globalnog stanja zasnovan na nalozima} \eng{account-based model}, globalno stanje predstavlja mapu naloga realizovanu odgovarajućom strukturom podataka, pri čemu se za svaki nalog vodi brojač izvršenih transakcija na protokolskom nivou \eng{protocol-level}, ili se kontrola izvršavanja implementira na nivou pametnih ugovora \eng{contract-level}, čime se sprečava dvostruka potrošnja
+\item krajnji korisnik,
+\item operater,
+\item drugi informacioni sistem,
+\item servis unutar istog sistema,
+\item automatizovani proces.
 \end{enumerate}
 
-Pored osnovne podele prema modelu upravljanja stanjem, oba pristupa se dodatno mogu klasifikovati prema načinu izvršavanja transakcijske logike, odnosno prema stepenu sinhronizacije izvršavanja:
-\begin{enumerate}
-\item \textbf{Sinhroni modeli}, u kojima se celokupna transakcijska logika izvršava atomično u okviru jedne transakcije, bez generisanja odloženih poruka, budućih poziva ili sporednih efekata koji bi se realizovali u kasnijim blokovima,
-\item \textbf{Asinhroni modeli}, u kojima izvršavanje transakcije može proizvesti poruke, događaje ili pozive ka drugim ugovorima ili adresama, čije se izvršavanje odvija u jednom od narednih blokova.
-\end{enumerate}
+Tipični primeri zahteva uključuju upis podatka u bazu, izvršavanje funkcionalnosti sistema, dohvat ili transformaciju informacija, i transakcije koje menjaju stanje sistema. Finalizacija zahteva može da podrazumeva vraćanje rezultata inicijatoru ili trajno beleženje izvršene operacije.
 
-\subsubsection{Bitcoin Script kao mehanizam kontrole pristupa}
-Bitkoin sistem koristi sinhroni UTXO model za predstavljanje i praćenje stanja sredstava u mreži. Po uspešnom dodavanju novog bloka u blokčejn, protokol automatski generiše posebnu transakciju bez ulaznih UTXO referenci, kojom se nova sredstva, zajedno sa prikupljenim transakcionim naknadama iz tog bloka, dodeljuju adresi učesnika koji je predložio i uspešno dodao novi blok. Ova transakcija, poznata kao \textit{blagajnička transakcija} \eng{coinbase transaction}, predstavlja jedini mehanizam kreiranja novih jedinica kriptovalute u obliku UTXO zapisa u Bitkoin sistemu, prema unapred definisanom monetarnom rasporedu.
+U skladu sa savremenim pristupima modeliranju procesa i \textit{end-to-end} analizi radnih tokova \cite{sedova2023development}, \textbf{zahtev se ne posmatra kao izolovana jedinica}, već kao deo šireg procesa čija se vrednost i funkcionalna uloga ispoljava tek u interakciji sa ostalim procesima i komponentama arhitekture informacionog sistema.
 
 \begin{definicija}
-U okviru UTXO modela, svaka transakcija troši jedan ili više postojećih UTXO zapisa kao ulaze \eng{inputs} i generiše nove UTXO zapise kao izlaze \eng{outputs}.
+Performanse predstavljaju skup kvantitativnih pokazatelja koji opisuju efikasnost obrade zahteva u informacionom sistemu.
 \end{definicija}
 
-% SLIKA 3
-Budući da se ulazi transakcije odnose na prethodno kreirane, ali još uvek nepotrošene izlaze, prilikom formiranja transakcije korisnik mora eksplicitno navesti koje UTXO zapise namerava da potroši kao ulaze, kao i nove UTXO zapise koje transakcija generiše na svojim izlazima. Iz tog razloga UTXO zapisi se jednoznačno identifikuju kombinacijom identifikatora transakcije u kojoj su nastali (\textit{tx\_hash}) i indeksa izlaza (\textit{vout}).
+Kako su performanse apstraktan pojam koji se kvantitativno izražava različitim metrikama, a pri tom različiti učesnici mogu imati različite kriterijume ,,efikasnost'' sistema (npr. organizacije prvenstveno optimizuju troškove, dok krajnji korisnici vrednuju brzinu i cenu usluge), u daljem radu razmatraju se sledeće ključne performansne metrike:
+\begin{enumerate}
+\item \textbf{vreme odaziva (latency)} - vreme koje protekne od slanja zahteva do dobijanja odgovora,
+\item \textbf{propusnost (throughput)} - broj zahteva koje sistem može da obradi u jedinici vremena,
+\item \textbf{cena obrade (cost)} - trošak izvršavanja pojedinačnog zahteva.
+\end{enumerate}
 
-% SLIKA 4
-Ukoliko korisnik želi da prenese samo deo vrednosti raspoloživog UTXO zapisa određenoj adresi, on kao ulaz koristi taj UTXO u celosti, dok se na izlazu generišu dva nova UTXO zapisa: jedan u iznosu namenjenom primaocu i drugi koji predstavlja ostatak sredstava i vraća se na adresu pošiljaoca \eng{change output}. 
-
-% SLIKA 5
-Slično tome, u slučaju kada vrednost pojedinačnog UTXO zapisa nije dovoljna za izvršenje željene transakcije, korisnik može kombinovati više sopstvenih UTXO zapisa kao ulaze, čime se njihova zbirna vrednost koristi za formiranje proizvoljnog broja izlaza transakcije. 
-
-Međutim, broj i struktura ulaznih i izlaznih UTXO zapisa direktno određuju veličinu transakcije, odnosno količinu prostora (izraženu u bajtovima) koju ona zauzima u bloku. Zbog toga je potrebno platiti naknadu po jedinici iskorišćenog virtuelnog bajta (\textit{vByte}) \cite{zhang2024transaction}.
-
-Iznos transakcione naknade se izračunava kao proizvod dužine transakcije i dinamične stope naknade po bajtu izražene u primarnoj kriptovaluti, koja varira u zavisnosti od opterećenja mreže. Ukoliko je prioritet transakcije veći, korisnik će ponuditi višu cenu po bajtu.
-
-Prilikom trošenja UTXO-a transakciona naknada se implicitno definiše kao razlika između ukupne vrednosti ulaznih i izlaznih UTXO zapisa, što se formalno može izraziti sledećom relacijom:
-$$ tx\_fee = \sum_{x \in UTXO_{in}} value(x) - \sum_{y \in UTXO_{out}} value(y)$$
-
-Ovim se implicitno uvodi uslov da ukupna vrednost ulaza transakcije mora biti jednaka ili veća od zbira vrednosti izlaza. 
-
-Ovakvo korišćenje UTXO-a u celosti predstavlja \textit{atomičnu operaciju} kojom se obezbeđuje prevencija dvostruke potrošnje, jer se svaki UTXO, nakon što je iskorišćen kao ulaz i transakcija uspešno validirana, trajno uklanja iz skupa raspoloživih UTXO zapisa.
-
-Mehanizam kojim Bitkoin mreža obezbeđuje da samo ovlašćeni korisnik može potrošiti određeni UTXO zasniva se na skriptnom jeziku koji je sastavni deo transakcione strukture, poznatom kao \textit{Bitcoin Script} (Bitkoin Skript). Reč je o jednostavnom, ali izrazito robusnom skriptnom jeziku zasnovanom na steku \eng{stack-based}, koji je namerno projektovan kao \textbf{netjuring-kompletan jezik} bez podrške za petlje i rekurziju, čime se garantuje konačnost izvršavanja svake skripte. Ovakav dizajn omogućava visoku predvidivost i formalnu proverljivost izvršavanja, dok se tokom procesa validacije transakcije putem skripte formalno proveravaju uslovi za potrošnju datog UTXO zapisa.
-
-Ovaj skriptni jezik omogućava sprovođenje \textbf{autorizacije} nad sredstvima, budući da definiše skup formalnih uslova koji moraju biti ispunjeni kako bi pristup bio odobren. U tom smislu, može se posmatrati kao pojednostavljen oblik \textit{diskrecione kontrole pristupa}, pri čemu se istovremeno obezbeđuju \textbf{integritet} stanja sredstava i \textbf{autentičnost} zahteva za njihovu potrošnju.
-
-% SLIKA 7
-Svaki UTXO sadrži pridruženu skriptu zaključavanja \eng{scriptPubKey}, kojom se definišu uslovi pod kojima taj izlaz može biti potrošen. Da bi određena transakcija validno potrošila UTXO, njen ulaz mora da obezbedi odgovarajuće podatke u okviru skripte otključavanja \eng{scriptSig}, tako da kombinacija ove dve skripte, nakon izvršavanja nad stekom, rezultuje nenultom bajt-vrednošću (najčešće 0x01), što označava uspešnu validaciju. Potrošnja UTXO zapisa smatra se nevalidnom ukoliko tokom izvršavanja dođe do prekida skripte, ukoliko stek ostane prazan ili ukoliko se na vrhu steka nalazi negativna nula (0x80), koja se u Bitkoin skriptnoj semantici tretira kao netačna vrednost.
-
-Iako Bitkoin Skript omogućava definisanje proizvoljno složenih uslova korišćenjem dostupnog skupa instrukcija, u praksi se najčešće koristi obrazac \textit{plaćanja na heš javnog ključa} \eng{Pay-to-Public-Key-Hash, P2PKH} \cite{decker2014bitcoin}. U ovom slučaju, pošiljalac prilaže digitalni potpis i odgovarajući javni ključ, dok skriptni mehanizam proverava da li heš dostavljenog javnog ključa odgovara vrednosti zaključanoj u referenciranom UTXO zapisu.
-
-\subsubsection{Pametni ugovori}
-Posmatrano iz apstraktnog ugla, svaki UTXO zapis, zbog svog jedinstvenog identifikatora i determinističkog mehanizma validacije, može se interpretirati kao instanca jednostavnog programa koji se može izvršiti tačno jednom. Ovaj program poseduje jednu implicitnu funkciju čije telo čini skripta zaključavanja \textit{scriptPubKey}, dok se ulazni parametri prosleđuju putem skripte otključavanja \textit{scriptSig}. Nakon uspešnog izvršavanja, dati UTXO prestaje da postoji i ne može biti ponovo iskorišćen, čime se obezbeđuje njegova jednokratna potrošivost.
-
-Na taj način, UTXO model realizuje mehanizam izvršavanja predikata potrošnje, koji se može formalizovati sledećim algoritmom:
-
-\begin{algorithm}
-\caption{UTXO kao predikat potrošnje}
-\begin{algorithmic}[1]
-\Function{ValidateUTXO}{$scriptSig$}
-    \State \textbf{execute} $scriptPubKey$ \textbf{with input} $scriptSig$
-    \If{stack \textbf{is non-empty} \textbf{and} top(stack) = \textbf{true}}
-        \State \Return \textbf{true}
-    \Else
-        \State \Return \textbf{false}
-    \EndIf
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
-
-Bitkoin sistem na ovaj način omogućava izvršavanje jednostavnih, determinističkih programa u decentralizovanom okruženju, bez potrebe za pouzdanim posrednicima, pri čemu protokol garantuje da se svaki takav program može uspešno izvršiti najviše jednom. Ovakav koncept samostalno izvršavajućih ugovornih uslova prvi je formalno definisao Nick Szabo 1994. godine \cite{szabo1994}.
+Zajedničko za sve navedene metrike jeste da na njih direktno utiču tri fundamentalna \textbf{resursa} informacionog sistema: hardver (procesor, memorija, I/O podsistem), softver (algoritmi, implementacija, organizacija baze podataka) i mreža (latencija, širina opsega, pouzdanost i stabilnost veze).
 
 \begin{definicija}
-Pametni ugovori predstavljaju programibilne ugovore u kojima su uslovi sporazuma eksplicitno definisani u obliku koda, koji se automatski izvršava kada su ispunjeni unapred određeni uslovi.
+Kapacitet predstavlja maksimalnu dugoročno održivu stopu obrade zahteva koju informacioni sistem može da postigne u stabilnom režimu rada, bez degradacije definisanih performansnih metrika \cite{jain1991art}.
 \end{definicija}
 
-Jedan od ključnih tehnoloških iskoraka u razvoju blokčejn sistema predstavlja uvođenje Tjuring-kompletne virtuelne mašine na nivou cele mreže, čime je omogućeno izvršavanje pametnih ugovora opšte namene. Ovi ugovori tokom svog izvršavanja mogu međusobno komunicirati i pozivati druge pametne ugovore, u potpuno decentralizovanom okruženju, čime se omogućava realizacija decentralizovanih aplikacija \eng{Decentralized Application, dApp}.
+Međutim, kada hardver, softver i/ili mrežni sloj ne mogu da obrade broj pristiglih zahteva, informacioni sistem izlazi iz stabilnog režima rada i ulazi u stanje \textbf{zagušenja}.
 
-U takvom okruženju, adrese mogu predstavljati kako korisničke naloge, tako i pametne ugovore, dok transakcije, pored prenosa vrednosti, mogu sadržati i poziv funkcije sa pripadajućim skupom parametara koji se prosleđuju pametnom ugovoru radi njegovog izvršavanja. Budući da je stanje blokčejna logički nepromenljivo, kombinacija pametnih ugovora i distribuirane knjige podataka omogućava izgradnju pouzdanog, transparentnog i verifikabilnog izvršnog okruženja.
+\begin{definicija}
+Zagušenje predstavlja stanje informacionog sistema u kojem je stopa pristiglih zahteva veća od kapaciteta.
+\end{definicija}
 
-Virtuelna mašina nije strogi preduslov za realizaciju pametnih ugovora, ali značajno pojednostavljuje njihovu implementaciju i omogućava postojanje jedinstvenog izvršnog modela na nivou cele mreže, čime se blokčejn može posmatrati kao oblik \textbf{globalnog distribuiranog računara}.
+U stanju zagušenja, zahtevi se akumuliraju brže nego što ih sistem može obraditi, redovi čekanja rastu, latencija postaje nepredvidiva, a pojedine operacije postaju neizvodljive u datim vremenskim ograničenjima.
 
-S obzirom na to da virtuelna mašina izvršava skup niskonivojskih \eng{low-level} instrukcija, u praksi se koriste viši programski jezici za pisanje pametnih ugovora, koji se potom prevode u odgovarajući bajtkod \eng{bytecode}. Tokom procesa prevođenja generišu se i programski interfejsi koji olakšavaju interakciju korisnika i drugih ugovora sa datim pametnim ugovorom.
+Primena fundamentalnih rezultata teorije čekanja \cite{adan2002queueing} omogućava formalno razumevanje ponašanja sistema kada dolazna stopa zahteva premaši njegov kapacitet, što se direktno preslikava na posmatrane performansne metrike. Time dobijamo:
 
-\subsubsection{Apstrakcija naloga}
-Jedan od ključnih izazova za šire usvajanje blokčejn tehnologija predstavlja složenost korisničkog iskustva, naročito u pogledu upravljanja privatnim ključevima i semenskim frazama. Ovakav model autentifikacije zasnovan na kriptografiji prenosi punu odgovornost na korisnika za bezbedno čuvanje poverljivih podataka, pri čemu njihov gubitak ili kompromitacija može dovesti do nepovratnog gubitka sredstava. Dodatno, model naplate transakcionih naknada predstavlja dodatni sloj složenosti za krajnje korisnike.
+\begin{teorema}\label{teorema:kapacitet}
+Kada dolazna stopa zahteva premaši kapacitet sistema, propusnost dostiže svoj maksimum, latencija raste bez ograničenja, a cena obrade svakog zahteva eksponencijalno raste usled akumulacije redova čekanja i pojačane konkurencije za resurse.
+\end{teorema}
 
-S obzirom na to da većina korisnika ne poseduje napredno tehničko znanje, neophodno je da decentralizovane aplikacije apstrahuju ove složene mehanizme kako ne bi predstavljali prepreku njihovoj upotrebi. U tom kontekstu, apstrakcija naloga \eng{account abstraction} predstavlja pristup koji ima za cilj unapređenje interakcije između korisnika i blokčejn sistema, omogućavajući fleksibilnije modele autentifikacije i upravljanja nalozima \cite{wang2023account}.
+U stvarnim informacionim sistemima obim pristiglih zahteva može u određenim trenucima da premaši raspoloživi kapacitet sistema. Zato je od suštinskog značaja razumeti kako se kapacitet može povećavati dodavanjem dodatnih resursa (računske snage, memorije, mrežnog kapaciteta, dodatnih čvorova itd.). U tom kontekstu definiše se sledeće svojstvo:
 
-Za razliku od tradicionalnog modela u kojem je nalog direktno vezan za jedan privatni ključ, apstrakcija naloga omogućava implementaciju programabilnih naloga u vidu pametnih ugovora, čime se logika autorizacije i validacije transakcija može prilagoditi konkretnim potrebama korisnika. Na taj način, korisnici mogu definisati različite mehanizme potpisivanja transakcija, uključujući višestruke potpise, socijalni oporavak naloga, kao i integraciju sa drugim sistemima autentifikacije.
+\begin{definicija}
+Skalabilnost predstavlja sposobnost informacionog sistema da se uz povećanje dostupnih resursa ostvari porast kapaciteta obrade zahteva, uz očuvanje definisanih performansnih karakteristika \cite{bondi2000characteristics}.
+\end{definicija}
 
-Dodatno, ovakav pristup omogućava fleksibilnije modele plaćanja transakcionih naknada, uključujući scenarije u kojima treće strane (npr. same aplikacije) preuzimaju troškove izvršavanja transakcija, kao i korišćenje alternativnih tokena umesto primarne kriptovalute mreže.
+\begin{definicija}
+Optimizacija predstavlja proces unapređenja softverskog sistema sa ciljem da za isti funkcionalni zahtev ostvari bolje performanse, najčešće kroz smanjenje upotrebe tehničkih resursa poput vremena izvršavanja, memorije, mrežnog protoka ili energije, pri čemu se zadržava nepromenjeno spoljašnje ponašanje sistema.
+\end{definicija}
 
-U literaturi i praksi razlikuju se dva osnovna pristupa implementaciji apstrakcije naloga:
+Skaliranje se odnosi na način proširenja hardverskih resursa i optimizacije softverskih aplikacija, te uključuje i hardverske i softverske aspekte sistema. U praksi se, nakon sprovedene softverske optimizacije, razlikuju dva osnovna pristupa skaliranju hardvera:
 \begin{enumerate}
-\item \textbf{Apstrakcija naloga zasnovana na pametnim ugovorima} \cite{AAeip4337} - pristup koji omogućava implementaciju apstrakcije naloga bez izmene osnovnog protokola, pri čemu korisnici implementiraju sopstvene naloge kao pametne ugovore. U ovom modelu uvodi se alternativni mehanizam obrade transakcija (npr. \textit{UserOperation} strukture i alternativni skupovi nepotvrđenih transakcija), pri čemu se zahtevi agregiraju i izvršavaju putem specijalizovanog pametnog ugovora na mreži.
-    
-\item \textbf{Urođena apstrakcija naloga} - pristup u kojem je apstrakcija naloga integrisana direktno u protokol blokčejna, čime se eliminiše potreba za dodatnim slojevima i omogućava urođena podrška za fleksibilne modele autentifikacije i izvršavanja transakcija.
+\item \textbf{Vertikalno skaliranje (scale-up)} - povećavanje resursnih kapaciteta jedne instance sistema (CPU, memorija, skladište),
+\item \textbf{Horizontalno skaliranje (scale-out)} - dodavanje novih instanci (ili procesa) unutar istog informacionog sistema, čime se povećava ukupan broj aktivnih izvršnih jedinica.
 \end{enumerate}
 
-Implementacija ovog pristupa i dalje predstavlja aktivnu oblast istraživanja, sa značajnim potencijalom da unapredi upotrebljivost blokčejn sistema i omogući njihovo šire usvajanje.
+U praksi se koristi i \textit{dijagonalno skaliranje} koje predstavlja kombinovanje vertikalnog i horizontalnog pristupa.
 
-\section{Upravljanje blokčejnom}
-U tradicionalnim organizacionim sistemima, odluke o promenama i razvoju sistema donosi ograničena i jasno definisana grupa ljudi, čime se upravljanje ostvaruje kroz centralizovanu ili hijerarhijski strukturisanu kontrolu. Nasuprot tome, jedan od osnovnih principa javnih blokčejn sistema jeste visok stepen kontrolne decentralizacije, pri čemu u proces odlučivanja mogu biti uključeni korisnici mreže, programeri pametnih ugovora, operatori čvorova, istraživači i drugi relevantni učesnici.
+\subsection{Vertikalno skaliranje}
+Vertikalno skaliranje podrazumeva povećavanje resursnih kapaciteta, tj. procesorskih resursa, memorije, I/O podsistema ili skladišnog prostora jedne fizičke ili virtuelne instance informacionog sistema. Time se jedna izvršna jedinica osposobljava da obradi veći broj zahteva u jedinici vremena. Ovakvo skaliranje je idealno za jednostavnije sisteme, gde bi se koristila monolitna, slojevita ili mikrokernel arhitektura.
 
-Upravljanje blokčejnom \cite{liu2023systematic} \eng{blockchain governance} funkcioniše bez centralnog upravnog tela i obuhvata skup procesa, pravila i društveno-tehničkih mehanizama putem kojih zajednica definiše način predlaganja, razmatranja, usvajanja i implementacije promena protokola. Ovi procesi određuju ko ima pravo da predloži izmene, ko može učestvovati u donošenju odluka, na koji način se predlozi evaluiraju i prihvataju, kao i kako se razrešavaju neslaganja koja mogu dovesti do račvanja mreže.
-
-Kako su blokčejn sistemi sazrevali, u praksi su se izdvojila dva dominantna modela upravljanja: upravljanje van protokola \eng{off-chain governance} i upravljanje unutar protokola \eng{on-chain governance}, koji se razlikuju po načinu formalizacije odlučivanja i stepenu automatizacije procesa donošenja odluka.
-
-\begin{description}
-\item \textbf{Upravljanje van protokola} odvija se kroz neformalne i poluformalne mehanizme, kao što su diskusije na forumima, društvenim mrežama i razvojnim platformama. U ovom modelu, pravo učešća nije ograničeno isključivo vlasništvom nad sredstvima, već se zasniva i na reputaciji, stručnosti i doprinosu zajednici, čime se podstiče šira i kvalitetnija razmena mišljenja. Ovakav pristup smanjuje rizik od brzopletih odluka i manipulacije putem finansijske moći, ali istovremeno može dovesti do dugotrajnih i slabo strukturisanih rasprava, kao i do ograničenog učešća netehničkih korisnika. Dodatni izazov predstavlja činjenica da pojedini učesnici u slučaju manjih nadogradnji mogu namerno odlagati ažuriranje softvera ukoliko procene da im predložene promene nisu u sopstvenom interesu.
-
-\item \textbf{Upravljanje unutar protokola} sprovodi se direktno na blokčejnu, pri čemu učesnici sa odgovarajućim pravima glasa koriste pametne ugovore za formalno donošenje odluka. Ovakav pristup obezbeđuje visok stepen transparentnosti, brzu verifikaciju rezultata i automatsku primenu usvojenih promena na svim čvorovima mreže. Međutim, ovaj model je podložan problemima niske izlaznosti učesnika, kao i riziku koncentracije moći, jer mali broj adresa sa velikim udelom sredstava može imati dominantan uticaj na konačne odluke.
-\end{description}
-
-Zbog navedenih ograničenja, savremeni blokčejn sistemi sve češće primenjuju hibridni model upravljanja, u okviru koga se ideje i predlozi najpre razmatraju kroz vanprotokolne mehanizme, dok se konačna odluka formalizuje i izvršava putem mehanizama upravljanja unutar protokola.
-
-Nakon postizanja saglasnosti o sadržaju predložene izmene, nova verzija protokola se najpre implementira i testira na testnoj mreži \eng{testnet}, gde učesnici proveravaju njenu ispravnost, bezbednost i kompatibilnost. Ukoliko se testiranje završi uspešno, zajednica se usaglašava oko tačno definisanog bloka od kojeg nova pravila stupaju na snagu na glavnoj mreži.
-
-U zavisnosti od obima i prirode promena, razlikuju se dve osnovne kategorije nadogradnji protokola:
+Prednosti vertikalnog skaliranja obuhvataju:
 \begin{enumerate}
-\item \textbf{Manje promene \eng{soft fork}} uvode ograničene modifikacije koje ne narušavaju fundamentalnu strukturu protokola. Ove izmene su unazad kompatibilne \eng{backward compatible}, što znači da čvorovi koji ne ažuriraju softver mogu i dalje učestvovati u mreži, ali uz poštovanje postojećih pravila.
-\item \textbf{Glavne promene \eng{hard fork}} uvode nove funkcionalnosti ili promene koje nisu kompatibilne sa prethodnim verzijama protokola. U tom slučaju dolazi do trajnog račvanja mreže, pri čemu svaki čvor mora ažurirati softver kako bi nastavio da učestvuje u novoj verziji sistema.
+\item \textbf{Jednostavnija arhitektura} - kompletan informacioni sistem izvršava se na jednoj fizičkoj ili virtuelnoj instanci, što smanjuje arhitektonsku složenost,
+\item \textbf{Konzistentnost} - sve operacije čitanja i pisanja odvijaju se lokalno čime se obezbeđuje stabilna i deterministička konzistentnost,
+\item \textbf{Niska operativna složenost} - sistem je jednostavniji za praćenje, održavanje, otklanjanje grešaka i nadgledanje performansi,
+\item \textbf{Minimalne promene u softveru} - aplikacija najčešće može da koristi jače resurse bez potrebe za promenom arhitekture, algoritama ili načina obrade podataka.
 \end{enumerate}
 
-\subsection{Decentralizovane autonomne organizacije}
-Decentralizovane autonomne organizacije \cite{el2020overview} \eng{Decentralized Autonomous Organizations, DAO} predstavljaju prirodnu evoluciju modela upravljanja unutar protokola, zasnovanu na upotrebi pametnih ugovora sa ciljem formalizacije i institucionalizacije procesa odlučivanja u blokčejn okruženju, u kome programski kod preuzima ulogu osnovnog regulatornog mehanizma, u skladu sa principom ,,kod je zakon'' \eng{code is law}.
-
-U ovakvim sistemima, pravila upravljanja, raspodele resursa i izvršavanja odluka ugrađena su direktno u protokol, čime se obezbeđuje visok stepen automatizacije, transparentnosti i otpornosti na proizvoljne intervencije.
-
-DAO modeli imaju najveći praktični i konceptualni smisao u okviru \textit{javnih blokčejn mreža}, gde su transparentnost, otvoren pristup i verifikabilnost osnovni preduslovi njihove funkcionalnosti, zbog čega su i danas najzastupljeniji upravo u ovom okruženju.
-
-U perspektivi daljeg razvoja, DAO sistemi se sve više posmatraju kao autonomni digitalni entiteti sposobni da koordiniraju ljudske i softverske aktere, pružaju usluge, upravljaju finansijskim tokovima i ostvaruju ekonomske ciljeve u okviru decentralizovanih tržišnih okruženja. 
-
-Ovakav razvojni pravac otvara prostor za primenu DAO modela u oblastima \textit{elektronske trgovine}, upravljanja digitalnim platformama i automatizovanih poslovnih ekosistema, u kojima decentralizovane organizacije mogu delovati kao samostalni učesnici tržišta, u interakciji sa drugim autonomnim softverskim sistemima i ljudskim akterima \cite{de2018blockchain}.
-
-\section{Blokčejn trilema}
-U distribuiranim sistemima koji se oslanjaju na mrežnu komunikaciju, pojava mrežnih particija predstavlja neizbežnu realnost, usled čega Teorema \ref{teorema:cap} uvodi fundamentalno ograničenje nad skupom osobina koje takvi sistemi mogu istovremeno garantovati. Budući da je blokčejn po svojoj prirodi distribuirani sistem, navedeno ograničenje se neposredno primenjuje i na blokčejn mreže.
-
-Kako ostvarivanje kontrolne decentralizacije u blokčejn sistemima zahteva odsustvo centralnog autoriteta, koordinacija i održavanje konzistentnog globalnog stanja podrazumevaju intenzivnu razmenu poruka između čvorova, čiji se obim povećava sa rastom broja učesnika mreže. U skladu sa Teoremom \ref{teorema:gunter}, ovaj porast dovodi do izraženog režijskog opterećenja usled sinhronizacije i kontencije, čime se nameće direktan kompromis između stepena decentralizacije i sistemskih performansi.
-
-Istovremeno, uklanjanje centralizovanog autoriteta uvodi potrebu za tolerancijom vizantijskog ponašanja učesnika. Kako formalizuje Teorema \ref{teorema:vizantijski-granica}, korektno funkcionisanje decentralizovanog sistema moguće je garantovati isključivo ukoliko udeo sistemskih resursa pod kontrolom vizantijskih učesnika ostane ispod određene gornje granice. Održavanje ove pretpostavke u praksi zahteva da većinski deo relevantnih oskudnih resursa pripada velikom broju ispravnih učesnika, što dodatno povećava troškove režijskog opterećenja.
-
-Kombinacija navedenih ograničenja dovodi do fundamentalnog kompromisa između \textbf{decentralizacije}, \textbf{sigurnosti} i \textbf{skalabilnosti}, poznatog kao \textit{blokčejn trilema} \cite{werth2023review}. Naime, sistem koji teži visokom stepenu kontrolne decentralizacije i snažnim sigurnosnim garancijama nužno trpi smanjenje efikasnosti i skalabilnosti, dok povećanje performansi zahteva kompromis u pogledu barem jedne od preostalih osobina. Ova trilema ne predstavlja implementacioni nedostatak konkretnih protokola, već je duboko ukorenjena u samim teorijskim osnovama blokčejn sistema.
-
-Kod dozvolom ograničenih blokčejn sistema, pristup mreži je strogo kontrolisan, a broj učesnika unapred ograničen, zbog čega je stepen decentralizacije značajno smanjen. Ovakav model omogućava postizanje višeg stepena efikasnosti uz snažne sigurnosne garancije zasnovane na poznatom skupu učesnika. Međutim, on zahteva da organizacije samostalno uspostave, upravljaju i održavaju kompletnu infrastrukturnu osnovu sistema, bilo kroz sopstvene resurse ili korišćenjem usluga računarstva u oblaku, što podrazumeva značajne operativne i finansijske troškove, kako je razmatrano u odeljku \ref{sec:cloud}.
-
-Nasuprot tome, \textit{javni blokčejn sistemi} su dozvolom neograničeni i oslanjaju se na već uspostavljenu globalnu infrastrukturu koju održava veliki broj nezavisnih učesnika, čime se eliminišu troškovi održavanja sopstvene infrastrukture. Međutim, \textit{troškovi korišćenja mreže prenose se na korisnike kroz mehanizme transakcionih naknada}. Istovremeno, izražena decentralizacija ovih sistema unapređuje otpornost i sigurnost podataka na više nivoa, obuhvatajući kako infrastrukturni i aplikativni sloj, tako i krajnje korisnike.
-
-\subsection{Decentralizovanost blokčejn sistema}
-Blokčejn sistemi u svom izvornom obliku zasnovani su na Nakamoto konsenzusu, čija je osnovna ideja raspodela kontrole nad mrežom na veliki broj dozvolom neograničenih i međusobno nezavisnih učesnika. U takvom modelu, nijedan pojedinačni entitet ne poseduje odlučujuću moć nad funkcionisanjem sistema, budući da svaki učesnik može konkurisati za proizvodnju narednog bloka. Izbor kanonske verzije lanca ne vrši se putem eksplicitnog glasanja, već implicitno kroz tržišni mehanizam konkurencije konsenzusnih resursa, čime se kao važeći prihvata lanac sa najvećom akumuliranom težinom tog resursa, u skladu sa protokolskim pravilom izbora lanca.
-
-Nasuprot tome, blokčejn sistemi zasnovani na BFT konsenzus mehanizmima koriste unapred definisan skup validatora, pri čemu se u svakom krugu konsenzusa jedan čvor formalno bira od strane protokola kao predlagač bloka, dok ostali validatori učestvuju u procesu eksplicitnog glasanja. Ovakav pristup podrazumeva razmenu poruka čiji broj uobičajeno raste kvadratno sa brojem validatora, što \textit{praktično ograničava veličinu validacionog skupa}. Zbog toga se BFT sistemi projektuju sa relativno malim brojem validatora, čime se postiže visoka efikasnost i deterministička finalnost, ali se istovremeno umanjuje stepen kontrolne decentralizacije.
-
-Međutim, kvantitativno merenje kontrolne decentralizacije u realnim sistemima predstavlja izuzetno složen problem, koji i dalje ostaje jedno od otvorenih istraživačkih pitanja savremene literature. Postojeći radovi \cite{ovezik2024sok} ukazuju na to da ne postoji univerzalno prihvaćen indeks koji bi na jedinstven način kvantifikovao stepen decentralizacije, te se analiza decentralizacije sprovodi kroz posmatranje pojedinačnih slojeva blokčejn sistema i njihovog relativnog doprinosa ukupnoj strukturi kontrole.
-
-Savremeni pristupi analizi decentralizacije \cite{ovezik2025sok} započinju izborom posmatranog sloja sistema, pri čemu se posebno izdvajaju dva osnovna sloja zajednička svim blokčejn sistemima, čije se karakteristike mogu direktno izvesti iz podataka zapisanih u samom blokčejnu:
+Međutim, postoje ozbiljna ograničenja:
 \begin{enumerate}
-\item \textbf{Sloj konsenzusa} \eng{consensus layer} obuhvata direktno učešće čvorova u konsenzusnom protokolu kroz kreiranje i validaciju blokova koji proširuju globalnu knjigu evidencije, pri čemu ovaj sloj ima neposredne implikacije po bezbednost sistema,
-\item \textbf{Sloj tokenomije} \eng{tokenomics layer} obuhvata raspodelu ekonomske vrednosti unutar sistema i povezan je sa mehanizmima upravljanja i korisnošću mreže, pri čemu kritične odluke često zavise od strukture vlasništva nad tokenima.
+\item \textbf{Hardverski limit} - svaka mašina ima gornju granicu kapaciteta: maksimalan broj CPU jezgara, količinu RAM-a, maksimalnu brzinu I/O-a i skladišta. Jednom kada se taj limit dostigne, više nije moguće dodatno skalirati,
+\item \textbf{Ekonomska neefikasnost na visokom nivou} - cena raste brzo i nelinearno u odnosu na dobijene performanse. Na primer, povećanje broja jezgara ne donosi linearnu dobit performansi \cite{hill2008amdahl},
+\item \textbf{Opterećenje} - kada sistem dođe do zagušenja i resursi budu iscrpljeni, performanse mogu naglo da opadnu, uz značajan porast latencije, kašnjenja ili čak potpuni pad servisa. Kada se dostigne hardverski limit, ne postoji način daljeg skaliranja bez arhitekturne promene, a period oporavka može biti dug,
+\item \textbf{Jedna tačka otkaza} - dostupnost celokupnog sistema direktno zavisi od ispravnosti jedne mašine, njen pad ili otkaz dovodi do potpunog prekida rada sistema.
 \end{enumerate}
 
-Radi procene decentralizacije izabranog sloja, neophodno je najpre identifikovati ključni resurs tog sloja i analizirati njegovu raspodelu među učesnicima. Pre same evaluacije decentralizacije sprovodi se faza \textit{predobrade prikupljenih podataka}, koja obuhvata grupisanje adresa koje pripadaju istom realnom entitetu, izbor perioda posmatranja za procenu udela resursa, identifikaciju aktivne populacije učesnika, definisanje učestalosti uzorkovanja podataka, kao i određivanje pragova za uključivanje ili isključivanje entiteta sa zanemarljivim udelima resursa.
+Da bi se makar delimično ublažile poslednje dve mane, jedno od poznatih rešenja jeste korišćenje rezerve \eng{hot standby}. To znači da postoji rezervna instanca spremna za aktivaciju u slučaju da glavna mašina zakaže ili postane neupotrebljiva. Ovo omogućava preuzimanje rada bez (ili uz minimalan) prekid za korisnike. Ipak, i ta rezerva nasleđuje sve prethodno navedene mane.
 
-Kako ne postoji jedinstven indeks koji bi objedinio sve metrike u jednu numeričku vrednost, nakon sprovedene predobrade prikupljeni podaci se podvrgavaju kvantitativnoj analizi primenom više komplementarnih metrika decentralizacije, među kojima se najčešće koriste:
+\subsection{Lokacijski zasnovano adresiranje}\label{section:location-based}
+Većina informacionih sistema omogućava jednostavnu komunikaciju između geografski raspoređenih klijenata i instance informacionog sistema, budući da se ta komunikacija zasniva na modelu \textbf{lokacijski zasnovanog adresiranja} \eng{location-based addressing} \cite{ding2011location}. U ovom modelu svaki zahtev se eksplicitno upućuje na unapred poznatu lokaciju servera, odnosno IP adresu, pri čemu se koristi DNS servis koji prevodi domen u adresu. Na taj način se celokupan radni tok obrade zahteva usmerava ka jednoj fizičkoj lokaciji.
+
+Ovakav model adresiranja jednostavan je za implementaciju i predstavlja dominantnu paradigmu tradicionalnih internet servisa. Međutim, on ima ključna ograničenja u pogledu performansi kada se klijenti i server nalaze na različitim geografskim lokacijama. Brojna merenja globalne internet latencije pokazuju da pristup serverima lociranim na drugim kontinentima tipično uvodi latenciju od \textbf{80-150 ms} \cite{kufel2015network} po jednom zahtevu, što značajno utiče na \textit{korisničko iskustvo} kod aplikacija osetljivih na kašnjenje, kao što su interaktivne web aplikacije, sistemi za finansijsko trgovanje, igre u realnom vremenu i \textit{streaming} servisi.
+
+Usled ovih ograničenja, vertikalno skalirani centralizovani sistemi ne mogu da kompenzuju geografska kašnjenja, nezavisno od raspoloživog hardvera. Ovaj problem se prevazilazi primenom geografski distribuiranih instanci, čime se zahtevi rutiraju ka najbližem dostupnom čvoru i smanjuje ukupna \textit{end-to-end} latencija.
+
+\subsection{Horizontalno skaliranje}
+Horizontalno skaliranje podrazumeva povećanje kapaciteta informacionog sistema dodavanjem dodatnih instanci aplikacije (procesa, kontejnera ili servera), pri čemu se svaki novi zahtev može obraditi na bilo kojoj od dostupnih instanci. Na taj način ukupan kapacitet sistema raste, budući da se opterećenje raspodeljuje na veći broj izvršnih jedinica.
+
+Prednosti horizontalnog skaliranja obično se klasifikuju na sledeći način:
 \begin{enumerate}
-\item \textbf{Šenonova entropija} \cite{shannon1948mathematical}, koja kvantifikuje stepen neizvesnosti u predviđanju proizvođača narednog bloka, pri čemu veće vrednosti ukazuju na ravnomerniju raspodelu moći,
-\item \textbf{Ginijev koeficijent} \cite{gini1921measurement}, koji meri neravnomernost raspodele resursa među učesnicima, gde veće vrednosti označavaju viši stepen koncentracije,
-\item \textbf{Nakamoto koeficijent}, koji predstavlja minimalan broj entiteta čija bi koordinacija omogućila kontrolu većine resursa u mreži,
-\item \textbf{$\tau$ indeks}, koji generalizuje Nakamoto koeficijent određivanjem broja entiteta potrebnih za kontrolu unapred definisanog udela $\tau$ ukupnih resursa,
-\item \textbf{Koncentracioni odnos} \cite{shepherd1987concentration}, koji meri koliki deo ukupnih resursa pripada skupu od $n$ najmoćnijih učesnika,
-\item \textbf{Herfindahl-Hiršmanov indeks} \cite{rhoades1993herfindahl}, koji kvantifikuje ukupni stepen koncentracije resursa u sistemu i potiče iz oblasti antimonopolskih analiza.
+\item \textbf{Teoretski neogračen kapacitet} - budući da se kapacitet može povećavati dodavanjem novih instanci, sistem nije vezan za jedinstveno hardversko ograničenje,
+\item \textbf{Ekonomska efikasnost} - troškovi skaliranja rastu približno linearno u odnosu na povećanje kapaciteta, što omogućava postepeno, predvidivo i finansijski održivo proširenje,
+\item \textbf{Geografska distrbucija} - instance se mogu rasporediti na različite fizičke lokacije, bliže krajnjim korisnicima, čime se smanjuje latencija i ublažava problem pristupa udaljenim serverima kod lokacijski zavisnog adresiranja,
+\item \textbf{Otpornost na greške} - izostanak jedne tačke otkaza omogućava da kvar pojedinačne instance ne utiče na dostupnost celog sistema.
 \end{enumerate}
 
-Javne blokčejn mreže karakteriše visok stepen decentralizacije, koji proizlazi iz njihove otvorene i transparentne prirode. Većina ovih sistema razvija se kao softver otvorenog koda \eng{open-source}, čime se omogućava javna proverljivost implementiranih algoritama i smanjuje rizik od netransparentne algoritamske kontrole. Ipak, treba napomenuti da u pojedinim blokčejn sistemima ove vrste određeni delovi šireg ekosistema (npr. klijentske implementacije, infrastruktura ili aplikacioni sloj) mogu ostati zatvoreni, što uvodi potencijalne tačke centralizacije.
+Uočavamo da se mnoge slabosti vertikalnog skaliranja u horizontalnom pristupu transformišu u njegove prednosti. Međutim, istovremeno se prednosti vertikalnog pristupa pretvaraju u izazove svojstvene distribuiranim sistemima. Ovo je posledica činjenice da održavanje većeg broja instanci nužno zahteva uvođenje složenijih softverskih mehanizama za distribuiranu koordinaciju.
 
-S obzirom na to da su javne blokčejn mreže dozvolom neograničene, mehanizmi cenzure i ograničavanja pristupa znatno su otežani, budući da ne postoji centralni autoritet koji bi mogao selektivno blokirati transakcije. Međutim, u praksi se uočava koncentracija moći kod velikih provajdera infrastrukture u centrima podataka \eng{data centers} \cite{gencer2018decentralization}, što može dovesti do ograničenih oblika \textbf{arhitektonske centralizovanosti} na nivou pristupa mreži.
+Zbog ovih dodatnih mehanizama, isti skup hardverskih resursa raspoređen na veći broj instanci ostvaruje nižu efektivnu performansu u poređenju sa konfiguracijom u kojoj se ti resursi nalaze u jednoj fizičkoj instanci. Ovaj efekat dovodi do pojave dodatnih troškova koje uvodi sama distribucija sistema.
 
-Uprkos tome, otvorena priroda sistema omogućava korisnicima da pokretanjem sopstvenih čvorova na ličnim računarima ili u \textit{bare-metal} okruženjima nezavisno verifikuju stanje mreže i šalju transakcije, čime se dodatno doprinosi smanjenju centralizacije i povećanju otpornosti sistema.
+\begin{definicija}\label{def:overhead}
+Režijsko opterećenje \eng{overhead} predstavlja potrošnju resursa koju distribuirani informacioni sistem mora da izvrši radi održavanja zajedničke koordinacije, sinhronizacije i upravljanja svojim instancama, a koja nije direktno deo primarne obrade korisničkog zahteva.
+\end{definicija}
 
-Podaci jednom zapisani na blokčejnu ostaju trajno dostupni, što predstavlja ograničenje u pogledu zaštite ličnih podataka i ne eliminiše u potpunosti obrasce nadzornog kapitalizma. Iako se identiteti korisnika predstavljaju pseudonimno putem kriptografskih adresa, povezivanje tih adresa sa identitetima iz stvarnog sveta može dovesti do potencijalne zloupotrebe podataka, budući da su sve transakcije javno dostupne i trajno zabeležene \cite{peng2021privacy}.
+Režijsko opterećenje ima kumulativno negativan uticaj na performanse: svaki novi mehanizam koordinacije povećava vreme obrade pojedinačnog zahteva i umanjuje deo sistema koji može biti posvećen korisničkim operacijama. Kao posledica toga, raste latencija, dok se efektivna propusnost sistema smanjuje.
 
-\subsection{Sigurnost blokčejn sistema}
-Sigurnost predstavlja fundamentalno svojstvo blokčejn sistema, budući da obezbeđuje jedinstvenost, neizmenljivost i konzistentnost distribuirane knjige evidencije, čak i u prisustvu vizantijskih čvorova. Očuvanje ovih svojstava mora biti garantovano bez izuzetaka, jer kompromitovanje bilo kog od njih dovodi u pitanje osnovnu funkcionalnost i smisao postojanja blokčejn sistema.
+\begin{definicija}
+Trošak sinhronizacije \eng{synchronization penalty} predstavlja deo režijskog opterećenja koji nastaje kada čvorovi moraju da razmenjuju svoje trenutno stanje, usklađuju podatke ili čekaju jedni na druge.
+\end{definicija}
 
-Usled asinhrone prirode distribuiranih mreža, blokovi se ne propagiraju istovremeno ka svim čvorovima, što može dovesti do privremenog postojanja konkurentnih verzija lanca, odnosno do pojave račvanja.
+\begin{definicija}
+Kontencija \eng{contention penalty} predstavlja deo režijskog opterećenja nastao usled međusobnog takmičenja čvorova za pristup istom resursu.
+\end{definicija}
 
-BFT blokčejn sistemi koriste višefazne konsenzus protokole zasnovane na eksplicitnoj razmeni poruka i glasanju, koji tipično obuhvataju faze predloga bloka \eng{propose}, glasanja o njegovoj ispravnosti \eng{prevote} i konačnog potvrđivanja \eng{precommit}, čime se obezbeđuje da svi ispravni čvorovi usaglase identičnu verziju stanja sistema. Ovakav pristup omogućava determinističku finalnost, zbog čega se BFT sistemi smatraju izuzetno sigurnim.
+Ovi fenomeni su formalno obuhvaćeni \textit{Univerzalnom zakonu skalabilnosti} \cite{gunther1993simple, gunther2008general}, koji opisuje kako režijsko opterećenje utiče na promenu \textbf{propusnosti} sistema pri povećanju broja instanci.
 
-Nasuprot tome, Nakamoto konsenzus dozvoljava privremeno postojanje konkurentnih verzija lanca, koje same po sebi ne predstavljaju narušavanje sigurnosti, budući da protokol garantuje njihovo naknadno razrešenje i konvergenciju ka jedinstvenoj globalnoj istoriji transakcija. Međutim, ukoliko napadač raspolaže dovoljnim udelom resursa relevantnih za proces konsenzusa, može proizvesti alternativnu istoriju transakcija koja biva prihvaćena kao validna od većine čvorova. Time postaje moguće izvršiti reorganizaciju lanca, poništiti prethodno potvrđene transakcije, ostvariti dvostruku potrošnju i narušiti neizmenljivost evidencije, čime se sigurnost sistema direktno kompromituje.
+\begin{teorema}\label{teorema:gunter}
+Gunterov univerzalni zakon skalabilnosti ima sledeću standardnu formu:
+$$C(N) = \frac{N}{1 + \alpha (N-1) + \beta N(N-1)} $$
+pri čemu:\\
+C(N) - relativna propusnost pri N čvorova,\\
+N - broj instanci (čvorova),\\
+$\alpha$ - parametar sinhronizacije,\\
+$\beta$ - parametar kontencije.
+\end{teorema}
 
-Iz navedenog sledi da sigurnost blokčejn sistema zavisi od sposobnosti konsenzusnog mehanizma da obezbedi dugoročnu konvergenciju ka jedinstvenoj verziji lanca, čak i u prisustvu zlonamernih učesnika.
+\begin{posledica}
+Kontencija predstavlja dominantni oblik režijskog opterećenja jer raste kvadratno sa brojem instanci, dok trošak sinhronizacije raste linearno.
+\end{posledica}
 
-U tom kontekstu, stopa račvanja lanca $F$ iako ne predstavlja potpunu meru sigurnosti često se koristi kao indikativna metrika stabilnosti konsenzusa, pri čemu se u pojedinim radovima \cite{nakai2023blockchain} njen inverz koristi kao aproksimativna mera sigurnosti sistema:
-$$ Sigurnost = \frac{1}{F} $$
+Kako broj instanci raste, sistem može ispoljiti sublinearno povećanje kapaciteta, stagnaciju ili degradaciju performansi \cite{hamann2021scalability}. Svaki novi čvor, osim što doprinosi procesnoj snazi, istovremeno uvodi dodatne konflikte u pristupu zajedničkim resursima i zahteva dodatnu koordinaciju, što može rasti brže od korisnog kapaciteta.
 
-\subsection{Skalabilnost blokčejn sistema}
-U skladu sa Definicijom 2.6, skalabilnost blokčejn sistema odnosi se na sposobnost mreže da, uz povećanje raspoloživih resursa, ostvari porast efektivnog kapaciteta obrade transakcija, pri čemu se istovremeno očuvaju prihvatljive performansne karakteristike i bezbednosna svojstva sistema.
+\subsection{Teorija distribuiranih sistema}
+U distribuiranim informacionim sistemima ne postoji jedinstvena globalna memorija kojoj bi svi čvorovi imali istovremeni i potpuno konzistentan pristup \cite{kleppmann2017designing}. Umesto toga, podaci su fizički raspodeljeni između više čvorova koji paralelno obrađuju korisničke zahteve. Ovakva organizacija čini globalno napredovanje informacionog sistema izuzetno složenim, jer se lokalne izmene stanja, nastale na jednom čvoru, moraju usaglasiti sa ostalim čvorovima sistema putem razmene poruka.
 
-Uprkos intenzivnom razvoju ove tehnologije, skalabilnost i dalje predstavlja jedno od ključnih otvorenih istraživačkih pitanja, budući da se upravo ograničenja u pogledu kapaciteta i performansi često identifikuju kao glavna prepreka širem usvajanju blokčejn tehnologije u savremenim informacionim sistemima. Sistematična analiza izazova skalabilnosti u blokčejn mrežama \cite{khan2021systematic} ukazuje da na skalabilnost utiče skup međuzavisnih faktora, uključujući propusnost transakcija, broj čvorova u mreži, veličinu distribuirane evidencije, veličinu bloka, troškove i kašnjenja komunikacije između čvorova, vreme finalizacije transakcija, kao i trošak izvršavanja transakcija.
+\begin{definicija}
+Poruka predstavlja elementarnu jedinicu komunikacije između čvorova u distribuiranom sistemu.
+\end{definicija}
 
-Navedeni faktori su snažno međusobno povezani i u velikoj meri \textit{određeni svojstvima primenjenog konsenzusnog mehanizma}, budući da upravo konsenzus definiše ključne protokolske parametre, kao što su veličina bloka i vremenski interval između uzastopnih blokova. Savremeni konsenzusni mehanizmi, u svom osnovnom obliku, još uvek ne uspevaju da obezbede nivo propusnosti i latencije neophodan za širok spektar industrijskih primena, pri čemu se ograničenje dodatno izražava činjenicom da se efektivna vrednost TPS ne povećava sa rastom broja čvorova.
+Bez dodatnih mehanizama koordinacije, čvorovi bi razmenom poruka mogli da lokalno napreduju nezavisno jedni od drugih, što bi dovelo do divergentnih verzija podataka i narušavanja konzistentnosti globalnog stanja sistema.
 
-Propusnost transakcija se najčešće izdvaja kao centralna metrika u analizi skalabilnosti, budući da kvantitativno odražava sposobnost sistema da obradi zahteve u jedinici vremena. Iako propusnost ne predstavlja samu skalabilnost, već njenu operativnu meru, ona se u praksi najčešće koristi kao njen neposredni pokazatelj.
-$$ Skalabilnost = \frac{n}{T} $$
+\begin{definicija}
+Koordinacija obuhvata sve mehanizme pomoću kojih distribuirani čvorovi usklađuju svoje napredovanje razmenom poruka, tako da sistem funkcioniše kao jedna logička celina.
+\end{definicija}
 
-U savremenim javnim blokčejn sistemima osnovni sloj (L1) projektovan je sa primarnim ciljem očuvanja visokog stepena decentralizacije i bezbednosti. Ovaj sloj obezbeđuje autoritativnu verziju globalnog stanja sistema i predstavlja krajnju instancu verifikacije i konsenzusne finalnosti.
+Koordinacija je potrebna svaki put kada lokalna izmena na jednom čvoru treba da bude reflektovana u celom sistemu. Ovaj proces zahteva komunikaciju da su svi čvorovi blagovremeno dobili informaciju o lokalnim promenama. Mehanizam koji omogućava dostavljanje informacija o izmenama svim drugim čvorovima naziva se propagacija \cite{holliday2003epidemic}.
 
-Paralelno sa tim, razvijaju se zasebni blokčejn sistemi koji predstavljaju više slojeve (L2), a koji funkcionišu izvan osnovnog lanca i imaju za cilj povećanje efektivne propusnosti sistema \cite{sguanci2021layer}. Ovi sistemi često primenjuju različite modele izvršavanja i konsenzusa u odnosu na osnovni sloj, te su u praksi često centralizovaniji. Njihova primarna uloga ogleda se u obradi transakcija i privremenom održavanju stanja, dok se agregirani rezultati periodično zapisuju na osnovni sloj, gde se obezbeđuje njihova kriptografska verifikacija i konačna sigurnost.
+\begin{definicija}
+Propagacija predstavlja proces distribuiranja informacija o promenama sa jednog čvora ka drugim čvorovima u mreži, radi njihovog usaglašavanja.
+\end{definicija}
 
-Na ovaj način se postiže povećanje skalabilnosti sistema, budući da se osnovni sloj rasterećuje od neposredne obrade svih transakcija, dok se istovremeno zadržavaju njegova bezbednosna i decentralizovana svojstva. Slojevita arhitektura omogućava paralelizaciju obrade, smanjenje komunikacionog opterećenja i povećanje efektivne propusnosti bez narušavanja sigurnosnog modela osnovnog lanca.
+Jedan od najrasprostranjenijih mehanizama propagacije u velikim distribuiranim sistemima jeste epidemijski algoritam poznat kao \textit{algoritam ogovaranja} \eng{gossip}. Algoritmi ogovaranja funkcionišu tako što svaki čvor periodično nasumično bira jedan ili više drugih čvorova i razmenjuje informacije o lokalnim promenama. Visoko su skalabilni, otporni na otkaze i ne zahtevaju centralizovani koordinacioni mehanizam.
 
-\section{Distribuirana arhitektura IPFS mreže}
-Iako blokčejn sistemi omogućavaju pouzdano izvršavanje poslovne logike i verifikaciju stanja u distribuiranom okruženju, njihova arhitektura nije pogodna za trajno skladištenje podataka zbog ograničenja povezanih sa skalabilnošću i visokim troškovima, pa se izbegava direktno čuvanje velikih datoteka (npr. JPG, PNG, MP3, PDF) unutar samog blokčejna.
+Nakon što čvor primi poruku o promeni i uspešno je primeni na svoju lokalnu kopiju podataka, potrebno je potvrditi \textbf{inicijatoru} da je operacija zabeležena. Ovaj korak omogućava nadogradnju pouzdanosti i sprečava gubitak ažuriranja.
 
-Zbog toga se u savremenim distribuiranim aplikacijama blokčejn često kombinuje sa spoljašnjim sistemima za skladištenje podataka, pri čemu se ostvaruje razdvajanje odgovornosti između sloja za verifikaciju i sloja za čuvanje sadržaja \cite{steichen2018blockchain}.
+\begin{definicija}
+Potvrda \eng{acknowledgment} predstavlja poruku kojom čvor signalizira inicijatoru da je uspešno primio, obradio i trajno sačuvao operaciju upisa.
+\end{definicija}
 
-Međutim, kako se većina savremenih web aplikacija i internet servisa oslanja na centralizovanu infrastrukturu, sadržaj se skladišti i distribuira sa serverskih sistema pod upravom velikih korporativnih provajdera. U takvom modelu, dostupnost podataka direktno zavisi od operativnog stanja centralnih servera, pri čemu njihov prekid rada dovodi do potpunog gubitka pristupa sadržaju. Centralizovana arhitektura istovremeno omogućava jednostavno sprovođenje kontrole i filtriranja sadržaja, čime se olakšava cenzura i ograničavanje pristupa.
+Propagacija i potvrde čine osnovu šireg mehanizma. Replikacija \cite{gray1996dangers} je fundamentalni koncept koji obezbeđuje da sistem ima više kopija istih podataka na različitim lokacijama i da te kopije ostaju međusobno usaglašene.
 
-Ipak, ključna prednost centralizovanih sistema ogleda se u visokom stepenu optimizacije performansi. Isporuka statičkog i multimedijalnog sadržaja realizuje se uz minimalno kašnjenje i u visokom kvalitetu, zahvaljujući infrastrukturi zasnovanoj na lokacijskom adresiranju, kako je objašnjeno u Odeljku \ref{section:location-based}. Takav pristup, međutim, podrazumeva da operater infrastrukture zadržava potpunu kontrolu nad brzinom isporuke sadržaja.
+\begin{definicija}\label{def:replikacija}
+Replikacija predstavlja proces održavanja više kopija (replika) istih podataka na različitim čvorovima distribuiranog sistema, u cilju povećanja dostupnosti i otpornosti na greške.
+\end{definicija}
 
-Međuplanetarni fajl sistem \eng{InterPlanetary File System, IPFS} \cite{benet2014ipfs} predstavlja distribuirani sistem zasnovan na mreži ravnopravnih čvorova, namenjen skladištenju i razmeni podataka bez centralne tačke upravljanja. U kontekstu sistema e-trgovine zasnovanih na blokčejnu, upotreba IPFS-a nije neophodna, ali predstavlja značajno unapređenje u pogledu distribuiranosti i efikasnosti skladištenja podataka, čime se omogućava izgradnja potpuno decentralizovanih platformi.
+Iako replikacija obezbeđuje da svaki čvor poseduje identičan skup podataka, u mnogim sistemima nije neophodno da svi čvorovi održavaju celu bazu. Alternativni pristupi zasnivaju se na razdvajanju podataka na manje, međusobno nezavisne celine.
 
-Podrazumevani način objavljivanja i pribavljanja sadržaja u IPFS mreži podrazumeva da korisnik lokalno pokrene IPFS servis u pozadini \eng{daemon}, koji funkcioniše kao \textbf{koordinacioni} čvor u procesu razmene podataka. Ovaj čvor uspostavlja izlazne \eng{outbound} konekcije ka drugim čvorovima u mreži, dok istovremeno može prihvatati dolazne \eng{inbound} konekcije. Alternativno, korisnik može koristiti spoljne servise koji omogućavaju pristup IPFS mreži bez pokretanja lokalnog čvora, o čemu će biti reči nakon objašnjenja osnovnih principa rada sistema u narednim pododeljcima.
+\begin{definicija}\label{def:sharding}
+Razdeljivanje podataka \eng{sharding} predstavlja tehniku u kojoj se logički skup podataka deli na više disjunktnih particija, pri čemu je svaki čvor odgovoran za obradu samo svog podskupa podataka, čime se povećava paralelizam i kapacitet obrade sistema \cite{curino2010schism}.
+\end{definicija}
 
-\subsection{Strukturiranje i adresiranje sadržaja}
-Prilikom postavljanja fajla na IPFS mrežu, sadržaj fajla se deli na manje blokove veličine 256KB-1MB. Dobijeni blokovi se zatim organizuju u strukturu podataka tipa \textit{Merkle Directed Acyclic Graph (Merkle DAG)} \cite{sanjuan2020merkle}, gde listovi grafa predstavljaju sirove blokove podataka koji sadrže isključivo segmente originalnog binarnog sadržaja. Koren grafa predstavlja čvor koji enkapsulira metapodatke o fajlu (npr. tip objekta i ukupnu veličinu), zajedno sa referencama ka podređenim čvorovima. Ukoliko broj blokova prevazilazi kapacitet korenog čvora, referenciranje se hijerarhijski organizuje kroz dodatne međučvorove, čime se formira balansirani Merkle DAG.
+\begin{definicija}\label{def:layering}
+Slojevitost podataka \eng{layering} predstavlja tehniku u kojoj se logički skup podataka organizuje u hijerarhijski raspoređene slojeve, gde osnovni sloj \eng{Layer 1, L1} održava autoritativno stanje sistema, dok viši slojevi obezbeđuju optimizovane, parcijalne ili privremene reprezentacije tog stanja, uz oslanjanje na niže slojeve radi očuvanja konzistentnosti \cite{lu2009hierarchical}.
+\end{definicija}
 
-Jedinstveni identifikator sadržaja \eng{Content Identifier, CID} je nepromenljiv i formira se kombinovanjem sledećih informacija:
+U savremenim sistemima najčešće se primenjuju hibridni modeli koji kombinuju različite oblike replikacije, čime se objedinuju njihove komplementarne prednosti i postiže skalabilan, efikasan i otporan distribuirani informacioni sistem.
+
+Kako replikacija omogućava da svaki čvor nezavisno obrađuje korisničke zahteve, a koordinacioni mehanizmi obezbeđuju da sve replike i particije ostanu međusobno usaglašene u meri koju propisuje primenjeni model konzistentnosti, neophodno je sprečiti preopterećenje pojedinačnih delova sistema. U tu svrhu uvodi se sledeći mehanizam:
+
+\begin{definicija}
+Raspodela opterećenja \eng{load balancing} predstavlja mehanizam koji dodeljuje dolazne zahteve različitim čvorovima sistema radi optimalnog iskorišćenja resursa, smanjenja vremena odaziva i sprečavanja preopterećenja pojedinačnih instanci \cite{chou2006load}.
+\end{definicija}
+
+Međutim, u realnim uslovima pošiljalac ne može unapred znati da li će poruka uspešno stići do odredišnog čvora niti da li će odgovor biti vraćen. Da bi se izbeglo slanje poruka ka nedostupnim instancama, neophodno je pre slanja proveriti njihovu dostupnost.
+
+\begin{definicija}
+Provera ispravnosti čvora \eng{health check} predstavlja mehanizam periodičnog ispitivanja dostupnosti i funkcionalnosti čvorova u distribuiranom sistemu, radi detekcije otkaza i obezbeđivanja da se neuspešne instance blagovremeno isključe iz procesa obrade.
+\end{definicija}
+
+Iako mehanizmi raspodele opterećenja i provere ispravnosti omogućavaju izbegavanje slanja poruka ka nedostupnim ili preopterećenim čvorovima, sam proces komunikacije između čvorova i dalje ostaje podložan mrežnim kašnjenjima i neizvesnostima u prenosu poruka. Da bi se kvantitativno ocenila efikasnost komunikacije i procenila pouzdanost mreže u realnim uslovima, neophodno je uvesti metriku koja opisuje ukupan vremenski odziv komunikacionog procesa.
+
+\begin{definicija}
+Vreme odaziva \eng{round-trip time, RTT} u distribuiranim mrežama predstavlja kvantitativnu meru koja označava ukupno vreme potrebno da poruka bude poslata od jednog čvora ka drugom i da se odgovor sa odredišta vrati nazad do inicijatora.
+\end{definicija}
+
+Kako distribuirani sistemi mogu obuhvatati proizvoljno veliki broj čvorova, poruke o izmenama podataka često pristižu iz različitih izvora, u nepredvidivom redosledu i sa različitim kašnjenjima. Da bi replike konzistentno primenile operacije upisa, neophodno je uspostaviti mehanizme koji određuju njihov redosled primene.
+
+\begin{definicija}
+Sat u distribuiranim sistemima predstavlja mehanizam za merenje ili poređenje vremena događaja.
+\end{definicija}
+
+Distribuirani sistemi ne mogu pretpostaviti postojanje globalnog, savršeno sinhronizovanog sata. Zbog toga se u praksi primenjuju različite vrste satova, od kojih svaki obezbeđuje specifičan model opažanja i poređenja događaja. Umesto oslanjanja na fizički sat, čija se tačnost ne može garantovati usled mrežnih kašnjenja, distribuirani sistemi najčešće koriste logičke časovnike, koji redosled događaja određuju na osnovu njihovih uzročno-posledičnih odnosa i strukture razmene poruka. Iako postoje i drugi modeli merenja vremena, logički časovnici se u praksi izdvajaju kao primarni alat za određivanje redosleda događaja.
+
+\begin{definicija}
+Uređenje \eng{ordering} predstavlja mehanizam kojim se operacijama dodeljuje precizan položaj u redosledu izvršavanja, bilo na svim čvorovima sistema ili na njihovom podskupu \cite{lamport2019time}.
+\end{definicija}
+
+Samo postojanje uređenja nije dovoljno da sistem funkcioniše ispravno, jer ono određuje isključivo redosled primene operacija, ali ne eliminiše problem paralelnih pristupa nad istim podacima. Istovremeno izvršavanje više operacija nad istim entitetima može dovesti do anomalija, gubitka ažuriranja ili narušavanja logičke konzistentnosti.
+
+\begin{definicija}
+Konflikt predstavlja situaciju u kojoj dve ili više operacija nad istim podacima ne mogu biti istovremeno primenjene bez narušavanja konzistentnosti sistema.
+\end{definicija}
+
+Zbog toga je neophodno uvesti dodatni mehanizam koji reguliše istovremene pristupe deljenom stanju.
+
+\begin{definicija}
+Kontrola konkurentnog pristupa \eng{concurrency control} predstavlja skup algoritama i tehnika koji obezbeđuju ispravno izvršavanje paralelnih operacija nad deljenim podacima, sprečavajući pojavu konflikata i obezbeđujući konzistentan rezultat \cite{bernstein1987concurrency}.
+\end{definicija}
+
+U praksi se primenjuju dva osnovna pristupa kontroli konkurentnog pristupa:
 \begin{enumerate}
-\item Verzija identifikatora, radi obezbeđivanja kompatibilnosti unapred.
-\item Višekodek \eng{multicodec}, koji označava format i tip kodiranja sadržaja.
-\item Višeheš \eng{multihash}, koji sadrži informaciju o korišćenoj heš funkciji, dužini heš vrednosti i samoj heš vrednosti korenog čvora grafa.
-\item Višebazno \eng{multibase} enkodiranje, koje se primenjuje samo prilikom prikaza CID-a u obliku tekstualne niske.
+\item \textbf{Pesimistička kontrola} - sprečava konflikte unapred tako što privremeno zaključava podatke pre izvršavanja operacije,
+\item \textbf{Optimistička kontrola} - dozvoljava paralelne upise, a konflikte otkriva i razrešava prilikom verifikacije ili potvrđivanja rezultata.
 \end{enumerate}
 
-Važno je napomenuti da identični fajlovi mogu imati različite CID identifikatore ukoliko su generisani korišćenjem različitih parametara kodiranja, kao što su drugačija verzija identifikatora, drugačiji tip formata ili drugačija heš funkcija, a ako se koriste isti parametri, tada isti sadržaj uvek rezultuje istim identifikatorom. Ukoliko više korisnika u mreži dodaje isti fajl, generisaće se isti CID, što omogućava ponovnu upotrebu već postojećih blokova podataka, tj. implicitnu deduplikaciju sadržaja na nivou blokova.
+\subsection{Konsenzus}
+Visok stepen koordinacije u distribuiranim sistemima postiže se primenom konsenzusnih protokola \cite{nguyen2002consensus}, jer oni omogućavaju snažnu konzistentnost i globalno uređenje upisa, čak i u prisustvu mrežnih kašnjenja, otkaza čvorova i particija mreže.
 
-Dodatno, sadržajno adresiranje omogućava kriptografsku proveru integriteta podataka. Pošto CID uključuje heš vrednost korenog čvora strukture podataka, svaka promena u sadržaju rezultuje drugačijom heš vrednošću, a samim tim i drugačijim identifikatorom. Na taj način korisnik može lokalno proveriti da li preuzeti sadržaj odgovara očekivanom identifikatoru.
+\begin{definicija}
+Konsenzus rešava fundamentalni problem koordinisanog napredovanja sistema u distribuiranim sistemima, u kojem skup čvorova mora da se usaglasi oko jedne zajedničke vrednosti, pri čemu moraju biti zadovoljeni sledeći uslovi:\\
+(1) \textbf{sporazum} \eng{agreement} - svi ispravni čvorovi moraju doneti identičnu odluku,\\
+(2) \textbf{validnost} \eng{validity} - odlučena vrednost mora poticati od neke predložene vrednosti,\\
+(3) \textbf{okončanje} \eng{termination} - svaki ispravan čvor mora eventualno doneti odluku.
+\end{definicija}
 
-Međutim, u mnogim praktičnim scenarijima javlja se potreba za ažuriranjem sadržaja, na primer u slučaju web stranica hostovanih na IPFS-u. Budući da je CID nepromenljiv identifikator koji direktno zavisi od sadržaja podataka, svaka izmena fajla rezultuje generisanjem novog CID-a. Zbog toga održavanje referenci na najnoviju verziju sadržaja može postati nepraktično.
+U proces konsenzusa ne moraju biti uključeni svi čvorovi u sistemu, već samo određeni podskup čvorova koji čine kvorum \eng{quorum}. Kako stepen raspodele odlučivanja direktno zavisi od kriterijuma za izbor čvorova koji učestvuju u donošenju odluke, sledi:
+\begin{posledica}
+Mehanizam formiranja kvoruma u konsenzusnom algoritmu predstavlja ključno mesto kontrolne decentralizacije.
+\end{posledica}
 
-Radi rešavanja ovog problema koristi se međuplanetarni sistem imena \eng{InterPlanetary Name System, IPNS}, koji predstavlja distribuirani sistem imenovanja zasnovan na kriptografskim ključevima. U okviru ovog sistema identitet prostora \textit{pokazivača} definiše se parom javnog i privatnog ključa, pri čemu javni ključ određuje jedinstveni prostor imena u kojem je moguće ažurirati promenljive reference ka nepromenljivim CID identifikatorima.
+Konsenzusni protokoli mogu biti organizovani sa glavnim čvorom \eng{leader-based} ili bez glavnog čvora \eng{leaderless}, u zavisnosti od arhitektonske strukture algoritma. Odlučivanje o pravilnom redosledu i razrešavanje mogućih neslaganja među replikama i dalje obezbeđuje sam konsenzusni protokol, dok glavni čvor služi isključivo kao mehanizam za predlaganje kandidata za narednu odluku. Na taj način glavni čvor pruža stabilan izvor predloga, dok protokol konsenzusa garantuje da sve ispravne replike usvoje isti, jedinstveni rezultat.
 
-Ažuriranje fajla u okviru IPNS zapisa zapravo predstavlja ažuriranje reference datog imena tako da pokazuje na željeni CID, pri čemu se autentičnost ažuriranja obezbeđuje privatnim ključem odgovarajućeg identiteta. Na taj način IPNS omogućava postojanje stabilnih i promenljivih identifikatora koji mogu referencirati različite verzije sadržaja tokom vremena.
+Zbog posledice iznad, kada postoji fiksni nepromenljivi glavni čvor koji je deo konsenzusnog procesa, može dovesti do smanjenja stepena kontrolne decentralizacije, budući da taj čvor preuzima ulogu centralne tačke koordinacije i serijalizacije predloga operacija.
 
-Važno je napomenuti da \textbf{replikacija} sadržaja objavljenog u IPFS mreži nije automatski zagarantovana. Podaci ostaju dostupni u mreži sve dok ih najmanje jedan čvor poseduje i aktivno deli sa ostalim učesnicima. U najjednostavnijem slučaju to je čvor korisnika koji je prvobitno objavio sadržaj. Ukoliko korisnik ne želi da održava sopstveni čvor stalno aktivnim, dugoročna dostupnost sadržaja može se obezbediti korišćenjem usluge kačenja \eng{pinning service}, koja trajno čuva određene blokove podataka na infrastrukturi treće strane. Ovakve usluge se u praksi najčešće komercijalno naplaćuju.
+Prva praktična implementacija konsenzusa u prisustvu takozvanih ,,vizantijskih'' čvorova \cite{castro1999practical} dala je ideju diskretnih rundama glasanja, gde se u svakoj rundi bira glavni čvor. Glavni čvor inicijalno predlaže vrednost, dok ostali učesnici proveravaju predlog, razmenjuju međurezultate i ažuriraju sopstvene odluke. Ukoliko dovoljan broj učesnika potvrdi predloženu vrednost kroz definisane faze protokola, ona se smatra prihvaćenom. U slučaju nepostojanja jasne većine, proces se može dalje koordinisati preko glavnog čvora. Ove iteracije se ponavljaju sve dok se ne postigne saglasnost među svim ispravnim čvorovima. Takav kombinovani pristup omogućava sistemu da očuva konsenzus čak i u prisustvu čvorova koji pokušavaju da sabotiraju proces.
 
-\subsection{Distribuirano pribavljanje sadržaja}
-Na osnovu CID-a moguće je deterministički rekonstruisati strukturu grafa i time pribaviti originalni fajl, pod uslovom da su svi njegovi blokovi dostupni u mreži. Na ovaj način IPFS zamenjuje lokacijski zasnovano adresiranje sadržajnim adresiranjem \eng{content-based addressing}. Korisnik ne zahteva podatak sa određene fizičke ili mrežne lokacije, već specificira kriptografski identifikator željenog sadržaja. Time se konceptualni fokus pomera sa pitanja ,,gde se podatak nalazi'' na pitanje ,,koji podatak je potreban'', čime se povećava otpornost sistema na cenzuru i prekide rada pojedinačnih čvorova.
-
-Razmena blokova između povezanih čvorova realizuje se korišćenjem protokola \textit{Bitswap}, koji predstavlja mehanizam za distribuiranu razmenu blokova između ravnopravnih čvorova. Prilikom zahteva za određenim sadržajem lokalni čvor formira listu željenih blokova \eng{want-list}, koja sadrži identifikatore potrebnih blokova. Ova lista se \textbf{propagira} putem poruka sa svim trenutno povezanim čvorovima, dok povezani čvorovi razmenjuju sopstvene liste želja.
-
-Proces pribavljanja sadržaja započinje dodavanjem CID identifikatora korenog čvora traženog sadržaja u listu željenih blokova. Nakon pribavljanja ovog bloka iz njegove strukture izdvajaju se reference na podređene blokove, koji se zatim dodaju u listu željenih blokova. Na taj način se postupno otkriva kompletna struktura grafa i proširuje skup blokova koje je potrebno pribaviti.
-
-Preuzimanje blokova realizuje se paralelno sa više čvorova ukoliko je sadržaj dostupan na više lokacija u mreži, čime se povećava stepen paralelizacije i efikasnost prenosa podataka.
-
-Ukoliko traženi blokovi nisu dostupni među trenutno povezanim čvorovima, IPFS koristi distribuiranu heš tabelu zasnovanu na protokolu \textit{Kademlia DHT} \cite{maymounkov2002kademlia} radi pronalaženja čvorova koji mogu obezbediti traženi sadržaj. Pretraga u ovoj strukturi zasniva se na iterativnom pronalaženju čvorova čiji identifikatori imaju manju udaljenost u odnosu na traženi ključ. Ovakav pristup omogućava pronalaženje odgovarajućih čvorova uz logaritamsku složenost u odnosu na veličinu mreže.
-
-Nakon pronalaženja čvorova koji mogu obezbediti tražene blokove, lokalni čvor uspostavlja izlaznu konekciju ka njima, nakon čega se razmena blokova nastavlja korišćenjem protokola \textit{Bitswap}. Proces se ponavlja sve dok svi potrebni blokovi ne budu pribavljeni, čime se omogućava rekonstrukcija originalnog fajla.
-
-Blokovi podataka koji se preuzmu tokom procesa pribavljanja sadržaja privremeno se skladište na lokalnom čvoru, čime taj čvor može postati dodatni izvor podataka za druge učesnike u mreži. Na taj način IPFS mreža prirodno ostvaruje efekat distribuirane replikacije sadržaja kroz proces razmene blokova između ravnopravnih čvorova. Međutim, blokovi koji nisu eksplicitno zakačeni smatraju se privremenim i mogu biti uklonjeni tokom procesa prikupljanja otpatka \eng{garbage collection}. Ovaj proces periodično oslobađa prostor u lokalnom skladištu uklanjanjem blokova koji nisu dugo referencirani.
-
-Ukoliko korisnik ne želi da pokreće lokalni IPFS čvor, pristup sadržaju moguće je ostvariti putem IPFS pristupnika \eng{gateway}. Pristupnik predstavlja servis koji izlaže standardizovani HTTP interfejs za pribavljanje sadržaja adresiranog putem CID identifikatora. Na ovaj način IPFS sadržaj postaje dostupan kroz konvencionalni web protokol, što omogućava pristup podacima i korisnicima koji ne učestvuju direktno u mreži ravnopravnih korisnika.
-
-Pristupnik prima HTTP zahtev koji sadrži CID identifikator u URL adresi, nakon čega pokušava da pronađe odgovarajući sadržaj. Ukoliko pristupnik već poseduje tražene blokove u lokalnom skladištu, sadržaj se odmah vraća klijentu. U suprotnom, ponašanje zavisi od konfiguracije pristupnika:
+Nakon uvođenja osnovnih pojmova možemo precizirati tri fundamentalna obrasca propagacije poruka koji se javljaju u realnim distribuiranim sistemima:
 \begin{enumerate}
-\item Rekurzivni pristupnik pokušava da pribavi traženi sadržaj iz IPFS mreže pre nego što ga prosledi korisniku.
-\item Nerekurzivni pristupnik vraća poruku o nedostupnosti podataka.
+\item \textbf{Jedan-ka-jedan 1-1 \eng{one-to-one}} - komunikacija u kojoj jedan čvor upućuje poruku tačno jednom drugom čvoru (npr. slanje izmene glavnom čvoru ili direktna replikacija između dva čvora),
+\item \textbf{Jedan-ka-više 1-N \eng{one-to-many}} - komunikacija u kojoj jedan čvor distribuira poruku većem broju čvorova (npr. glavni čvor replicira zapis svim replikama, ili čvor šalje predlog konsenzus protokolu koji ga prosleđuje svim učesnicima),
+\item \textbf{Više-ka-više N-N \eng{many-to-many}} - komunikacioni obrazac u kojem više čvorova paralelno razmenjuje poruke sa većim brojem drugih čvorova (npr. protokoli bez centralnog koordinatora u kojima čvorovi međusobno razmenjuju poruke radi postizanja saglasnosti).
 \end{enumerate}
 
-Oslanjanje na pristupnike trećih strana uvodi određene kompromise u pogledu decentralizacije sistema. Budući da pristupnike obično održava jedan administrativni entitet, oni mogu predstavljati tačke centralizovane kontrole nad pristupom sadržaju. Operateri pristupnika imaju tehničku mogućnost da evidentiraju zahteve korisnika i sadržaj koji se pribavlja, što može imati implikacije na privatnost. Pored toga, veliki broj korisnika može koristiti isti javni pristupnik, što potencijalno dovodi do zagušenja i smanjenja propusnosti.
+Važno je istaći da distribuirani sistemi ne moraju nužno posedovati mehanizam konsenzusa. Kada konsenzus postoji, on se tipično primenjuje nad pojedinačnom vrednošću (npr. operacijom, predlogom ili zapisom u logu) o kojoj sistem treba da donese odluku. Svaka odluka konsenzusa predstavlja jedan korak globalnog napredovanja sistema.
 
-Kao potencijalno rešenje razvijaju se tzv. pristupnici bez poverenja \eng{trustless gateways}, koji omogućavaju verifikaciju sadržaja direktno na strani klijenta. U tom slučaju pregledač može kriptografski proveriti da li preuzeti sadržaj odgovara očekivanom CID identifikatoru, čime se smanjuje potreba za poverenjem u operatera pristupnika. Ipak, podrška za ovakav način rada još uvek nije široko implementirana u savremenim web pregledačima.
+Sekvenca konsenzusnih odluka omogućava implementaciju totalno uređenog prenosa poruka \eng{total order broadcast} \cite{defago2004total}, pri čemu svi čvorovi posmatraju isti redosled poruka. Iz toga sledi sledeći rezultat:
+\begin{teorema}
+Totalno uređen prenos poruka ekvivalentan je problemu konsenzusa \cite{chandra1996unreliable}.
+\end{teorema}
+
+Totalno uređen prenos poruka predstavlja globalno svojstvo sistema koje obezbeđuje jedinstven redosled izvršavanja operacija na svim čvorovima. Na osnovu tog redosleda svaki čvor može lokalno izvršavati operacije, bez potrebe za logičkom centralizacijom.
+
+Ukoliko svaki čvor u sistemu beleži sve operacije u istom redosledu, sistem poseduje osobinu replikovanog log-zapisa \eng{replicated log} \cite{wang2015building}. U prisustvu konsenzusa, jedinstvenost i konzistentnost ovog zapisa su garantovane.
+
+Kada postoji totalno uređen prenos poruka i kada su čvorovi modelovani tako da deterministički izvršavaju operacije u istom redosledu, distribuirani sistem ostvaruje osobinu \textit{replikacije stanja mašine} \eng{state machine replication} \cite{schneider1990implementing}, čime se obezbeđuje jaka konzistentnost sistema.
+
+Međutim, u potpuno asinhronim distribuiranim sistemima javlja se fundamentalno ograničenje izraženo FLP teoremom:
+\begin{teorema}
+Ne postoji deterministički konsenzusni protokol koji garantuje okončanje u prisustvu makar jednog neispravnog čvora u potpuno asinhronom sistemu \cite{fischer1985impossibility}.
+\end{teorema}
+
+S obzirom na to da replikacija stanja mašine zahteva totalno uređen prenos poruka, a time i konsenzus, CP sistemi se modeluju kao parcijalno sinhronizovani sistemi \cite{dwork1988consensus}, u kojima postoji gornja granica kašnjenja poruka i brzine izvršavanja, ali ona nije unapred poznata.
+
+Sa druge strane, deterministički konsenzus može dovesti do blokiranja sistema u slučaju kašnjenja ili otkaza čvorova, što je u suprotnosti sa principima AP sistema koji prioritizuju dostupnost. U takvim sistemima moguće je koristiti verovatnosni konsenzus \eng{probabilistic consensus}, u kojem čvorovi iterativno razmenjuju informacije sa nasumično odabranim podskupom drugih čvorova i ažuriraju svoja stanja prema određenom verovatnosnom pravilu. Verovatnoća neusaglašenosti opada, tipično eksponencijalno, sa brojem iteracija \cite{fagnani2008randomized}.
+
+\begin{definicija}
+Verovatnosni konsenzus je nedeterministički mehanizam postizanja dogovora u distribuiranim sistemima koji koristi slučajne procese, pri čemu verovatnoća zadovoljenja svojstava sporazuma, validnosti i terminacije konvergira ka 1.
+\end{definicija}
+
+Verovatnosni konsenzus zaobilazi ograničenja FLP teoreme napuštanjem determinističkih garancija \cite{ben1983another}, čime postaje primenljiv u potpuno asinhronim sistemima.
+
+Ipak, ovakav pristup obezbeđuje samo probabilističke garancije konzistentnosti, što znači da postoji nenulta verovatnoća privremene neusaglašenosti. Zbog toga verovatnosni konsenzus ne može zadovoljiti stroge zahteve determinističke konzistentnosti, već zahteva dodatne mehanizme za razrešavanje konflikata i postizanje konačne saglasnosti.
+
+Dodatno, u procesu determinističkog konsenzusa postoji praktično ograničenje broja čvorova koji mogu efikasno učestvovati u kvorumu. Sa porastom broja učesnika dolazi do povećanja komunikacionog opterećenja, što, u skladu sa Teoremom \ref{teorema:gunter}, može dovesti do zagušenja mreže i degradacije performansi sistema, a u krajnjem slučaju i do njegovog blokiranja. Ova ograničenja predstavljaju značajan faktor pri projektovanju skalabilnih distribuiranih sistema.
+
+\subsection{Analiza troškova sinhronizacije i kontencije}
+\textbf{Trošak sinhronizacije} u distribuiranim sistemima prvenstveno je određen obimom i strukturom komunikacije potrebne da bi se održalo konzistentno i usaglašeno stanje među čvorovima. Na ovaj trošak najznačajnije utiču obrasci propagacije, posebno 1-N i N-N šemi, budući da generišu veći broj međusobnih razmena i povećavaju zahtev za koordinacijom. Dodatni doprinos potiče od mehanizama potvrđivanja operacija, pri čemu broj komunikacionih rundi i njihovo trajanje direktno zavise od vremena odaziva (RTT). U sistemima koji koriste konsenzusne protokole, ovaj trošak dodatno raste jer svaka odluka zahteva više komunikacionih faza i formiranje kvoruma, čime latencija pojedinačne operacije postaje zavisna od najsporijih učesnika u procesu odlučivanja.
+
+Vrsta replikacije takođe snažno oblikuje trošak sinhronizacije: sinhrona replikacija zahteva da sve replike prihvate operaciju pre njenog završetka, što povećava ukupno usklađivanje, dok asinhrona replikacija omogućava smanjenje ovog troška delegiranjem propagacije u pozadinu. Particionisanje generalno smanjuje sinhronizaciju jer ograničava broj čvorova koji moraju biti uključeni u usklađivanje stanja, ali je njegova primena ograničena u sistemima koji zahtevaju konsenzus, budući da svaka particija mora sadržati dovoljan broj čvorova za formiranje kvoruma i donošenje odluka.
+
+Uređenje operacija predstavlja jedan od strukturalno najskupljih elemenata sinhronizacije, posebno kada je zahtevano totalno uređenje, budući da ono implicira globalno slaganje o redosledu izvršavanja operacija. Mehanizmi kontrole konkurentnog pristupa dodatno uvode sinhronizacione korake, bilo kroz zaključavanje (pesimistički pristup) bilo kroz verifikaciju konflikata (optimistički pristup). U sistemima zasnovanim na konsenzusu, totalno uređenje se ostvaruje kroz sekvencu odluka, što uvodi dodatnu zavisnost između operacija i ograničava mogućnost paralelnog izvršavanja.
+
+Provera ispravnosti čvorova i raspodela opterećenja doprinose trošku sinhronizacije u manjoj meri, ali povećavaju ukupan režijski saobraćaj sistema, odnosno pozadinsku komunikaciju koja nije deo primarne obrade korisničkih zahteva.
+
+U prisustvu vizantijskih čvorova, trošak sinhronizacije se dodatno uvećava zbog potrebe za višerundnom razmenom poruka, verifikacijom poruka i formiranjem kvoruma otpornog na maliciozno ponašanje.
+
+U celini posmatrano, svaki mehanizam koji zahteva striktno uređenje, rad sa kvorumima ili usklađivanje replika proporcionalno povećava trošak sinhronizacije sa rastom broja čvorova i složenošću protokola.
+
+\textbf{Trošak kontencije} potiče iz situacija u kojima više čvorova istovremeno pokušava da pristupi istom resursu ili istoj logičkoj jedinici podataka, što izaziva konkurenciju, zagušenja i čekanje. Ovaj trošak primarno određuju mehanizmi kontrole konkurentnog pristupa: pesimističke tehnike zaključavanja stvaraju direktne konflikte i blokiranja, dok optimistički pristupi prebacuju teret kontencije na kasniju detekciju i razrešavanje konfliktnih upisa.
+
+Obrasci propagacije utiču na kontenciju uglavnom u slučajevima kada više čvorova generiše konkurentne upise nad istim entitetom, pri čemu N-N komunikacija može dodatno uvećati efektivno zagušenje. Duže trajanje zaključavanja ili konfliktne verifikacije povećava vreme odaziva, što dalje amplifikuje kontenciju. Replikacija povećava kontenciju ukoliko sve replike moraju serijalizovati iste operacije, dok particionisanje tu kontenciju smanjuje razdvajanjem domena pristupa. Mehanizmi uređenja takođe doprinose kontenciji jer totalni redosled implicitno uvodi globalnu serijalizaciju.
+
+Provera ispravnosti čvorova može privremeno smanjiti raspoloživu procesnu snagu i time pojačati pritisak na preostale čvorove, dok raspodela opterećenja ublažava kontenciju ravnomernijom distribucijom zahteva.
+
+Prisustvo vizantijskih čvorova dodatno pojačava kontenciju, jer protokoli moraju da serijalizuju operacije kroz šire kvorume i produžene faze verifikacije kako bi se eliminisali lažni ili kontradiktorni predlozi.
+
+U celini, kontenciju najviše povećavaju arhitekturalni obrasci koji uvode zajedničke kritične sekcije, globalna zaključavanja ili serijalizaciju pristupa istim podacima, pri čemu sistemi zasnovani na konsenzusu predstavljaju poseban slučaj u kojem je takva serijalizacija ugrađena osobina sistema.
+
+\section{Operativna svojstva}
+Bezbednosni modeli predstavljaju formalizovane teorijske okvire kojima se sistematski definišu bezbednosni ciljevi, principi i pravila ponašanja informacionih sistema u odnosu na pretnje, neovlašćen pristup i zloupotrebu resursa. U kontekstu distribuiranih informacionih sistema, ovi modeli se primenjuju u okruženjima koja karakterišu autonomni čvorovi, nepouzdani komunikacioni kanali i parcijalni otkazi, što značajno komplikuje ostvarivanje i koordinaciju bezbednosnih svojstava. 
+
+Ovi modeli čine osnovu savremenih teorijskih i praktičnih pristupa informacionoj bezbednosti i zasnivanju arhitektura visokog nivoa pouzdanosti. Ključna operativna bezbednosna svojstva \cite{bishop2002art, sommer2019survey}, koja se u literaturi često objedinuju akronimom \textit{CIAAN}, predstavljaju kvalitativne osobine sistema i uključuju:
+\begin{enumerate}
+\item \textbf{Poverljivost} \eng{confidentiality} - svojstvo kojim se obezbeđuje da podaci ostanu dostupni isključivo ovlašćenim korisnicima, posebno kada je reč o ličnim, osetljivim ili zaštićenim informacijama,
+\item \textbf{Integritet} \eng{integrity} - svojstvo koje garantuje tačnost, potpunost i neizmenljivost podataka, sprečavajući njihovu modifikaciju od strane neovlašćenih korisnika,
+\item \textbf{Dostupnost} \eng{availability} - svojstvo koje obezbeđuje da resursi i usluge budu trajno i blagovremeno dostupni, uprkos greškama, napadima ili opterećenju sistema,
+\item \textbf{Autentičnost} \eng{authenticity} - svojstvo koje omogućava pouzdanu identifikaciju inicijatora koji šalje ili pruža određenu informaciju,
+\item \textbf{Neporecivost} \eng{non-repudiation} - svojstvo kojim se obezbeđuje da korisnici ne mogu negirati prethodno izvršene radnje, poput slanja, primanja ili potvrde poruka.
+\end{enumerate}
+
+U distribuiranim sistemima bezbednosna svojstva ostvaruju se kroz koordinisanu interakciju više čvorova, što podrazumeva dodatne komunikacione i računarske troškove. 
+Za razliku od ostalih bezbednosnih svojstava, dostupnost je pretežno određena arhitektonskim i operativnim karakteristikama sistema i u distribuiranim okruženjima se dominantno oslanja na mehanizme replikacije, zbog čega je detaljno razmatrana u prethodnom poglavlju.
+
+Primena bezbednosnih modela suočava se sa brojnim izazovima, uključujući visoku složenost modernih informacionih sistema, troškove implementacije, organizacioni otpor korisnika, kao i tehnička ograničenja integracije različitih sigurnosnih mehanizama. Prestroge bezbednosne politike mogu značajno umanjiti produktivnost i upotrebljivost sistema, dok previše liberalan pristup povećava rizi kompromitovanja podataka. Savremene bezbednosne arhitekture stoga teže uspostavljanju održive ravnoteže između operativnih potreba i nivoa zaštite.
+
+Međutim operativna svojstva informacionih sistema ne mogu se posmatrati izolovano od njihovih arhitektonskih i performansnih ograničenja, budući da svaki mehanizam za obezbeđivanje bezbednosti, pouzdanosti ili integriteta nužno uvodi dodatne troškove u pogledu latencije, propusnosti i režijskog opterećenja sistema. Ovaj režijski trošak je naročito izražen u distribuiranim sistemima, gde bezbednosni mehanizmi često podrazumevaju dodatne poruke, kriptografske operacije i sinhronizaciju između udaljenih čvorova.
+
+\subsection{Kriptografski i poverljivi mehanizmi}
+U cilju ostvarivanja navedenih operativnih bezbednosnih svojstava i njihove primene u realnim informacionim sistemima, uvode se konkretni tehnički mehanizmi, među kojima kriptografija ima centralnu ulogu u obezbeđivanju poverljivosti, integriteta i autentičnosti podataka. Njena suštinska uloga ogleda se u sprečavanju neovlašćenog pristupa informacijama putem formalno definisanih matematičkih transformacija, uz jasno definisane ciljeve, kao što su sigurnost šifrovanja, otpornosti na kriptoanalitičke napade i verifikacije autentičnosti poruka.
+
+\begin{definicija}
+Šifrovanje \eng{encryption} je proces pretvaranja podataka u nečitljiv oblik radi zaštite. Dešifrovanje \eng{decryption} je proces vraćanja šifrovanih podataka u njihov originalni, čitljiv oblik.
+\end{definicija}
+
+U distribuiranim sistemima, kriptografski mehanizmi ne utiču samo na bezbednost, već i direktno na performanse sistema, jer uvode dodatne računarske operacije i komunikacione korake u svaki tok podataka.
+
+U cilju pojednostavljenja opisa kriptografskih protokola i komunikacionih scenarija, u nastavku se učesnici u razmeni poruka konvencionalno označavaju simboličkim imenima: pošiljalac Alisa (A) \eng{Alice}, primaoc Boban (B) \eng{Bob}, prisluškivač Eva (E) \eng{Eve} i zlonamerni napadač Milena (M) \eng{Mallory}, čime se pojednostavljuje analiza bezbednosti i formalna specifikacija protokola.
+
+\subsubsection{Simetrična kriptografija}
+Prvi praktično definisan simetrični kriptografski algoritam projektovan za računare bio je ,,Lucifer'' \cite{smith1971design}, razvijen u IBM-u početkom sedamdesetih godina 20. veka kao odgovor na rastuću potrebu za automatizovanom zaštitom podataka u bankarskim i finansijskim sistemima. U Luciferu je eksplicitno uvedena upotreba tajnog ključa, tj. numeričke vrednosti koja kontroliše procese šifrovanja i dešifrovanja. Ovim je postavljen temelj savremenim blok šiframa i identifikovani su prvi problemi privatnosti i sigurnosti u računarskim sistemima \cite{feistel1973cryptography}.
+
+\begin{definicija}
+Simetrična kriptografija predstavlja kriptografski model u kojem se za šifrovanje i dešifrovanje podataka koristi identičan tajni ključ.
+\end{definicija}
+
+Kada Alisa želi da Bobu prenese poverljivu poruku, ona primenjuje simetrični algoritam šifrovanja koristeći unapred usaglašeni tajni ključ. Nakon što Bob primi šifrat, on primenjuje isti tajni ključ kako bi izvršio dešifrovanje i rekonstruisao originalni sadržaj. Bez pristupa tom ključu, nijedna neovlašćena strana ne može rekonstruisati poruku.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.75\textwidth]{chapter3_simetricna.png}
+    \caption{TODO}
+\end{figure}
+
+Simetrični algoritmi mogu se podeliti na:
+\begin{enumerate}
+\item \textbf{Blok šifre} - obrađuju podatke u blokovima fiksne veličine, primenom višestrukih rundi transformacija, kao što su permutacije, substitucije i mešanje podataka. Ovakav dizajn obezbeđuje visok nivo otpornosti na kriptoanalitičke napade. Najzastupljeniji savremeni predstavnici su AES \cite{daemen2002design} i Camellia \cite{aoki2000camellia}.
+\item \textbf{Strim \eng{stream} šifre} - šifruju podatke kontinuirano, na nivou bitova ili bajtova, generisanjem pseudonasumičnog toka podataka koji se kombinuje sa otvorenim tekstom. One su naročito pogodne za aplikacije koje zahtevaju nisku latenciju ili obradu podataka u realnom vremenu. Danas se najčešće koristi ChaCha20 \cite{bernstein2008chacha}.
+\item \textbf{AEAD \eng{Authenticated Encryption with Associated Data} šeme} - koriste postojeće blok ili strim šifre u kombinaciji sa mehanizmima za autentifikaciju čime se istovremeno obezbeđuje poverljivost i integritet/autentičnost podataka. Najkorišćenije AEAD šeme danas su AES-GCM \cite{kasper2009faster} i ChaCha20-Poly1305 \cite{nir2018chacha20}.
+\end{enumerate}
+
+Prednost simetrične kriptografije, pored visokog nivoa sigurnosti, ogleda se u njenoj izuzetnoj brzini i efikasnosti, jer šifrovanje i dešifrovanje troše minimalne resurse i dobro se skaliraju za velike količine podataka. Zbog ovih osobina, simetrična kriptografija predstavlja osnovu za šifrovanje podataka u sistemima sa visokim zahtevima u pogledu propusnosti i niske latencije.
+
+Izazovi simetrične kriptografije uključuju otežano skaliranje sistema sa velikim brojem korisnika, budući da svaki par korisnika mora deliti sopstveni tajni ključ, kao i \textbf{problem razmene ključeva} \eng{key exchange problem}, koji se odnosi na bezbedan prenos tajnog kriptografskog materijala preko nezaštićenog komunikacionog kanala. Tajni ključ mora biti razmenjen na bezbedan način, jer njegova kompromitacija dovodi do ugrožavanja celokupne komunikacije.
+
+U tradicionalnim sistemima to je podrazumevalo da se inicijalna razmena ključeva mora obaviti neposrednim ili prethodno obezbeđenim putem, što predstavlja ozbiljno praktično ograničenje u okruženjima gde se komunikacione strane nalaze na velikim geografskim udaljenostima.
+
+\subsubsection{Asimetrična kriptografija}
+Motivisani problemima simetrične kriptografije, Diffie i Hellman \cite{diffie1976} predlažu prvi praktični algoritam za uspostavljanje zajedničkog tajnog materijala \eng{shared secret} između dve strane tokom inicijalne faze komunikacije preko nezaštićenog kanala. Predloženi mehanizam omogućava da se za svaku novu sesiju nezavisno generiše novi tajni materijal, koji se u savremenim sistemima koristi kao osnova za izvođenje simetričnih privremenih (sesijskih) ključeva.
+
+Pored toga, ovaj rad po prvi put formalno uvodi koncept javno dostupnih informacija i privatnih tajni, pri čemu bezbednost sistema više ne zahteva postojanje tajnog kanala za inicijalnu razmenu ključeva. Autori takođe uvode teorijsku ideju digitalnih potpisa, čime postavljaju temelj za dalji razvoj kriptografije i savremenih bezbednosnih protokola.
+
+Dalje, u radu \cite{rivest1978method}, u kojem je predstavljen asimetrični kriptografski algoritam zasnovan na modularnoj aritmetici, autori ističu da se sigurnost sistema u praksi povezuje sa teškoćom faktorizacije velikih kompozitnih brojeva. Ova \textit{asimetrija računarske složenosti} \cite{wigderson2007p} zasniva se na činjenici da postoje efikasne metode za generisanje i proveru prostih brojeva, poput ,,Eratostenovog sita'' \cite{helfgott2020improved}, dok je rastavljanje proizvoljnog prirodnog broja na proste činioce izrazito težak problem za koji do danas nije poznat polinomijalno efikasan algoritam \cite{crandall2005prime}.
+
+\begin{definicija}
+Asimetrična kriptografija predstavlja kriptografski model u kojem se za šifrovanje i dešifrovanje podataka koriste dva različita, ali matematički povezana ključa: javni ključ, koji može biti slobodno distribuiran, i privatni ključ, koji mora ostati tajan. Poruka se šifruje javnim ključem primaoca, dok se dešifrovanje vrši odgovarajućim privatnim ključem, čime se obezbeđuje poverljivost komunikacije.
+\end{definicija}
+
+Kada Alisa želi da Bobu prenese poverljive podatke, ona ih šifruje Bobovim javnim ključem, čime obezbeđuje da jedino Bob, koristeći sopstveni privatni ključ, može da rekonstruiše originalnu poruku. Nasuprot tome, ukoliko Alisa primeni sopstveni privatni ključ nad nekom porukom, rezultujući šifrat može biti verifikovan korišćenjem njenog javnog ključa, što svakome omogućava da proveri da poruka potiče upravo od nje. Ovaj princip neposredno vodi ka formalizaciji digitalnog potpisa kao fundamentalnog mehanizma asimetrične kriptografije.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.75\textwidth]{chapter3_asimetricna.png}
+    \caption{TODO}
+\end{figure}
+
+\begin{definicija}
+Digitalni potpis predstavlja kriptografski mehanizam u kojem se privatni ključ koristi za generisanje proverljivog kriptografskog otiska nad porukom, dok se odgovarajući javni ključ koristi za verifikaciju tog otiska. Proces verifikacije potvrđuje autentičnost pošiljaoca, integritet poruke i obezbeđuje neporicivost autorstva.
+\end{definicija}
+
+Međutim, da bi se obezbedila neporecivost i sprečilo naknadno poricanje ili umetanje događaja u prošlost, javlja se potreba za povezivanjem digitalnih potpisa sa preciznim vremenom njihovog nastanka. U ovom kontekstu razvijen je koncept kriptografskog vremenskog obeležavanja \cite{merkleprotocols} \eng{time-stamping} digitalnih dokaza, pri čemu se, radi pojednostavljenja modela, pretpostavlja postojanje centralnog autoriteta odgovornog za verifikaciju potpisa i održavanje pouzdane vremenske evidencije.
+
+Asimetrični kriptografski algoritmi mogu se klasifikovati prema matematičkim problemima na kojima se zasniva njihova sigurnost:
+\begin{enumerate}
+\item \textbf{Algoritmi zasnovani na problemu faktorizacije} - Bezbednost ovih sistema zasniva se na teškoći faktorizacije velikih kompozitnih brojeva na proste činioce. Koriste se u okruženjima gde je potrebna kompatibilnost i jednostavnost implementacije. Najistaknutiji predstavnik ove klase je RSA \cite{rivest1978method}.
+\item \textbf{Algoritmi zasnovani na problemu diskretnog logaritma u multiplikativnim grupama} - Bezbednost ovih sistema zasniva se na teškoći izračunavanja diskretnog logaritma u grupama modularne aritmetike. Ovi algoritmi se danas retko koriste u novim implementacijama zbog većih veličina ključeva. Glavni predstavnici ove klase su Diffie-Hellman protokol razmene ključeva i \textit{Digital Signature Algorithm} \cite{pub2000digital}.
+\item \textbf{Algoritmi zasnovani na eliptičkim krivama} - Ovi algoritmi koriste algebarsku strukturu eliptičkih krivih nad konačnim poljima i obezbeđuju istu bezbednost kao prethodne klase uz znatno kraće ključeve i bolje performanse. Najzastupljeniji algoritmi su ECDSA \cite{johnson2001elliptic} (npr. nad krivama secp256k1 \cite{qu1999sec}) i EdDSA (npr. ed25519 \cite{bernstein2012high}).
+\item \textbf{Postkvantni algoritmi} - Zasnivaju se na matematičkim problemima za koje nisu poznati efikasni kvantni napadi. Posebno su značajni jer bi Šorov algoritam \cite{shor1994algorithms} kompromitovao prethodne tri klase ukoliko se pojave veliki univerzalni kvantni računari.
+\end{enumerate}
+
+Glavna prednost asimetrične kriptografije jeste što eliminiše problem bezbedne distribucije tajnog ključa, koji predstavlja fundamentalno ograničenje simetrične kriptografije. Svaki korisnik poseduje jedinstveni par ključeva, što omogućava skalabilnost u velikim distribuiranim sistemima. Dodatno, asimetrična kriptografija omogućava digitalne potpise, čime obezbeđuje autentičnost, integritet i neporicivost, što nije ostvarivo isključivo simetričnim pristupom.
+
+Međutim, asimetrični algoritmi značajno su sporiji i računski zahtevniji po pitanju procesorske snage u poređenju sa simetričnim, a za isti nivo bezbednosti zahtevaju znatno duže ključeve. Ovo ograničava njihovu praktičnu primenu za šifrovanje velikih količina podataka, naročito u resursno ograničenim sistemima. Zbog značajnog performansnog opterećenja, asimetrična kriptografija nije pogodna za kontinuirano šifrovanje podataka u distribuiranim sistemima sa velikim obimom saobraćaja.
+
+\subsubsection{Hibridna kriptografija}
+Ideja kombinovanja asimetričnih algoritama za uspostavljanje zajedničkog tajnog materijala i simetričnih šema za efikasno šifrovanje podataka prvi put se implicitno pojavljuje u radu Merkle-a \cite{merkleprotocols}, koji se u literaturi često smatra konceptualnom pretečom savremenih hibridnih kriptografskih protokola. Ovaj pristup omogućava da se performansni trošak asimetričnih mehanizama ograniči na inicijalnu fazu uspostavljanja sesije, dok se dalja komunikacija odvija korišćenjem brze i efikasne simetrične kriptografije.
+
+\begin{definicija}
+Hibridna kriptografija predstavlja pristup u kojem se za svaku pojedinačnu konekciju (sesiju) najpre uspostavlja glavni zajednički tajni materijal \eng{shared secret} korišćenjem asimetričnih algoritama za razmenu ključeva, nakon čega se celokupna dalja komunikacija šifruje brzim simetričnim algoritmima.
+\end{definicija}
+
+Iz uspostavljenog zajedničkog tajnog materijala, primenom algoritama za derivaciju ključeva \cite{chen2024recommendation} \eng{Key Derivation Functions}, generiše se čitav skup sesijskih ključeva \eng{session keys} koji se koriste za različite kriptografske potrebe, kao što su šifrovanje, autentikacija poruka, itd. 
+
+Međutim, aktivni napadač može presresti i čuvati sav saobraćaj, što dovodi do problema \textbf{tajnosti unapred} \cite{canetti2001analysis} \eng{forward secrecy}. Naime, ukoliko bi se u budućnosti kompromitovao glavni tajni materijal uspostavljen tokom početnog dogovora, sve ranije razmenjene poruke mogle bi biti dešifrovane. Stoga moderni protokoli koriste algoritme razmene ključeva koji obezbeđuju ovo svojstvo.
+
+% TODO SLIKA
+Najrasprostranjeniji primer hibridne kriptografije jeste protokol TLS \cite{rescorla2018transport} \eng{Transport Layer Security}, koji obezbeđuje poverljivost, integritet i autentičnost podataka tokom komunikacije između klijenta i servera. Prilikom uspostavljanja veze server klijentu dostavlja \textit{digitalni sertifikat} koji sadrži relevantne verifikacione informacije. Nakon verifikacije sertifikata, klijent i server dogovaraju zajednički sesijski tajni materijal, koji se tokom inicijalne razmene štiti asimetričnom kriptografijom. Po uspešnom završetku ovog procesa, dalja komunikacija odvija se primenom efikasnog simetričnog šifrovanja.
+
+Digitalni sertifikat potpisuje autoritet za sertifikate \eng{Certificate Authority}, koji predstavlja entitet od poverenja zadužen za povezivanje identiteta servera sa njegovim javnim ključem. Na taj način autoritet za sertifikate postaje centralna tačka poverenja u TLS modelu, jer kompromitacija tog entiteta može ugroziti bezbednost komunikacije.
+
+Kriptografski algoritmi za šifrovanje prvenstveno obezbeđuju \textbf{poverljivost} komunikacije. Međutim, poverljivost ne podrazumeva nužno i zaštitu integriteta podataka, pa je za to potrebno uvesti dodatne mehanizme.
+
+\subsubsection{Kriptografske heš funckije}
+Simetrične i asimetrične kriptografske šeme su dvosmerne, odnosno podržavaju procese šifrovanja i dešifrovanja. Kriptografske heš funkcije $H$ ne koriste ključeve i ne omogućavaju rekonstrukciju izvornog podatka iz dobijene vrednosti, što ih čini jednosmernim funkcijama, i to je njihova ključna razlika u odnosu na klasične šeme šifrovanja.
+
+Primena heš funkcije na proizvoljan ulazni podatak generiše deterministički izračunatu vrednost fiksne dužine, tzv. \textit{heš} $h$, pri čemu dužina izlaza zavisi od konkretne primenjene funkcije.
+
+\begin{definicija}
+Kriptografska heš funkcija je deterministička transformacija koja proizvoljan ulazni niz podataka preslikava u izlaz fiksne dužine.
+\end{definicija}
+
+S obzirom na to da heš funkcija preslikava proizvoljno velik prostor ulaza u konačan prostor izlaza, teorijski je moguće da različiti ulazi imaju isti izlaz (kolizija). Stoga se bezbedna heš funkcija definiše svojstvima koja moraju biti teško ostvariva za napadača:
+\begin{enumerate}
+\item za isti ulaz $u$ funkcija uvek proizvodi isti izlaz $h$,
+\item promena jednog bita ulaza rezultira izlazom koji se značajno razlikuje od prethodnog,
+\item izuzetno je teško pronaći $u_1$ i $u_2$ takve da $u_1 \neq u_2$, a $H(u_1)=H(u_2)$,
+\item za dati heš $h$ teško je pronaći bilo koji ulaz $u$ za koji važi $H(u)=h$.
+\end{enumerate}
+
+Pored bezbednosti, savremene heš funkcije moraju biti dizajnirane za visoku efikasnost i mogućnost obrade podataka proizvoljne dužine. Njihova efikasnost ih čini pogodnim za primenu u distribuiranim sistemima, gde se heš operacije često izvršavaju nad velikim količinama podataka i u realnom vremenu.
+
+Najčešće korišćene moderne heš funkcije uključuju: porodicu SHA-2 \cite{pub2012secure} (npr. SHA-256), porodicu SHA-3 \cite{dworkin2015sha} zasnovanu na Keccak konstrukciji, kao i RIPEMD-160 \cite{dobbertin1996ripemd}.
+
+% TODO SLIKA
+% MAC SAMO ZA SLADNJE 
+Kada Alisa šalje Bobu fajl proizvoljne veličine, najpre se izračunava heš vrednost sadržaja fajla. U slučaju asimetrične kriptografije, nad dobijenom heš vrednošću se generiše digitalni potpis korišćenjem Alisinog privatnog ključa. Alternativno, u sistemima sa uspostavljenim deljenim tajnim ključem, integritet i autentičnost poruke mogu se obezbediti primenom mehanizma autentikacionog koda poruke \cite{krawczyk1997hmac} \eng{Message Authentication Code, MAC}. Po prijemu fajla, Bob ponovo izračunava heš vrednost primljenih podataka i verifikuje potpis ili MAC koristeći odgovarajući ključ. Ukoliko se vrednosti podudaraju, obezbeđuje se integritet podataka i potvrđuje njihovo poreklo.
+
+Na ovaj način, heš funkcije obezbeđuju \textbf{integritet} poruke.
+
+\subsection{Funkcionalni bezbednosni okvir}
+Raniji informacioni sistemi nisu raspolagali jedinstvenim mehanizmima za upravljanje celokupnim okruženjem, već je svaki uređaj unutar mreže morao biti zasebno konfigurisan i održavan. Identitet korisnika nije bio dosledno verifikovan na svim tačkama pristupa, pravila pristupa bila su gruba i neprecizna, sistemi nisu mogli da vode celovite evidencije o aktivnostima korisnika, a ukupna zaštita zavisila je od individualnih podešavanja svakog pojedinačnog uređaja.
+
+\begin{definicija}
+AAA \cite{metz2002aaa} \eng{Authentication, Authorization, Accounting} predstavlja bezbednosni okvir za proveru identiteta, ograničavanje pristupa i praćenje upotrebe resursa.
+\end{definicija}
+
+Originalni AAA model se u literaturi i praksi često smatra izuzetno moćnim i funkcionalno nezamenljivim \cite{de2000generic}, jer se široko tretira kao minimalna i standardizovana arhitektura za kontrolu pristupa. On omogućava logičku centralizaciju bezbednosnih politika i efikasnu kontrolu pristupa celokupnom informacionom okruženju, što je posebno važno u velikim, složenim i distribuiranim sistemima, budući da smanjuje rizik od neovlašćenog korišćenja resursa i zloupotrebe privilegija.
+
+\subsubsection{Autentikacija}
+Autentikacija predstavlja inicijalni korak u procesu kontrole pristupa informacionim sistemima, jer mehanizmi autorizacije i evidencije nemaju praktičnu vrednost ukoliko identitet subjekta nije pouzdano utvrđen.
+
+\begin{definicija}
+Autentikacija je bezbednosni proces kojim se proverava i potvrđuje identitet entiteta (korisnika, sistema ili procesa) koji zahteva pristup resursima informacionog sistema.
+\end{definicija}
+
+Autentikacioni mehanizmi se klasifikuju \cite{bonneau2012quest} kao odgovor na različite bezbednosne pretnje, operativna ograničenja i funkcionalne zahteve informacionih sistema:
+\begin{enumerate}
+\item \textbf{Autentikacija zasnovana na znanju \eng{Knowledge-based}} oslanja se na dokazivanje identiteta putem informacije poznate isključivo legitimnom korisniku, kao što su lozinke, PIN-ovi i tajne fraze. Ova klasa pogodna je za široku primenu zbog jednostavne implementacije i niskih infrastrukturnih zahteva. Međutim, podložna je napadima kao što su pecanje identiteta \cite{dhamija2006phishing} \eng{phishing} i beleženje pritisaka tastera \cite{rai2022systematic} \eng{keylogging}, kao i napadima grubom silom \eng{brute-force}, što značajno ograničava njen bezbednosni nivo.
+\item \textbf{Autentikacija zasnovana na posedovanju \eng{Possession-based}} zasniva se na dokazivanju identiteta posedovanjem fizičkog ili digitalnog objekta, poput pametnih kartica, hardverskih tokena ili kriptografskih ključeva. Ovakav pristup omogućava znatno viši nivo bezbednosti kroz upotrebu kriptografskih mehanizama. Glavna ograničenja ove klase su rizik od gubitka ili krađe autentikacionog sredstva, kao i potreba za njegovim sigurnim skladištenjem i upravljanjem.
+\item \textbf{Autentikacija zasnovana na biometriji \eng{Inherence-based}} realizuje se utvrđivanjem identiteta na osnovu fizičkih ili bihevioralnih karakteristika korisnika, kao što su otisak prsta, prepoznavanje lica ili glas. Ovaj pristup eliminiše potrebu za pamćenjem tajni ili posedovanjem dodatnih objekata, ali uvodi izazove u pogledu privatnosti, etičkih pitanja i otpornosti na napade imitacije, uključujući lažne biometrijske uzorke.
+\item \textbf{Autentikacija zasnovana na kriptografiji \eng{Cryptographic-based}} zasniva se na dokazivanju posedovanja kriptografskog ključa bez njegovog otkrivanja, primenom mehanizama kao što su digitalni potpisi, izazov-odgovor protokoli \cite{bellare1993entity}, tokeni koji omogućavaju privremeni i ograničeni pristup resursima \cite{hardt2012oauth} \eng{OAuth} i protokoli zasnovani na dokazima nultog znanja \cite{goldwasser2019knowledge} \eng{zero-knowledge proofs}.
+\end{enumerate}
+
+S obzirom na to da nijedna pojedinačna klasa autentikacije ne obezbeđuje potpunu zaštitu, u savremenim sistemima se primenjuje višefaktorska autentikacija \cite{ometov2018multi} \eng{Multi-Factor Authentication, MFA}, kojom se kombinovanjem dva ili više različitih faktora značajno povećava otpornost sistema na kompromitaciju.
+
+Autentičnost se u praksi ostvaruje kako na nivou identiteta, putem mehanizama autentikacije, tako i na nivou podataka i poruka, primenom kriptografskih mehanizama za verifikaciju porekla i integriteta.
+
+Autentikacija primarno doprinosi ostvarivanju \textbf{autentičnosti} identiteta subjekata koji učestvuju u radu informacionog sistema, obezbeđujući pouzdano vezivanje identiteta za konkretne zahteve za pristup.
+
+\subsubsection{Autorizacija}
+Autorizacija predstavlja naredni korak u procesu kontrole pristupa informacionim sistemima, koji se izvršava nakon uspešne autentikacije subjekta. Dok autentikacija odgovara na pitanje \textit{ko} je korisnik, autorizacija određuje \textit{šta} je tom korisniku dozvoljeno da radi unutar sistema.
+
+\begin{definicija}
+Autorizacija je bezbednosni proces kojim se određuju dozvoljene operacije koje autentikovani entitet može izvršiti nad resursima informacionog sistema.
+\end{definicija}
+
+Kontrola pristupa \eng{Access Control} predstavlja u literaturi i praksi nezamenjiv bezbednosni mehanizam za sprovođenje odluka o autorizaciji u informacionim sistemima \cite{lampson1974protection}. Njena osnovna uloga ogleda se u doslednom ograničavanju upotrebe resursa u skladu sa unapred definisanim bezbednosnim politikama, čime se obezbeđuje zaštita sistema od neovlašćenog pristupa, prekoračenja ovlašćenja i zloupotrebe privilegija.
+
+Odluke o autorizaciji ne donose se proizvoljno, već se zasnivaju na apstraktnim modelima kontrole pristupa \cite{sandhu2002access}, koji formalno opisuju način dodele, provere i sprovođenja prava pristupa nad resursima informacionog sistema. Ovi modeli omogućavaju sistematično i konzistentno upravljanje privilegijama, nezavisno od konkretne tehničke implementacije. U nastavku su prikazani najčešće korišćeni modeli kontrole pristupa, poređani od konceptualno najmanje restriktivnih ka strožim oblicima kontrole:
+\begin{enumerate}
+\item \textbf{Diskreciona kontrola pristupa (DAC)} zasniva se na principu vlasništva nad resursima, gde svaki resurs ima svog vlasnika. Vlasnik ima diskreciono pravo da dodeljuje ili oduzima pristup drugim korisnicima ili grupama korisnika, što ovaj model čini fleksibilnim, ali potencijalno podložnim zloupotrebama.
+\item \textbf{Obavezna kontrola pristupa (MAC)} predstavlja strožiji i statičniji model, u kome su resursi i subjekti označeni bezbednosnim etiketama i nivoima poverljivosti. Pristup se dozvoljava isključivo na osnovu unapred definisanih pravila i hijerarhije bezbednosnih nivoa, bez mogućnosti diskrecione promene od strane korisnika.
+\item \textbf{Kontrola pristupa zasnovana na ulogama (RBAC)} može se posmatrati kao hibridni pristup koji kombinuje elemente DAC i MAC modela. U ovom modelu, privilegije se ne dodeljuju direktno korisnicima, već ulogama koje odražavaju njihove funkcije unutar organizacije. RBAC je danas jedan od najrasprostranjenijih modela u praksi zbog dobre ravnoteže između bezbednosti i administrativne jednostavnosti.
+\item \textbf{Kontrola pristupa zasnovana na atributima (ABAC)} predstavlja fleksibilan i dinamički model u kome se odluke o pristupu donose na osnovu kombinacije atributa subjekta, resursa, okruženja i zahteva. Ovaj model omogućava preciznu i kontekstno zavisnu autorizaciju i posebno je pogodan za složene, distribuirane i dinamične sisteme.
+\end{enumerate}
+
+Ukoliko sistem nije adekvatno konfigurisan, napadači mogu identifikovati i iskoristiti njegove ranjivosti kako bi neovlašćeno proširili svoja pristupna prava. Ovakvo ponašanje, poznato kao eskalacija privilegija \cite{provos2003preventing} \eng{privilege escalation}, omogućava napadaču da stekne viši nivo ovlašćenja od predviđenog. Posledice ovakvih napada mogu varirati od ograničenih funkcionalnih poremećaja do ozbiljnih bezbednosnih incidenata, uključujući kompromitaciju poverljivih podataka, kršenje regulatornih zahteva, narušavanje reputacije sistema i značajne ekonomske gubitke.
+
+Zbog toga, u cilju umanjenja ovakvih napada i povećanja bezbednosti, autorizacioni modeli u praksi često primenjuju princip najmanjih privilegija \cite{ceesay2010authentication}, kojim se entitetima dodeljuju isključivo prava neophodna za izvršavanje njihovih zadataka, čime se značajno smanjuje rizik od kompromitacije poverljivih podataka.
+
+Autorizacija ima ključnu ulogu u ostvarivanju \textbf{poverljivosti} i \textbf{integriteta} informacionih resursa, jer precizno definiše i dosledno sprovodi koje su operacije dozvoljene nad određenim podacima i funkcijama sistema.
+
+\subsubsection{Evidencija}
+Evidencija predstavlja završnu komponentu funkcionalnog bezbednosnog okvira i obuhvata sistematsko prikupljanje, čuvanje i analizu zapisa o aktivnostima autentifikovanih i autorizovanih entiteta u informacionom sistemu. Dok autentikacija i autorizacija definišu identitet i dozvole subjekata, evidencija omogućava uvid u način na koji se ta prava realizuju u praksi i na koji način su resursi korišćeni tokom rada sistema.
+
+\begin{definicija}
+Evidencija je bezbednosni proces kojim se beleže, čuvaju i analiziraju informacije o aktivnostima subjekata nad resursima informacionog sistema radi nadzora, revizije i ostvarivanja odgovornosti.
+\end{definicija}
+
+Primarna uloga evidencije ogleda se u povezivanju odluka o autentikaciji i autorizaciji sa konkretnim izvršenim radnjama. Ove informacije se najčešće evidentiraju u obliku dnevnika aktivnosti \eng{logs}, koji čine osnovu za nadzor, detekciju anomalija, forenzičku analizu i reviziju sistema. U okruženjima sa visokim rizicima bezbednosti, dnevnici aktivnosti moraju biti dizajnirani tako da u slučaju kompromitacije sistema ne otkrivaju osetljive podatke koji bi mogli poslužiti napadaču za dalju eksploataciju.
+
+U distribuiranim sistemima, evidencija dodatno komplikuje dizajn sistema, jer zahteva korelaciju zapisa sa više čvorova, često bez globalno sinhronizovanog vremena, što povećava skladišne i procesorske zahteve.
+
+Evidencija se može organizovati \cite{bishop2002art} u sledeće grupe:
+\begin{enumerate}
+\item \textbf{Evidencija autentikacije} - obuhvata zapise o pokušajima autentikacije (uspešnim i neuspešnim), korišćenim autentikacionim mehanizmima, vremenu i trajanju autentikacione sesije, izvoru zahteva (npr. IP adresi, uređaju, lokaciji), promenama autentikacionih podataka i detekciji sumnjivih obrazaca.
+\item \textbf{Evidencija autorizacije} - obuhvata zahteve za pristup resursima, donete autorizacione odluke, reference na politike i pravila kontrole pristupa, promene privilegija i administrativne odluke o dodeli ili oduzimanju prava pristupa.
+\item \textbf{Ostala evidencija} - obuhvata podatke o aktivnostima i korišćenju resursa, bezbednosnim događajima i incidentima, sistemskim i konfiguracionim promenama, kao i zapise o integritetu samih evidencija.
+\end{enumerate}
+
+Nakon kompromitovanja sistema, napadač može pokušati da izmeni postojeće zapise evidencije, što je poznato kao manipulacija dnevnicima aktivnosti \eng{log tampering}, ili da umetne zlonamerne ili lažne zapise u sistem \eng{log injection}. Ovakve aktivnosti imaju za cilj prikrivanje tragova napada ili narušavanje integriteta evidencije. Zbog toga je neophodno projektovati mehanizme koji omogućavaju detekciju neovlašćenih izmena, kao što su kriptografska zaštita zapisa, kontrola integriteta i analiza anomalija u evidenciji \cite{schneier1999secure}.
+
+Evidencija primarno doprinosi ostvarivanju \textbf{neporecivosti} izvršenih radnji, dok se kriptografskim mehanizmima obezbeđuju proverljivi i vremenski obeleženi dokazi o aktivnostima subjekata u sistemu.
+
+\subsection{Bezbednosne pretnje i napadi}
+Pored napada usmerenih na mehanizme autentikacije, autorizacije i evidencije, informacioni sistemi moraju obezbediti i zaštitu komunikacionih kanala. U suprotnom, napadač može presresti komunikaciju i lažno se predstaviti kao legitimni servis ili korisnik, pri čemu korisnik ostaje u uverenju da direktno komunicira sa pouzdanim entitetom, dok se poruke zapravo preusmeravaju kroz napadača \cite{mallik2019man, syverson1994taxonomy, baitha2018session}. Ovakvi napadi omogućavaju napadaču da u realnom vremenu prikupi osetljive podatke, kao što su lozinke, podaci naloga i finansijske informacije.
+
+Pored toga, direktni napadi na sistem mogu značajno ugroziti njegov rad, naročito u prisustvu zlonamernog softvera \eng{malware}. Ovakav softver može usporiti rad sistema, omogućiti neovlašćen nadzor nad aktivnostima korisnika, obezbediti napadaču direktan pristup uređaju, potpuno onemogućiti njegov rad ili se dalje širiti unutar mreže \cite{rains2020cybersecurity}.
+
+Iako se savremeni bezbednosni standardi i protokoli kontinuirano unapređuju radi povećanja otpornosti na nove pretnje, značajan broj bezbednosnih incidenata i dalje je posledica ljudskih grešaka, kao što su korišćenje slabih lozinki ili nepažljivo rukovanje osetljivim podacima.
+
+Jedan od najvećih izazova u oblasti bezbednosti mreža predstavlja \textit{socijalni inženjering} \cite{salahdine2019social}, koji često predstavlja početnu tačku različitih napada, budući da iskorišćava prirodnu ljudsku sklonost ka poverenju. Ova kategorija napada obuhvata tehnike kao što su pecanje \eng{phishing}, mamčenje \eng{baiting} i lažno predstavljanje \eng{pretexting}.
+
+Statistički podaci \cite{yeo2022human, theHumanFactor} potvrđuju da značajan procenat bezbednosnih incidenata uključuje ljudski faktor, često nezavisno od tehnološkog nivoa zaštite. Ovo naglašava potrebu za kontinuiranom edukacijom korisnika, razvojem bezbednosne kulture i sistemskim pristupom upravljanju ljudskim faktorom, zbog čega se ljudski faktor u literaturi prepoznaje kao jedan od ključnih uzroka kompromitovanja čak i visoko zaštićenih sistema.
+
+Dodatno, informacionim sistemima može biti uskraćena dostupnost usluge usled preopterećenja izazvanog velikim brojem zlonamernih zahteva \cite{lau2000distributed}, što je poznato kao napad uskraćivanja usluge \eng{Denial of Service, DoS}. Ovakvi napadi dovode do zagušenja sistema, pri čemu, u skladu sa Teoremom \ref{teorema:kapacitet}, dolazi do prekoračenja kapaciteta obrade zahteva.
+
+U naprednijim scenarijima, napadi mogu biti distribuirani, pri čemu više kompromitovanih uređaja, često geografski rasprostranjenih i inficiranih zlonamernim softverom, koordinisano generišu veliki broj zahteva prema ciljnom sistemu. Ovakav oblik napada poznat je kao distribuirani napad uskraćivanja usluge \eng{Distributed Denial of Service, DDoS}. Iako primarno utiču na dostupnost sistema i ne moraju nužno izazvati trajnu štetu, ovi napadi mogu dovesti do značajnih operativnih i ekonomskih posledica.

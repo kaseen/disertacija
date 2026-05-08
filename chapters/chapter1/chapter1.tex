@@ -1,377 +1,224 @@
-\chapter{Savremeni informacioni sistemi}\label{sec:uvod}
-Ideja radnog sistema postoji praktično onoliko dugo koliko postoji organizovana trgovina i proizvodnja. Na primer, još u Mesopotamiji (oko 3000. p.n.e.) postoji evidencija trgovine žitom, kreditnih ugovora, kamata i dugova na glinenim tablicama. Kasnije, u vreme Vavilona, Hamurabijev zakonik (oko 1750. p.n.e.) uspostavlja formalna pravila ne samo za poslovne odnose, već i za šire državne i društvene procese, uključujući regulisanje ugovora, odgovornosti, radnih obaveza i sankcija \cite{carmona2007accounting}.
+\chapter{Metodološki okvir disertacije}
 
-Dalji razvoj radnih sistema kroz istoriju u velikoj meri je bio uslovljen razvojem tehnologije. Napredak u oblastima kao što su pismo, ekonomski i pravni sistemi, kao i komunikacione i informacione tehnologije, uključujući štampu, telegraf, telefon i računar, značajno je uticao na način organizovanja i upravljanja radnim procesima. Kao posledica toga, tehnologija je postala nerazdvojni deo savremenih radnih sistema, iz čega se postepeno razvija i koncept informacionih sistema.
+\section{Obrazloženje predložene teze}
+Elektronska trgovina definiše se kao proces kupovine i prodaje dobara i usluga putem elektronskih mreža, pre svega interneta. U osnovi svakog sistema elektronske trgovine nalazi se reprezentacija entiteta putem jedinstvenih, grupnih ili implicitnih identifikatora, kojima se definiše stanje sistema, skup operacija nad entitetima koji omogućavaju promene stanja, pravila koja ograničavaju dozvoljene transformacije, kao i prezentacioni interfejs putem koga korisnici komuniciraju sa sistemom. Bez navedenih elemenata nije moguće obezbediti konzistentnost, integritet i skalabilnost sistema, te oni zajedno čine minimalni tehnički model implementacije platformi elektronske trgovine u okviru informacionih sistema.
 
-S obzirom na to da informacioni sistemi danas predstavljaju jedan od najzastupljenijih oblika tehnološke podrške poslovnim procesima, u nastavku ovog poglavlja biće analizirano njihovo mesto u okviru radnih sistema. Posebna pažnja biće posvećena načinu na koji savremeni informacioni sistemi funkcionišu, kao i prednostima i ograničenjima koje donosi njihov dominantni koncept primene u savremenom poslovanju.
+Savremeni informacioni sistemi, uključujući sisteme elektronske trgovine, dominantno su zasnovani na centralizovanom modelu u kojem se poverenje delegira trećoj strani. Ovakav pristup, iako funkcionalan, uvodi određena ograničenja, budući da primarni fokus sistema nije nužno usmeren na interese krajnjih korisnika. Centralizacija podrazumeva da treća strana upravlja podacima korisnika i posreduje u obradi plaćanja, čime preuzima ključnu ulogu u sistemu i održava privatnu knjigu evidencije. Iako ovakav pristup pojednostavljuje korisničko iskustvo, naročito u domenu plaćanja, on uvodi dodatne troškove posredovanja koji nisu uvek transparentni krajnjim korisnicima. Pored toga, oslanjanje na centralizovane entitete može dovesti do problema kao što su zloupotreba podataka, netransparentnost i sistemski rizici.
 
-\section{Radni sistem}\label{sec:radni-sistem}
-\textbf{Radni sistem} \eng{Work system} se, prema Alteru \cite{alter2013work}, definiše kao organizovani sociotehnički sistem u kojem ljudi i/ili mašine izvršavaju formalne ili neformalne \textit{zahteve} kroz obavljanje \textbf{procesa} i \textbf{aktivnosti}, koristeći informacije, tehnologiju i druge resurse kako bi proizveli određene proizvode ili usluge za jasno definisane interne ili eksterne korisnike. Osnovna ideja ovog pristupa jeste da radni sistem prikazuje \textbf{kako se posao u organizaciji zaista odvija u praksi}, nezavisno od stepena automatizacije ili nivoa tehnološke podrške.
- 
-Na taj način omogućava se sveobuhvatna analiza, razumevanje, objektivno vrednovanje i unapređenje poslovnih aktivnosti, pri čemu se zahtevi razlažu na merljive i proverljive kriterijume performansi i kvaliteta, čime se obezbeđuje njihova operacionalizacija i mogućnost formalnog preslikavanja u \textbf{izvršive modele}.
+Pojava \textit{Bitcoin} (Bitkoin) tehnologije predstavlja značajan iskorak u ovom domenu, jer uvodi model elektronskog plaćanja zasnovan na kriptografskom dokazu umesto poverenja. Na taj način omogućava se direktno izvršavanje transakcija između učesnika, bez potrebe za centralnim posrednicima. Sistem se zasniva na javnoj dostupnosti zapisa o transakcijama kroz decentralizovanu mrežu čvorova koji održavaju distribuiranu knjigu evidencije svih izvršenih transakcija na mreži, čime se obezbeđuju transparentnost i verifikabilnost.
 
-U okviru ovog pristupa Alter identifikuje devet osnovnih elemenata koji čine opšti model radnog sistema. Ovi elementi predstavljaju analitički okvir koji se može primeniti na različite podtipove sistema, poput informacionih sistema, projekata, lanaca snabdevanja ili elektronske trgovine, dok se u određenim kontekstima pojedini elementi mogu prilagođavati ili izostavljati.
+Eliminacijom centralnog posrednika javlja se problem koordinacije i postizanja konsenzusa o stanju sistema u otvorenom okruženju koje može uključivati zlonamerne aktere. Ovaj problem rešava se Nakamoto konsenzusnim mehanizmom, koji uvodi oskudan resurs potreban za predlaganje novog stanja mreže. Time se uspostavlja asimetrija računarske složenosti, jer pronalaženje rešenja zahteva značajan napor zasnovan na metodama grube sile, dok je verifikacija pronađenog rešenja brza i deterministička, čime se obezbeđuje sigurnost sistema.
 
+Prilikom kreiranja transakcije korisnik dokazuje vlasništvo nad sredstvima u skladu sa uslovima definisanim u samoj transakciji. Ovo se ostvaruje putem skriptnog jezika \textit{Bitcoin Script}, koji predstavlja sastavni deo transakcione strukture i omogućava definisanje jednostavnih, determinističkih uslova izvršavanja bez potrebe za pouzdanim posrednicima. Ovakav pristup konceptualno je blizak ideji samostalno izvršavajućih ugovornih uslova, koju je još 1994. godine formalno definisao Nick Szabo.
+
+Dalji razvoj blokčejn tehnologija doveo je do pojave platforme \textit{Ethereum} (Eterijum), koja integriše koncept distribuirane knjige i pametnih ugovora, uvodeći Tjuring-kompletnu virtuelnu mašinu. Pametni ugovor predstavlja program na blokčejnu u obliku niza bajtnih instrukcija raspoređenih na određenoj adresi, čijim se međusobnim izvršavanjem omogućava razvoj decentralizovanih aplikacija, koje omogućavaju automatizaciju poslovne logike i direktnu interakciju među korisnicima. Na taj način distribuirana knjiga evidencije evoluira u globalno distribuiranu računarsku platformu.
+
+Primena decentralizovanih aplikacija na javnim blokčejn mrežama zadovoljava minimalni tehnički model elektronske trgovine i predstavlja značajan potencijal u ovom domenu. Ovakvi sistemi obezbeđuju visok nivo transparentnosti, integriteta, dostupnosti, autentičnosti i neporecivosti. Dodatno, omogućena su direktna plaćanja između korisnika bez potrebe za posrednicima, čime se smanjuju operativni troškovi, uključujući troškove održavanja infrastrukture. Pametni ugovori predstavljaju autonomne programe koji se izvršavaju u distribuiranom okruženju i omogućavaju formalizaciju i automatizaciju pravila sistema.
+
+\section{Predmet istraživanja}
+Predmet ovog istraživanja obuhvata analizu blokčejn sistema kao specifične klase distribuiranih sistema, sa ciljem utvrđivanja da li oni mogu da zadovolje operativna svojstva savremenih informacionih sistema. Poseban fokus stavlja se na ispitivanje uticaja decentralizacije, kao proširenja sociotehničke perspektive, na složenost sistema i potrebu za novim mehanizmima koordinacije koji omogućavaju pouzdano upravljanje zajedničkim stanjem bez centralnog autoriteta.
+
+U radu se razmatra geneza blokčejn tehnologije, kao i klasifikacija blokčejn sistema prema različitim kriterijumima, uključujući model replikacije, otvorenost sistema, kontrolu pristupa, konsenzusni mehanizam, model upravljanja stanjem, stepen sinhronizacije izvršavanja i model upravljanja sistemom, što ima značajan uticaj na dizajn platforme. Posebna pažnja posvećena je analizi osnovnih svojstava, kao što su decentralizacija, sigurnost i performanse, koja predstavljaju ključne kriterijume i ograničenja za evaluaciju sistema.
+
+Platforma Eterijum koristi se kao reprezentativan slučaj za analizu i implementaciju predloženih rešenja, budući da predstavlja jednu od najrazvijenijih platformi za razvoj decentralizovanih aplikacija. S obzirom na to da ova mreža standardizuje modelovanje entiteta putem identifikatora i definisanje osnovnih operacija nad njima u okviru jedinstvenog pametnog ugovora, ovakav pristup je posebno relevantan za sisteme elektronske trgovine, gde svaki proizvod ili usluga mora biti jednoznačno identifikovan.
+
+Jedan od centralnih aspekata eksperimentalnog istraživanja odnosi se na troškovni model javnih blokčejn sistema, koji uvode eksplicitne transakcione naknade. U tom kontekstu analiziraju se predvidivi troškovi povezani sa reprezentacijom entiteta i izvršavanjem osnovnih operacija nad njima, kao i nepredvidivi troškovi koji proizlaze iz dodatnih funkcionalnosti i složenosti sistema definisanih pravilima sistema.
+
+Fokus istraživanja usmeren je na entitete sa jedinstvenim identifikatorima, koji predstavljaju opštiji model objekata sa identitetom, vlasništvom i atributima, pri čemu se istražuju mogućnosti optimizacije skladištenja mape vlasništva u postojećim standardima za nezamenljive tokene, radi efikasnije reprezentacije podataka. Grupni identifikatori se posmatraju kao degenerisan slučaj ovog modela, u kome više instanci sa jedinstvenim identifikatorom deli identitet, atributi su uniformni, a u mapi vlasništva prati se količina umesto pojedinačnih instanci, te se stoga ne razmatraju.
+
+Analiza obuhvata evaluaciju različitih pristupa enkodiranju atributa, gde kuponi predstavljaju reprezentativan studijski slučaj, kao i ograničenja u pogledu gubitka informacija kod takvih enkodiranja. Posebna pažnja posvećena je analizi osnovnih operacija nad entitetima, kao što su kreiranje, prenos i uništavanje, uz poređenje troškova izvršavanja u različitim scenarijima, sa ciljem unapređenja efikasnosti sistema.
+
+Pravila sistema elektronske trgovine mogu se formalizovati kroz različite zahteve, čija se troškovna procena ne može unapred u potpunosti odrediti zbog njihove složenosti i brojnosti. Imajući u vidu da je Eterijum virtuelna mašina Tjuring-kompletna, u radu se analiziraju proširenja pametnih ugovora za podršku funkcionalnostima elektronske trgovine, kao i primena modularnog dizajna koji omogućava nadogradnju postojeće platforme i proširenje funkcionalnosti.
+
+Na kraju, razmatra se uloga prezentacionog sloja koji posreduje između korisnika i pametnih ugovora, sa ciljem pojednostavljenja interakcije i očuvanja korisničkog suvereniteta nad kriptografskim identitetom, uz mogućnost njegove decentralizacije i kriptografske verifikacije.
+
+\section{Problem istraživanja}
+Uprkos navedenim prednostima, primena javnih blokčejn mreža u elektronskoj trgovini suočava se sa značajnim ograničenjima. Ključni problem ogleda se u činjenici da troškovi sistema, koji su u tradicionalnim modelima implicitno uključeni kroz korišćenje posredničkih servisa, u ovom slučaju postaju eksplicitni kroz transakcione naknade koje snose korisnici prilikom izvršavanja operacija, što uvodi dodatnu složenost iz perspektive korisnika i negativno utiče na ukupni kvalitet korisničkog iskustva.
+
+Ovo ograničava primenu blokčejn tehnologija u elektronskoj trgovini, budući da korisnici nisu navikli na eksplicitno plaćanje naknada za korišćenje usluga. Dodatni problem predstavlja nepredvidivost ovih naknada, s obzirom na to da zavise od nivoa opterećenja mreže. Blokčejn se u tom smislu može posmatrati kao sistem zasnovan na odnosu ponude i potražnje, gde ponudu čini raspoloživa količina računarskih resursa mreže, dok potražnja odgovara ukupnom zahtevu za njihovim korišćenjem. Ovo čini da neoptimizovan bajtkod pametnih ugovora dovodi do povećane potrošnje gasa, usled čega korisnici plaćaju veće naknade za izvršavanje funkcionalno identičnih operacija, naročito u uslovima visoke iskorišćenosti mreže.
+
+Posebno značajan faktor u ovom kontekstu predstavlja trajno skladištenje podataka, budući da svaki podatak upisan u skladište mora biti lokalno sačuvan od strane svih čvorova mreže, čime se povećava ukupna količina podataka koju sistem mora da održava. Dodatno, operacije pristupa skladištu zahtevaju ulazno-izlazne operacije, što uvodi dodatno režijsko opterećenje i čini operacije čitanja i pisanja među najskupljim operacijama u pogledu potrošnje gasa.
+
+U kontekstu reprezentacije proizvoda i usluga elektronske trgovine korišćenjem standarda za nezamenljive tokene, moguće je iskoristiti raspoloživi prostor u mapi vlasništva za enkodiranje dodatnih atributa. Međutim, ovaj pristup je ograničen karakteristikama virtuelne mašine, pre svega veličinom skladišnih jedinica. Ograničen broj raspoloživih bitova nameće potrebu za kompromisom između količine i preciznosti informacija koje se enkodiraju, što može dovesti do gubitka informacija ili nemogućnosti reprezentacije složenijih struktura podataka.
+
+Dodatno, primena standarda za nezamenljive tokene koji koriste model implicitnog vlasništva uvodi specifične troškovne karakteristike. U ovim modelima, vlasništvo se ne čuva eksplicitno za svaki pojedinačni entitet, već se razrešava tokom operacija prenosa i uništavanja tokena, što dovodi do dinamičke prirode troškova izvršavanja. Konkretno, trošak ovih operacija zavisi od pozicije prvog eksplicitno definisanog tokena u okviru sekvence, što rezultuje promenljivim troškovima u zavisnosti od ulaznih parametara.
+
+Ovakvo ponašanje implicira da izbor standarda direktno utiče na ekonomsku isplativost u različitim scenarijima upotrebe. Dodatno, modeli zasnovani na implicitnom vlasništvu nameću ograničenje da entiteti kreirani u okviru iste sekvence dele zajedničke atribute, što smanjuje fleksibilnost u modelovanju proizvoljnih objekata.
+
+Prilikom proširenja funkcionalnosti pametnih ugovora kroz modularni dizajn uvode se novi izazovi, pri čemu svaka dodatna funkcionalnost povećava složenost sistema i troškove postavljanja pametnih ugovora za kompanije i preduzeća. Takođe, uvođenje novih funkcionalnosti često zahteva dodatne provere i pristup skladištu, kao i povećanje broja izvršnih instrukcija, što direktno utiče na povećanje troškova u odnosu na model iz eksperimentalnog dela, što otežava preciznu procenu ukupnih troškova unapred.
+
+S obzirom na to da blokčejn sistemi funkcionišu kao zatvorena i deterministička izvršna okruženja, neophodno je uvesti dodatne mehanizme za integraciju sa spoljašnjim izvorima podataka. Ove informacije mogu biti javne ili privatne i često su neophodne za izvršavanje složenijih poslovnih procesa, uključujući validaciju eksternih događaja ili generisanje nasumičnih vrednosti. Međutim, oslanjanje na spoljašnje izvore uvodi dodatne bezbednosne rizike, jer kompromitovan ili nepouzdan izvor može negativno uticati na izvršavanje pametnih ugovora.
+
+Jedan od fundamentalnih izazova blokčejn sistema predstavlja kompromis između decentralizacije, sigurnosti i skalabilnosti, poznat kao blokčejn trilema. Javne blokčejn mreže u pravilu daju prioritet decentralizaciji i sigurnosti, što dovodi do ograničenja u pogledu skalabilnosti. Ovaj problem postaje posebno izražen u scenarijima masovne primene, zbog čega je neophodno analizirati postojeće pristupe njegovom rešavanju i pravce daljeg razvoja.
+
+Na kraju, dodatni izazov predstavlja dinamičan razvoj blokčejn tehnologija, koji otežava dugoročno predviđanje pravaca razvoja. Ipak, moguće je definisati opšti okvir za integraciju blokčejn tehnologija u sisteme elektronske trgovine na osnovu trenutno dostupnih tehnoloških rešenja i saznanja.
+
+Iz navedenog proizlazi da osnovni problem istraživanja predstavlja pronalaženje modela elektronske trgovine zasnovanog na blokčejn tehnologiji koji omogućava efikasno upravljanje troškovima, uz očuvanje funkcionalnosti, sigurnosti i prihvatljivog korisničkog iskustva.
+
+\section{Ciljevi istraživanja}
+Opšti cilj ovog istraživanja jeste razvoj modela i dizajna distribuirane platforme za elektronsku trgovinu zasnovane na javnoj blokčejn mreži, koja omogućava efikasno upravljanje troškovima izvršavanja uz očuvanje funkcionalnih zahteva, sigurnosti sistema i prihvatljivog korisničkog iskustva.
+
+Tok i sadržaj rada neposredno su uslovljeni definisanim ciljevima istraživanja, pri čemu se opšti cilj razlaže na sledeće specifične ciljeve:
 \begin{enumerate}
-\item \textbf{Procesi i aktivnosti} predstavljaju konkretan rad koji se obavlja unutar radnog sistema. Jedan proces obuhvata jednu ili više aktivnosti, dok jedan radni zahtev obuhvata jedan ili više procesa, pri čemu se kroz procese i aktivnosti operacionalizuju poslovne potrebe, pravila, izuzeci, ograničenja i ciljevi koji zajedno čine sadržaj zahteva.
-\item \textbf{Učesnici} su ljudi koji obavljaju rad u sistemu rada, bez obzira na to da li koriste informacione tehnologije ili ne. U mnogim slučajevima i sami kupci mogu biti učesnici sistema rada.
-\item \textbf{Informacije} obuhvataju sve oblike podataka koje radni sistem kreira, koristi, skladišti, prenosi, ažurira ili briše tokom aktivnosti. Ovo ne obuhvata samo digitalne podatke u informacionim tehnologijama, već i verbalne dogovore, dokumenta, implicitno znanje, beleške i sl.
-\item \textbf{Tehnologije} obuhvataju fizičke i/ili digitalne alate koji pomažu učesnicima da obave posao ili da ga u potpunosti automatizuju. Tehnologije mogu biti od običnog čekića, preko računara i softvera, sve do potpuno automatizovanih digitalnih agenata.
-\item \textbf{Proizvod} u sistemu rada predstavlja rezultat njegovog postojanja, jer radni sistem kao krajnji izlaz proizvodi određenu informaciju, fizičku stvar i/ili uslugu koja donosi vrednost korisniku. Procena uspešnosti sistema rada može se meriti na osnovu proizvoda.
-\item \textbf{Kupci} su oni koji dobijaju i koriste proizvode ili usluge sistema rada. Oni mogu biti spoljašnji (kupci organizacije) ili unutrašnji (npr. drugi odsek u kompaniji).
-\item \textbf{Okruženje} predstavlja spoljne faktore koji utiču na rad sistema: zakone i regulativu, tržišnu konkurenciju, kulturu, standarde, organizacione politike, istoriju firme i sl. Ignorisanje okruženja može dovesti do pogrešne analize i neuspeha pri dizajnu sistema.
-\item \textbf{Infrastruktura} obuhvata resurse na koje se radni sistem oslanja i koristi, ali koji nisu direktno pod njegovom kontrolom. To mogu biti drugi sistemi, ljudska infrastruktura, zajedničke baze podataka, ,,platforme u oblaku''  i sl.
-\item \textbf{Strategije} određuju pravac i nameru. One postoje na nivou preduzeća, odeljenja i konkretnog sistema rada. Strategije moraju biti usklađene i koherentne, jer neusaglašene strategije dovode do neuspešne implementacije i pogrešnih prioriteta.
+\item Formalizacija minimalnog tehničkog modela elektronske trgovine u kontekstu blokčejn sistema, kroz identifikaciju ključnih elemenata sistema, uključujući reprezentaciju entiteta, skup operacija nad njima, pravila transformacije stanja i prezentacioni interfejs za korisnike.
+\item Analiza savremenih informacionih sistema elektronske trgovine u okviru centralizovanog modela, sa ciljem identifikacije njihovih ograničenja i implicitnih pretpostavki u pogledu poverenja i upravljanja podacima.
+\item Uvođenje i formalizacija pojma decentralizacije kao proširenja klasične sociotehničke paradigme informacionih sistema.
+\item Definisanje analitičkog okvira za evaluaciju informacionih sistema, koji uključuje metrike za procenu tehničkih atributa infrastrukture, performansi i operativnih svojstava sistema.
+\item Analiza javnih blokčejn sistema kao posebne klase distribuiranih informacionih sistema, u okviru prethodno definisanog analitičkog okvira, sa posebnim osvrtom na uticaj decentralizacije na složenost sistema i ograničenja koja iz toga proizlaze.
+\item Detaljna analiza konsenzusnog i izvršnog sloja Eterijum platforme, sa naglaskom na ispitivanje decentralizacije, sigurnosti i performansi, kao i formalizaciju pojma gasa kao osnovne jedinice troškovnog modela za utrošen računarski napor.
+\item Analiza troškovnog modela skladištenja podataka na Eterijum blokčejnu.
+\item Analiza enkodirane reprezentacije entiteta sa maksimalnom veličinom od jedne skladišne jedinice u bajtovima unutar jedinstvenog identifikatora mape vlasništva u okviru standarda za nezamenljive tokene.
+\item Komparativna analiza modifikovanih standarda ERC-721, ERC-721A i ERC-721Psi za rad sa e-kuponima kao reprezentativnim studijskim slučajem, sa fokusom na troškove skladišnih operacija nad entitetima prilikom izvršavanja osnovnih funkcija, uključujući kreiranje, prenos i uništavanje.
+\item Analiza mehanizma razrešavanja implicitnog vlasništva u standardima ERC-721 i ERC-721Psi, koji nastaje tokom operacija prenosa i uništavanja tokena, uz izvođenje formula za njegovo određivanje u zavisnosti od prvog tokena u grupi.
+\item Eksperimentalna evaluacija performansi ovako definisanih e-kupona, uz merenje troškova izvršavanja osnovnih operacija u različitim standardima i scenarijima parametara.
+\item Ispitivanje mogućnosti prilikom dizajna platforme za e-trgovinu kroz proširenje funkcionalnosti standarda za nezamenljive tokene, uključujući modularni dizajn pametnih ugovora i integraciju sa spoljašnjim izvorima podataka, u cilju projektovanja potpuno decentralizovane poslovne logike sistema elektronske trgovine na javnoj blokčejn mreži, čime se uvode dodatni nepredvidivi troškovi.
+\item Analiza potpune decentralizacije sistema kroz očuvanje suvereniteta nad kriptografskim identitetom i primenu sadržajno adresiranih sistema za realizaciju distribuiranog prezentacionog sloja.
 \end{enumerate}
 
-Prethodna definicija radnog sistema može se posmatrati kao analitička, jer pruža opis njegove strukture i međusobnih odnosa komponenti. Da bi se obezbedilo dublje teorijsko razumevanje pojma, uvodi se \textit{ontološka definicija} koja razmatra minimalni skup elemenata neophodnih da bi radni sistem postojao kao realan entitet. Iako Alter eksplicitno ne koristi termin ,,ontološki minimum radnog sistema'', iz njegove definicije i logike pristupa proizlazi da su za postojanje svakog radnog sistema neophodni sledeći elementi:
+Ovako definisani ciljevi omogućavaju projektovanje arhitektonskog modela distribuirane platforme za elektronsku trgovinu zasnovane na javnoj blokčejn mreži, sa posebnim fokusom na optimizaciju transakcionih naknada korisnika prilikom izvršavanja osnovnih operacija nad entitetima sa jedinstvenim identifikatorima, uključujući njihovo kreiranje, prenos i uništavanje.
+
+Tako uspostavljen analitički i eksperimentalni okvir predstavlja osnovu za sistematsku evaluaciju performansi i troškova predloženog rešenja, kao i za njegovu primenu i dalja unapređenja na drugim blokčejn platformama.
+
+\section{Hipoteze istraživanja}
+U okviru ovog istraživanja postavljena je opšta hipoteza koja glasi:
+
+\begin{quote}
+\textit{Moguće je dizajnirati distribuiranu platformu elektronske trgovine zasnovanu na javnoj blokčejn mreži, koja primenom optimizovanih modela skladištenja i obrade podataka u pametnim ugovorima omogućava značajno smanjenje transakcionih troškova korisnika, uz očuvanje funkcionalnih i bezbednosnih svojstava sistema.}
+\end{quote}
+
+Iz tako definisane opšte hipoteze proizilaze posebne hipoteze koje detaljnije razrađuju pojedinačne aspekte posmatranog problema, kroz formalizaciju ključnih svojstava blokčejn sistema, njihovih ograničenja i mogućnosti primene u elektronskoj trgovini:
 \begin{enumerate}
-\item \textbf{procesi i aktivnosti} - koji određuju \textit{šta se i kako radi}
-\item \textbf{učesnici} - koji određuju \textit{ko radi}
-\item \textbf{resursi} (informacije i tehnologije) - koji određuju \textit{čime se radi}, i
-\item \textbf{proizvod/ishod} - koji određuje \textit{šta se postiže}.
+\item Javni blokčejn sistemi sa podrškom pametnih ugovora mogu formalno zadovoljiti minimalni tehnički model elektronske trgovine.
+\item Decentralizacija uvodi dodatnu složenost i zahteva specifične mehanizme koordinacije.
+\item Troškovni model zasnovan na gasu omogućava kvantifikaciju računarskih operacija.
+\item Optimizacija reprezentacije entiteta primenom standarda za nezamenljive tokene značajno smanjuje troškove izvršavanja operacija.
+\item Model implicitnog vlasništva uvodi promenljive troškove u zavisnosti od načina razrešavanja vlasništva.
+\item Proširenje funkcionalnosti povećava troškove na nelinearan i teško predvidiv način.
+\item Moguće je realizovati decentralizovan prezentacioni sloj bez narušavanja suvereniteta korisnika.
 \end{enumerate}
 
-Ovi elementi čine jezgro ontološkog okvira svakog radnog sistema i predstavljaju njegovu minimalnu strukturu nezavisno od konteksta ili stepena složenosti.
-
-Prema Alteru, radni sistemi postoje kako bi stvarali vrednost za svoje korisnike, pa se njihova uspešnost ocenjuje kako prema efikasnosti unutrašnjih procesa, tako i prema percepciji i zadovoljstvu korisnika proizvodima i uslugama koje sistem generiše, odnosno \textit{korisničkom iskustvu}. U zavisnosti od svrhe i konteksta, pojam \textit{vrednosti} može se interpretirati na različite načine, što otvara prostor za teorijsko proširivanje Alterove definicije radnog sistema.
-
-Polazeći od različitih konteksta u kojima radni sistemi funkcionišu, u daljem radu oni se razmatraju kroz četiri osnovne kategorije:
+Pojedinačne hipoteze koje su dalje razmatrane u disertaciji odnose se na kvantitativnu analizu troškova izvršavanja osnovnih operacija modifikovanih nezamenljivih tokena za rad sa reprezentovanim entitetima u okviru jedne skladišne jedinice:
 \begin{enumerate}
-\item Poslovni sistemi usmereni su na stvaranje ekonomske vrednosti za klijente i organizaciju,
-\item Javni sistemi usmereni su na stvaranje društvene vrednosti kroz pružanje usluga građanima i unapređenje javnog interesa \cite{moore1997creating},
-\item Neprofitni sistemi usmereni su na stvaranje zajedničkog dobra bez cilja ostvarivanja profita \cite{murray1994evaluating},
-\item Lični radni sistemi odnose se na načine na koje pojedinci koriste tehnologiju i informacije za postizanje ličnih ciljeva i povećanje lične produktivnosti.
+\item Trošak operacije grupnog kreiranja u standardima sa implicitnim vlasništvom je znatno manji nego u standardu ERC-721.
+\item Trošak razrešavanja implicitnog vlasništva raste sa udaljenošću od prvog eksplicitno definisanog tokena u grupi.
+\item Troškovi operacija prenosa i uništavanja u standardima sa implicitnim vlasništvom su znatno veći nego u standardu ERC-721 zbog eksplicitnog razrešavanja vlasništva.
+\item Trošak operacije prenosa u standardu ERC-721Psi postaje isplatljiviji od ERC-721A nakon određenog rastojanja između prvog tokena u grupi i posmatranog tokena.
+\item Trošak operacija uništavanja u standardu ERC-721 ostaje konstantan i najmanji je jer jedini omogućava eksplicitan povraćaj gasa usled oslobađanja skladišne jedinice.
+\item Trošak uništavanja više tokena u jednoj transakciji u standardu ERC-721Psi počevši od određenog broja uništenih kupona postaje troškovno najpovoljniji.
+\item Trošak razrešavanja implicitnog vlasništva u standardu ERC-721A teži vrednosti približno 256 puta većoj nego u standardu ERC-721Psi kad broj kupona kreiranih u jednoj transakciji teži beskonačnosti.  
+\item Trošak postavljanja pametnog ugovora koji implementira ERC-721Psi standard je najveći u odnosu na ostale posmatrane standarde.
 \end{enumerate}
 
-Bez obzira na kategoriju, svi radni sistemi dele zajednički ontološki minimum, odnosno procese i aktivnosti koje učesnici obavljaju koristeći informacije i tehnologije radi stvaranja određene vrednosti za jasno definisane korisnike.
+\section{Metodološki pristup}
+Metodologija istraživanja zasniva se na kombinaciji teorijsko-analitičkog, konstruktivnog i eksperimentalnog pristupa, sa ciljem sistematske evaluacije mogućnosti primene blokčejn tehnologija u razvoju platformi elektronske trgovine.
 
-Među različitim tipovima radnih sistema, informacioni sistemi predstavljaju poseban slučaj u kojem su procesi i aktivnosti u značajnoj meri podržani ili automatizovani informacionim tehnologijama. Zbog toga će u daljem radu fokus biti na informacionim sistemima kao izvršivim modelima radnih sistema.
-
-\section{Informacioni sistem}
-Da bi se precizno definisao informacioni sistem, potrebno je najpre razjasniti pojam informacionih tehnologija, koje se zasnivaju na skupu osnovnih tehničkih komponenti \cite{laudon2004management}. U svom osnovnom obliku, informacioni sistemi se zasnivaju na dve fundamentalne komponente:
-\begin{enumerate}
-\item \textbf{Hardver}, koji obezbeđuje fizičku infrastrukturu neophodnu za izvršavanje računarskih procesa,
-\item \textbf{Softver}, koji predstavlja logički sloj sistema i definiše njegove funkcionalnosti, ponašanje i stepen automatizacije poslovnih procesa.
-\end{enumerate}
-
-Međutim, u savremenim informacionim sistemima, radi preciznije analize i jasnijeg modelovanja, ove osnovne komponente se u literaturi često posmatraju kroz dodatna dva konceptualna sloja, koji u sebi implicitno obuhvataju i hardverske i softverske elemente:
-
-\begin{enumerate}[start=3]
-\item \textbf{Bazu podataka}, koja obezbeđuje mehanizme trajnog čuvanja podataka, kao i logičke strukture i softverske servise za njihovo organizovano čitanje, pisanje i upravljanje,
-\item \textbf{Mreže}, kao infrastrukturni i komunikacioni sloj koji omogućava razmenu podataka, koordinaciju i interoperabilnost između udaljenih delova sistema.
-\end{enumerate}
-
-Ovakva četvorokomponentna podela ne uvodi nove fundamentalne tehničke osnove sistema, već predstavlja analitički okvir koji omogućava jasnije razdvajanje odgovornosti, lakše razumevanje arhitekture i precizniju analizu ponašanja savremenih informacionih sistema.
-
-\begin{definicija}
-Informacione tehnologije (IT) predstavljaju skup tehničkih sredstava, uključujući hardver, softver, baze podataka i mreže, namenjenih obradi, čuvanju, razmeni i prikazu informacija neophodnih za realizaciju poslovnih procesa i aktivnosti.
-\end{definicija}
-
-\begin{definicija}
-Informacioni sistem predstavlja sociotehnički sistem koji nastaje integracijom radnog sistema sa informacionim tehnologijama radi podrške ili automatizacije procesa i aktivnosti u okviru tog sistema.
-\end{definicija}
-
-Bez obzira na veličinu ili primenjenu tehnologiju, svaki informacioni sistem obuhvata tri osnovne funkcionalne celine: ulaz, obradu i izlaz. U savremenim softverskim rešenjima te celine se najčešće realizuju kao:
-\begin{enumerate}
-\item prijem i prikaz informacija korisniku (korisnički interfejs, \textit{frontend}),
-\item obrada podataka i izvršavanje poslovne logike (\textit{backend}),
-\item skladištenje i upravljanje podacima (baza podataka i sistemi za upravljanje podacima).
-\end{enumerate}
-Ovakva podela predstavlja minimalnu logičku, odnosno konceptualnu arhitekturu informacionog sistema.
-
-\subsection{Tjuringova kompletnost} 
-Radni sistem formuliše zahteve u domenu realnih poslovnih procesa, koje označavamo skupom $Z_{RS}$, dok informacioni sistem predstavlja njihovu formalizovanu i izvršivu reprezentaciju u digitalnom okruženju, označenu skupom $Z_{IS}$. 
-
-Preslikavanje skupa $Z_{RS}$ u formalni domen informacionog sistema ne predstavlja trivijalnu funkciju, već podrazumeva interpretaciju, razlaganje, preciziranje i formalizaciju poslovnih zahteva. Ovaj proces obuhvata identifikaciju, analizu, specifikaciju, validaciju i upravljanje zahtevima tokom životnog ciklusa sistema \cite{zave1997classification}.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.98\textwidth]{chapter1_zahtev.png}
-    \caption{TODO}
-\end{figure}
-
-Međutim, samo oni zahtevi koji se mogu dovoljno precizno formalizovati, operacionalizovati i algoritamski izraziti mogu postati deo odgovarajućeg formalnog jezika informacionog sistema, te važi relacija:
-$$
-Z_{IS} \subseteq f(Z_{RS})
-$$
-
-U sistemima projektovanim za unapred definisan i konačno ograničen domen zahteva, upotreba \textit{ograničenih} formalnih jezika predstavlja sasvim dovoljan pristup. Međutim, u slučajevima kada buduća struktura procesa, poslovnih pravila i njihovih kombinacija nije unapred poznata, odnosno kada je domen zahteva strukturno neformalan, svaka pojava nove poslovne logike zahtevala bi redizajn informacionog sistema ukoliko je njegov formalni jezik ograničene izražajnosti.
-
-\begin{definicija}
-Tjuringova kompletnost \cite{turing1936computable} predstavlja fundamentalno svojstvo formalnih računarskih sistema koje omogućava izražavanje proizvoljnih algoritama putem kombinacije sekvencijalnog izvršavanja, uslovnog grananja i iterativnih konstrukcija. 
-\end{definicija}
-
-Sistem koji poseduje ova svojstva teorijski je sposoban da implementira svaki izračunljivi algoritam, zbog čega se jezici koji ispunjavaju ove uslove nazivaju \textit{Tjuring kompletni jezici}.
-
-Tjuringova kompletnost postaje neophodan uslov u situacijama u kojima radni sistem ne može unapred ograničiti oblik svojih budućih zahteva, budući da omogućava implementaciju novih tipova funkcionalnih zahteva čija se struktura i logika ne mogu predvideti u fazi projektovanja sistema, bez potrebe za redizajnom osnovne arhitekture informacionog sistema.
-
-Iako Tjuringova kompletnost obezbeđuje maksimalnu izražajnost, ona istovremeno uvodi povećanu složenost u verifikaciji, analizi i kontroli ponašanja sistema. Zbog toga se u pojedinim domenima namerno koriste netjuring kompletni jezici kako bi se obezbedila veća sigurnost, predvidivost i formalna proverljivost izvršavanja.
-
-\subsection{Tipovi informacionih sistema}
-Informacioni sistemi mogu se posmatrati kao tehnološke implementacije radnih sistema različitih namena. U literaturi se klasifikuju prema organizacionom nivou, funkcionalnoj oblasti i domenu primene \cite{laudon2004management, bourgeois2019information}. Ove podele mogu se prirodno ugraditi u posmatranje radnih sistema kroz prethodno definisane četiri kategorije, čime se dobija okvir za klasifikaciju informacionih sistema:
+Validacija postavljenih hipoteza vrši se u skladu sa njihovom prirodom. Posebne hipoteze koje se odnose na formalna svojstva sistema i konceptualne modele validiraju se teorijsko-analitičkim pristupom. Hipoteze koje podrazumevaju dizajn i implementaciju sistema validiraju se konstruktivno, kroz demonstraciju izvodljivosti predloženih rešenja. Pojedinačne hipoteze, koje se odnose na kvantitativne aspekte troškova izvršavanja, validiraju se eksperimentalno, na osnovu merenja potrošnje gasa i komparativne analize dobijenih rezultata.
 
 \begin{description}
-\item \textbf{Poslovni informacioni sistemi.} Većina klasičnih informacionih sistema pripada poslovnom kontekstu. Sistemi za procesiranje transakcija (TPS), menadžerski informacioni sistemi (MIS), sistemi za podršku odlučivanju (DSS) i izvršni informacioni sistemi (ESS/EIS) omogućavaju operativnu i menadžersku podršku poslovnim procesima. Pored toga, funkcionalni informacioni sistemi, poput finansijskih, računovodstvenih, marketinških, proizvodnih i HR sistema, kao i integrisani sistemi (ERP, CRM, SCM), predstavljaju tipične implementacije poslovnih radnih sistema.
-\item \textbf{Javni informacioni sistemi.} Informacioni sistemi u javnom sektoru obuhvataju sisteme e-uprave, zdravstvene i obrazovne informacione sisteme u državnim institucijama, kao i specijalizovane MIS i DSS sisteme za potrebe upravljanja javnim politikama. Ovi sistemi primarno stvaraju društvenu vrednost, u skladu sa ciljevima javnih radnih sistema.
-\item \textbf{Neprofitni informacioni sistemi.} U neprofitnim organizacijama informacioni sistemi podržavaju upravljanje donacijama, rad volontera, finansijsko izveštavanje, komunikaciju sa zajednicom i realizaciju projekata od javnog interesa. Iako manje standardizovani od poslovnih i javnih informacionih sistema, ovi sistemi predstavljaju tehnološku podršku stvaranju zajedničkog dobra.
-\item \textbf{Lični informacioni sistemi.} Lični informacioni sistemi odnose se na alate i aplikacije koje pojedinci koriste radi organizacije ličnih aktivnosti, upravljanja informacijama i povećanja produktivnosti. U ovu kategoriju spadaju i sistemi koje koriste slobodni radnici \eng{freelancer}, uključujući alate za upravljanje projektima, praćenje vremena, finansijsko praćenje i komunikaciju sa klijentima.
+\item \textbf{Teorijsko-analitički pristup} obuhvata formalizaciju minimalnog tehničkog modela elektronske trgovine, kao i analitički okvir za evaluaciju informatičkih sistema.
+
+U tom kontekstu analiziraju se osnovna svojstva javnih blokčejn sistema kao specifične klase distribuiranih sistema, koji omogućavaju korišćenje već uspostavljene mrežne i bezbednosne infrastrukture. Analiza obuhvata ključne aspekte kao što su decentralizacija, sigurnost i performanse, uz poseban osvrt na uticaj ovih svojstava na složenost sistema i mehanizme koordinacije. 
+
+Dodatno, fokus istraživanja, u pogledu reprezentacije entiteta, operacija nad njima i pravila sistema, usmeren je na Eterijum mrežu kao jednu od najzastupljenijih platformi za razvoj decentralizovanih aplikacija, pri čemu se analiziraju njene ključne karakteristike kroz konsenzusni i izvršni sloj. Za prezentacioni sloj razmatra se distribuirana arhitektura \textit{IPFS} mreže, pri čemu se analiziraju ključne karakteristike postavljanja i pribavljanja sadržaja.
+
+\item \textbf{Konstruktivni pristup} koristi se za projektovanje arhitektonskog modela distribuirane platforme elektronske trgovine.
+
+U okviru ovog pristupa razvija se model reprezentacije entiteta zasnovan na standardima za nezamenljive tokene u okviru ograničenja Eterijum mreže, pri čemu elektronski kuponi predstavljaju reprezentativan studijski slučaj. 
+
+Dodatno, razmatra se modularni dizajn pametnih ugovora kojim se omogućava implementacija pravila i ograničenja neophodnih za potpuno decentralizovano funkcionisanje sistema, ali koji može uvoditi dodatne nepredvidive troškove u korisničkim transakcijama.
+
+Takođe, definiše se arhitektura prezentacionog sloja zasnovana na decentralizovanim tehnologijama, sa ciljem očuvanja suvereniteta korisnika nad kriptografskim identitetom i omogućavanja verifikabilne interakcije sa sistemom.
+
+\item \textbf{Eksperimentalni pristup} primenjuje se u cilju kvantitativne evaluacije transakcionih troškova korisnika prilikom izvršavanja osnovnih operacija nad entitetima sa jedinstvenim identifikatorima, kroz analizu troškovnog modela zasnovanog na gasu u okviru Eterijum platforme.
+
+U okviru eksperimentalne analize implementirana je enkodirana reprezentacija entiteta elektronske trgovine unutar jedne skladišne jedinice u okviru standarda za nezamenljive tokene, uključujući standarde ERC-721, ERC-721A i ERC-721Psi, pri čemu se vrši poređenje troškova operacija kreiranja, prenosa i uništavanja tokena u kontrolisanim uslovima, sa posebnim naglaskom na broj i tip pristupa skladištu kao dominantnom faktoru troškova, koji predstavlja primarni predmet optimizacije.
+
+Preostale operacije koje se izvršavaju u okviru funkcija imaju znatno manji uticaj na ukupnu potrošnju gasa i u daljoj analizi biće aproksimativno modelovane radi pojednostavljenja formalnog zapisa.
+
+Kod standarda koji koriste implicitni model vlasništva, posebna pažnja posvećena je analizi algoritama za njegovo razrešavanje. Ovi algoritmi se formalno modeluju, a njihova složenost i trošak izražavaju se kroz aproksimativne funkcije u zavisnosti od rastojanja između posmatranog tokena i prvog tokena u grupnom kreiranju.
 \end{description}
 
-Ovakva integracija pokazuje da se različite akademske klasifikacije informacionih sistema mogu dosledno mapirati na četiri osnovne kategorije radnih sistema, pri čemu se svaki informacioni sistem posmatra u funkciji vrednosti koju konkretan radni sistem nastoji da proizvede.
+Eksperimenti su sprovedeni u kontrolisanom okruženju, uz korišćenje istih ulaznih parametara i uslova izvršavanja za sve posmatrane standarde, kako bi se obezbedila uporedivost rezultata.
 
-Poslovni informacioni sistemi i posebno digitalna trgovina ili \textbf{e-trgovina} \eng{e-commerce} predstavljaju jedan od najdinamičnijih i najvrednijih segmenata savremenih informacionih sistema. Prema savremenim empirijskim analizama digitalne ekonomije \cite{veenam2024cross}, industrija globalne e-trgovine procenjena je na približno 21,1 bilion američkih dolara u 2023. godini, uz projekcije snažnog dugoročnog rasta u narednoj deceniji, prema tržišnim analizama na 183,8 biliona do 2032. godine, što potvrđuje njenu izuzetnu ekonomsku i tehnološku relevantnost.
+Na ovaj način uspostavlja se integrisan metodološki okvir koji omogućava sveobuhvatnu evaluaciju predloženog modela kroz kombinaciju formalne analize, dizajna sistema i empirijskih rezultata.
 
-Ovakav obim digitalne trgovine ukazuje na potrebu za visokim standardima performansi, pouzdanosti, skalabilnosti i sigurnosti informacionih sistema, jer tehnološki zahtevi \textit{platformi za e-trgovinu} često predstavljaju referentni nivo zahteva za savremene poslovne informacione sisteme.
+Predloženi metodološki okvir može se integrisati u šire studije koje se bave konkretnim domenima primene. U slučajevima kada je potrebno koristiti više skladišnih jedinica za zapis složenijih struktura podataka, predstavljeni šematski model omogućava relativno jednostavno proširenje analize i kvantifikaciju efikasnosti takvog pristupa.
 
-Informacioni sistemi u drugim domenima, poput javnog sektora, neprofitnih organizacija ili ličnih sistema, razlikuju se prvenstveno po svojim ciljevima i korisničkim zahtevima. Međutim, osnovni tehnološki izazovi i principi u velikoj meri ostaju isti.
+Iako je analiza sprovedena nad javnim blokčejn sistemima, koncept optimalnog pakovanja podataka nije ograničen isključivo na njih. Pristup je primenljiv i u dozvolom ograničenim blokčejn mrežama, jer se zasniva na opštem principu racionalnog korišćenja skladišnog prostora. Ovaj pristup doprinosi smanjenju ukupne količine podataka koju čuvaju čvorovi mreže, smanjenju veličine blokova i povećanju ekonomske održivosti celokupnog ekosistema.
 
-U daljem izlaganju, e-trgovina se koristi kao dominantni referentni primer savremenog informacionog sistema, jer u sebi objedinjuje tipične izazove visokog obima obrade podataka, složene arhitekture i upravljanja stanjem sistema. Iz tog razloga, svi naredni koncepti i analize biće predstavljeni bez eksplicitnog navođenja domena primene, podrazumevajući kontekst e-trgovine. Ipak, razmatrani principi nisu vezani isključivo za ovaj domen, već predstavljaju opšte obrasce i mehanizme primenljive na širi spektar informacionih sistema.
-
-\section{Arhitektonska organizacija informacionih sistema}\label{sec:arhitektonska-organizacija}
-Program predstavlja statički, fizički zapis koda na uređaju (hardveru) koji sam po sebi ne izvršava nikakvu aktivnost. Kada se pokrene njegova instanca, tj. kada se aplikacija učita u radnu memoriju računara, nastaje proces. Po završetku izvršavanja, proces se uklanja iz radne memorije i time prestaje da postoji.
-
-\begin{definicija}
-Proces je instanca aplikacije koja ima sopstveni memorijski prostor i kontekst izvršavanja.
-\end{definicija}
-
-Najčešće se softver izvršava na uređajima koji poseduju operativni sistem \cite{tanenbaum2015modern} čija je uloga da omogući istovremeno izvršavanje i upravljanje više procesa na istom uređaju: planiranje njihovog izvršavanja, dodelu resursa, sinhronizaciju i međuprocesnu komunikaciju \eng{Inter-Process Communication, IPC}. 
-
-U zavisnosti od fizičke strukture procesora može se u istom trenutku izvršavati jedan ili više procesa, pri čemu operativni sistem ,,naizmenično'' dodeljuje procesor procesima tako što pauzira, čuva i vraća njihov kontekst izvršavanja.
-
-%Proces tokom izvršavanja može pokrenuti dodatne podređene komponente koje omogućavaju konkurentno izvršavanje zadataka:
-%\begin{enumerate}
-%\item \textbf{Podređeni procesi} \eng{child processes} - predstavljaju nezavisne izvršne jedinice koje se pokreću iz glavnog procesa i imaju sopstveni memorijski prostor. Koriste se kada je potrebno izvršavanje izolovanih zadataka koji ne treba da dele memoriju sa glavnim procesom. Na primer, izvođenje sistemske komande može se realizovati kao podređeni proces. U ovu kategoriju spadaju i \textit{vremenski zakazani procesi} \eng{cron jobs}, koji se pokreću periodično u definisanim vremenskim intervalima (npr. svakog dana u ponoć).
-    
-%\item \textbf{Niti} \eng{threads} - predstavljaju lakše izvršne jedinice koje dele isti memorijski prostor unutar procesa. Koriste se za paralelno izvršavanje više zadataka u okviru istog procesa. Na primer, jedna nit može slušati dolazne mrežne zahteve, druga obrađivati podatke, treća upisivati rezultate u bazu podataka, dok \textit{radne niti} \eng{worker threads} omogućavaju da se pojedini poslovi obavljaju u pozadini bez blokiranja glavnog toka programa.
-%\end{enumerate}
-
-Međutim, softver se može izvršavati i na uređajima bez klasičnog operativnog sistema, u tzv. \textit{bare-metal} okruženju, gde postoji samo jedan proces koji direktno radi na hardveru. Višestruki procesi mogu postojati ukoliko je razvijeno posebno programsko okruženje koje to omogućava. %Višestruki procesi i niti%
-
-\begin{definicija}
-Instanca informacionog sistema je skup pokrenutih procesa koji rade u koordinaciji kako bi obezbedili punu funkcionalnost aplikacije.
-\end{definicija}
-
-Pokrenuti informacioni sistem nije statičan, već se njegovo ponašanje izražava kroz kontinuirano izvršavanje procesa i promene unutrašnjeg stanja sistema. U tom kontekstu uvode se dva ključna pojma:
-
-\begin{definicija}
-Stanje informacionog sistema predstavlja skup svih podataka i sistemskih parametara koji u datom trenutku u potpunosti opisuju njegovo operativno stanje.
-\end{definicija}
-
-\begin{definicija}
-Napredovanje informacionog sistema predstavlja proces prelaska sistema iz jednog stanja u drugo kao posledicu njegovog izvršavanja i obrade zahteva.
-\end{definicija}
-
-U zavisnosti od načina na koji su procesi i aktivnosti organizovani unutar instance informacionog sistema mogu se identifikovati različiti arhitektonski pristupi. Ovi pristupi određuju strukturu sistema, način raspodele odgovornosti između komponenti, njihove međusobne zavisnosti i mehanizme komunikacije putem kojih sistem ostvaruje svoje funkcionalno ponašanje.
-
-Najjednostavniji oblik organizacije informacionog sistema podrazumeva da se sve funkcionalne komponente izvršavaju na jednom uređaju, pri čemu moduli međusobno komuniciraju pozivima funkcija ili metoda unutar istog procesa.
-
-\begin{description}
-\item \textbf{Monolitna arhitektura \cite{levcovitz2016towards}.}
-Monolitna arhitektura predstavlja pristup u kome su sve funkcionalne komponente informacionog sistema objedinjene u jedinstvenu aplikacionu celinu. U okviru ovog pristupa korisnički interfejs (ulaz/izlaz), poslovna logika (obrada) i upravljanje podacima (baza podataka) implementirani su kao delovi jednog izvršnog sistema.
-
-Glavna prednost monolitne arhitekture ogleda se u njenoj jednostavnosti, što je čini pogodnom za manje i srednje aplikacije. Razvoj, testiranje, implementacija i nadgledanje sistema u takvom okruženju su relativno jednostavni jer se sve komponente nalaze u okviru jedinstvene aplikacije.
-
-Međutim, sa rastom obima i složenosti sistema javljaju se poteškoće u održavanju, jer promene u jednom delu sistema mogu imati neočekivane posledice u drugim delovima aplikacije. Zbog toga se u praksi često primenjuje pristup \textit{modularnog monolita}, u kojem se unutar monolitne aplikacije jasno razdvajaju funkcionalni moduli kako bi se olakšalo održavanje i eventualna buduća migracija ka drugim arhitekturama.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.65\textwidth]{chapter1_monolit.png}
-    \caption{TODO}
-\end{figure}
-
-\item \textbf{Višeslojna arhitektura \cite{savolainen2009layered}.}
-Višeslojna arhitektura zasniva se na organizaciji sistema u više logičkih slojeva, pri čemu svaki sloj ima jasno definisanu funkciju i odgovornost. Ovakva struktura omogućava razdvajanje različitih aspekata sistema, čime se postižu apstrakcija i enkapsulacija funkcionalnosti.
-
-Komunikacija između slojeva odvija se prema unapred definisanim pravilima, najčešće između susednih slojeva, čime se smanjuje međusobna zavisnost komponenti i olakšava održavanje sistema. Tipičan primer ovakve organizacije obuhvata sledeće slojeve:
-
+\section{Eksperimentalni metod}
+Eksperimentalni metod zasniva se na kvantitativnoj analizi potrošnje gasa tokom izvršavanja ključnih operacija nad entitetima elektronske trgovine pri čemu je za merenje gasa korišćen razvojni okvir \textit{Foundry}, koji predstavlja široko prihvaćen alat za razvoj i testiranje pametnih ugovora, čime je obezbeđena determinističnost i ponovljivost rezultata. Ovaj razvojni okvir obuhvata alate:
 \begin{enumerate}
-\item \textit{Prezentacioni sloj} - korisnički interfejs koji omogućava komunikaciju korisnika sa sistemom,
-\item \textit{Biznis sloj} - sloj koji implementira poslovnu logiku i pravila rada sistema,
-\item \textit{Perzistentni sloj} - sloj koji obezbeđuje preslikavanje objekata iz aplikacionog domena u strukture podataka,
-\item \textit{Sloj podataka} - baza podataka ili drugi mehanizmi za trajno skladištenje i pristup podacima.
+\item Alat \textit{forge} (v0.2.0), koji se koristi za izgradnju, testiranje i implementaciju pametnih ugovora, kao i za izvršavanje osnovnih operacija i očitavanje vrednosti potrošenog gasa po transakciji.
+\item Alat \textit{anvil} (v0.2.0), koji obezbeđuje lokalni čvor Eterijum testne mreže i koristi se za sprovođenje eksperimenata, čime je eliminisan uticaj spoljašnjih faktora.
 \end{enumerate}
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.55\textwidth]{chapter1_slojevita.png}
-    \caption{TODO}
-\end{figure}
+U okviru ovog okruženja implementirani su pametni ugovori enkodirane reprezentacije elektronskih kupona za sve posmatrane standarde, pri čemu je merena potrošnja gasa za izvršavanje operacija nad elektronskim kuponima.
 
-\item \textbf{Mikrokernel arhitektura \cite{michel2017microkernel}.}
-Mikrokernel arhitektura zasniva se na razdvajanju osnovne funkcionalnosti sistema od dodatnih modula. Centralni deo sistema čini jezgro \eng{kernel} koje obezbeđuje minimalni skup osnovnih funkcija, dok se dodatne funkcionalnosti implementiraju kroz nezavisne module ili dodatke \eng{plug-in}.
+U cilju preciznog poređenja efikasnosti implementacija, analizirana je isključivo potrošnja gasa posmatranih operacija nad kuponima, bez uključivanja osnovnog troška transakcije od 21.000 jedinica gasa, koji je konstantan i nezavisan od implementacije standarda. Pre sprovođenja eksperimenata izvršena je inicijalizacija svih relevantnih internih promenljivih stanja, uključujući promenljivu za identifikaciju narednog tokena za kreiranje, promenljivu za praćenje ukupno uništenih tokena kod ERC-721A standarda, kao i obe bitmape kod ERC-721Psi standarda.
 
-Svi moduli komuniciraju sa jezgrom sistema, koje posreduje u njihovoj međusobnoj koordinaciji. Ovakav pristup omogućava visok stepen proširivosti i fleksibilnosti, jer se nove funkcionalnosti mogu dodavati ili menjati bez potrebe za modifikacijom osnovne strukture sistema. Zbog toga se mikrokernel arhitektura često primenjuje u sistemima koji zahtevaju visok stepen modularnosti, prilagodljivosti i dugoročne održivosti, kao što su operativni sistemi.
+U eksperimentalnom delu analizirana je zavisnost potrošnje gasa od broja kupona kreiranih u jednoj transakciji. Testovi su sprovedeni pozivanjem funkcije za kreiranje sa različitim vrednostima parametra $n \in \{1, 2, 3, 5, 10, 20\}$, pri čemu je za svaku vrednost izmerena ukupna potrošnja gasa. Važno je napomenuti da je broj kreiranih kupona jedini parametar koji utiče na potrošnju gasa ove operacije, dok ostali parametri imaju konstantan uticaj.
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.35\textwidth]{chapter1_microkernel.png}
-    \caption{TODO}
-\end{figure}
+Analogno tome, za analizu operacija prenosa i uništavanja korišćen je identifikator kupona oblika $n+1$, koji predstavlja rastojanje između prvog tokena u grupi i posmatranog tokena. Na ovaj način simuliran je najgori slučaj određivanja implicitnog vlasništva u okviru grupe. U slučaju analize uništavanja više kupona u jednoj transakciji, funkcija uništavanja pozivana je uzastopno za različite identifikatore kupona, čime je obezbeđeno da se u svakom pozivu obrađuje različit kupon.
 
-\end{description}
+Svako merenje izvršeno je više puta, a prikazane vrednosti predstavljaju srednje vrednosti dobijenih rezultata. Dobijeni rezultati upoređeni su između navedenih standarda, pri čemu je referentna tačka bila implementacija zasnovana na ERC-721 modelu. Na osnovu ove komparativne analize izvedeni su zaključci o efikasnosti predloženih pristupa optimizaciji.
 
-Ukoliko se sve komponente sistema izvršavaju na jednom računarskom uređaju, sistem zadržava \textbf{centralizovanu} prirodu. Međutim, kada se pojedini moduli izvršavaju na različitim fizičkim uređajima koji međusobno koordiniraju svoje stanje, sistem prelazi u kategoriju \textbf{distribuiranih sistema}.
+Radi obezbeđivanja doslednosti i uporedivosti rezultata, svi pametni ugovori kompajlirani su korišćenjem kompajlera \textit{solc} v0.8.22, sa onemogućenom optimizacijom. Za implementaciju ERC-721 standarda korišćena je referentna implementacija biblioteke \textit{OpenZeppelin} v4.9.0, dok su za standarde ERC-721A i ERC-721Psi korišćene implementacije v4.2.3, odnosno v0.7.0.
 
-\begin{definicija}
-Distribuiran informacioni sistem predstavlja skup nezavisnih računarskih uređaja (čvorova) koji ne dele zajedničku memoriju i međusobno komuniciraju razmenom poruka, pri čemu koordinacijom svog rada prema korisniku deluju kao jedinstven i koherentan sistem \cite{van2017distributed}.
-\end{definicija}
-
-Za razliku od centralizovanih sistema, u distribuiranim sistemima komunikacija između komponenti ne može se ostvariti direktnim pozivima funkcija, već se realizuje putem mrežnih komunikacionih mehanizama. Najčešći obrasci komunikacije uključuju:
+Za svaki od posmatranih standarda implementirane su osnovne funkcije za kreiranje, prenos i uništavanje tokena, nakon čega je izvršeno sistematsko merenje potrošnje gasa pri različitim vrednostima ulaznih parametara. Posebno su analizirani:
 \begin{enumerate}
-\item Interfejs za programiranje aplikacija \cite{bloch2006design} \eng{Application Programming Interface, API} - skup definisanih pravila i interfejsa koji omogućavaju komunikaciju između aplikacija preko mreže,
-\item Udaljeni poziv procedure \cite{birrell1984implementing} \eng{Remote Procedure Call, RPC} - mehanizam koji omogućava pozivanje funkcija na udaljenim sistemima kao da su lokalne,
-\item Red poruka \cite{eugster2003many} \eng{Message Queue} - asinhroni mehanizam razmene poruka putem posredničkog sistema za razmenu poruka,
-\item Tok događaja \cite{eugster2003many} \eng{Event Streaming} - mehanizam kontinuirane razmene i obrade tokova događaja u realnom vremenu,
-\item Web komunikaciona veza \cite{fette2011websocket} \eng{Web Socket} - mehanizam koji omogućava stalno otvorenu, dvosmernu komunikaciju između klijenta i servera preko jedne konekcije.
+\item Potrošnja gasa navedenih NFT standarda prilikom višestrukog kreiranja kupona u jednoj transakciji.
+\item Potrošnja gasa navedenih NFT standarda prilikom prenosa kupona u zavisnosti od udaljenosti od početnog elementa grupe.
+\item Potrošnja gasa navedenih NFT standarda prilikom uništavanja kupona u zavisnosti od udaljenosti od početnog elementa grupe.
+\item Potrošnja gasa navedenih NFT standarda prilikom višestrukog uništavanja kupona u jednoj transakciji.
+\item Komparativna analiza potrošnje gasa standarda ERC-721A i ERC-721Psi prilikom velikih grupnih operacija.
+\item Potrošnja gasa prilikom postavljanja pametnih ugovora za navedene NFT standarde.
 \end{enumerate}
 
-\begin{description}
-\item \textbf{Arhitektura vođena događajima \cite{michelson2006event}.}
-Arhitektura vođena događajima zasniva se na razmeni informacija putem događaja koji nastaju u sistemu. Komponente koje generišu događaje nazivaju se proizvođači \eng{producers}, dok komponente koje ih obrađuju predstavljaju potrošače \eng{consumers}. Komunikacija između njih često se ostvaruje posredstvom sistema za posredovanje poruka \eng{broker}.
+\section{Ograničenja predložene metodologije}
+U okviru predložene metodologije, za reprezentaciju proizvoda ili usluga sa jedinstvenim identifikatorom na javnim EVM-kompatibilnim blokčejn mrežama korišćeni su postojeći standardi za nezamenljive tokene, modifikovani za potrebe ovog istraživanja, dok standardi za zamenljive tokene sa grupnim identifikatorima nisu razmatrani, budući da se posmatraju kao degenerisan slučaj.
 
-Najčešće implementacije ovog pristupa zasnivaju se na sistemima redova poruka ili sistemima za tok događaja. Kod sistema redova poruka svaku poruku obrađuje jedan potrošač, dok kod sistema za tok događaja više potrošača može istovremeno primiti i obraditi isti događaj.
+Kada je reč o metodologiji reprezentacije entiteta u okviru standarda za nezamenljive tokene, optimizacija je ostvarena iskorišćavanjem neiskorišćenih bitova unutar mapiranja vlasništva, čime je omogućeno pakovanje dodatnih atributa proizvoda ili usluge u okviru jedne skladišne jedinice. Na taj način smanjen je broj operacija čitanja i upisa u skladište, što direktno utiče na smanjenje potrošnje gasa. Međutim, efikasnost predloženog pristupa direktno zavisi od trenutnog modela obračuna gasa, posebno odnosa između \texttt{SLOAD}, \texttt{SSTORE} i aritmetičkih operacija. Promene u protokolu naplate skladišnih operacija mogu smanjiti relativnu prednost ove optimizacije.
 
-Ovakav pristup povećava fleksibilnost sistema jer omogućava jednostavno dodavanje novih proizvođača i potrošača. Međutim, posrednik može postati usko grlo sistema, zbog čega se u praksi često koristi klaster \eng{cluster} posrednika koji raspodeljuje opterećenje između više instanci.
+Prilikom pakovanja više promenljivih u jednu skladišnu jedinicu polazi se od pretpostavke da je veličina adrese u EVM okruženju 160 bita. S obzirom na dinamičan razvoj blokčejn tehnologije, ne postoji garancija da će ova veličina ostati nepromenjena. Eventualna promena mogla bi smanjiti raspoloživi prostor unutar skladišnog slota, čime bi bilo neophodno prilagoditi predloženi model optimizacije, pri čemu bi osnovni koncept metodologije ostao nepromenjen.
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.5\textwidth]{chapter1_event.png}
-    \caption{TODO}
-\end{figure}
+Upotreba implicitnog vlasništva uvodi ograničenja u kontekstu grupnog kreiranja NFT-ova. Kada se više tokena kreira u okviru iste transakcije, podaci se eksplicitno čuvaju samo za prvi token, dok ostali implicitno nasleđuju iste vrednosti. Ovakav pristup je efikasan u slučaju identičnih instanci, ali postaje ograničavajući u scenarijima koji zahtevaju veću raznovrsnost atributa unutar jedne serije.
 
-\item \textbf{Mikroservisna arhitektura \cite{alshuqayran2016systematic}.}
-Mikroservisna arhitektura zasniva se na principu da svaka komponenta sistema ima jednu jasno definisanu odgovornost \eng{single responsibility}. Sistem je sastavljen od većeg broja malih, samostalnih servisa koji međusobno komuniciraju putem mreže, najčešće korišćenjem \textit{API}-ja ili \textit{RPC} mehanizama.
+Analiza je fokusirana na statičke modele proizvoda i usluga, kod kojih se atributi ne menjaju često ili ne zahtevaju složene dinamičke interakcije. Poslovni modeli sa izraženom dinamikom podataka nisu obuhvaćeni ovom analizom, a njihova podrška bi zahtevala dodatne mehanizme ažuriranja i potencijalno drugačiju strukturu skladištenja.
 
-Svaki mikroservis obično predstavlja kompletan mini-sistem sa sopstvenim ulaznim i izlaznim interfejsima, poslovnom logikom i često sopstvenim skladištem podataka. Zbog takve strukture mikroservisi se mogu nezavisno razvijati, testirati, skalirati i ažurirati.
+Pre dizajna sistema za elektronsku trgovinu neophodno je pažljivo proceniti stepen potrebne nadogradivosti i modularnosti, kao i njihov odnos prema složenosti implementacije i bezbednosnim rizicima. Svaka od navedenih arhitektonskih odluka ima direktan uticaj na potrošnju gasa, veličinu bajtkoda i ukupne troškove postavljanja i održavanja platforme, kao i na troškove izvršavanja transakcija krajnjih korisnika, što nije eksplicitno analizirano u okviru predložene metodologije zbog složenosti sistema.
 
-Ovaj pristup povećava fleksibilnost i skalabilnost sistema, kao i mogućnost integracije sa drugim aplikacijama. Međutim, istovremeno uvodi dodatnu složenost u pogledu orkestracije servisa, bezbednosti komunikacije i nadgledanja distribuiranih komponenti.
+Dodatno, u okviru date metodologije nije detaljno analizirana bezbednost integracije blokčejn sistema sa spoljašnjim izvorima podataka, kao ni uticaj na performanse predloženih rešenja. Takođe, nisu sprovedena merenja latencijskog kašnjenja prilikom upotrebe sadržajno adresiranih sistema za decentralizaciju prezentacionog sloja, što može imati značajan uticaj na korisničko iskustvo.
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.5\textwidth]{chapter1_microservice.png}
-    \caption{TODO}
-\end{figure}
+Predstavljeni koncept može se primeniti i na druge, ne-EVM blokčejn sisteme, uz ograničenje da se razmatraju blokčejn arhitekture zasnovane na linearnom nizu blokova povezanih u strogo hronološki lanac, dok paradigme zasnovane na usmerenim acikličnim grafovima nisu obuhvaćene ovim istraživanjem.
 
-\end{description}
+U ovom slučaju dodatno ograničenje predstavlja pretpostavka da izabrani blokčejn sistem podržava postojanje mape vlasništva u okviru jednog pametnog ugovora, kao što je slučaj sa Eterijum blokčejnom. Ovakav model podrazumeva mogućnost skladištenja svih tokena unutar jednog ugovora sa praktično neograničenim skladišnim kapacitetom, čime se omogućava primena identične NFT logike. Dodatno, pretpostavlja se da veličina adrese ne zauzima celu skladišnu jedinicu, kako bi se omogućilo iskorišćavanje preostalih bitova za reprezentaciju dodatnih informacija o entitetu.
 
-Navedene arhitekture predstavljaju najrasprostranjenije pristupe organizaciji savremenih informacionih sistema, iako u praksi postoje i drugi specijalizovani arhitektonski modeli namenjeni specifičnim domenima primene. Dodatno, navedene arhitekture koje se izvršavaju na jednom uređaju, moguće je dodatno proširiti tako što se pokrenu više instanci i uvede raspoređivanje opterećenja, gde se po potrebi bira način komunikacionih mehanizama između njih.
+Suprotan primer predstavlja arhitektura kakva je primenjena na asinhronoj blokčejn mreži \textit{Telegram Open Network}, gde se svaki NFT implementira kao zaseban pametni ugovor, sa ograničenim skladišnim kapacitetom i uslovljenom asinhronom komunikacijom. U takvom modelu nije moguće primeniti model implicitnog vlasništva na način korišćen u analiziranim NFT standardima.
 
-\section{Računarstvo u oblaku i elastično skaliranje informacionih sistema}\label{sec:cloud}
-Razvoj informacionih sistema tradicionalno je zahtevao nabavku sopstvene fizičke infrastrukture (servera, mrežne opreme, skladišta podataka) i angažovanje stručnog osoblja za njeno održavanje. Takav pristup nosi visoke početne troškove, zahteva složeno planiranje i otežava brzo prilagođavanje promenama u obimu posla.
+\section{Naučni doprinos}
+Naučni doprinos ove disertacije ogleda se u sistematskom povezivanju teorijskih, konstruktivnih i eksperimentalnih aspekata primene blokčejn tehnologija u domenu elektronske trgovine, kroz razvoj integrisanog modela koji omogućava kvantitativno i kvalitativno sagledavanje ograničenja i mogućnosti ovakvih sistema. Na osnovu sprovedenog istraživanja i dobijenih rezultata, izdvajaju se sledeći naučni doprinosi:
 
-Savremene organizacije sve češće usvajaju model računarstva u oblaku \eng{cloud computing} \cite{mell2011nist}, u kome se infrastruktura, platforme i/ili softverske usluge iznajmljuju od eksternog provajdera. Umesto sopstvene opreme koriste se virtuelni resursi koji se dinamički dodeljuju prema potrebi, čime se omogućava \textbf{elastično skaliranje instanci informacionog sistema}, smanjuju troškovi infrastrukture i održavanja, umanjuje potreba za internim sistemskim osobljem i ubrzava postavljanje razvojnih i produkcionih okruženja.
-
-Okruženja u oblaku tipično se realizuju kao javna, privatna ili hibridna, dok se isporuka servisa organizuje kroz standardne modele: \textit{IaaS} (infrastruktura kao usluga), \textit{PaaS} (platforma kao usluga) i \textit{SaaS} (softver kao usluga). Ovi modeli određuju nivo kontrole koji zadržava korisnik i nivo odgovornosti koji preuzima provajder usluge.
-
-Kontejnerizacija predstavlja dominantan tehnološki pristup za raspoređivanje softverskih komponenti u oblaku. Kontejneri (npr. \textit{Docker}) omogućavaju izolovano, prenosivo i konzistentno pokretanje aplikacionih instanci, dok platforme za orkestraciju (npr. \textit{Kubernetes}) automatizuju njihovo raspoređivanje i oporavak u dinamičkim okruženjima.
-
-Zahvaljujući ovim tehnologijama, arhitektonske organizacije informacionih sistema opisane u poglavlju \ref{sec:arhitektonska-organizacija} mogu se efikasno distribuirati i održavati u \textit{cloud} infrastrukturi, uz značajno smanjenje tehničke složenosti i operativnih troškova u odnosu na tradicionalne modele upravljanja resursima.
-
-\section{Centralizacija u distribuiranim informacionim sistemima}
-Savremeni informacioni sistemi često se izvršavaju na velikom broju fizički distribuiranih čvorova, mada njihova dominantna arhitektonska paradigma mrežne komunikacije i dalje ostaje topološki klijent-server model \cite{berson1992client}. U takvom modelu unapred je definisan raspored komunikacije između komponenti sistema, pri čemu pojedini čvorovi imaju ulogu servera koji pružaju usluge, dok drugi čvorovi nastupaju kao klijenti koji te usluge zahtevaju. Posledično, komunikaciona struktura sistema ima hijerarhijski karakter, jer čvorovi ne poseduju ravnopravan položaj u mreži.
-
-Iako je infrastrukturno raspodeljen na više računarskih čvorova, ovakav sistem zadržava centralizovan model upravljanja. Poslovna logika, donošenje ključnih odluka i upravljanje stanjem sistema najčešće su koncentrisani u okviru jedinstvene upravljačke instance ili ograničenog broja međusobno koordinisanih autoriteta. Zbog toga se sistem, sa operativne tačke gledišta, ponaša kao jedinstvena računarska celina sa jednim globalnim stanjem i jednim centrom poverenja.
-
-Iz perspektive radnih sistema, informacioni sistemi trebalo bi da doprinose stvaranju vrednosti za sve učesnike sistema. Međutim, istorijski razvoj dominantnih modela digitalnih platformi bio je pre svega usmeren na optimizaciju poslovnih ciljeva i tržišne vrednosti organizacija koje njima upravljaju. Kao posledica takvog pristupa, kontrola nad podacima, pravilima interakcije i distribucijom vrednosti u velikoj meri ostaje koncentrisana u rukama centralnih upravljačkih entiteta.
-
-U savremenoj literaturi sve češće se ukazuje na to da centralizovana kontrola nad informacionim sistemima može dovesti do smanjenja autonomije korisnika i pojave različitih oblika asimetrije moći između platformi i njihovih korisnika. Među najčešće diskutovanim pojavama izdvajaju se:
 \begin{enumerate}
-\item \textbf{Algoritamska kontrola} \cite{bakshy2015exposure} - korišćenje algoritama za filtriranje, rangiranje i preporuku sadržaja, čime platforme indirektno utiču na informacione tokove kojima su korisnici izloženi,
-\item \textbf{Cenzura i kontrola pristupa} \cite{roberts2019behind} - centralizovano upravljanje sadržajem i pristupom platformama, koje omogućava uklanjanje sadržaja ili ograničavanje pristupa određenim korisnicima,
-\item \textbf{Monopol i koncentracija moći} \cite{khan2016amazon} - koncentracija tržišne moći u okviru velikih digitalnih platformi može ograničiti konkurenciju i uticati na izbor proizvoda i usluga dostupnih korisnicima.
-\item \textbf{Nadzorni kapitalizam} \cite{zuboff2023age} - ekonomski model digitalnih platformi zasnovan na masovnom prikupljanju i analizi korisničkih podataka radi optimizacije poslovnih modela i ciljanog oglašavanja,
-\item \textbf{Zloupotreba ličnih podataka} \cite{acquisti2016economics} - koncentracija velikih količina korisničkih podataka u centralizovanim bazama povećava rizike od neovlašćenog pristupa, curenja podataka i drugih oblika narušavanja privatnosti,
+\item Formalizacija minimalnog tehničkog modela elektronske trgovine u kontekstu javnih blokčejn sistema, čime se uspostavlja jasan teorijski okvir za analizu i poređenje različitih arhitektonskih pristupa.
+\item Definisanje analitičkog okvira za evaluaciju blokčejn sistema kao posebne klase distribuiranih informacionih sistema, kojim se omogućava strukturisano razmatranje odnosa između decentralizacije, sigurnosti i performansi, kao i njihovog uticaja na složenost i operativna svojstva sistema.
+\item Formalizacija optimizovanog modela reprezentacije entiteta elektronske trgovine sa jedinstvenim identifikatorima unutar jedne skladišne jedinice, zasnovanog na standardima za nezamenljive tokene, čime se smanjuje broj pristupa skladištu kao dominantnog faktora troškova.
+\item Formalna analiza i modelovanje mehanizama implicitnog vlasništva u standardima za nezamenljive tokene, uključujući izvođenje aproksimativnih funkcija troška eksplicitnog razrešavanja vlasništva u zavisnosti od udaljenosti od početnog elementa grupe.
+\item Komparativna analiza troškovne efikasnosti osnovnih operacija standarda ERC-721, ERC-721A i ERC-721Psi u različitim operativnim scenarijima, zasnovana na eksperimentalnim merenjima potrošnje gasa.
+\item Predlog arhitektonskog modela distribuirane platforme elektronske trgovine zasnovane na javnoj blokčejn mreži, koji integriše optimizovane modele skladištenja, modularni dizajn pametnih ugovora i decentralizovan prezentacioni sloj kroz primenu sadržajno adresiranih sistema, uz očuvanje suvereniteta korisnika nad kriptografskim identitetom.
 \end{enumerate}
 
-Da bi se informacioni sistem mogao smatrati decentralizovanim, nije dovoljno da se izvršava na velikom broju čvorova. Neophodno je da njegova arhitektura bude projektovana bez centralne tačke kontrole ili jedinstvene tačke otkaza sistema \eng{single point of failure}, jer bi njen otkaz, uklanjanje ili kompromitovanje dovelo do poremećaja ili potpunog prekida rada sistema \cite{baran1964distributed}.
+\section{Struktura disertacije}
+Rad je strukturiran kroz više međusobno povezanih celina koje prate logički tok od teorijskih osnova, preko analitičkog i metodološkog okvira, do konstruktivne realizacije i eksperimentalne evaluacije predloženog rešenja, pri čemu se u uvodnom poglavlju sistematski definišu predmet, ciljevi, hipoteze i metodološki pristup istraživanja.
 
-Prema standardnoj klasifikaciji \cite{buterin2017meaning}, decentralizacija se može analizirati kroz tri međusobno nezavisne dimenzije:
-\begin{enumerate}
-\item \textbf{Arhitektonska decentralizacija} - fizička i geografska raspodela računarskih čvorova,
-\item \textbf{Kontrolna (politička) decentralizacija} - raspodela moći odlučivanja i upravljanja među različitim učesnicima,
-\item \textbf{Logička decentralizacija} - struktura softverskog stanja i način na koji sistem konceptualno funkcioniše kao celina.
-\end{enumerate}
+U drugoj glavi uspostavlja se konceptualni okvir za analizu savremenih sistema elektronske trgovine. Razmatraju se radni i informacioni sistemi, kao i formalna izražajnost poslovnih zahteva koje takvi sistemi treba da podrže. Dalje se analiziraju osnovni arhitektonski obrasci organizacije informacionih sistema, uz naglasak da većina savremenih rešenja zadržava centralizovan model upravljanja, nezavisno od toga da li su implementirana na jednom ili više računarskih čvorova, kao i ograničenja takvog pristupa. U tom kontekstu uvodi se pojam decentralizacije kroz različite dimenzije, kao ključni teorijski okvir za razumevanje potencijala unapređenja autonomije i korisničkog iskustva. Ova osnova služi kao polazište za dalju analizu izgradnje platforme za e-trgovinu na javnim blokčejn tehnologijama, sa ciljem povećanja otpornosti i distribuirane kontrole, čime se uvodi problem transakcionih troškova za korisnike i definiše centralni istraživački fokus ovog doktorskog rada.
 
-\subsection{Arhitektonska decentralizacija}
-Arhitektonska decentralizacija odnosi se pre svega na \textbf{hardverski sloj} sistema i ne predstavlja binarnu osobinu sistema, već kontinualni spektar koji zavisi od broja čvorova, njihove međusobne nezavisnosti, vlasničke strukture i fizičke raspodele.
+Treća glava uspostavlja analitički okvir za evaluaciju informacionih sistema kroz njihova tehnička svojstva i kompromis između performansi, skalabilnosti, dostupnosti i bezbednosti. Analiza obuhvata fundamentalne principe i ograničenja distribuiranih sistema, uključujući CAP teoremu, skalabilnost, zagušenje, režijsko opterećenje, koordinaciju, propagaciju, replikaciju, konsenzus i kontrolu konkurentnog pristupa, kao i njihove posledice po performanse i operativnu stabilnost sistema. Posebna pažnja posvećena je operativnim svojstvima informacionih sistema kroz bezbednosne modele, kriptografske mehanizme, autentikaciju, autorizaciju i evidenciju, čime se pokazuje da tehnička arhitektura sistema istovremeno određuje i njegove mogućnosti i njegova ograničenja.
 
-\begin{definicija}
-Arhitektonska decentralizacija podrazumeva postojanje fizičke infrastrukture sastavljene od čvorova koje pokreću međusobno nezavisni vlasnici, raspoređenih na različitim fizičkim lokacijama, bez centralizovanog mehanizama upravljanja infrastrukturom.
-\end{definicija}
+Četvrta glava rada razmatra blokčejn kao infrastrukturni sloj distribuiranih sistema. Polazeći od teorijskih osnova, uključujući kriptografsko vremensko obeležavanje, dokaz uloženog rada i rane modele elektronskog novca, uvodi se kontekst nastanka savremenih blokčejn mreža. Posebno se analizira Bitkoin kao prvi praktično realizovan sistem, koji kroz javno dostupnu evidenciju transakcija i Nakamoto konsenzus omogućava postizanje saglasnosti u okruženju bez međusobnog poverenja. Dalje se razmatraju ključne arhitektonske komponente blokčejn sistema, uključujući strukturu blokova i transakcija, modele upravljanja stanjem i kontrole pristupa, pametne ugovore, apstrakciju naloga i međulančanu komunikaciju. Posebna pažnja posvećena je blokčejn trilemi između decentralizovanosti, sigurnosti i skalabilnosti, ukorenjenoj u samim teorijskim osnovama blokčejn sistema. Na kraju, imajući u vidu da se blokčejn često kombinuje sa spoljašnjim sistemima za skladištenje podataka, uvodi se IPFS kao distribuirani sistem za skladištenje sadržaja, sa fokusom na sadržajno adresiranje, integritet i dostupnost podataka.
 
-Tipičan primer sistema u kome su prisutne sve tri forme centralizacije jesu tradicionalne korporativne infrastrukture, gde se sistem izvršava na više fizički i geografski razdvojenih lokacija, ali su svi ti resursi u vlasništvu ili pod kontrolom jednog administrativnog entiteta i podležu jedinstvenoj upravljačkoj politici. Ovi sistemi jasno ilustruju sledeću teoremu:
-\begin{posledica}
-Fizička distribuiranost čvorova ne implicira decentralizaciju informacionog sistema.
-\end{posledica}
+Peta glava pruža pregled arhitekture Eterijum blokčejna kroz analizu konsenzusnog i izvršnog sloja. Detaljno se razmatraju mehanizmi zasnovani na dokazu uloga, uključujući raspodelu validatora, proces glasanja, kao i algoritme izbora kanonske grane i finalizacije, čime se omogućava analiza bezbednosnih mehanizama, ekonomskih modela i potencijalnih pretnji stabilnosti mreže. U nastavku se obrađuju unutrašnja struktura izvršnog sloja sistema, model globalnog stanja, rad Eterijum virtuelne mašine (EVM) i proces obrade transakcija, čime se pruža integrisan i celovit prikaz funkcionisanja Eterijuma kao decentralizovanog računarskog sistema.
 
-\subsection{Kontrolna decentralizacija}
-Kontrolna (politička) decentralizacija odnosi se na \textbf{ljudski i organizacioni sloj} sistema i podrazumeva odsustvo jedinstvenog entiteta koji poseduje ovlašćenje da izdaje naredbe, donosi konačne odluke ili menja globalno stanje sistema.
+Šesta glava rada posvećena je metodološkoj optimizaciji pametnih ugovora za potrebe elektronske trgovine, sa ciljem smanjenja potrošnje gasa i unapređenja korisničkog iskustva. U prethodnom radu razmatrano je modelovanje elektronskih kupona kao specifične instance digitalnih entiteta, što predstavlja reprezentativan studijski slučaj za širu primenu nezamenljivih tokena u elektronskoj trgovini. Analiza je usmerena na operacije pristupa trajnom skladištu kao ključni faktor optimizacije, budući da one dominantno određuju ukupnu cenu izvršavanja na blokčejn sistemima, uz predlog kompaktnog pakovanja više informacija u jednu skladišnu jedinicu i korišćenja postojećih NFT standarda. Imajući u vidu široku primenu Eterijum virtuelne mašine, razmatraju se standardi ERC-721, ERC-721A i ERC-721Psi kroz detaljnu analizu troškova operacija kreiranja, prenosa i uništavanja. Predloženi pristupi evaluirani su eksperimentalnim merenjima potrošnje gasa, čime se omogućava objektivno poređenje njihove efikasnosti i praktične primenljivosti.
 
-\begin{definicija}
-Kontrolna decentralizacija označava svojstvo sistema u kojem nijedan pojedinačni čvor ili učesnik nema privilegovanu ulogu u donošenju odluka, već se napredovanje sistema ostvaruje kolektivnim delovanjem nezavisnih učesnika, bez postojanja centralizovanog autoriteta ili tačke poverenja.
-\end{definicija}
-
-Da bi ovakav model bio moguć, čvorovi sistema moraju biti u mogućnosti da međusobno komuniciraju direktno, bez posrednika sa centralnom ulogom koji bi mogli da nameću pravila komunikacije.
-
-\begin{definicija}
-Mreža ravnopravnih korisnika \eng{peer-to-peer, P2P} predstavlja model komunikacije u kome svaki učesnik može preuzimati ulogu i klijenta i servera, omogućavajući direktan prenos podataka između dva ili više čvorova bez oslanjanja na centralni server \cite{oram2001peer}.
-\end{definicija}
-
-Iako ovakva topologija omogućava eliminisanje \textit{centralne tačke komunikacije} i predstavlja osnovu arhitektonske decentralizacije, ona sama po sebi ne garantuje ostvarivanje kontrolne decentralizacije. Naime, ona ne eliminiše centralizovane mehanizme kontrole nad pravilima sistema, kao što su pravo učešća u mreži, validnost poruka i način donošenja odluka o napredovanju globalnog stanja.
-
-\begin{teorema}\label{teorema:p2p}
-Mreža ravnopravnih korisnika predstavlja potreban, ali ne i dovoljan uslov za ostvarivanje kontrolne decentralizacije.
-\end{teorema}
-
-Iz tog razloga, sam sistem mora formalno definisati procese i aktivnosti čijim se izvršavanjem omogućava da svi čvorovi, na osnovu lokalnih informacija i razmene poruka, dinamički odrede napredovanje sistema i kolektivno ga prihvate.
-
-Međutim, uklanjanje centralizovanog autoriteta u procesima odlučivanja implicitno uvodi mogućnost da se pojedini čvorovi ponašaju neispravno ili maliciozno, bilo usled tehničkih kvarova, bilo kao posledica kompromitovanja od strane napadača koji šalju lažne ili međusobno kontradiktorne poruke.
-
-Ovakvi incidenti ilustruju izazov poznat kao \textit{Problem vizantijskih generala} \cite{lamport2019byzantine} \eng{Byzantine Generals Problem}, u kojem sistem mora da obezbedi konzistentan dogovor čak i u prisustvu čvorova koji se ponašaju maliciozno ili nepredvidivo. 
-
-\begin{definicija}
-Vizantijski general je učesnik u distribuiranom sistemu koji je uključen u koordinaciju ili donošenje zajedničke odluke, ali može biti zlonamern, neispravan ili namerno šalje netačne ili kontradiktorne informacije drugim učesnicima.
-\end{definicija}
-
-U distribuiranim sistemima, mogućnost da se pojedini učesnici ponašaju vizantijski predstavlja jedan od fundamentalni izazova za očuvanje korektnog i konzistentnog napredovanja sistema. Ukoliko vizantijski čvorovi raspolažu većinskim udelom resursa koji su relevantni za donošenje odluka i održavanje globalnog stanja sistema, bilo da se radi o broju čvorova, računarskoj snazi, udelu uloga ili drugim oblicima sistemskog uticaja, oni mogu preuzeti efektivnu kontrolu nad procesom odlučivanja, čime se narušavaju sigurnost, konzistentnost i kontrolna decentralizacija sistema. 
-
-Iz tog razloga, svaki distribuirani sistem mora eksplicitno definisati pretpostavke o maksimalnom obimu vizantijskog ponašanja koji je u stanju da toleriše, što predstavlja njegovo fundamentalno teorijsko ograničenje.
-
-\begin{teorema}\label{teorema:vizantijski-granica}
-Ako se u mreži ravnopravnih korisnika ostvaruje kontrolna decentralizacija, sistem mora biti projektovan tako da definiše gornju granicu udela sistemskih resursa koji mogu biti pod kontrolom vizantijskih učesnika, unutar koje se garantuje korektno funkcionisanje sistema.
-\end{teorema}
-
-U slučaju prekoračenja ove granice, vizantijski učesnici mogu manipulacijom porukama, pravilima validacije ili procesom donošenja odluka proizvesti divergentna stanja sistema, onemogućiti postizanje konsenzusa ili nametnuti sopstvenu verziju globalnog stanja, čime se efektivno urušava kontrolna decentralizacija.
-
-Postoji veliki broj algoritama za rešavanje problema vizantijskih generala \cite{lamport2019byzantine}. Međutim, pokazano je da je za postizanje determinističkog i sigurnog konsenzusa u prisustvu do $f$ vizantijskih čvorova neophodno da ukupan broj učesnika zadovoljava uslov $n \ge 3f + 1$. Ovaj uslov predstavlja donju granicu na broj čvorova potrebnih za tolerisanje $f$ proizvoljno neispravnih učesnika, čime se obezbeđuje da ispravni čvorovi čine strogu većinu u odnosu na potencijalno zlonamerne.
-
-\subsection{Logička decentralizacija}
-Logička decentralizacija odnosi se na \textbf{softverski i protokolarni sloj} sistema i opisuje način na koji je sistem konceptualno organizovan, odnosno kako se njegovo stanje modeluje, deli i koristi od strane učesnika.
-
-Za razliku od arhitektonske i kontrolne decentralizacije, koje se bave fizičkom infrastrukturom i raspodelom ovlašćenja, logička decentralizacija se odnosi na \textit{apstraktni oblik sistema}, odnosno na to da li se on posmatra kao jedinstvena, nedeljiva celina ili kao skup lokalno povezanih, samostalnih delova.
-
-\begin{definicija}
-Logička decentralizacija označava konceptualnu organizaciju sistema u kojoj ne postoji jedinstveno, centralno definisano globalno stanje koje svi čvorovi moraju da dele i održavaju, već se sistem sastoji od više lokalnih stanja koja su međusobno nezavisna i čija se ispravnost ne oslanja na postojanje ili dostupnost ostatka sistema.
-\end{definicija}
-
-Intuitivno, sistem je logički decentralizovan ukoliko se može podeliti na dva ili više delova tako da svaki deo, zajedno sa svojim korisnicima i resursima, i dalje funkcioniše na način koji je u skladu sa originalnom namenom sistema, bez potrebe za koordinacijom sa ostalim delovima.
-
-Primer sistema koji je logički decentralizovan, ali kontrolno centralizovan, predstavlja mreža za isporuku sadržaja \cite{pathan2007taxonomy} \eng{Content Delivery Network, CDN}. Ona se sastoji od velikog broja geografski raspoređenih rubnih servera \eng{edge servers}, koji služe za efikasnu isporuku statičkog sadržaja krajnjim korisnicima. Istu infrastrukturu može koristiti više nezavisnih proizvođača sadržaja, pri čemu svaki rubni server održava sopstvene lokalne kopije podataka. U takvom sistemu ne postoji jedinstveno operativno globalno stanje koje svi serveri moraju u svakom trenutku da dele. Ukoliko se infrastruktura podeli na dva odvojena dela, svaki deo i dalje može samostalno isporučivati sadržaj svojim korisnicima. Iako se izmene sadržaja iniciraju iz centralnog izvora, sama isporuka i osnovno funkcionisanje sistema ne zavise od postojanja jedinstvene, centralno usklađene slike stanja u celokupnoj mreži.
-
-Primer sistema koji ostvaruje i logičku i kontrolnu decentralizaciju predstavlja \textit{BitTorrent} protokol \cite{cohen2003incentives}. BitTorrent funkcioniše kao mreža ravnopravnih korisnika u kojoj se za svaki sadržaj formira posebna grupa čvorova koji učestvuju u njegovoj razmeni. Svaki čvor održava isključivo sopstveno lokalno stanje, koje se odnosi na delove sadržaja koje poseduje i razmenjuje. U ovom sistemu ne postoji globalno stanje koje bi objedinjavalo sve učesnike mreže. Različite grupe čvorova funkcionišu nezavisno jedna od druge, a podela sistema na više delova ne narušava njegovu osnovnu funkcionalnost. Svaki deo mreže i dalje omogućava pronalaženje, razmenu i preuzimanje sadržaja u okviru svojih lokalnih interakcija. Servisi za pretragu sadržaja (npr. \textit{The Pirate Bay}) mogu olakšati pronalaženje relevantnih grupa korisnika, ali nisu neophodni za osnovno funkcionisanje sistema i ne predstavljaju njegovu logičku komponentu.
-
-\section{Granice i implikacije decentralizacije u distribuiranim informacionim sistemima}
-Od tri dimenzije decentralizacije, kontrolna decentralizacija u praksi obično ima najveću intuitivnu težinu. Kada se za neki sistem kaže da je ,,decentralizovan'', najčešće se pod tim podrazumeva da korisnici nisu podređeni jednom centralnom autoritetu i da nijedan pojedinačni subjekt nema potpunu kontrolu nad upravljanjem sistemom. 
-
-Zbog toga je moguće da sistem bude arhitektonski ili logički centralizovan, a da se i dalje smatra decentralizovanim ukoliko je kontrola nad njegovim funkcionisanjem raspodeljena između većeg broja učesnika. Međutim, arhitektonska centralizacija uvodi jedinstvenu tačku otkaza sistema, što predstavlja značajan rizik za pouzdanost i otpornost informacionih sistema.
-
-U praksi, većina savremenih distribuiranih informacionih sistema zadržava kontrolno centralizovan model upravljanja, dok se distribucija infrastrukture koristi prvenstveno radi povećanja dostupnosti, skalabilnosti i performansi sistema. Takvi sistemi uvode dodatnu složenost u odnosu na centralizovane arhitekture, jer zahtevaju mehanizme sinhronizacije stanja između čvorova, upravljanje konkurentnim izvršavanjem i rešavanje problema konzistentnosti podataka. Ovi mehanizmi neminovno utiču na performanse sistema, a samim tim i na korisničko iskustvo.
-
-Uvođenje dodatnih oblika decentralizacije u takvim okruženjima dodatno povećava složenost sistema, jer zahteva razvoj novih mehanizama koordinacije koji mogu da obezbede pouzdano upravljanje zajedničkim stanjem sistema bez centralnog autoriteta.
-
-Iz tog razloga decentralizacija se može posmatrati kao proširenje sociotehničke perspektive informacionih sistema, primenjeno na domene distribuiranih algoritama, konsenzusa i upravljanja zajedničkim stanjem u mrežama nezavisnih učesnika.
-
-Analiza takvih sistema zahteva oslanjanje na teorijske osnove distribuiranih sistema, koje proučavaju ograničenja i kompromise između skalabilnosti, konzistentnosti, bezbednosti i otpornosti na otkaze u okruženjima bez centralne tačke kontrole.
-
-U narednom poglavlju biće predstavljeni osnovni koncepti i metrike teorije distribuiranih sistema koji omogućavaju formalnu analizu ovih ograničenja. Ovaj teorijski okvir poslužiće kao osnova za razumevanje blokčejn tehnologija, koje u kasnijim poglavljima posmatramo kao posebnu klasu distribuiranih informacionih sistema usmerenih ka uklanjanju centralnog autoriteta nad upravljanjem stanjem sistema.
+Sedma glava predstavlja diskusiju o mogućnostima daljeg unapređenja i proširenja funkcionalnosti pametnih ugovora u okviru NFT-zasnovane platforme za elektronsku trgovinu. Analizirane su dodatne funkcionalnosti NFT standarda, uključujući mehanizme autorizacije, metapodataka i raspodele prihoda, kao i bezbednosni i upravljački obrasci pametnih ugovora. Poseban akcenat stavljen je na modularni dizajn i nadogradive arhitekture, koje omogućavaju razvoj složenih i dugoročno održivih sistema. Takođe je obrađena integracija sa spoljašnjim izvorima podataka putem proročišta, kao i izazovi decentralizacije prezentacionog sloja. Na kraju se analiziraju ograničenja predložene metodologije, čime su definisani potencijalni pravci daljeg unapređenja i istraživanja.
