@@ -25,32 +25,46 @@ Komunikacija između konsenzusnog i izvršnog sloja je dvosmerna i ostvaruje se 
 \end{enumerate}
 
 \section{Konsenzusni sloj Eterijum mreže}
-Vreme u konsenzusnom sloju podeljeno je na epohe \eng{epochs}, pri čemu se svaka epoha sastoji od 32 slota, dok trajanje pojedinačnog slota iznosi 12 sekundi, što znači da jedna epoha traje 6 minuta i 24 sekunde. 
+Vreme u konsenzusnom sloju podeljeno je na epohe \eng{epochs}, pri čemu se svaka epoha sastoji od 32 slota, dok trajanje pojedinačnog slota iznosi 12 sekundi. Na osnovu toga proizlazi da trajanje jedne epohe iznosi 6 minuta i 24 sekunde.
 
-Da bi učesnik mreže stekao status validatora, neophodno je da najpre zaključa najmanje 32 ETH \cite{VALIDATOReip7251}, koji predstavlja primarnu kriptovalutu Eterijum blokčejna, u ugovoru za ulaganje \eng{staking contract}. Time prelazi u stanje validatora u redu za aktivaciju \eng{activation queue}, jer postoji ograničenje broja validatora koji se mogu aktivirati u svakoj epohi, definisano parametrom ograničenja protoka \eng{churn limit} \cite{CHURNeip7514}. Ovo ograničenje postoji kako bi se kontrolisala dinamika ulaska i izlaska validatora \cite{li2024mitigating}, čime se obezbeđuje stabilnost mreže.
+Da bi učesnik mreže stekao status validatora, neophodno je da najpre zaključa najmanje 32 ETH \cite{VALIDATOReip7251}, primarne kriptovalute Eterijum blokčejna, u ugovoru za ulaganje \eng{staking contract}. Time učesnik prelazi u stanje validatora u redu za aktivaciju \eng{activation queue}, gde čeka uključivanje u proces validacije. Nakon isteka perioda čekanja, validator postaje deo skupa aktivnih validatora i može učestvovati u procesu predlaganja i validacije blokova.
 
-S obzirom na to da je blokčejn deterministički distribuirani sistem, neophodno je obezbediti izvor pseudonasumičnosti za predlagača bloka koji je javno proverljiv, ali unapred nepredvidiv, kako bi se sprečilo da napadač utiče na raspodelu konsenzusnih uloga. U konsenzusnom sloju Eterijuma, ovaj zahtev se ostvaruje putem distribuiranog mehanizma generisanja slučajnosti poznatog kao \textit{RANDAO} \cite{alpturer2024optimal}.
+Razlog za čekanje jeste postojanje ograničenja broja validatora koji se mogu aktivirati tokom jedne epohe, definisanog parametrom ograničenja protoka \eng{churn limit} \cite{CHURNeip7514}, u cilju kontrole dinamike ulaska i izlaska validatora \cite{li2024mitigating}, čime se doprinosi stabilnosti mreže. 
 
-RANDAO predstavlja kolektivni kriptografski protokol u kojem validatori postepeno doprinose generisanju zajedničke pseudonasumične vrednosti, koja se ažurira pri svakom predlaganju bloka i uključuje u njegovo zaglavlje. Na osnovu tako generisane RANDAO vrednosti, na početku svake epohe vrši se deterministička, ali pseudonasumična permutacija skupa aktivnih validatora.
+S obzirom na to da blokčejn predstavlja deterministički distribuirani sistem, neophodno je obezbediti izvor pseudonasumičnosti za izbor predlagača bloka koji je istovremeno javno proverljiv i unapred nepredvidiv, kako bi se sprečila mogućnost uticaja napadača na raspodelu konsenzusnih uloga. U konsenzusnom sloju Eterijuma ovaj zahtev realizuje se putem distribuiranog mehanizma generisanja slučajnosti poznatog kao \textit{RANDAO} \cite{alpturer2024optimal}.
 
-Na početku svake epohe, svi aktivni validatori raspoređuju se u odbore \eng{committees} približno jednake veličine, tako da svakom slotu odgovara tačno jedan odbor, pri čemu se na osnovu RANDAO vrednosti unapred određuju predlagači blokova za čitavu epohu, kao i sastav odbora za pojedinačne slotove, uz verovatnoću izbora koja je proporcionalna efektivnom ulogu validatora.
+RANDAO predstavlja kolektivni kriptografski protokol u kojem validatori postepeno doprinose generisanju zajedničke pseudonasumične vrednosti. Ova vrednost ažurira se kada validator izabran za trenutni slot predloži novi blok, pri čemu je obavezan da u zaglavlje bloka uključi odgovarajuću vrednost \eng{randao reveal}. Na osnovu tako generisane RANDAO vrednosti, na početku svake epohe vrši se deterministička, ali pseudonasumična permutacija skupa aktivnih validatora.
 
-Predlagač bloka je odgovoran za kreiranje novog bloka tako što, putem povezanog izvršnog klijenta, bira transakcije iz svog lokalnog skupa nepotvrđenih transakcija i uključuje ih u izvršni sadržaj bloka. Nakon interne provere izvršnog sadržaja i njegove integracije sa konsenzusnim podacima u jedinstvenu strukturu bloka, predloženi blok se distribuira ostalim validatorima u odgovarajućem odboru.
+Tom prilikom validatori se raspoređuju u odbore \eng{committees} približno jednake veličine, pri čemu minimalna veličina odbora mora biti veća od 128 validatora iz bezbednosnih razloga. U okviru jednog slota može postojati najviše 64 odbora, pri čemu broj odbora zavisi od broja aktivnih validatora, dok na verovatnoću izbora validatora utiče visina njegovog efektivnog uloga.
 
-U ovoj fazi preostali validatori proveravaju validnost bloka najpre na konsenzusnom, a zatim na izvršnom sloju, i ukoliko su obe faze uspešne, glasaju za blok koji smatraju delom kanonske grane lanca emitovanjem najviše jedne atestacije \eng{attestation} odnosno potvrde koja sadrži sledeće podatke:
+\begin{sidewaysfigure}
+    \centering
+    \includegraphics[width=\textheight]{chapter5_pos.png}
+    \caption{TODO\\
+        \textbf{a)} TODO\\
+        \textbf{b)} TODO\\
+        \textbf{c)} TODO\\
+        \textbf{d)} TODO\\
+        \textbf{e)} TODO
+    }
+\end{sidewaysfigure}
+
+Predlagač bloka prilikom kreiranja novog bloka, putem povezanog izvršnog klijenta, bira transakcije iz svog lokalnog skupa nepotvrđenih transakcija i uključuje ih u izvršni sadržaj bloka. Nakon interne provere izvršnog sadržaja i njegove integracije sa konsenzusnim podacima u jedinstvenu strukturu bloka, predloženi blok se distribuira ostalim validatorima u odgovarajućem odboru.
+
+U ovoj fazi preostali validatori proveravaju validnost bloka najpre na konsenzusnom, a zatim na izvršnom sloju, i ukoliko su obe faze uspešne, glasaju za blok koji smatraju delom kanonske grane lanca emitovanjem najviše jedne atestacije \eng{attestation}, odnosno potvrde koja sadrži sledeće podatke:
 \begin{enumerate}
 \item \textbf{slot} - broj slota na koji se atestacija odnosi,
-\item \textbf{indeks} - indeks komiteta kojem validator pripada u trenutnom slotu,
+\item \textbf{indeks} - indeks odbora kojem validator pripada u trenutnom slotu,
 \item \textbf{heš bloka na vrhu lanca \eng{beacon block root}} - heš bloka koji validator trenutno smatra vrhom lanca,
 \item \textbf{izvorna kontrolna tačka \eng{source}} - kontrolna tačka poslednje opravdane \eng{justified} kontrolne tačke koja je validatoru poznata,
 \item \textbf{ciljna kontrolna tačka \eng{target}} - kontrolna tačka trenutne epohe, odnosno prvi blok trenutne epohe.
 \end{enumerate}
 
-Kako se svaki odbor sastoji od velikog broja validatora, direktna propagacija pojedinačnih atestacija dovela bi do zagušenja mreže, u skladu sa Teoremom \ref{teorema:gunter}. Iz tog razloga, svaki odbor je dodatno podeljen na manje komunikacione podmreže \eng{subnets}, pri čemu se svaki validator nalazi u tačno jednoj podmreži.
+Kako se svaki odbor sastoji od velikog broja validatora, direktna propagacija pojedinačnih atestacija dovela bi do zagušenja mreže, u skladu sa Teoremom \ref{teorema:gunter}. Iz tog razloga, svakom odboru dodatno se dodeljuje komunikaciona podmreža \eng{subnets}, pri čemu se svaki validator nalazi u okviru tačno jedne podmreže.
 
-Unutar svake podmreže, šesnaest validatora se bira u ulogu agregatora \eng{aggregators}, koji prikupljaju atestacije ostalih validatora i kombinuju njihove kriptografske potpise u jedan agregatni potpis primenom BLS šeme agregacije potpisa \cite{boneh2001short} i emituju dobijeni agregatni potpis široj mreži. Ovakav mehanizam omogućava efikasnu verifikaciju velikog broja atestacija uz minimalan komunikacioni i računarski trošak.
+Unutar svake podmreže, šesnaest validatora bira se za ulogu agregatora \eng{aggregators}, koji prikupljaju atestacije ostalih validatora iz istog odbora i kombinuju njihove kriptografske potpise u jedinstven agregatni potpis primenom BLS šeme agregacije potpisa \cite{boneh2001short} nakon čega emituju dobijeni agregatni potpis široj mreži. Ovakav mehanizam omogućava efikasnu verifikaciju velikog broja atestacija uz minimalan komunikacioni i računarski trošak.
 
-Validator koji je izabran za predlagača bloka uključuje u predloženi blok agregirane BLS atestacije iz svake komunikacione podmreže, pri čemu se za svaku podmrežu bira agregacija sa najvećom podrškom validatora. Ove agregirane atestacije se kombinuju u jedan konačni BLS potpis, koji postaje sastavni deo strukture bloka.
+Validator koji je izabran za predlagača bloka uključuje u predloženi blok agregirane BLS atestacije iz svake komunikacione podmreže, pri čemu se za svaku podmrežu bira agregacija sa najvećom podrškom validatora. Na taj način agregirane atestacije kombinuju se u jedinstveni BLS potpis, koji postaje sastavni deo strukture bloka.
 
 \subsection{Račvanja u konsenzusnom sloju}
 Usled asinhrone prirode distribuirane mreže, predloženi blok ne dospeva do svih validatora istovremeno. Kao posledica toga, pojedini validatori mogu primiti novi blok tek u narednom slotu. Validatori koji nisu primili novi blok nastavljaju da glasaju za poslednji blok koji im je poznat. Ukoliko novi predlagač nije upoznat sa prethodno predloženim blokom, on može konstruisati blok koji se nadovezuje direktno na poslednji poznati blok, čime dolazi do privremenog račvanja lanca.

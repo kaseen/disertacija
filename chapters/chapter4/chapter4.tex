@@ -490,6 +490,12 @@ Podrazumevani način objavljivanja i pribavljanja sadržaja u IPFS mreži podraz
 \subsection{Strukturiranje i adresiranje sadržaja}
 Prilikom postavljanja fajla na IPFS mrežu, sadržaj fajla se deli na manje blokove veličine 256KB-1MB. Dobijeni blokovi se zatim organizuju u strukturu podataka tipa \textit{Merkle Directed Acyclic Graph (Merkle DAG)} \cite{sanjuan2020merkle}, gde listovi grafa predstavljaju sirove blokove podataka koji sadrže isključivo segmente originalnog binarnog sadržaja. Koren grafa predstavlja čvor koji enkapsulira metapodatke o fajlu (npr. tip objekta i ukupnu veličinu), zajedno sa referencama ka podređenim čvorovima. Ukoliko broj blokova prevazilazi kapacitet korenog čvora, referenciranje se hijerarhijski organizuje kroz dodatne međučvorove, čime se formira balansirani Merkle DAG.
 
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{chapter4_merkledag.png}
+    \caption{TODO}
+\end{figure}
+
 Jedinstveni identifikator sadržaja \eng{Content Identifier, CID} je nepromenljiv i formira se kombinovanjem sledećih informacija:
 \begin{enumerate}
 \item Verzija identifikatora, radi obezbeđivanja kompatibilnosti unapred.
@@ -497,6 +503,12 @@ Jedinstveni identifikator sadržaja \eng{Content Identifier, CID} je nepromenlji
 \item Višeheš \eng{multihash}, koji sadrži informaciju o korišćenoj heš funkciji, dužini heš vrednosti i samoj heš vrednosti korenog čvora grafa.
 \item Višebazno \eng{multibase} enkodiranje, koje se primenjuje samo prilikom prikaza CID-a u obliku tekstualne niske.
 \end{enumerate}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{chapter4_cid.png}
+    %\caption{TODO}
+\end{figure}
 
 Važno je napomenuti da identični fajlovi mogu imati različite CID identifikatore ukoliko su generisani korišćenjem različitih parametara kodiranja, kao što su drugačija verzija identifikatora, drugačiji tip formata ili drugačija heš funkcija, a ako se koriste isti parametri, tada isti sadržaj uvek rezultuje istim identifikatorom. Ukoliko više korisnika u mreži dodaje isti fajl, generisaće se isti CID, što omogućava ponovnu upotrebu već postojećih blokova podataka, tj. implicitnu deduplikaciju sadržaja na nivou blokova.
 
