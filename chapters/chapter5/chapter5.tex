@@ -13,6 +13,21 @@ Eterijum se najčešće modeluje kao sistem sastavljen od dva protokolarno razdv
 
 Svaki validator mora imati funkcionalan pristup i konsenzusnom i izvršnom sloju protokola, zbog čega se koristi slojevita arhitektura klijenata. Razdvajanje izvršnog i konsenzusnog klijenta, naročito kada se izvršavaju na različitim uređajima, može povećati napadnu površinu sistema i uvesti dodatne bezbednosne rizike u njihovoj međusobnoj komunikaciji.
 
+\begin{figure}[ht]
+    \centering
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{chapter5_engine_api.png}
+        \caption{TODO}
+    \end{minipage}
+\hfill
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=1\linewidth]{chapter5_p2p.png}
+        \caption{TODO}
+    \end{minipage}
+\end{figure}
+
 Komunikacija između konsenzusnog i izvršnog sloja je dvosmerna i ostvaruje se isključivo putem standardizovanog interfejsa poznatog kao \textit{Engine API}, koji predstavlja jedini dozvoljeni mehanizam njihove koordinacije. Proces predlaganja i validacije novog bloka odvija se kroz sledeće faze:
 \begin{enumerate}
 \item Validator izabran za predlagača u okviru konsenzusnog sloja inicira izvršnom sloju proces izgradnje novog bloka pozivom \textit{engine\_forkchoiceUpdatedV2}, prosleđujući trenutni izbor kanonskog lanca i parametre za konstrukciju bloka.
@@ -69,12 +84,15 @@ Validator koji je izabran za predlagača bloka uključuje u predloženi blok agr
 \subsection{Račvanja u konsenzusnom sloju}
 Usled asinhrone prirode distribuirane mreže, predloženi blok ne dospeva do svih validatora istovremeno. Kao posledica toga, pojedini validatori mogu primiti novi blok tek u narednom slotu. Validatori koji nisu primili novi blok nastavljaju da glasaju za poslednji blok koji im je poznat. Ukoliko novi predlagač nije upoznat sa prethodno predloženim blokom, on može konstruisati blok koji se nadovezuje direktno na poslednji poznati blok, čime dolazi do privremenog račvanja lanca.
 
-% TODO
-%Pretpostavimo da je poslednji blok označen sa $B$. Predlagač $P$ predlaže blok $B_1$, koji ne dospeva do predlagača $Q$ u narednom slotu. Predlagač $Q$ zatim predlaže blok $B_2$ koji se takođe nadovezuje na blok $B$, čime nastaje račvanje. U narednim slotovima, naredni predlagači mogu nastaviti izgradnju lanca na obe grane, pri čemu se, na primer, tri nova bloka nadovezuju na granu $B_1$, dok se dva bloka linearno nadovezuju na granu $B_2$ (Slika TODO).
-
 S obzirom na to da svaka atestacija sadrži informaciju o bloku koji validator trenutno vidi na vrhu blokčejna, validator u svakom narednom slotu ima mogućnost da promeni svoj izbor i emituje novu atestaciju za blok na suprotnoj grani, ukoliko ne želi da glasa za istu granu. Iz tog razloga, u procesu izbora glavne grane u obzir se uzima isključivo poslednja važeća atestacija svakog validatora, odnosno atestacija sa najvećim brojem slota koju je validator emitovao i koja je uključena u agregirane BLS potpise \eng{Latest Message Driven, LMD}.
 
 Kako se u Eterijum mreži zaključava primarna kriptovaluta u vidu uloga validatora, izbor grane koja će biti proglašena glavnom u slučaju račvanja zasniva se na \textit{pravilu najtežeg lanca}, koje predstavlja varijaciju klasičnog pravila najdužeg lanca. Ovo pravilo ne posmatra broj blokova na grani, već \textbf{težina uloga} predstavlja ukupnu količinu ETH zaključanu u podstablu posmatranog bloka, koja uzima uzimajući u obzir poslednje atestacije svih validatora koji su glasali za njega ili njegove potomke \eng{Greedy Heaviest-Observed Sub-Tree, GHOST}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{chapter5_fork.png}
+    \caption{Primer nastanka račvanja lanca, pri čemu se u narednim slotovima u prvom slučaju dva bloka linearno nadovezuju na inicijalnu račvu, dok u drugom slučaju dolazi do dodatnog račvanja postojećeg ogranka lanca.}
+\end{figure}
 
 U slučaju račvanja, Nakamoto konsenzus obezbeđuje verovatnosnu finalnost Eterijum blokčejna primenom kombinovanog mehanizma \textit{LMD-GHOST}, koji koristi poslednje atestacije validatora za deterministički izbor grane sa najvećom ukupnom težinom.
 
