@@ -15,16 +15,16 @@ Svaki validator mora imati funkcionalan pristup i konsenzusnom i izvršnom sloju
 
 \begin{figure}[ht]
     \centering
-    \begin{minipage}{0.49\textwidth}
+    \begin{minipage}{0.39\textwidth}
         \centering
         \includegraphics[width=\linewidth]{chapter5_engine_api.png}
-        \caption{TODO}
+        \caption{Komunikacija između konsenzusnog i izvršnog sloja putem standardizovanog interfejsa.}
     \end{minipage}
 \hfill
-    \begin{minipage}{0.49\textwidth}
+    \begin{minipage}{0.59\textwidth}
         \centering
         \includegraphics[width=1\linewidth]{chapter5_p2p.png}
-        \caption{TODO}
+        \caption{Mreža ravnopravnih čvorova u Eterijum mreži.}
     \end{minipage}
 \end{figure}
 
@@ -55,12 +55,12 @@ Tom prilikom validatori se raspoređuju u odbore \eng{committees} približno jed
 \begin{sidewaysfigure}
     \centering
     \includegraphics[width=\textheight]{chapter5_pos.png}
-    \caption{TODO\\
-        \textbf{a)} TODO\\
-        \textbf{b)} TODO\\
-        \textbf{c)} TODO\\
-        \textbf{d)} TODO\\
-        \textbf{e)} TODO
+    \caption{Struktura konsenzusnog sloja u Eterijum mreži.\\
+        \textbf{a)} Podela vremena na slotove.\\
+        \textbf{b)} Skup aktivnih validatora koji učestvuju u predlaganju novih blokova.\\
+        \textbf{c)} Protokol RANDAO koji pseudonasumično raspoređuje skup aktivnih validatora na početku svakog slota.\\
+        \textbf{d)} Slot u kojem validator nije predložio blok, usled čega nije došlo do promene RANDAO pseudonasumične vrednosti.\\
+        \textbf{e)} Prikupljanje atestacija nastalih usled izostanka predlaganja bloka u prethodnom slotu.
     }
 \end{sidewaysfigure}
 
@@ -84,15 +84,15 @@ Validator koji je izabran za predlagača bloka uključuje u predloženi blok agr
 \subsection{Račvanja u konsenzusnom sloju}
 Usled asinhrone prirode distribuirane mreže, predloženi blok ne dospeva do svih validatora istovremeno. Kao posledica toga, pojedini validatori mogu primiti novi blok tek u narednom slotu. Validatori koji nisu primili novi blok nastavljaju da glasaju za poslednji blok koji im je poznat. Ukoliko novi predlagač nije upoznat sa prethodno predloženim blokom, on može konstruisati blok koji se nadovezuje direktno na poslednji poznati blok, čime dolazi do privremenog račvanja lanca.
 
-S obzirom na to da svaka atestacija sadrži informaciju o bloku koji validator trenutno vidi na vrhu blokčejna, validator u svakom narednom slotu ima mogućnost da promeni svoj izbor i emituje novu atestaciju za blok na suprotnoj grani, ukoliko ne želi da glasa za istu granu. Iz tog razloga, u procesu izbora glavne grane u obzir se uzima isključivo poslednja važeća atestacija svakog validatora, odnosno atestacija sa najvećim brojem slota koju je validator emitovao i koja je uključena u agregirane BLS potpise \eng{Latest Message Driven, LMD}.
-
-Kako se u Eterijum mreži zaključava primarna kriptovaluta u vidu uloga validatora, izbor grane koja će biti proglašena glavnom u slučaju račvanja zasniva se na \textit{pravilu najtežeg lanca}, koje predstavlja varijaciju klasičnog pravila najdužeg lanca. Ovo pravilo ne posmatra broj blokova na grani, već \textbf{težina uloga} predstavlja ukupnu količinu ETH zaključanu u podstablu posmatranog bloka, koja uzima uzimajući u obzir poslednje atestacije svih validatora koji su glasali za njega ili njegove potomke \eng{Greedy Heaviest-Observed Sub-Tree, GHOST}.
-
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.7\textwidth]{chapter5_fork.png}
-    \caption{Primer nastanka račvanja lanca, pri čemu se u narednim slotovima u prvom slučaju dva bloka linearno nadovezuju na inicijalnu račvu, dok u drugom slučaju dolazi do dodatnog račvanja postojećeg ogranka lanca.}
+    \caption{Primer račvanja lanca, pri čemu se u prvom slučaju blokovi linearno nadovezuju na inicijalnu račvu, dok u drugom dolazi do dodatnog račvanja ogranka sa većim brojem atestacija.}
 \end{figure}
+
+S obzirom na to da svaka atestacija sadrži informaciju o bloku koji validator trenutno vidi na vrhu blokčejna, validator u svakom narednom slotu ima mogućnost da promeni svoj izbor i emituje novu atestaciju za blok na suprotnoj grani, ukoliko ne želi da glasa za istu granu. Iz tog razloga, u procesu izbora glavne grane u obzir se uzima isključivo poslednja važeća atestacija svakog validatora, odnosno atestacija sa najvećim brojem slota koju je validator emitovao i koja je uključena u agregirane BLS potpise \eng{Latest Message Driven, LMD}.
+
+Kako se u Eterijum mreži zaključava primarna kriptovaluta u vidu uloga validatora, izbor grane koja će biti proglašena glavnom u slučaju račvanja zasniva se na \textit{pravilu najtežeg lanca}, koje predstavlja varijaciju klasičnog pravila najdužeg lanca. Ovo pravilo ne posmatra broj blokova na grani, već \textbf{težina uloga} predstavlja ukupnu količinu ETH zaključanu u podstablu posmatranog bloka, koja uzima uzimajući u obzir poslednje atestacije svih validatora koji su glasali za njega ili njegove potomke \eng{Greedy Heaviest-Observed Sub-Tree, GHOST}.
 
 U slučaju račvanja, Nakamoto konsenzus obezbeđuje verovatnosnu finalnost Eterijum blokčejna primenom kombinovanog mehanizma \textit{LMD-GHOST}, koji koristi poslednje atestacije validatora za deterministički izbor grane sa najvećom ukupnom težinom.
 
@@ -104,6 +104,14 @@ Casper FFG predstavlja BFT mehanizam finalizacije koji se ne bavi predlaganjem b
 Kako svaka atestacija sadrži informacije o izvornoj i ciljnoj kontrolnoj tački, validatori putem svojih atestacija glasaju za prelaz između dve uzastopne kontrolne tačke pa atestacijama istovremeno učestvuju i u mehanizmu izbora grane i u procesu finalizacije.
 
 Ukoliko \textbf{velika većina} (najmanje dve trećine ukupnog uloga aktivnih validatora) u okviru jedne epohe potvrdi isti prelaz između kontrolnih tačaka, ciljana kontrolna tačka se smatra \textit{opravdanom}. Ukoliko se u narednoj epohi opravda novi prelaz koji polazi od ove opravdane kontrolne tačke, ona postaje \textit{finalizovana}. Na taj način, finalizacija zahteva uspešno opravdavanje u dve uzastopne epohe.
+
+\begin{figure}[ht]
+    \centering
+    \makebox[\textwidth][c]{
+        \includegraphics[width=1.2\textwidth]{chapter5_finalizacija.png}
+    }
+    \caption{Mehanizam finalizacije blokova kroz dve uzastopno opravdane epohe.}
+\end{figure}
 
 Ovakav dvostepeni proces obezbeđuje toleranciju na vizantijsko ponašanje validatora, ali Casper FFG algoritam ne pokušava da finalizuje svaku kontrolnu tačku redom, jer u slučaju konfliktnog glasanja dolazi da u trenutnoj rundi ne bude finalizovana kontrolna tačka. U slučajevima kad se ovo desi Eterijum mreža nastavlja sa verovatnosnom finalnošću zasnovanom na \textit{LMD-GHOST} algoritmu.
 
@@ -216,6 +224,12 @@ $$ \sigma : Address_{160} \to Account $$
 
 Pretpostavlja se da je preslikavanje $\sigma$ implementirano korišćenjem modifikovanog Merkle-Patricia stabla, koje obezbeđuje kriptografsku proverljivost integriteta podataka putem Merkle konstrukcije, kao i efikasne operacije umetanja, pretrage i brisanja sa logaritamskom složenošću u odnosu na broj elemenata \eng{the Practical Algorithm to Retrieve Information Coded in Alphanumeric, Patricia} \cite{morrison1968patricia}.
 
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.95\textwidth]{chapter5_world_state.png}
+    \caption{Primer uprošćenog trenutnog stanja Eterijum sistema sa 8-bitnim adresama.}
+\end{figure}
+
 Zbog toga se u svakom bloku Eterijum blokčejna čuva korenska vrednost ovog stabla \eng{state root}, koja omogućava svim čvorovima u mreži da kriptografski verifikuju da li se nalaze u istom globalnom stanju nakon prelaska iz jednog bloka u naredni. Kako svaka promena stanja bilo kog naloga neminovno dovodi do promene korena stabla, upoređivanje isključivo ove korenske vrednosti predstavlja efikasan mehanizam za proveru konzistentnosti stanja, bez potrebe za poređenjem pojedinačnih stanja naloga tokom ažuriranja mreže.
 
 \textbf{Adrese} u Eterijum mreži su fiksne dužine od 160 bita (20 bajtova) i mogu pripadati jednoj od sledećih kategorija:
@@ -240,6 +254,12 @@ U slučaju naloga pametnog ugovora, stanje naloga može imati proizvoljnu velič
 $$ \sigma_{addr} : \mathbb{B}_{32} \to \mathbb{B}_{32} $$
 
 Pretpostavlja se da je preslikavanje $\sigma_{addr}$ implementirano korišćenjem modifikovanog Merkle-Patricia stabla, koje obezbeđuje kriptografsku proverljivost i efikasno ažuriranje stanja. Svaki nalog koji poseduje neprazan \textit{heš izvršnog koda} ima pridruženo sopstveno trajno skladište, čime se implicitno identifikuje kao nalog pametnog ugovora.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.95\textwidth]{chapter5_contract_state.png}
+    \caption{Povezivanje trenutnog heša skladišta naloga pametnog ugovora sa stablom njegovog skladišta.}
+\end{figure}
 
 Shodno tome, svaka promena stanja pametnog ugovora dovodi do promene njegovog skladišta, što se reflektuje kroz izmenu odgovarajućeg heša skladišta. Ova promena se dalje propagira do korenske vrednosti Merkle-Patricia stabla globalnog stanja, čime se obezbeđuje da svaka izmena trajnog stanja bude kriptografski evidentirana na nivou celog sistema.
 
@@ -276,6 +296,14 @@ Stanje Eterijum virtuelne mašine obuhvata sledeće komponente:
 \end{enumerate}
 
 S obzirom na to da je bajtkod pametnog ugovora predstavljen kao niz bajtova, u kojem pojedini bajtovi predstavljaju operacione kodove, dok drugi mogu predstavljati njihove operande, izvršavanje koda može se modelovati kao sekvencijalni proces vođen brojačem programa. U tom kontekstu, EVM se može posmatrati kao stek-orijentisana virtuelna mašina \eng{stack-based virtual machine} \cite{smith2005virtual}, u kojoj instrukcije implicitno koriste operande sa vrha steka i rezultate vraćaju nazad na stek. Ovakav model omogućava izvršavanje instrukcija koje manipulišu različitim segmentima stanja, uključujući bajtkod ugovora, podatke za poziv, privremenu memoriju i trajno skladište.
+
+\begin{figure}[ht]
+    \centering
+    \makebox[\textwidth][c]{
+        \includegraphics[width=1.2\textwidth]{chapter5_evm_context.png}
+    }
+    \caption{Kontekst izvršavanja transakcije u EVM okruženju.}
+\end{figure}
 
 Ukoliko se vrednost brojača programa odnosi na kod instrukcije, proverava se da li je raspoloživa dovoljna količina gasa za njegovo izvršavanje, nakon čega se brojač ažurira. Proces se nastavlja sve dok se ne dostigne kraj bajtkoda, ne izvrši instrukcija \texttt{STOP} ili \texttt{RETURN}, ili dok ne nastupi greška tokom izvršavanja.
 
@@ -359,3 +387,11 @@ Imajući u vidu prethodno opisane komponente sistema, sada se može sagledati ko
 \item U narednom slotu, validator izabran za predlagača bloka odlučuje da li će korisnikova transakcija biti uključena u predloženi blok, pri čemu na ovu odluku značajno utiče visina cene gasa koju je korisnik spreman da plati po jedinici resursa.
 \item Predloženi blok se propagira kroz mrežu, pri čemu ostali validatori proveravaju njegovu ispravnost, izvršavaju transakcije, ažuriraju lokalno stanje sistema i nastavljaju proces glasanja i finalizacije u skladu sa pravilima konsenzusa.
 \end{enumerate}
+
+\begin{sidewaysfigure}
+    \centering
+    \makebox[\textheight][c]{
+        \includegraphics[width=1.2\textheight]{chapter5_tx_tok.png}
+    }
+    \caption{Kompletan tok obrade transakcije u Eterijum mreži.}
+\end{sidewaysfigure}

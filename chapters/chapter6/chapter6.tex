@@ -71,7 +71,7 @@ U okviru ovakvog modela, kupon sadrži sledeće informacije:
 \item Početnu vremensku oznaku u \textit{Unix} formatu koja definiše trenutak od kog kupon postaje validan (64 bita),
 \item Skup od osam binarnih promenljivih, svaka veličine jednog bita. U demonstracionom modelu jedna promenljiva označava da li je kupon ,,poklonjiv'', što omogućava njegov prenos između korisnika. Druge promenljive mogu imati funkcionalnosti poput ,,tržišno prenosiv'', čime bi se omogućila sekundarna trgovina (ukupno 8 bita),
 \item Celobrojnu vrednost koja predstavlja procenat popusta (8 bita),
-\item Parametar koji definiše trajanje važenja kupona nakon početne vremenske oznake. Ova vrednost izražena je u jednakim vremenskim intervalima, koji se definišu prilikom postavljanja ugovora (16 bita).
+\item Parametar koji definiše trajanje validnosti kupona nakon početne vremenske oznake. Ova vrednost izražena je u jednakim vremenskim intervalima, koji se definišu prilikom postavljanja ugovora (16 bita).
 \end{enumerate}
 
 Ovakvo gusto enkodiranje podataka nužno uvodi određena ograničenja. Na primer, korišćenje 8 bita za procenat popusta onemogućava reprezentaciju decimalnih vrednosti. Slično tome, izbor veličine vremenskog intervala direktno utiče na maksimalno moguće trajanje važenja kupona i ukoliko je jednak jednom danu, maksimalna dužina važenja iznosi približno $\approx$20 godina. Iako je moguće primenom bitskih operatora precizno kontrolisati raspodelu proizvoljnog broja bitova, uključujući vrednosti koje nisu deljive sa 8, u ovom radu je takav pristup izostavljen radi jednostavnosti implementacije i preglednosti formalne analize.
