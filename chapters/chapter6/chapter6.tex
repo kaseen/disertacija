@@ -56,7 +56,7 @@ U ovom radu primenjuje se detaljna analiza osnovnih operacija, kreiranja \eng{mi
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.35\textwidth]{chapter6_pametan_ugovor.png}
-    \caption{TODO}
+    \caption{Struktura pametnog ugovora za nezamenljive tokene u kojem se vodi evidencija o vlasništvu nad identifikatorima, stanjima adresa i osnovnim operacijama koje će biti analizirane.}
 \end{figure}
 
 U prethodnom radu \cite{tasic2024cost} fokus je bio na modelovanju elektronskih kupona kao specifične instance digitalnih entiteta u sistemima elektronske trgovine, imajući u vidu da savremeno tržište u velikoj meri zavisi od njihove primene. U tom radu demonstrirano je da se značajne uštede u potrošnji gasa ostvaruju enkodiranjem svih relevantnih informacija o kuponu unutar jedne skladišne jedinice. Time je unapređen pristup ranijim rešenjima koja su za svaki novi kupon instancirala zaseban pametni ugovor, što je izrazito skladišno i infrastrukturno neefikasno.
@@ -83,7 +83,7 @@ U okviru ovakvog modela, kupon sadrži sledeće informacije:
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.97\textwidth]{chapter6_upakovano_vlasnistvo.png}
-    \caption{TODO}
+    \caption{Reprezentacija informacija elektronskog kupona enkodiranih u jednu EVM skladišnu jedinicu.}
 \end{figure}
 
 Ovakvo gusto enkodiranje podataka nužno uvodi određena ograničenja. Na primer, korišćenje 8 bita za procenat popusta onemogućava reprezentaciju decimalnih vrednosti. Slično tome, izbor veličine vremenskog intervala direktno utiče na maksimalno moguće trajanje važenja kupona i ukoliko je jednak jednom danu, maksimalna dužina važenja iznosi približno $\approx$20 godina. Iako je moguće primenom bitskih operatora precizno kontrolisati raspodelu proizvoljnog broja bitova, uključujući vrednosti koje nisu deljive sa 8, u ovom radu je takav pristup izostavljen radi jednostavnosti implementacije i preglednosti formalne analize.
@@ -157,20 +157,20 @@ Mapa vlasnika modifikovana je tako da umesto adrese vlasnika direktno preslikava
 
 Na početku izvršavanja funkcije vrši se validacija ulaznih parametara kako bi se obezbedila njihova konzistentnost sa definisanim modelom enkodiranja, posebno u pogledu ograničenja reprezentacije procentualne vrednosti i maksimalnog trajanja važenja kupona. Nakon uspešne validacije, strukturirani podaci o kuponu upisuju se u mapu vlasnika na poziciji definisanoj promenljivom \textit{\_currentIndex}, nakon čega se ova promenljiva inkrementira.
 
+\begin{figure}[ht]
+    \centering
+    \makebox[\textwidth][c]{
+        \includegraphics[width=1.1\textwidth]{chapter6_erc721_mint.png}
+    }
+    \caption{Višestruko kreiranje kupona u standardu ERC-721 sa fokusom na trošak skladištenja u mapi vlasništva označen crvenom bojom.}
+\end{figure}
+
 Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \begin{enumerate}
 \item Upis nove skladišne jedinice u mapu vlasnika uzrokuje trošak hladne \Sj\ operacije, budući da se radi o prethodno nekorišćenoj skladišnoj jedinici.
 \item Ažuriranje mape stanja vlasnika uzrokuje trošak hladne \Sd\ operacije, ako nije nula.
 \item Promena vrednosti promenljive \textit{\_currentIndex} realizuje se kao topla \Sd\ operacija, ako nije nula, jer je skladišna jedinica već pristupljena tokom izvršavanja funkcije.
 \end{enumerate}
-
-\begin{figure}[ht]
-    \centering
-    \makebox[\textwidth][c]{
-        \includegraphics[width=1.2\textwidth]{chapter6_erc721_mint.png}
-    }
-    \caption{TODO}
-\end{figure}
 
 \subsubsection{Prenos}
 Na početku izvršavanja funkcije prenosa trenutni vlasnik se učitava u memoriju radi validacije. Nakon toga vrši se provera vlasništva nad tokenom i ispravnosti adrese primaoca. Dodatno, implementacija kupona proširuje osnovni ERC-721 model proverom da li je kupon označen kao prenosiv. Nakon uspešne validacije ažuriraju se brojevi kupona adresa i prenosi vlasništvo.
@@ -186,9 +186,9 @@ Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \begin{figure}[ht]
     \centering
     \makebox[\textwidth][c]{
-        \includegraphics[width=1.2\textwidth]{chapter6_erc721_transfer.png}
+        \includegraphics[width=1.1\textwidth]{chapter6_erc721_transfer.png}
     }
-    \caption{TODO}
+    \caption{Prenos kupona u standardu ERC-721 sa fokusom na trošak skladištenja u mapi vlasništva označen crvenom bojom.}
 \end{figure}
 
 \subsubsection{Uništavanje}
@@ -209,9 +209,9 @@ Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \begin{figure}[ht]
     \centering
     \makebox[\textwidth][c]{
-        \includegraphics[width=1.2\textwidth]{chapter6_erc721_burn.png}
+        \includegraphics[width=1.1\textwidth]{chapter6_erc721_burn.png}
     }
-    \caption{TODO}
+    \caption{Uništavanje kupona u standardu ERC-721 sa fokusom na oslobađanje skladišnog prostora u mapi vlasništva označen zelenom bojom.}
 \end{figure}
 
 \subsection{ERC-721A}
@@ -243,24 +243,11 @@ Pored toga, standard koristi mapu upakovanog stanja podataka \textit{\_packedAdd
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.97\textwidth]{chapter6_upakovano_stanje.png}
-    \caption{TODO}
+    \caption{Reprezentacija informacija stanja adrese enkodiranih u jednu EVM skladišnu jedinicu.}
 \end{figure}
 
 \subsubsection{Kreiranje}
 ERC-721A omogućava kreiranje više identičnih tokena unutar jedne transakcije. Funkcija za kreiranje kupona, pored parametara definisanih u osnovnom ERC-721 standardu, dodatno prima i broj kupona koji se kreiraju. Kako su identifikatori tokena uzastopni, pokazivač na naredni identifikator kupona najpre se učitava u memoriju, nakon čega se vrši validacija ulaznih parametara.
-
-Informacije o vlasništvu se zatim eksplicitno upisuju samo za prvi token u grupi, korišćenjem sledeće kompaktne reprezentacije:
-\begin{equation}
-\label{eq:erc721_packed}
-\begin{split}
-owner \Razmak | \Razmak (startTimestamp \ll 160) \Razmak | \Razmak (nextInitialized \ll 225) \Razmak | \\
-(gitable \ll 226) \Razmak | \Razmak (percentage \ll 232) \Razmak | \Razmak (numOfBlocks \ll 240)
-\end{split}
-\end{equation}
-
-Ova reprezentacija proširuje osnovni model tako što umesto vremena kreiranja beleži vreme početka važenja kupona, kao i dodatne informacije specifične za kupon, pri čemu se svi podaci pakuju u jednu skladišnu jedinicu korišćenjem bitskih operacija, umesto korišćenja eksplicitne strukture podataka.
-
-Nakon toga, pokazivač na naredni identifikator tokena povećava se za ukupan broj kreiranih tokena. Skladišne jedinice koje odgovaraju ostalim identifikatorima tokena u grupi ostaju neinicijalizovane, čime implicitno predstavljaju vlasništvo nad tokenima, koje se razrešava tek tokom kasnijih operacija.
 
 \begin{algorithm}
 \caption{Funkcija kreiranja elektronskih kupona u okviru ERC-721A standarda}
@@ -285,6 +272,19 @@ Nakon toga, pokazivač na naredni identifikator tokena povećava se za ukupan br
 \end{algorithmic}
 \end{algorithm}
 
+Informacije o vlasništvu se zatim eksplicitno upisuju samo za prvi token u grupi, korišćenjem sledeće kompaktne reprezentacije:
+\begin{equation}
+\label{eq:erc721_packed}
+\begin{split}
+owner \Razmak | \Razmak (startTimestamp \ll 160) \Razmak | \Razmak (nextInitialized \ll 225) \Razmak | \\
+(gitable \ll 226) \Razmak | \Razmak (percentage \ll 232) \Razmak | \Razmak (numOfBlocks \ll 240)
+\end{split}
+\end{equation}
+
+Ova reprezentacija proširuje osnovni model tako što umesto vremena kreiranja beleži vreme početka važenja kupona, kao i dodatne informacije specifične za kupon, pri čemu se svi podaci pakuju u jednu skladišnu jedinicu korišćenjem bitskih operacija, umesto korišćenja eksplicitne strukture podataka.
+
+Nakon toga, pokazivač na naredni identifikator tokena povećava se za ukupan broj kreiranih tokena. Skladišne jedinice koje odgovaraju ostalim identifikatorima tokena u grupi ostaju neinicijalizovane, čime implicitno predstavljaju vlasništvo nad tokenima, koje se razrešava tek tokom kasnijih operacija.
+
 Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \begin{enumerate}
 \item Učitavanje vrednosti pokazivača na naredni identifikator tokena uzrokuje trošak hladne operacije \Sl.
@@ -296,9 +296,9 @@ Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \begin{figure}[ht]
     \centering
     \makebox[\textwidth][c]{
-        \includegraphics[width=1.2\textwidth]{chapter6_erc721a_mint.png}
+        \includegraphics[width=1.1\textwidth]{chapter6_erc721a_mint.png}
     }
-    \caption{TODO}
+    \caption{Višestruko kreiranje kupona u standardu ERC-721A sa fokusom na implicitno vlasništvo označeno zelenom bojom i trošak skladištenja prvog tokena u grupi označen crvenom bojom.}
 \end{figure}
 
 Ključna optimizacija proizilazi iz činjenice da se operacija \Sj\ izvršava samo jednom, za prvi token u grupi, dok se za ostale tokene vlasništvo implicitno podrazumeva, čime se značajno smanjuju ukupni troškovi gasa.
@@ -389,19 +389,19 @@ Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 
 \begin{figure}[!ht]
 \centering
-\subfloat[]{
+\subfloat[Ažuriranje vlasništva u slučaju kada se implicitno vlasništvo ne prekida.]{
     \makebox[\textwidth][c]{
-        \includegraphics[width=1.2\textwidth]{chapter6_erc721a_transfer_1.png}
+        \includegraphics[width=1.1\textwidth]{chapter6_erc721a_transfer_1.png}
     }
 }
 \vspace{0.5cm}
-\subfloat[]{
+\subfloat[Ažuriranje vlasništva uz dodatni upis u sledeću skladišnu jedinicu radi očuvanja implicitnog vlasništva.]{
     \makebox[\textwidth][c]{
-        \includegraphics[width=1.2\textwidth]{chapter6_erc721a_transfer_2.png}
+        \includegraphics[width=1.1\textwidth]{chapter6_erc721a_transfer_2.png}
     }
 }
 
-\caption{TODO}
+\caption{Prenos kupona u standardu ERC-721A sa fokusom na trošak skladištenja u mapi vlasništva označen crvenom bojom.}
 \end{figure}
 
 U implementaciji e-kupona, vremenska oznaka kreiranja se ne ažurira tokom prenosa, kako bi se očuvala informacija o vremenu početka važenja kupona.
@@ -423,18 +423,18 @@ Vremenom, kako se implicitno definisani tokeni prenose ili uništavaju, broj imp
 
 \begin{figure}[!ht]
 \centering
-\subfloat[]{
+\subfloat[Uništavanje tokena u slučaju kada se implicitno vlasništvo ne prekida.]{
     \makebox[\textwidth][c]{
-        \includegraphics[width=1.2\textwidth]{chapter6_erc721a_burn_1.png}
+        \includegraphics[width=1.1\textwidth]{chapter6_erc721a_burn_1.png}
     }
 }
 \vspace{0.5cm}
-\subfloat[]{
+\subfloat[Uništavanje tokena koje zahteva dodatni upis u sledeću skladišnu jedinicu radi očuvanja implicitnog vlasništva.]{
     \makebox[\textwidth][c]{
-        \includegraphics[width=1.2\textwidth]{chapter6_erc721a_burn_2.png}
+        \includegraphics[width=1.1\textwidth]{chapter6_erc721a_burn_2.png}
     }
 }
-\caption{TODO}
+\caption{Uništavanje kupona u standardu ERC-721A sa fokusom na trošak skladištenja u mapi vlasništva označen crvenom bojom.}
 \end{figure}
 
 \subsection{ERC-721Psi}
@@ -464,6 +464,8 @@ Informacije o vlasništvu se zatim eksplicitno upisuju samo za prvi token u grup
 
 Tokom kreiranja neophodno je postaviti odgovarajući bit u bitmapi \textit{\_batchHead}, kojim se označava prvi token u grupi. Kako skladišna jedinica u EVM-u ima veličinu od 256 bita, bitmapa je organizovana kao mapa uzastopnih blokova \eng{bucket} od po 256 bita. U ovoj reprezentaciji, vrednost \textit{1} na određenoj poziciji označava da identifikator tokena koji odgovara toj poziciji predstavlja početak grupe. 
 
+Postupak postavljanja odgovarajućeg bita sastoji se od određivanja indeksa bloka kojem pripada dati identifikator, nakon čega se postavlja odgovarajući bit unutar tog bloka, kao što je prikazano u Algoritmu \ref{alg:erc721psi_set}.
+
 \begin{algorithm}
 \caption{Postavljanje prvog u grupi u bitmapi standarda ERC-721Psi}
 \label{alg:erc721psi_set}
@@ -476,7 +478,14 @@ Tokom kreiranja neophodno je postaviti odgovarajući bit u bitmapi \textit{\_bat
 \end{algorithmic}
 \end{algorithm}
 
-Postupak postavljanja odgovarajućeg bita sastoji se od određivanja indeksa bloka kojem pripada dati identifikator, nakon čega se postavlja odgovarajući bit unutar tog bloka, kao što je prikazano u Algoritmu \ref{alg:erc721psi_set}.
+\begin{figure}[ht]
+    \centering
+    \makebox[\textwidth][c]{
+        \includegraphics[width=1.1\textwidth]{chapter6_erc721psi_mint.png}
+    }
+    \caption{Višestruko kreiranje kupona u standardu ERC-721Psi sa fokusom na implicitno vlasništvo označeno zelenom bojom, omogućeno pomoću bitmape početaka, i trošak skladištenja označen crvenom bojom.}
+\end{figure}
+
 
 Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \begin{enumerate}
@@ -486,14 +495,6 @@ Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \item Ažuriranje stanja primaoca uzrokuje trošak hladne operacije \Sd, ako nije nula.
 \item Ažuriranje vrednosti pokazivača na naredni identifikator realizuje se kao topla \Sd\ operacija, ako nije nula, jer je skladišna jedinica već pristupljena tokom validacije funkcije.
 \end{enumerate}
-
-\begin{figure}[ht]
-    \centering
-    \makebox[\textwidth][c]{
-        \includegraphics[width=1.2\textwidth]{chapter6_erc721psi_mint.png}
-    }
-    \caption{TODO}
-\end{figure}
 
 \subsubsection{Prenos}
 Operacija prenosa kupona zadržava istu osnovnu funkcionalnu logiku kao u standardu ERC-721A, uz dodatni korak ažuriranja bitmape. Određivanje vlasnika tokena zasniva se na pronalaženju identifikatora prvog tokena u grupi označenog u bitmapi, nakon čega se na osnovu te informacije očitava vlasništvo tokena iz mape upakovanih vlasničkih podataka.
@@ -550,15 +551,15 @@ Upravo zbog učitavanja 256 lokacija istovremeno, ova metoda je značajno jeftin
 
 Na primer, za $n = 1000$ procenjeni trošak je približno $\approx$134 puta manji u odnosu na ERC-721A, dok je za $n = 10000$ trošak približno $\approx$225 puta manji. U graničnom slučaju kada $n \rightarrow \infty$, odnos troškova teži faktoru 256.
 
-Nakon pronalaženja implicitnog vlasništva, analogno prethodnom standardu, grupno vlasništvo se deli na dva segmenta, nakon čega je potrebno eksplicitno evidentirati ovu promenu u bitmapi. Nakon toga se ažuriraju odgovarajući podaci o vlasništvu i stanju adresa kao i u prethodnom standardu.
-
 \begin{figure}[ht]
     \centering
     \makebox[\textwidth][c]{
-        \includegraphics[width=1.2\textwidth]{chapter6_erc721psi_transfer.png}
+        \includegraphics[width=1.2\textwidth]{chapter6_implicit.png}
     }
-    \caption{TODO}
+    \caption{Poređenje skladišnih operacija za čitanje prilikom razrešavanja implicitnog vlasništva u standardima ERC-721A i ERC-721Psi, označenih crvenom i narandžastom bojom.}
 \end{figure}
+
+Nakon pronalaženja implicitnog vlasništva, analogno prethodnom standardu, grupno vlasništvo se deli na dva segmenta, nakon čega je potrebno eksplicitno evidentirati ovu promenu u bitmapi. Nakon toga se ažuriraju odgovarajući podaci o vlasništvu i stanju adresa kao i u prethodnom standardu.
 
 Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \begin{enumerate}
@@ -571,18 +572,18 @@ Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \item Potencijalno ažuriranje bitmape originalnog vlasnika, što uzrokuje trošak tople operacije \Sd\ ako naredni bitmap blok nije prazan, odnosno tople operacije \Sj\ ako je prazan.
 \end{enumerate}
 
+\begin{figure}[ht]
+    \centering
+    \makebox[\textwidth][c]{
+        \includegraphics[width=1.1\textwidth]{chapter6_erc721psi_transfer.png}
+    }
+    \caption{Prenos kupona u standardu ERC-721Psi u slučaju kada se implicitno vlasništvo ne prekida, sa fokusom na trošak skladištenja u bitmapi označen crvenom bojom.}
+\end{figure}
+
 \subsubsection{Uništavanje}
 Operacija uništavanja prati istu osnovnu logiku kao i u ERC-721A standardu, uz dodatno ažuriranje bitmape koja evidentira stanje uništenosti tokena. Najpre se određuje implicitni vlasnik tokena pretraživanjem bitmape početaka grupa, čime se istovremeno implicitno proverava da li je kupon već iskorišten. Nakon određivanja informacija o vlasništvu, proverava se da li su ispunjeni uslovi za uništavanje primenom formule \ref{eq:erc721_burn}. Ukoliko je provera uspešna, evidentira se stanje uništenosti tokena i ažurira odgovarajuće stanje u mapi upakovanog stanja adresa.
 
 Zbog korišćenja ekstenzije koja beleži stanje uništenosti tokena, ova operacija podrazumeva postavljanje odgovarajućeg bita u bitmapi uništenosti na vrednost \textit{1}. Kao posledica ovakvog pristupa, iako token postaje trajno nevažeći, ne dolazi do povraćaja gasa, jer se tokom uništavanja vrši dodatni upis u skladište, analogno prethodnom standardu.
-
-\begin{figure}[ht]
-    \centering
-    \makebox[\textwidth][c]{
-        \includegraphics[width=1.2\textwidth]{chapter6_erc721psi_burn.png}
-    }
-    \caption{TODO}
-\end{figure}
 
 Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \begin{enumerate}
@@ -592,6 +593,14 @@ Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \item Ažuriranje bitmape uništenosti tokena, što uzrokuje trošak tople \Sd\ operacije, ako nije nula.
 \item Ažuriranje stanja korisnika u mapi upakovanog stanja adresa, što uzrokuje trošak hladne \Sd\ operacije, ako nije nula.
 \end{enumerate}
+
+\begin{figure}[ht]
+    \centering
+    \makebox[\textwidth][c]{
+        \includegraphics[width=1.1\textwidth]{chapter6_erc721psi_burn.png}
+    }
+    \caption{Uništavanje kupona u standardu ERC-721Psi sa fokusom na trošak skladištenja u bitmapi uništenih tokena označen crvenom bojom.}
+\end{figure}
 
 \section{Rezultati eksperimentalne analize}
 Nakon definisanja različitih pristupa implementaciji elektronskih kupona kroz NFT standarde, kao i analize njihovih operacija, za eksperimentalno određivanje potrošnje gasa korišćen je razvojni okvir \textit{Foundry} \cite{foundry}, koji predstavlja široko prihvaćen alat za razvoj i testiranje pametnih ugovora. Ovaj okvir obuhvata alat \textit{forge} (v0.2.0), koji se koristi za izgradnju, testiranje i implementaciju pametnih ugovora, kao i alat \textit{anvil} (v0.2.0), koji obezbeđuje lokalni čvor Eterijum testne mreže. U okviru ovog okruženja implementirani su pametni ugovori za sve posmatrane standarde, pri čemu je merena potrošnja gasa za izvršavanje operacija nad elektronskim kuponima.
