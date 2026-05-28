@@ -74,13 +74,7 @@ Ovakva četvorokomponentna podela ne uvodi nove fundamentalne tehničke osnove s
 Informacioni sistem predstavlja sociotehnički sistem koji nastaje integracijom radnog sistema sa informacionim tehnologijama radi podrške ili automatizacije procesa i aktivnosti u okviru tog sistema.
 \end{definicija}
 
-Bez obzira na veličinu ili primenjenu tehnologiju, svaki informacioni sistem obuhvata tri osnovne funkcionalne celine: ulaz, obradu i izlaz. U savremenim softverskim rešenjima te celine se najčešće realizuju kao:
-\begin{enumerate}
-\item prijem i prikaz informacija korisniku (korisnički interfejs, \textit{frontend}),
-\item obrada podataka i izvršavanje poslovne logike (server, \textit{backend}),
-\item skladištenje i upravljanje podacima (baza podataka i sistemi za upravljanje podacima).
-\end{enumerate}
-Ovakva podela predstavlja minimalnu logičku, odnosno konceptualnu arhitekturu informacionog sistema.
+Bez obzira na arhitekturu, veličinu ili primenjenu tehnologiju, svaki informacioni sistem obuhvata osnovne funkcionalne: ulaz podataka, njihovu obradu i generisanje izlaznih informacija \cite{long2005towards}. Savremeni informacioni sistemi dodatno uključuju mehanizme skladištenja podataka, kontrole i povratne sprege, čime se omogućava adaptivno i kontinuirano funkcionisanje sistema.
 
 \subsection{Tjuringova kompletnost} 
 Radni sistem formuliše zahteve u domenu realnih poslovnih procesa, koje označavamo skupom $Z_{RS}$, dok informacioni sistem predstavlja njihovu formalizovanu i izvršivu reprezentaciju u digitalnom okruženju, označenu skupom $Z_{IS}$. 
@@ -92,15 +86,17 @@ $$
 Z_{IS} \subseteq f(Z_{RS})
 $$
 
-U sistemima projektovanim za unapred definisan i konačno ograničen domen zahteva, upotreba \textit{ograničenih} formalnih jezika predstavlja sasvim dovoljan pristup. Međutim, u slučajevima kada buduća struktura procesa, poslovnih pravila i njihovih kombinacija nije unapred poznata, odnosno kada je domen zahteva strukturno neformalan, svaka pojava nove poslovne logike zahtevala bi redizajn informacionog sistema ukoliko je njegov formalni jezik ograničene izražajnosti.
-
 \begin{definicija}
-Tjuringova kompletnost \cite{turing1936computable} predstavlja fundamentalno svojstvo formalnih računarskih sistema koje omogućava izražavanje proizvoljnih algoritama putem kombinacije sekvencijalnog izvršavanja, uslovnog grananja i iterativnih konstrukcija. 
+Programski jezik \cite{pierce2002types} predstavlja formalni jezik namenjen opisivanju računarskih procesa, čija sintaksa i semantika definišu način reprezentacije podataka, operacija i kontrolnih struktura koje se mogu jednoznačno interpretirati i izvršiti od strane računarskog sistema.
 \end{definicija}
 
-Sistem koji poseduje ova svojstva teorijski je sposoban da implementira svaki izračunljivi algoritam, zbog čega se jezici koji ispunjavaju ove uslove nazivaju \textit{Tjuring kompletni jezici}.
+U sistemima projektovanim za unapred definisan i konačno ograničen domen zahteva, upotreba \textit{ograničenih} programskih jezika predstavlja sasvim dovoljan pristup. Međutim, u slučajevima kada buduća struktura procesa, poslovnih pravila i njihovih kombinacija nije unapred poznata, odnosno kada je domen zahteva strukturno neformalan, svaka pojava nove poslovne logike zahtevala bi redizajn informacionog sistema ukoliko programski jezici koje koristi poseduju ograničenu izražajnu moć.
 
-Tjuringova kompletnost postaje neophodan uslov u situacijama u kojima radni sistem ne može unapred ograničiti oblik svojih budućih zahteva, budući da omogućava implementaciju novih tipova funkcionalnih zahteva čija se struktura i logika ne mogu predvideti u fazi projektovanja sistema, bez potrebe za redizajnom osnovne arhitekture informacionog sistema.
+\begin{definicija}
+Tjuringova kompletnost \cite{turing1936computable} predstavlja fundamentalno svojstvo programskog jezika koje omogućava izražavanje proizvoljnih algoritama uz dostupnost osnovnih kontrolnih struktura kao što su sekvencijalno izvršavanje, uslovno grananje i ponavljanje izvršavanja instrukcija. 
+\end{definicija}
+
+Tjuringova kompletnost programskog jezika informacionog sistema predstavlja neophodan uslov u situacijama u kojima radni sistem ne može unapred ograničiti oblik svojih budućih zahteva, budući da omogućava implementaciju novih tipova funkcionalnih zahteva čija se struktura i logika ne mogu predvideti u fazi projektovanja sistema, bez potrebe za redizajnom osnovne arhitekture informacionog sistema. Jezici koji podržavaju Tjuringovu kompletnost se nazivaju \textit{Tjuring kompletni jezici}.
 
 Iako Tjuringova kompletnost obezbeđuje maksimalnu izražajnost, ona istovremeno uvodi povećanu složenost u verifikaciji, analizi i kontroli ponašanja sistema. Zbog toga se u pojedinim domenima namerno koriste netjuring kompletni jezici kako bi se obezbedila veća sigurnost, predvidivost i formalna proverljivost izvršavanja.
 
