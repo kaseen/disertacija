@@ -77,6 +77,7 @@ Informacioni sistem predstavlja sociotehnički sistem koji nastaje integracijom 
 Bez obzira na arhitekturu, veličinu ili primenjenu tehnologiju, svaki informacioni sistem obuhvata osnovne funkcionalne: ulaz podataka, njihovu obradu i generisanje izlaznih informacija \cite{long2005towards}. Savremeni informacioni sistemi dodatno uključuju mehanizme skladištenja podataka, kontrole i povratne sprege, čime se omogućava adaptivno i kontinuirano funkcionisanje sistema.
 
 \subsection{Tjuringova kompletnost} 
+% TODO IZBACI Z{IS} i Z{RS}
 Radni sistem formuliše zahteve u domenu realnih poslovnih procesa, koje označavamo skupom $Z_{RS}$, dok informacioni sistem predstavlja njihovu formalizovanu i izvršivu reprezentaciju u digitalnom okruženju, označenu skupom $Z_{IS}$. 
 
 Preslikavanje skupa $Z_{RS}$ u formalni domen informacionog sistema ne predstavlja trivijalnu funkciju, već podrazumeva interpretaciju, razlaganje, preciziranje i formalizaciju poslovnih zahteva. Ovaj proces obuhvata identifikaciju, analizu, specifikaciju, validaciju i upravljanje zahtevima tokom životnog ciklusa sistema \cite{zave1997classification}.
@@ -100,19 +101,16 @@ Tjuringova kompletnost programskog jezika informacionog sistema predstavlja neop
 
 Iako Tjuringova kompletnost obezbeđuje maksimalnu izražajnost, ona istovremeno uvodi povećanu složenost u verifikaciji, analizi i kontroli ponašanja sistema. Zbog toga se u pojedinim domenima namerno koriste netjuring kompletni jezici kako bi se obezbedila veća sigurnost, predvidivost i formalna proverljivost izvršavanja.
 
-\subsection{Tipovi informacionih sistema}
-Informacioni sistemi mogu se posmatrati kao tehnološke implementacije radnih sistema različitih namena. U literaturi se klasifikuju prema organizacionom nivou, funkcionalnoj oblasti i domenu primene \cite{laudon2004management, bourgeois2019information}. Ove podele mogu se prirodno ugraditi u posmatranje radnih sistema kroz prethodno definisane četiri kategorije, čime se dobija okvir za klasifikaciju informacionih sistema:
+\section{Informacioni sistem elektronske trgovine}
+Kako se informacioni sistemi mogu posmatrati kao tehnološke implementacije radnih sistema različitih namena, poslovni informacioni sistemi nastaju primenom informacionih sistema u domenu poslovnih procesa \cite{bourgeois2019information}. Većina savremenih informacionih sistema pripada kategoriji poslovnih informacionih sistema, koji predstavljaju najširi okvir digitalne podrške poslovnim aktivnostima organizacije.
 
-\begin{description}
-\item \textbf{Poslovni informacioni sistemi.} Većina klasičnih informacionih sistema pripada poslovnom kontekstu. Sistemi za procesiranje transakcija (TPS), menadžerski informacioni sistemi (MIS), sistemi za podršku odlučivanju (DSS) i izvršni informacioni sistemi (ESS/EIS) omogućavaju operativnu i menadžersku podršku poslovnim procesima. Pored toga, funkcionalni informacioni sistemi, poput finansijskih, računovodstvenih, marketinških, proizvodnih i HR sistema, kao i integrisani sistemi (ERP, CRM, SCM), predstavljaju tipične implementacije poslovnih radnih sistema.
-\item \textbf{Javni informacioni sistemi.} Informacioni sistemi u javnom sektoru obuhvataju sisteme e-uprave, zdravstvene i obrazovne informacione sisteme u državnim institucijama, kao i specijalizovane MIS i DSS sisteme za potrebe upravljanja javnim politikama. Ovi sistemi primarno stvaraju društvenu vrednost, u skladu sa ciljevima javnih radnih sistema.
-\item \textbf{Neprofitni informacioni sistemi.} U neprofitnim organizacijama informacioni sistemi podržavaju upravljanje donacijama, rad volontera, finansijsko izveštavanje, komunikaciju sa zajednicom i realizaciju projekata od javnog interesa. Iako manje standardizovani od poslovnih i javnih informacionih sistema, ovi sistemi predstavljaju tehnološku podršku stvaranju zajedničkog dobra.
-\item \textbf{Lični informacioni sistemi.} Lični informacioni sistemi odnose se na alate i aplikacije koje pojedinci koriste radi organizacije ličnih aktivnosti, upravljanja informacijama i povećanja produktivnosti. U ovu kategoriju spadaju i sistemi koje koriste slobodni radnici \eng{freelancer}, uključujući alate za upravljanje projektima, praćenje vremena, finansijsko praćenje i komunikaciju sa klijentima.
-\end{description}
+U okviru poslovnih informacionih sistema, digitalna trgovina \eng{digital commerce} predstavlja specijalizovanu oblast usmerenu na upravljanje celokupnim digitalnim korisničkim iskustvom kroz različite digitalne kanale, dok elektronska trgovina \eng{e-commerce} predstavlja uži podskup digitalne trgovine fokusiran prvenstveno na elektronsko izvršavanje kupoprodajnih transakcija.
 
-Ovakva integracija pokazuje da se različite akademske klasifikacije informacionih sistema mogu dosledno mapirati na četiri osnovne kategorije radnih sistema, pri čemu se svaki informacioni sistem posmatra u funkciji vrednosti koju konkretan radni sistem nastoji da proizvede.
+\begin{definicija}
+Elektronska trgovina \cite{oecd2025} predstavlja prodaju ili kupovinu robe i usluga realizovanu putem računarskih mreža korišćenjem metoda posebno projektovanih za prijem ili izdavanje porudžbina.
+\end{definicija}
 
-Poslovni informacioni sistemi i posebno digitalna trgovina ili \textbf{e-trgovina} \eng{e-commerce} predstavljaju jedan od najdinamičnijih i najvrednijih segmenata savremenih informacionih sistema. Prema savremenim empirijskim analizama digitalne ekonomije \cite{veenam2024cross}, industrija globalne e-trgovine procenjena je na približno 21,1 bilion američkih dolara u 2023. godini, uz projekcije snažnog dugoročnog rasta u narednoj deceniji, prema tržišnim analizama na 183,8 biliona do 2032. godine, što potvrđuje njenu izuzetnu ekonomsku i tehnološku relevantnost.
+E-trgovina predstavlja jedan od najdinamičnijih i najvrednijih segmenata savremenih informacionih sistema. Prema savremenim empirijskim analizama digitalne ekonomije \cite{veenam2024cross}, industrija globalne e-trgovine procenjena je na približno 21,1 bilion američkih dolara u 2023. godini, uz projekcije snažnog dugoročnog rasta u narednoj deceniji, prema tržišnim analizama na 183,8 biliona do 2032. godine, što potvrđuje njenu izuzetnu ekonomsku i tehnološku relevantnost.
 
 Ovakav obim digitalne trgovine ukazuje na potrebu za visokim standardima performansi, pouzdanosti, skalabilnosti i sigurnosti informacionih sistema, jer tehnološki zahtevi \textit{platformi za e-trgovinu} često predstavljaju referentni nivo zahteva za savremene poslovne informacione sisteme.
 
@@ -249,7 +247,7 @@ Ovaj pristup povećava fleksibilnost i skalabilnost sistema, kao i mogućnost in
 
 Navedene arhitekture predstavljaju najrasprostranjenije pristupe organizaciji savremenih informacionih sistema, iako u praksi postoje i drugi specijalizovani arhitektonski modeli namenjeni specifičnim domenima primene. Dodatno, navedene arhitekture koje se izvršavaju na jednom uređaju, moguće je dodatno proširiti tako što se pokrenu više instanci i uvede raspoređivanje opterećenja, gde se po potrebi bira način komunikacionih mehanizama između njih.
 
-\section{Računarstvo u oblaku i elastično skaliranje informacionih sistema}\label{sec:cloud}
+\subsection{Računarstvo u oblaku i elastično skaliranje informacionih sistema}\label{sec:cloud}
 Razvoj informacionih sistema tradicionalno je zahtevao nabavku sopstvene fizičke infrastrukture (servera, mrežne opreme, skladišta podataka) i angažovanje stručnog osoblja za njeno održavanje. Takav pristup nosi visoke početne troškove, zahteva složeno planiranje i otežava brzo prilagođavanje promenama u obimu posla.
 
 Savremene organizacije sve češće usvajaju model računarstva u oblaku \eng{cloud computing} \cite{mell2011nist}, u kome se infrastruktura, platforme i/ili softverske usluge iznajmljuju od eksternog provajdera. Umesto sopstvene opreme koriste se virtuelni resursi koji se dinamički dodeljuju prema potrebi, čime se omogućava \textbf{elastično skaliranje instanci informacionog sistema}, smanjuju troškovi infrastrukture i održavanja, umanjuje potreba za internim sistemskim osobljem i ubrzava postavljanje razvojnih i produkcionih okruženja.
