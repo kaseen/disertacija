@@ -112,11 +112,22 @@ Elektronska trgovina \cite{oecd2025} predstavlja prodaju ili kupovinu robe i usl
 
 E-trgovina predstavlja jedan od najdinamičnijih i najvrednijih segmenata savremenih informacionih sistema. Prema savremenim empirijskim analizama digitalne ekonomije \cite{veenam2024cross}, industrija globalne e-trgovine procenjena je na približno 21,1 bilion američkih dolara u 2023. godini, uz projekcije snažnog dugoročnog rasta u narednoj deceniji, prema tržišnim analizama na 183,8 biliona do 2032. godine, što potvrđuje njenu izuzetnu ekonomsku i tehnološku relevantnost.
 
-Ovakav obim digitalne trgovine ukazuje na potrebu za visokim standardima performansi, pouzdanosti, skalabilnosti i sigurnosti informacionih sistema, jer tehnološki zahtevi \textit{platformi za e-trgovinu} često predstavljaju referentni nivo zahteva za savremene poslovne informacione sisteme.
+Ovakav obim i složenost digitalne trgovine ukazuju na potrebu za sistematičnim modelovanjem i struktuiranjem njenog domena kako bi se omogućila analiza, klasifikacija i diskusija o sistemima elektronske trgovine. U tu svrhu koristi se referentni model elektronske trgovine \cite{menasce2000reference}, koji obuhvata tri međusobno povezana podmodela:
+\begin{enumerate}
+\item \textbf{Poslovni model}, koji definiše vrstu poslovanja, proizvode i usluge koje sistem elektronske trgovine nudi korisnicima, kao i mehanizme ostvarivanja prihoda.
+\item \textbf{Model ponašanja kupaca}, koji se bavi razumevanjem i modelovanjem načina na koji korisnici komuniciraju sa platformom kroz generisanje zahteva, navigaciju kroz sistem i obrasce njegovog korišćenja.
+\item \textbf{Model resursa informacione tehnologije}, koji obuhvata infrastrukturu neophodnu za realizaciju i podršku sistema elektronske trgovine.
+\end{enumerate}
 
-Informacioni sistemi u drugim domenima, poput javnog sektora, neprofitnih organizacija ili ličnih sistema, razlikuju se prvenstveno po svojim ciljevima i korisničkim zahtevima. Međutim, osnovni tehnološki izazovi i principi u velikoj meri ostaju isti.
+Budući da korisnici predstavljaju osnovni izvor prihoda elektronske trgovine, degradacija performansi može dovesti do napuštanja pojedinačnih sesija, smanjenja stope konverzije i dugoročnog gubitka korisnika. Empirijska istraživanja pokazuju da čak i relativno mala povećanja vremena odziva i složenosti interakcije mogu dovesti do povećane stope napuštanja sajta, smanjenog zadovoljstva korisnika i manjeg broja realizovanih kupovina \cite{albarq2021effect, arapakis2021impact}.
 
-U daljem izlaganju, e-trgovina se koristi kao dominantni referentni primer savremenog informacionog sistema, jer u sebi objedinjuje tipične izazove visokog obima obrade podataka, složene arhitekture i upravljanja stanjem sistema. Iz tog razloga, svi naredni koncepti i analize biće predstavljeni bez eksplicitnog navođenja domena primene, podrazumevajući kontekst e-trgovine. Ipak, razmatrani principi nisu vezani isključivo za ovaj domen, već predstavljaju opšte obrasce i mehanizme primenljive na širi spektar informacionih sistema.
+\begin{posledica}
+Korisničko iskustvo u sistemima elektronske trgovine direktno zavisi od performansi informacione infrastrukture na kojoj se sistem zasniva.
+\end{posledica}
+
+Tehnološki zahtevi platformi za e-trgovinu često predstavljaju referentni nivo zahteva za savremene poslovne informacione sisteme, jer informacioni sistemi u drugim domenima, poput javnog sektora, neprofitnih organizacija ili ličnih sistema, razlikuju se prvenstveno po svojim ciljevima i korisničkim zahtevima. Međutim, osnovni tehnološki izazovi i principi u velikoj meri ostaju isti.
+
+U daljem izlaganju, e-trgovina se koristi kao dominantni referentni primer savremenog informacionog sistema, jer objedinjuje tipične izazove visokog obima obrade podataka, složene arhitekture i upravljanja stanjem sistema. Iz tog razloga, svi naredni koncepti i analize biće predstavljeni bez eksplicitnog navođenja domena primene, podrazumevajući kontekst e-trgovine. Ipak, razmatrani principi nisu vezani isključivo za ovaj domen, već predstavljaju opšte obrasce i mehanizme primenljive na širi spektar informacionih sistema.
 
 \section{Arhitektonska organizacija informacionih sistema}\label{sec:arhitektonska-organizacija}
 Program predstavlja statički, fizički zapis koda na uređaju (hardveru) koji sam po sebi ne izvršava nikakvu aktivnost. Kada se pokrene njegova instanca, tj. kada se aplikacija učita u radnu memoriju računara, nastaje proces. Po završetku izvršavanja, proces se uklanja iz radne memorije i time prestaje da postoji.
