@@ -76,16 +76,10 @@ Informacioni sistem predstavlja sociotehnički sistem koji nastaje integracijom 
 
 Bez obzira na arhitekturu, veličinu ili primenjenu tehnologiju, svaki informacioni sistem obuhvata osnovne funkcionalne: ulaz podataka, njihovu obradu i generisanje izlaznih informacija \cite{long2005towards}. Savremeni informacioni sistemi dodatno uključuju mehanizme skladištenja podataka, kontrole i povratne sprege, čime se omogućava adaptivno i kontinuirano funkcionisanje sistema.
 
-\subsection{Tjuringova kompletnost} 
-% TODO IZBACI Z{IS} i Z{RS}
-Radni sistem formuliše zahteve u domenu realnih poslovnih procesa, koje označavamo skupom $Z_{RS}$, dok informacioni sistem predstavlja njihovu formalizovanu i izvršivu reprezentaciju u digitalnom okruženju, označenu skupom $Z_{IS}$. 
+\subsection{Tjuringova kompletnost}
+Radni sistem formuliše zahteve u domenu realnih poslovnih procesa, dok informacioni sistem predstavlja njihovu formalizovanu i izvršivu reprezentaciju u digitalnom okruženju. Preslikavanje zahteva radnog sistema u formalni domen informacionog sistema ne predstavlja trivijalan proces, već podrazumeva interpretaciju, razlaganje, preciziranje i formalizaciju poslovnih zahteva.
 
-Preslikavanje skupa $Z_{RS}$ u formalni domen informacionog sistema ne predstavlja trivijalnu funkciju, već podrazumeva interpretaciju, razlaganje, preciziranje i formalizaciju poslovnih zahteva. Ovaj proces obuhvata identifikaciju, analizu, specifikaciju, validaciju i upravljanje zahtevima tokom životnog ciklusa sistema \cite{zave1997classification}.
-
-Međutim, samo oni zahtevi koji se mogu dovoljno precizno formalizovati, operacionalizovati i algoritamski izraziti mogu postati deo odgovarajućeg formalnog jezika informacionog sistema, te važi relacija:
-$$
-Z_{IS} \subseteq f(Z_{RS})
-$$
+Samo oni zahtevi koji se mogu dovoljno precizno formalizovati, operacionalizovati i algoritamski izraziti mogu biti reprezentovani i izvršeni u okviru formalnog jezika informacionog sistema. Proces njihove transformacije obuhvata identifikaciju, analizu, specifikaciju, validaciju i upravljanje zahtevima tokom celokupnog životnog ciklusa sistema \cite{zave1997classification}.
 
 \begin{definicija}
 Programski jezik \cite{pierce2002types} predstavlja formalni jezik namenjen opisivanju računarskih procesa, čija sintaksa i semantika definišu način reprezentacije podataka, operacija i kontrolnih struktura koje se mogu jednoznačno interpretirati i izvršiti od strane računarskog sistema.
@@ -119,6 +113,8 @@ Ovakav obim i složenost digitalne trgovine ukazuju na potrebu za sistematičnim
 \item \textbf{Model resursa informacione tehnologije}, koji obuhvata infrastrukturu neophodnu za realizaciju i podršku sistema elektronske trgovine.
 \end{enumerate}
 
+Proizvodi i usluge u sistemima elektronske trgovine predstavljaju poslovne entitete koji moraju posedovati jedinstvenu identifikaciju radi omogućavanja pretrage, razmene podataka, upravljanja životnim ciklusom i interoperabilnosti između različitih informacionih sistema. Iako konkretni mehanizmi identifikacije mogu varirati u zavisnosti od domena primene, postojanje identifikatora predstavlja neophodan uslov za upravljanje katalogom proizvoda, realizaciju porudžbina i izvršavanje transakcija \cite{talaika2015harvesting}.
+
 Budući da korisnici predstavljaju osnovni izvor prihoda elektronske trgovine, degradacija performansi može dovesti do napuštanja pojedinačnih sesija, smanjenja stope konverzije i dugoročnog gubitka korisnika. Empirijska istraživanja pokazuju da čak i relativno mala povećanja vremena odziva i složenosti interakcije mogu dovesti do povećane stope napuštanja sajta, smanjenog zadovoljstva korisnika i manjeg broja realizovanih kupovina \cite{albarq2021effect, arapakis2021impact}.
 
 \begin{posledica}
@@ -127,7 +123,7 @@ Korisničko iskustvo u sistemima elektronske trgovine direktno zavisi od perform
 
 Tehnološki zahtevi platformi za e-trgovinu često predstavljaju referentni nivo zahteva za savremene poslovne informacione sisteme, jer informacioni sistemi u drugim domenima, poput javnog sektora, neprofitnih organizacija ili ličnih sistema, razlikuju se prvenstveno po svojim ciljevima i korisničkim zahtevima. Međutim, osnovni tehnološki izazovi i principi u velikoj meri ostaju isti.
 
-U daljem izlaganju, e-trgovina se koristi kao dominantni referentni primer savremenog informacionog sistema, jer objedinjuje tipične izazove visokog obima obrade podataka, složene arhitekture i upravljanja stanjem sistema. Iz tog razloga, svi naredni koncepti i analize biće predstavljeni bez eksplicitnog navođenja domena primene, podrazumevajući kontekst e-trgovine. Ipak, razmatrani principi nisu vezani isključivo za ovaj domen, već predstavljaju opšte obrasce i mehanizme primenljive na širi spektar informacionih sistema.
+U daljem izlaganju, elektronska trgovina se koristi kao dominantni referentni primer savremenog informacionog sistema, jer objedinjuje tipične izazove visokog obima obrade podataka, kompleksnih sistemskih arhitektura i upravljanja stanjem sistema. Shodno tome, svi naredni koncepti i analize biće predstavljeni bez eksplicitnog navođenja domena primene, podrazumevajući kontekst e-trgovine. Međutim, razmatrani principi nisu ograničeni na ovaj domen, već predstavljaju opšte obrasce i mehanizme primenljive na širi spektar informacionih sistema.
 
 \section{Arhitektonska organizacija informacionih sistema}\label{sec:arhitektonska-organizacija}
 Program predstavlja statički, fizički zapis koda na uređaju (hardveru) koji sam po sebi ne izvršava nikakvu aktivnost. Kada se pokrene njegova instanca, tj. kada se aplikacija učita u radnu memoriju računara, nastaje proces. Po završetku izvršavanja, proces se uklanja iz radne memorije i time prestaje da postoji.
