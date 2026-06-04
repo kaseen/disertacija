@@ -125,25 +125,18 @@ Tehnološki zahtevi platformi za e-trgovinu često predstavljaju referentni nivo
 
 U daljem izlaganju, elektronska trgovina se koristi kao dominantni referentni primer savremenog informacionog sistema, jer objedinjuje tipične izazove visokog obima obrade podataka, kompleksnih sistemskih arhitektura i upravljanja stanjem sistema. Shodno tome, svi naredni koncepti i analize biće predstavljeni bez eksplicitnog navođenja domena primene, podrazumevajući kontekst e-trgovine. Međutim, razmatrani principi nisu ograničeni na ovaj domen, već predstavljaju opšte obrasce i mehanizme primenljive na širi spektar informacionih sistema.
 
-\section{Arhitektonska organizacija informacionih sistema}\label{sec:arhitektonska-organizacija}
-Program predstavlja statički, fizički zapis koda na uređaju (hardveru) koji sam po sebi ne izvršava nikakvu aktivnost. Kada se pokrene njegova instanca, tj. kada se aplikacija učita u radnu memoriju računara, nastaje proces. Po završetku izvršavanja, proces se uklanja iz radne memorije i time prestaje da postoji.
+\section{Arhitektonska organizacija informacionih sistema}
+Program predstavlja statički, fizički zapis koda na uređaju (hardveru) koji sam po sebi ne izvršava nikakvu aktivnost. Kada se pokrene njegova instanca, tj. kada se program učita u radnu memoriju računara, nastaje proces. Po završetku izvršavanja, proces se uklanja iz radne memorije i time prestaje da postoji.
 
 \begin{definicija}
 Proces je instanca aplikacije koja ima sopstveni memorijski prostor i kontekst izvršavanja.
 \end{definicija}
 
-Najčešće se softver izvršava na uređajima koji poseduju operativni sistem \cite{tanenbaum2015modern} čija je uloga da omogući istovremeno izvršavanje i upravljanje više procesa na istom uređaju: planiranje njihovog izvršavanja, dodelu resursa, sinhronizaciju i međuprocesnu komunikaciju \eng{Inter-Process Communication, IPC}. 
+Najčešće se softver izvršava na uređajima koji poseduju operativni sistem \cite{tanenbaum2015modern}, čija je uloga da omogući istovremeno izvršavanje i upravljanje više procesa na istom uređaju: planiranje njihovog izvršavanja, dodelu resursa, sinhronizaciju i međuprocesnu komunikaciju \eng{Inter-Process Communication, IPC}.
 
 U zavisnosti od fizičke strukture procesora može se u istom trenutku izvršavati jedan ili više procesa, pri čemu operativni sistem ,,naizmenično'' dodeljuje procesor procesima tako što pauzira, čuva i vraća njihov kontekst izvršavanja.
 
-%Proces tokom izvršavanja može pokrenuti dodatne podređene komponente koje omogućavaju konkurentno izvršavanje zadataka:
-%\begin{enumerate}
-%\item \textbf{Podređeni procesi} \eng{child processes} - predstavljaju nezavisne izvršne jedinice koje se pokreću iz glavnog procesa i imaju sopstveni memorijski prostor. Koriste se kada je potrebno izvršavanje izolovanih zadataka koji ne treba da dele memoriju sa glavnim procesom. Na primer, izvođenje sistemske komande može se realizovati kao podređeni proces. U ovu kategoriju spadaju i \textit{vremenski zakazani procesi} \eng{cron jobs}, koji se pokreću periodično u definisanim vremenskim intervalima (npr. svakog dana u ponoć).
-    
-%\item \textbf{Niti} \eng{threads} - predstavljaju lakše izvršne jedinice koje dele isti memorijski prostor unutar procesa. Koriste se za paralelno izvršavanje više zadataka u okviru istog procesa. Na primer, jedna nit može slušati dolazne mrežne zahteve, druga obrađivati podatke, treća upisivati rezultate u bazu podataka, dok \textit{radne niti} \eng{worker threads} omogućavaju da se pojedini poslovi obavljaju u pozadini bez blokiranja glavnog toka programa.
-%\end{enumerate}
-
-Međutim, softver se može izvršavati i na uređajima bez klasičnog operativnog sistema, u tzv. \textit{bare-metal} okruženju, gde postoji samo jedan proces koji direktno radi na hardveru. Višestruki procesi mogu postojati ukoliko je razvijeno posebno programsko okruženje koje to omogućava. %Višestruki procesi i niti%
+Međutim, softver se može izvršavati i na uređajima bez klasičnog operativnog sistema, u tzv. \textit{bare-metal} okruženju, gde postoji samo jedan proces koji direktno radi na hardveru. Višestruki procesi mogu postojati ukoliko je implementirano posebno izvršno okruženje koje to omogućava.
 
 \begin{definicija}
 Instanca informacionog sistema je skup pokrenutih procesa koji rade u koordinaciji kako bi obezbedili punu funkcionalnost aplikacije.
@@ -152,7 +145,7 @@ Instanca informacionog sistema je skup pokrenutih procesa koji rade u koordinaci
 Pokrenuti informacioni sistem nije statičan, već se njegovo ponašanje izražava kroz kontinuirano izvršavanje procesa i promene unutrašnjeg stanja sistema. U tom kontekstu uvode se dva ključna pojma:
 
 \begin{definicija}
-Stanje informacionog sistema predstavlja skup svih podataka i sistemskih parametara koji u datom trenutku u potpunosti opisuju njegovo operativno stanje.
+Stanje informacionog sistema predstavlja skup svih podataka i sistemskih parametara koji u datom trenutku u potpunosti opisuju njegovu instancu.
 \end{definicija}
 
 \begin{definicija}
@@ -167,14 +160,14 @@ Najjednostavniji oblik organizacije informacionog sistema podrazumeva da se sve 
 \item \textbf{Monolitna arhitektura \cite{levcovitz2016towards}.}
 Monolitna arhitektura predstavlja pristup u kome su sve funkcionalne komponente informacionog sistema objedinjene u jedinstvenu aplikacionu celinu. U okviru ovog pristupa korisnički interfejs (ulaz/izlaz), poslovna logika (obrada) i upravljanje podacima (baza podataka) implementirani su kao delovi jednog izvršnog sistema.
 
-Glavna prednost monolitne arhitekture ogleda se u njenoj jednostavnosti, što je čini pogodnom za manje i srednje aplikacije. Razvoj, testiranje, implementacija i nadgledanje sistema u takvom okruženju su relativno jednostavni jer se sve komponente nalaze u okviru jedinstvene aplikacije.
+Glavna prednost monolitne arhitekture ogleda se u njenoj jednostavnosti, zbog čega je pogodna za manje i srednje aplikacije. Razvoj, testiranje, implementacija i nadgledanje sistema u takvom okruženju su relativno jednostavni jer se sve komponente nalaze u okviru jedinstvene aplikacije.
 
 Međutim, sa rastom obima i složenosti sistema javljaju se poteškoće u održavanju, jer promene u jednom delu sistema mogu imati neočekivane posledice u drugim delovima aplikacije. Zbog toga se u praksi često primenjuje pristup \textit{modularnog monolita}, u kojem se unutar monolitne aplikacije jasno razdvajaju funkcionalni moduli kako bi se olakšalo održavanje i eventualna buduća migracija ka drugim arhitekturama.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.65\textwidth]{chapter2_monolit.png}
-    \caption{TODO}
+    \includegraphics[width=0.6\textwidth]{chapter2_monolit.png}
+    \caption{Modularni monolit kao organizacioni obrazac monolitne arhitekture.}
 \end{figure}
 
 \item \textbf{Višeslojna arhitektura \cite{savolainen2009layered}.}
@@ -184,15 +177,15 @@ Komunikacija između slojeva odvija se prema unapred definisanim pravilima, naj�
 
 \begin{enumerate}
 \item \textit{Prezentacioni sloj} - korisnički interfejs koji omogućava komunikaciju korisnika sa sistemom,
-\item \textit{Biznis sloj} - sloj koji implementira poslovnu logiku i pravila rada sistema,
+\item \textit{Poslovni sloj} - sloj koji implementira poslovnu logiku i pravila rada sistema,
 \item \textit{Perzistentni sloj} - sloj koji obezbeđuje preslikavanje objekata iz aplikacionog domena u strukture podataka,
 \item \textit{Sloj podataka} - baza podataka ili drugi mehanizmi za trajno skladištenje i pristup podacima.
 \end{enumerate}
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.55\textwidth]{chapter2_slojevita.png}
-    \caption{TODO}
+    \includegraphics[width=0.5\textwidth]{chapter2_slojevita.png}
+    \caption{Logički slojevi i njihove međusobne zavisnosti u višeslojnoj arhitekturi.}
 \end{figure}
 
 \item \textbf{Mikrokernel arhitektura \cite{michel2017microkernel}.}
@@ -203,7 +196,7 @@ Svi moduli komuniciraju sa jezgrom sistema, koje posreduje u njihovoj međusobno
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.35\textwidth]{chapter2_microkernel.png}
-    \caption{TODO}
+    \caption{Mikrokernel arhitektura sa centralnim jezgrom i proširivim modulima.}
 \end{figure}
 
 \end{description}
@@ -229,13 +222,13 @@ Arhitektura vođena događajima zasniva se na razmeni informacija putem događaj
 
 Najčešće implementacije ovog pristupa zasnivaju se na sistemima redova poruka ili sistemima za tok događaja. Kod sistema redova poruka svaku poruku obrađuje jedan potrošač, dok kod sistema za tok događaja više potrošača može istovremeno primiti i obraditi isti događaj.
 
-Ovakav pristup povećava fleksibilnost sistema jer omogućava jednostavno dodavanje novih proizvođača i potrošača. Međutim, posrednik može postati usko grlo sistema, zbog čega se u praksi često koristi klaster \eng{cluster} posrednika koji raspodeljuje opterećenje između više instanci.
-
-\begin{figure}[ht]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.5\textwidth]{chapter2_event.png}
-    \caption{TODO}
+    \caption{Arhitektura vođena događajima sa proizvođačima, posrednikom i potrošačima događaja.}
 \end{figure}
+
+Ovakav pristup povećava fleksibilnost sistema jer omogućava jednostavno dodavanje novih proizvođača i potrošača. Međutim, posrednik može postati usko grlo sistema, zbog čega se u praksi često koristi klaster \eng{cluster} posrednika koji raspodeljuje opterećenje između više instanci.
 
 \item \textbf{Mikroservisna arhitektura \cite{alshuqayran2016systematic}.}
 Mikroservisna arhitektura zasniva se na principu da svaka komponenta sistema ima jednu jasno definisanu odgovornost \eng{single responsibility}. Sistem je sastavljen od većeg broja malih, samostalnih servisa koji međusobno komuniciraju putem mreže, najčešće korišćenjem \textit{API}-ja ili \textit{RPC} mehanizama.
@@ -247,23 +240,27 @@ Ovaj pristup povećava fleksibilnost i skalabilnost sistema, kao i mogućnost in
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.5\textwidth]{chapter2_microservice.png}
-    \caption{TODO}
+    \caption{Mikroservisna arhitektura sa nezavisnim servisima i mrežnom komunikacijom.}
 \end{figure}
 
 \end{description}
 
-Navedene arhitekture predstavljaju najrasprostranjenije pristupe organizaciji savremenih informacionih sistema, iako u praksi postoje i drugi specijalizovani arhitektonski modeli namenjeni specifičnim domenima primene. Dodatno, navedene arhitekture koje se izvršavaju na jednom uređaju, moguće je dodatno proširiti tako što se pokrenu više instanci i uvede raspoređivanje opterećenja, gde se po potrebi bira način komunikacionih mehanizama između njih.
+Navedene arhitekture predstavljaju najrasprostranjenije pristupe organizaciji savremenih informacionih sistema, iako u praksi postoje i drugi specijalizovani arhitektonski modeli namenjeni specifičnim domenima primene.
+
+Dodatno, navedene arhitekture koje se izvršavaju na jednom uređaju moguće je proširiti pokretanjem više instanci i uvođenjem raspoređivanja opterećenja, pri čemu se prema potrebi bira odgovarajući komunikacioni mehanizam između njih.
 
 \subsection{Računarstvo u oblaku i elastično skaliranje informacionih sistema}\label{sec:cloud}
-Razvoj informacionih sistema tradicionalno je zahtevao nabavku sopstvene fizičke infrastrukture (servera, mrežne opreme, skladišta podataka) i angažovanje stručnog osoblja za njeno održavanje. Takav pristup nosi visoke početne troškove, zahteva složeno planiranje i otežava brzo prilagođavanje promenama u obimu posla.
+Razvoj informacionih sistema tradicionalno je zahtevao nabavku sopstvene fizičke infrastrukture (servera, mrežne opreme, skladišta podataka) i angažovanje stručnog osoblja za njeno održavanje. Takav pristup nosi visoke troškove održavanja infrastrukture, zahteva složeno planiranje i otežava brzo prilagođavanje promenama u obimu posla.
 
-Savremene organizacije sve češće usvajaju model računarstva u oblaku \eng{cloud computing} \cite{mell2011nist}, u kome se infrastruktura, platforme i/ili softverske usluge iznajmljuju od eksternog provajdera. Umesto sopstvene opreme koriste se virtuelni resursi koji se dinamički dodeljuju prema potrebi, čime se omogućava \textbf{elastično skaliranje instanci informacionog sistema}, smanjuju troškovi infrastrukture i održavanja, umanjuje potreba za internim sistemskim osobljem i ubrzava postavljanje razvojnih i produkcionih okruženja.
+Savremene organizacije sve češće usvajaju model računarstva u oblaku \eng{cloud computing} \cite{mell2011nist}, u kome se infrastruktura, platforme i/ili softverske usluge iznajmljuju od eksternog provajdera.
+
+Umesto sopstvene opreme koriste se virtuelni resursi koji se dinamički dodeljuju prema potrebi, čime se omogućava elastično skaliranje instanci informacionog sistema, smanjuju troškovi infrastrukture i održavanja, umanjuje potreba za internim sistemskim osobljem i ubrzava postavljanje razvojnih i produkcionih okruženja.
 
 Okruženja u oblaku tipično se realizuju kao javna, privatna ili hibridna, dok se isporuka servisa organizuje kroz standardne modele: \textit{IaaS} (infrastruktura kao usluga), \textit{PaaS} (platforma kao usluga) i \textit{SaaS} (softver kao usluga). Ovi modeli određuju nivo kontrole koji zadržava korisnik i nivo odgovornosti koji preuzima provajder usluge.
 
 Kontejnerizacija predstavlja dominantan tehnološki pristup za raspoređivanje softverskih komponenti u oblaku. Kontejneri (npr. \textit{Docker}) omogućavaju izolovano, prenosivo i konzistentno pokretanje aplikacionih instanci, dok platforme za orkestraciju (npr. \textit{Kubernetes}) automatizuju njihovo raspoređivanje i oporavak u dinamičkim okruženjima.
 
-Zahvaljujući ovim tehnologijama, arhitektonske organizacije informacionih sistema opisane u poglavlju \ref{sec:arhitektonska-organizacija} mogu se efikasno distribuirati i održavati u \textit{cloud} infrastrukturi, uz značajno smanjenje tehničke složenosti i operativnih troškova u odnosu na tradicionalne modele upravljanja resursima.
+Zahvaljujući ovim tehnologijama, arhitektonske organizacije informacionih sistema mogu se efikasno distribuirati i održavati u \textit{cloud} infrastrukturi, uz značajno smanjenje tehničke složenosti i operativnih troškova u odnosu na tradicionalne modele upravljanja resursima.
 
 \section{Centralizacija u distribuiranim informacionim sistemima}
 Savremeni informacioni sistemi često se izvršavaju na velikom broju fizički distribuiranih čvorova, mada njihova dominantna arhitektonska paradigma mrežne komunikacije i dalje ostaje topološki klijent-server model \cite{berson1992client}. U takvom modelu unapred je definisan raspored komunikacije između komponenti sistema, pri čemu pojedini čvorovi imaju ulogu servera koji pružaju usluge, dok drugi čvorovi nastupaju kao klijenti koji te usluge zahtevaju. Posledično, komunikaciona struktura sistema ima hijerarhijski karakter, jer čvorovi ne poseduju ravnopravan položaj u mreži.
