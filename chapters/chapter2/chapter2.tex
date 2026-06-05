@@ -267,7 +267,7 @@ Savremeni informacioni sistemi često se izvršavaju na velikom broju fizički d
 
 Iako je infrastrukturno raspodeljen na više računarskih čvorova, ovakav sistem zadržava centralizovan model upravljanja. Poslovna logika, donošenje ključnih odluka i upravljanje stanjem sistema najčešće su koncentrisani u okviru jedinstvene upravljačke instance ili ograničenog broja međusobno koordinisanih autoriteta. Zbog toga se sistem, sa operativne tačke gledišta, ponaša kao jedinstvena računarska celina sa jednim globalnim stanjem i jednim centrom poverenja.
 
-Iz perspektive radnih sistema, informacioni sistemi trebalo bi da doprinose stvaranju vrednosti za sve učesnike sistema. Međutim, istorijski razvoj dominantnih modela digitalnih platformi bio je pre svega usmeren na optimizaciju poslovnih ciljeva i tržišne vrednosti organizacija koje njima upravljaju. Kao posledica takvog pristupa, kontrola nad podacima, pravilima interakcije i distribucijom vrednosti u velikoj meri ostaje koncentrisana u rukama centralnih upravljačkih entiteta.
+Međutim, istorijski razvoj dominantnih modela digitalnih platformi bio je pre svega usmeren na optimizaciju poslovnih ciljeva i tržišne vrednosti organizacija koje njima upravljaju. Kao posledica takvog pristupa, kontrola nad podacima, pravilima interakcije i distribucijom vrednosti u velikoj meri ostaje koncentrisana u rukama centralnih upravljačkih entiteta.
 
 U savremenoj literaturi sve češće se ukazuje na to da centralizovana kontrola nad informacionim sistemima može dovesti do smanjenja autonomije korisnika i pojave različitih oblika asimetrije moći između platformi i njihovih korisnika. Među najčešće diskutovanim pojavama izdvajaju se:
 \begin{enumerate}
@@ -287,6 +287,18 @@ Prema standardnoj klasifikaciji \cite{buterin2017meaning}, decentralizacija se m
 \item \textbf{Logička decentralizacija} - struktura softverskog stanja i način na koji sistem konceptualno funkcioniše kao celina.
 \end{enumerate}
 
+\begin{figure}[ht]
+\centering
+
+\subfloat[Centralizovani sistem]{\includegraphics[width=0.3\textwidth]{chapter2_dc_1.png}}
+\hfill
+\subfloat[Distribuirani sistem sa centralizovanom kontrolom]{\includegraphics[width=0.3\textwidth]{chapter2_dc_2.png}}
+\hfill
+\subfloat[Decentralizovani sistem]{\includegraphics[width=0.3\textwidth]{chapter2_dc_3.png}}
+
+\caption{Arhitektonski modeli organizacije i upravljanja informacionim sistemima.}
+\end{figure}
+
 \subsection{Arhitektonska decentralizacija}
 Arhitektonska decentralizacija odnosi se pre svega na \textbf{hardverski sloj} sistema i ne predstavlja binarnu osobinu sistema, već kontinualni spektar koji zavisi od broja čvorova, njihove međusobne nezavisnosti, vlasničke strukture i fizičke raspodele.
 
@@ -294,7 +306,7 @@ Arhitektonska decentralizacija odnosi se pre svega na \textbf{hardverski sloj} s
 Arhitektonska decentralizacija podrazumeva postojanje fizičke infrastrukture sastavljene od čvorova koje pokreću međusobno nezavisni vlasnici, raspoređenih na različitim fizičkim lokacijama, bez centralizovanog mehanizama upravljanja infrastrukturom.
 \end{definicija}
 
-Tipičan primer sistema u kome su prisutne sve tri forme centralizacije jesu tradicionalne korporativne infrastrukture, gde se sistem izvršava na više fizički i geografski razdvojenih lokacija, ali su svi ti resursi u vlasništvu ili pod kontrolom jednog administrativnog entiteta i podležu jedinstvenoj upravljačkoj politici. Ovi sistemi jasno ilustruju sledeću teoremu:
+Tipičan primer sistema u kome su prisutne sve tri forme centralizacije jesu tradicionalne korporativne infrastrukture, gde se sistem izvršava na više fizički i geografski razdvojenih lokacija, ali su svi ti resursi u vlasništvu ili pod kontrolom jednog administrativnog entiteta i podležu jedinstvenoj upravljačkoj politici.
 \begin{posledica}
 Fizička distribuiranost čvorova ne implicira decentralizaciju informacionog sistema.
 \end{posledica}
