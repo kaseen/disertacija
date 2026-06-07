@@ -1,15 +1,17 @@
 \chapter{Analitički okvir za evaluaciju informacionih sistema}
-Cilj ovog poglavlja jeste da uspostavi metodologiju za analizu tehničkih prednosti i ograničenja informacionih sistema, nezavisno od toga da li su oni centralizovani, distribuirani ili decentralizovani. Fokus je isključivo na njihovim \textbf{tehničkim atributima infrastrukture}, dok se menadžerski, organizacioni i ekonomski faktori pominju samo okvirno, jer ne predstavljaju predmet detaljne analize ove disertacije.
+Cilj ovog poglavlja jeste da uspostavi analitički okvir za analizu tehničkih prednosti i ograničenja informacionih sistema, nezavisno od toga da li su oni centralizovani, distribuirani ili decentralizovani.
 
-Da bi se obezbedio standardizovan okvir evaluacije, karakteristike informacionih i softverskih arhitektura formalizuju se kroz \textbf{atribute kvaliteta} prema IEEE i ISO standardima \cite{bass2021software, 2013ISOI}. Za potrebe ove disertacije atributi kvaliteta biće grupisani u sledeće kategorije:
+Da bi se obezbedio standardizovan okvir evaluacije, karakteristike informacionih i softverskih arhitektura formalizuju se kroz \textbf{atribute kvaliteta} prema IEEE i ISO standardima \cite{bass2021software, 2013ISOI}. Za potrebe ove disertacije atributi kvaliteta biće objedinjeni i grupisani u sledeće analitičke kategorije:
 \begin{enumerate}
-\item \textbf{Performanse i efikasnost:} performanse, skalabilnost, efikasnost korišćenja resursa, troškovna efikasnost, operativno održavanje, fleksibilnost, energetska efikasnost.
+\item \textbf{Performanse i efikasnost:} performanse, skalabilnost, efikasnost korišćenja resursa, troškovna efikasnost, operativno održivost, fleksibilnost i energetska efikasnost.
 \item \textbf{Operativna svojstva:} dostupnost, integritet, sigurnost, pouzdanost, otpornost na greške, konzistentnost podataka.
 \item \textbf{Upotrebljivost:} korisničko iskustvo, lakoća učenja \eng{learnability}, operabilnost, pristupačnost.
 \item \textbf{Funkcionalna ispravnost:} ispravnost funkcionalnih zahteva, potpunost funkcija, preciznost izvodenja funkcija, usklađenost sa specifikacijom.
 \end{enumerate}
 
-Ovakva klasifikacija omogućava konzistentno i teorijski utemeljeno poređenje informacionih sistema na tehničkom nivou. Razmatranje ovih atributa jasno odvaja \textbf{tehnička svojstva sistema}, koja su primarni predmet istraživanja u ovoj disertaciji, od šireg organizacionog i poslovnog konteksta.
+Fokus je isključivo na \textbf{modelu resursa informacione tehnologije}, koji obuhvata infrastrukturu i tehnološke resurse čije korišćenje i održavanje omogućavaju realizaciju i podršku sistema.  Menadžerski, organizacioni i ekonomski faktori pominju se samo okvirno, jer ne predstavljaju predmet detaljne analize ove disertacije.
+
+Ovakva klasifikacija omogućava konzistentno i teorijski utemeljeno poređenje informacionih sistema na tehničkom nivou. Razmatranje ovih atributa omogućava jasno razdvajanje tehničkih svojstava sistema, koja predstavljaju primarni predmet istraživanja u ovoj disertaciji, od šireg organizacionog i poslovnog konteksta.
 
 \section{CAP teorema}
 Jedno od najznačajnijih kvalitativnih ograničenja u distribuiranim sistemima proizilazi iz činjenice da su \textbf{mrežne particije} neizbežan događaj: pitanje nije ,,da li'' će se dogoditi, već ,,kada''. Ova činjenica je najjasnije formalizovana kroz \textit{CAP teoremu}, koja definiše osnovni skup arhitektonskih kompromisa u dizajnu distribuiranih sistema.
@@ -21,13 +23,13 @@ Mrežna particija može nastati u različitim situacijama, uključujući:
 \item \textit{greške u mrežnoj konfiguraciji} - ispravni čvorovi ne vide jedni druge zbog pogrešne konfiguracije.
 \end{enumerate}
 
-Ponašanje sistema u ovakvim uslovima najpreciznije je opisano CAP teoremom, koju je prvi formulisao Eric Brewer \cite{brewer2000towards}, a formalno dokazali Gilbert i Lynch \cite{gilbert2002brewer}. Teorema definiše osnovni kompromis sa kojim se suočavaju svi distribuirani sistemi koji upravljaju deljenim stanjem.
+Ponašanje sistema u ovakvim uslovima je prvi formulisao Eric Brewer \cite{brewer2000towards}, a formalno su dokazali Gilbert i Lynch \cite{gilbert2002brewer}. Teorema definiše osnovni kompromis sa kojim se suočavaju svi distribuirani sistemi koji upravljaju deljenim stanjem.
 
 \begin{teorema}\label{teorema:cap}
 U distribuiranom sistemu koji čuva podatke moguće je istovremeno garantovati najviše dve od sledeće tri osobine:\\
 (1) \textbf{konzistentnost (C)} - svaki čvor vidi isto stanje sistema, tj. operacija čitanja uvek vraća poslednju potvrđenu upisanu vrednost,\\
 (2) \textbf{dostupnost (A)} - sistem garantuje odgovor na svaki zahtev u konačnom vremenu,\\
-(3) \textbf{toleranciju na particije (P)} - sistem nastavlja da radi i u slučaju mrežnih particija (poruke se mogu izgubiti ili stići nakon arbitrarnog kašnjenja).
+(3) \textbf{toleranciju na particije (P)} - sistem nastavlja da radi i u slučaju mrežnih particija (poruke se mogu izgubiti ili stići sa proizvoljnim kašnjenjem).
 \end{teorema}
 
 \begin{posledica}
@@ -35,18 +37,10 @@ Kada dođe do mrežne particije, distribuiran sistem ne može istovremeno garant
 \end{posledica}
 
 \section{Performanse i efikasnost}
-U radnim sistemima različitih tipova (poslovnim, javnim, neprofitnim i ličnim) \textit{procesi i aktivnosti} sastoje se od niza elementarnih procesnih jedinica, koje predstavljaju najmanje nedeljive korake rada unutar sistema. Svaka takva jedinica stvara potrebu za izvršenjem određene funkcije nad informacijama, čime nastaje \textbf{zahtev} koji se upućuje informacionom sistemu.
-
-Da bi se precizno razlikovala perspektiva radnog sistema od perspektive informacionog sistema, uvodi se razlika između:
-\begin{enumerate}
-\item \textbf{elementarnih procesnih jedinica} - najmanjih jedinica rada u okviru radnog sistema, i
-\item \textbf{elementarnih operacija informacionog sistema} - osnovnih računskih, logičkih ili ulazno-izlaznih operacija koje softverska infrastruktura izvršava radi obrade zahteva.
-\end{enumerate}
-
-Procesna jedinica generiše zahtev, dok informacioni sistem realizuje taj zahtev kroz skup tehničkih operacija, čime se ostvaruje napredovanje informacionog sistema sa svakim uspešno izvršenim zahtevom.
+Radni sistem ostvaruje interakciju sa informacionim sistemom kroz zahteve koji predstavljaju formalizovani izraz poslovnih potreba. Obradom pristiglih zahteva informacioni sistem izvršava odgovarajuće operacije nad svojim stanjem, čime se ostvaruje njegovo napredovanje i realizuju tražene funkcionalnosti.
 
 \begin{definicija}\label{def:zahtev}
-Zahtev predstavlja elementarnu funkcionalnu operaciju koju informacioni sistem treba da obradi. Finalizacija zahteva označava trenutak kada informacioni sistem završi kompletnu obradu zahteva.
+Zahtev predstavlja formalizovanu specifikaciju funkcionalnosti ili promene stanja koju informacioni sistem treba da realizuje. Finalizacija zahteva označava trenutak kada informacioni sistem završi kompletnu obradu zahteva.
 \end{definicija}
 
 Zahtev može da inicira:
@@ -62,24 +56,26 @@ Tipični primeri zahteva uključuju upis podatka u bazu, izvršavanje funkcional
 
 U skladu sa savremenim pristupima modeliranju procesa i \textit{end-to-end} analizi radnih tokova \cite{sedova2023development}, \textbf{zahtev se ne posmatra kao izolovana jedinica}, već kao deo šireg procesa čija se vrednost i funkcionalna uloga ispoljava tek u interakciji sa ostalim procesima i komponentama arhitekture informacionog sistema.
 
+Iz perspektive korisnika ili radnog sistema relevantan je rezultat obrade zahteva, dok se iz perspektive informacionog sistema posmatraju resursi, vreme i operacije neophodne za njegovu realizaciju.
+
 \begin{definicija}
 Performanse predstavljaju skup kvantitativnih pokazatelja koji opisuju efikasnost obrade zahteva u informacionom sistemu.
 \end{definicija}
 
 Kako su performanse apstraktan pojam koji se kvantitativno izražava različitim metrikama, a pri tom različiti učesnici mogu imati različite kriterijume ,,efikasnost'' sistema (npr. organizacije prvenstveno optimizuju troškove, dok krajnji korisnici vrednuju brzinu i cenu usluge), u daljem radu razmatraju se sledeće ključne performansne metrike:
 \begin{enumerate}
-\item \textbf{vreme odaziva (latency)} - vreme koje protekne od slanja zahteva do dobijanja odgovora,
-\item \textbf{propusnost (throughput)} - broj zahteva koje sistem može da obradi u jedinici vremena,
-\item \textbf{cena obrade (cost)} - trošak izvršavanja pojedinačnog zahteva.
+\item \textbf{vreme odaziva \eng{latency}} - vreme koje protekne od slanja zahteva do dobijanja odgovora,
+\item \textbf{propusnost \eng{throughput}} - broj zahteva koje sistem može da obradi u jedinici vremena,
+\item \textbf{cena obrade \eng{cost}} - trošak izvršavanja pojedinačnog zahteva.
 \end{enumerate}
 
-Zajedničko za sve navedene metrike jeste da na njih direktno utiču tri fundamentalna \textbf{resursa} informacionog sistema: hardver (procesor, memorija, I/O podsistem), softver (algoritmi, implementacija, organizacija baze podataka) i mreža (latencija, širina opsega, pouzdanost i stabilnost veze).
+Zajedničko za sve navedene metrike jeste da na njih direktno utiču tri fundamentalna resursa informacionog sistema: hardver (procesor, memorija, I/O podsistem), softver (algoritmi, implementacija, organizacija baze podataka) i mreža (latencija, širina opsega, pouzdanost i stabilnost veze).
 
 \begin{definicija}
 Kapacitet predstavlja maksimalnu dugoročno održivu stopu obrade zahteva koju informacioni sistem može da postigne u stabilnom režimu rada, bez degradacije definisanih performansnih metrika \cite{jain1991art}.
 \end{definicija}
 
-Međutim, kada hardver, softver i/ili mrežni sloj ne mogu da obrade broj pristiglih zahteva, informacioni sistem izlazi iz stabilnog režima rada i ulazi u stanje \textbf{zagušenja}.
+Međutim, kada hardver, softver i/ili mrežni sloj ne mogu da obrade broj pristiglih zahteva, informacioni sistem izlazi iz stabilnog režima rada i ulazi u stanje zagušenja.
 
 \begin{definicija}
 Zagušenje predstavlja stanje informacionog sistema u kojem je stopa pristiglih zahteva veća od kapaciteta.
@@ -90,7 +86,7 @@ U stanju zagušenja, zahtevi se akumuliraju brže nego što ih sistem može obra
 Primena fundamentalnih rezultata teorije čekanja \cite{adan2002queueing} omogućava formalno razumevanje ponašanja sistema kada dolazna stopa zahteva premaši njegov kapacitet, što se direktno preslikava na posmatrane performansne metrike. Time dobijamo:
 
 \begin{teorema}\label{teorema:kapacitet}
-Kada dolazna stopa zahteva premaši kapacitet sistema, propusnost dostiže svoj maksimum, latencija raste bez ograničenja, a cena obrade svakog zahteva eksponencijalno raste usled akumulacije redova čekanja i pojačane konkurencije za resurse.
+Kada dolazna stopa zahteva premaši kapacitet sistema, vreme odaziva raste bez ograničenja, propusnost dostiže svoj maksimum, a cena obrade svakog zahteva eksponencijalno raste usled akumulacije redova čekanja i pojačane konkurencije za resurse.
 \end{teorema}
 
 U stvarnim informacionim sistemima obim pristiglih zahteva može u određenim trenucima da premaši raspoloživi kapacitet sistema. Zato je od suštinskog značaja razumeti kako se kapacitet može povećavati dodavanjem dodatnih resursa (računske snage, memorije, mrežnog kapaciteta, dodatnih čvorova itd.). U tom kontekstu definiše se sledeće svojstvo:
@@ -133,11 +129,11 @@ Međutim, postoje ozbiljna ograničenja:
 Da bi se makar delimično ublažile poslednje dve mane, jedno od poznatih rešenja jeste korišćenje rezerve \eng{hot standby}. To znači da postoji rezervna instanca spremna za aktivaciju u slučaju da glavna mašina zakaže ili postane neupotrebljiva. Ovo omogućava preuzimanje rada bez (ili uz minimalan) prekid za korisnike. Ipak, i ta rezerva nasleđuje sve prethodno navedene mane.
 
 \subsection{Lokacijski zasnovano adresiranje}\label{section:location-based}
-Većina informacionih sistema omogućava jednostavnu komunikaciju između geografski raspoređenih klijenata i instance informacionog sistema, budući da se ta komunikacija zasniva na modelu \textbf{lokacijski zasnovanog adresiranja} \eng{location-based addressing} \cite{ding2011location}. U ovom modelu svaki zahtev se eksplicitno upućuje na unapred poznatu lokaciju servera, odnosno IP adresu, pri čemu se koristi DNS servis koji prevodi domen u adresu. Na taj način se celokupan radni tok obrade zahteva usmerava ka jednoj fizičkoj lokaciji.
+Većina informacionih sistema omogućava komunikaciju između geografski raspoređenih klijenata i instance informacionog sistema, budući da se ta komunikacija zasniva na modelu \textbf{lokacijski zasnovanog adresiranja} \eng{location-based addressing} \cite{ding2011location}. U ovom modelu svaki zahtev se eksplicitno upućuje na unapred poznatu lokaciju servera, pri čemu se koristi DNS servis koji prevodi naziv domena u odgovarajuću IP adresu. Na taj način se celokupan radni tok obrade zahteva usmerava ka jednoj fizičkoj lokaciji.
 
-Ovakav model adresiranja jednostavan je za implementaciju i predstavlja dominantnu paradigmu tradicionalnih internet servisa. Međutim, on ima ključna ograničenja u pogledu performansi kada se klijenti i server nalaze na različitim geografskim lokacijama. Brojna merenja globalne internet latencije pokazuju da pristup serverima lociranim na drugim kontinentima tipično uvodi latenciju od \textbf{80-150 ms} \cite{kufel2015network} po jednom zahtevu, što značajno utiče na \textit{korisničko iskustvo} kod aplikacija osetljivih na kašnjenje, kao što su interaktivne web aplikacije, sistemi za finansijsko trgovanje, igre u realnom vremenu i \textit{streaming} servisi.
+Ovakav model adresiranja jednostavan je za implementaciju i predstavlja dominantnu paradigmu tradicionalnih internet servisa. Međutim, on ima ključna ograničenja u pogledu performansi kada se klijenti i server nalaze na različitim geografskim lokacijama. Brojna merenja vremena odaziva globalnog interneta pokazuju da pristup serverima lociranim na drugim kontinentima tipično uvodi vreme odaziva od \textbf{80-150 ms} \cite{kufel2015network} po jednom zahtevu, što može značajno uticati na \textit{korisničko iskustvo} kod aplikacija osetljivih na kašnjenje, kao što su interaktivne web aplikacije, sistemi za finansijsko trgovanje, igre u realnom vremenu i \textit{streaming} servisi.
 
-Usled ovih ograničenja, vertikalno skalirani centralizovani sistemi ne mogu da kompenzuju geografska kašnjenja, nezavisno od raspoloživog hardvera. Ovaj problem se prevazilazi primenom geografski distribuiranih instanci, čime se zahtevi rutiraju ka najbližem dostupnom čvoru i smanjuje ukupna \textit{end-to-end} latencija.
+Usled ovih ograničenja, vertikalno skalirani centralizovani sistemi ne mogu da kompenzuju geografska kašnjenja, nezavisno od raspoloživog hardvera. Ovaj problem se ublažava primenom geografski distribuiranih instanci, pri čemu se zahtevi usmeravaju ka najbližem dostupnom čvoru, čime se smanjuje ukupno vreme odaziva.
 
 \subsection{Horizontalno skaliranje}
 Horizontalno skaliranje podrazumeva povećanje kapaciteta informacionog sistema dodavanjem dodatnih instanci aplikacije (procesa, kontejnera ili servera), pri čemu se svaki novi zahtev može obraditi na bilo kojoj od dostupnih instanci. Na taj način ukupan kapacitet sistema raste, budući da se opterećenje raspodeljuje na veći broj izvršnih jedinica.
@@ -146,7 +142,7 @@ Prednosti horizontalnog skaliranja obično se klasifikuju na sledeći način:
 \begin{enumerate}
 \item \textbf{Teoretski neogračen kapacitet} - budući da se kapacitet može povećavati dodavanjem novih instanci, sistem nije vezan za jedinstveno hardversko ograničenje,
 \item \textbf{Ekonomska efikasnost} - troškovi skaliranja rastu približno linearno u odnosu na povećanje kapaciteta, što omogućava postepeno, predvidivo i finansijski održivo proširenje,
-\item \textbf{Geografska distrbucija} - instance se mogu rasporediti na različite fizičke lokacije, bliže krajnjim korisnicima, čime se smanjuje latencija i ublažava problem pristupa udaljenim serverima kod lokacijski zavisnog adresiranja,
+\item \textbf{Geografska distrbucija} - instance se mogu rasporediti na različite fizičke lokacije, bliže krajnjim korisnicima, čime se smanjuje vreme odaziva i ublažava problem pristupa udaljenim serverima kod lokacijski zavisnog adresiranja,
 \item \textbf{Otpornost na greške} - izostanak jedne tačke otkaza omogućava da kvar pojedinačne instance ne utiče na dostupnost celog sistema.
 \end{enumerate}
 
@@ -158,7 +154,7 @@ Zbog ovih dodatnih mehanizama, isti skup hardverskih resursa raspoređen na već
 Režijsko opterećenje \eng{overhead} predstavlja potrošnju resursa koju distribuirani informacioni sistem mora da izvrši radi održavanja zajedničke koordinacije, sinhronizacije i upravljanja svojim instancama, a koja nije direktno deo primarne obrade korisničkog zahteva.
 \end{definicija}
 
-Režijsko opterećenje ima kumulativno negativan uticaj na performanse: svaki novi mehanizam koordinacije povećava vreme obrade pojedinačnog zahteva i umanjuje deo sistema koji može biti posvećen korisničkim operacijama. Kao posledica toga, raste latencija, dok se efektivna propusnost sistema smanjuje.
+Režijsko opterećenje ima kumulativno negativan uticaj na performanse: svaki novi mehanizam koordinacije povećava vreme obrade pojedinačnog zahteva i umanjuje deo sistema koji može biti posvećen korisničkim operacijama. Kao posledica toga, raste vreme odaziva, dok se efektivna propusnost sistema smanjuje.
 
 \begin{definicija}
 Trošak sinhronizacije \eng{synchronization penalty} predstavlja deo režijskog opterećenja koji nastaje kada čvorovi moraju da razmenjuju svoje trenutno stanje, usklađuju podatke ili čekaju jedni na druge.
