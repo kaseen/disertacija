@@ -227,7 +227,7 @@ Slojevitost podataka \eng{layering} predstavlja tehniku u kojoj se logički skup
 
 U savremenim sistemima najčešće se primenjuju hibridni modeli koji kombinuju različite oblike replikacije, čime se objedinuju njihove komplementarne prednosti i postiže skalabilan, efikasan i otporan distribuirani informacioni sistem.
 
-Kako replikacija omogućava da svaki čvor nezavisno obrađuje korisničke zahteve, a koordinacioni mehanizmi obezbeđuju da sve replike i particije ostanu međusobno usaglašene u meri koju propisuje primenjeni model konzistentnosti, neophodno je sprečiti preopterećenje pojedinačnih delova sistema. U tu svrhu uvodi se sledeći mehanizam:
+Kako replikacija omogućava da svaki čvor nezavisno obrađuje korisničke zahteve, a koordinacioni mehanizmi obezbeđuju da sve replike i particije ostanu međusobno usaglašene u meri koju propisuje primenjeni model konzistentnosti, neophodno je sprečiti preopterećenje pojedinačnih delova sistema.
 
 \begin{definicija}
 Raspodela opterećenja \eng{load balancing} predstavlja mehanizam koji dodeljuje dolazne zahteve različitim čvorovima sistema radi optimalnog iskorišćenja resursa, smanjenja vremena odaziva i sprečavanja preopterećenja pojedinačnih instanci \cite{chou2006load}.
@@ -276,25 +276,27 @@ U praksi se primenjuju dva osnovna pristupa kontroli konkurentnog pristupa:
 \end{enumerate}
 
 \subsection{Konsenzus}
-Visok stepen koordinacije u distribuiranim sistemima postiže se primenom konsenzusnih protokola \cite{nguyen2002consensus}, jer oni omogućavaju snažnu konzistentnost i globalno uređenje upisa, čak i u prisustvu mrežnih kašnjenja, otkaza čvorova i particija mreže.
+Tokom razvoja distribuiranih sistema predloženi su brojni protokoli za koordinaciju izvršavanja operacija između više učesnika sistema. Rani pristupi zasnivali su se na prisustvu centralnog koordinatora koji komunicira sa svim učesnicima i prikuplja njihove odgovore o mogućnosti izvršavanja određene izmene. Ukoliko svi učesnici potvrde spremnost za izvršavanje operacije, izmena se potvrđuje, u suprotnom se odbacuje. Ovakvi protokoli omogućavaju koordinisano izvršavanje distribuiranih transakcija, ali uvode centralnu tačku otkaza u obliku koordinatora \cite{graz1978notes}.
+
+Kasniji razvoj istraživanja doveo je do nastanka algoritama konsenzusa \cite{nguyen2002consensus} zasnovanih na razmeni poruka i glasanju između čvorova, što omogućava visok stepen koordinacije u distribuiranim sistemima.
 
 \begin{definicija}
-Konsenzus rešava fundamentalni problem koordinisanog napredovanja sistema u distribuiranim sistemima, u kojem skup čvorova mora da se usaglasi oko jedne zajedničke vrednosti, pri čemu moraju biti zadovoljeni sledeći uslovi:\\
+Konsenzus rešava fundamentalni problem koordinisanog napredovanja stanja u distribuiranim sistemima, u kojem skup čvorova mora da se usaglasi oko jedne zajedničke vrednosti, pri čemu moraju biti zadovoljeni sledeći uslovi:\\
 (1) \textbf{sporazum} \eng{agreement} - svi ispravni čvorovi moraju doneti identičnu odluku,\\
 (2) \textbf{validnost} \eng{validity} - odlučena vrednost mora poticati od neke predložene vrednosti,\\
 (3) \textbf{okončanje} \eng{termination} - svaki ispravan čvor mora eventualno doneti odluku.
 \end{definicija}
+
+Prvobitni algoritmi konsenzusa omogućavali su postizanje saglasnosti o zajedničkom stanju sistema u prisustvu otkaza pojedinih učesnika \eng{Crash Fault Tolerance} \cite{lamport2019part}. Dalji razvoj distribuiranih sistema doveo je do nastanka algoritama tolerantnih na vizantijske greške \eng{Byzantine Fault Tolerance}, koji omogućavaju postizanje konsenzusa čak i u prisustvu proizvoljnog ili zlonamernog ponašanja pojedinih učesnika. Među njima se posebno izdvaja \textit{Practical Byzantine Fault Tolerance (PBFT)} \cite{castro1999practical}, koji predstavlja prvi široko prihvaćen praktični algoritam za postizanje konsenzusa u prisustvu vizantijskih grešaka.
+
+Konsenzusni protokoli mogu biti organizovani sa glavnim čvorom \eng{leader-based} ili bez glavnog čvora \eng{leaderless}, u zavisnosti od arhitektonske strukture algoritma. Odlučivanje o pravilnom redosledu i razrešavanje mogućih neslaganja među replikama i dalje obezbeđuje sam konsenzusni protokol, dok glavni čvor služi isključivo kao mehanizam za predlaganje kandidata za narednu odluku. Na taj način glavni čvor pruža stabilan izvor predloga, dok protokol konsenzusa garantuje da sve ispravne replike usvoje isti, jedinstveni rezultat.
 
 U proces konsenzusa ne moraju biti uključeni svi čvorovi u sistemu, već samo određeni podskup čvorova koji čine kvorum \eng{quorum}. Kako stepen raspodele odlučivanja direktno zavisi od kriterijuma za izbor čvorova koji učestvuju u donošenju odluke, sledi:
 \begin{posledica}
 Mehanizam formiranja kvoruma u konsenzusnom algoritmu predstavlja ključno mesto kontrolne decentralizacije.
 \end{posledica}
 
-Konsenzusni protokoli mogu biti organizovani sa glavnim čvorom \eng{leader-based} ili bez glavnog čvora \eng{leaderless}, u zavisnosti od arhitektonske strukture algoritma. Odlučivanje o pravilnom redosledu i razrešavanje mogućih neslaganja među replikama i dalje obezbeđuje sam konsenzusni protokol, dok glavni čvor služi isključivo kao mehanizam za predlaganje kandidata za narednu odluku. Na taj način glavni čvor pruža stabilan izvor predloga, dok protokol konsenzusa garantuje da sve ispravne replike usvoje isti, jedinstveni rezultat.
-
 Zbog posledice iznad, kada postoji fiksni nepromenljivi glavni čvor koji je deo konsenzusnog procesa, može dovesti do smanjenja stepena kontrolne decentralizacije, budući da taj čvor preuzima ulogu centralne tačke koordinacije i serijalizacije predloga operacija.
-
-Prva praktična implementacija konsenzusa u prisustvu takozvanih ,,vizantijskih'' čvorova \cite{castro1999practical} dala je ideju diskretnih rundama glasanja, gde se u svakoj rundi bira glavni čvor. Glavni čvor inicijalno predlaže vrednost, dok ostali učesnici proveravaju predlog, razmenjuju međurezultate i ažuriraju sopstvene odluke. Ukoliko dovoljan broj učesnika potvrdi predloženu vrednost kroz definisane faze protokola, ona se smatra prihvaćenom. U slučaju nepostojanja jasne većine, proces se može dalje koordinisati preko glavnog čvora. Ove iteracije se ponavljaju sve dok se ne postigne saglasnost među svim ispravnim čvorovima. Takav kombinovani pristup omogućava sistemu da očuva konsenzus čak i u prisustvu čvorova koji pokušavaju da sabotiraju proces.
 
 Nakon uvođenja osnovnih pojmova možemo precizirati tri fundamentalna obrasca propagacije poruka koji se javljaju u realnim distribuiranim sistemima:
 \begin{enumerate}
@@ -331,7 +333,7 @@ Verovatnosni konsenzus je nedeterministički mehanizam postizanja dogovora u dis
 
 Verovatnosni konsenzus zaobilazi ograničenja FLP teoreme napuštanjem determinističkih garancija \cite{ben1983another}, čime postaje primenljiv u potpuno asinhronim sistemima.
 
-Ipak, ovakav pristup obezbeđuje samo probabilističke garancije konzistentnosti, što znači da postoji nenulta verovatnoća privremene neusaglašenosti. Zbog toga verovatnosni konsenzus ne može zadovoljiti stroge zahteve determinističke konzistentnosti, već zahteva dodatne mehanizme za razrešavanje konflikata i postizanje konačne saglasnosti.
+Ipak, ovakav pristup obezbeđuje samo verovatnosne garancije konzistentnosti, što znači da postoji nenulta verovatnoća privremene neusaglašenosti. Zbog toga verovatnosni konsenzus ne može zadovoljiti stroge zahteve determinističke konzistentnosti, već zahteva dodatne mehanizme za razrešavanje konflikata i postizanje konačne saglasnosti.
 
 Dodatno, u procesu determinističkog konsenzusa postoji praktično ograničenje broja čvorova koji mogu efikasno učestvovati u kvorumu. Sa porastom broja učesnika dolazi do povećanja komunikacionog opterećenja, što, u skladu sa Teoremom \ref{teorema:gunter}, može dovesti do zagušenja mreže i degradacije performansi sistema, a u krajnjem slučaju i do njegovog blokiranja. Ova ograničenja predstavljaju značajan faktor pri projektovanju skalabilnih distribuiranih sistema.
 
