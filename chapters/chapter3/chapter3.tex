@@ -27,9 +27,9 @@ Ponašanje sistema u ovakvim uslovima je prvi formulisao Eric Brewer \cite{brewe
 
 \begin{teorema}\label{teorema:cap}
 U distribuiranom sistemu koji čuva podatke moguće je istovremeno garantovati najviše dve od sledeće tri osobine:\\
-(1) \textbf{konzistentnost (C)} - svaki čvor vidi isto stanje sistema, tj. operacija čitanja uvek vraća poslednju potvrđenu upisanu vrednost,\\
-(2) \textbf{dostupnost (A)} - sistem garantuje odgovor na svaki zahtev u konačnom vremenu,\\
-(3) \textbf{toleranciju na particije (P)} - sistem nastavlja da radi i u slučaju mrežnih particija (poruke se mogu izgubiti ili stići sa proizvoljnim kašnjenjem).
+(1) \textbf{Konzistentnost \eng{Consistency, C}} - svaki čvor vidi isto stanje sistema, tj. operacija čitanja uvek vraća poslednju potvrđenu upisanu vrednost,\\
+(2) \textbf{Dostupnost \eng{Availability, A}} - sistem garantuje odgovor na svaki zahtev u konačnom vremenu,\\
+(3) \textbf{Toleranciju na particije \eng{Partition Tolerance, P}} - sistem nastavlja da radi i u slučaju mrežnih particija (poruke se mogu izgubiti ili stići sa proizvoljnim kašnjenjem).
 \end{teorema}
 
 \begin{posledica}
@@ -276,7 +276,7 @@ U praksi se primenjuju dva osnovna pristupa kontroli konkurentnog pristupa:
 \end{enumerate}
 
 \subsection{Konsenzus}
-Tokom razvoja distribuiranih sistema predloženi su brojni protokoli za koordinaciju izvršavanja operacija između više učesnika sistema. Rani pristupi zasnivali su se na prisustvu centralnog koordinatora koji komunicira sa svim učesnicima i prikuplja njihove odgovore o mogućnosti izvršavanja određene izmene. Ukoliko svi učesnici potvrde spremnost za izvršavanje operacije, izmena se potvrđuje, u suprotnom se odbacuje. Ovakvi protokoli omogućavaju koordinisano izvršavanje distribuiranih transakcija, ali uvode centralnu tačku otkaza u obliku koordinatora \cite{graz1978notes}.
+Tokom razvoja distribuiranih sistema predloženi su brojni protokoli za koordinaciju izvršavanja operacija između više učesnika sistema. Rani pristupi zasnivali su se na prisustvu centralnog koordinatora koji komunicira sa svim učesnicima i prikuplja njihove odgovore o mogućnosti izvršavanja određene izmene \cite{graz1978notes}. Ukoliko \textbf{svi} učesnici potvrde spremnost za izvršavanje operacije, izmena se potvrđuje, u suprotnom se odbacuje. Ovakvi protokoli omogućavaju koordinisano izvršavanje distribuiranih transakcija, ali uvode centralnu tačku otkaza u obliku koordinatora.
 
 Kasniji razvoj istraživanja doveo je do nastanka algoritama konsenzusa \cite{nguyen2002consensus} zasnovanih na razmeni poruka i glasanju između čvorova, što omogućava visok stepen koordinacije u distribuiranim sistemima.
 
@@ -375,7 +375,7 @@ Ovi modeli čine osnovu savremenih teorijskih i praktičnih pristupa informacion
 U distribuiranim sistemima bezbednosna svojstva ostvaruju se kroz koordinisanu interakciju više čvorova, što podrazumeva dodatne komunikacione i računarske troškove. 
 Za razliku od ostalih bezbednosnih svojstava, dostupnost je pretežno određena arhitektonskim i operativnim karakteristikama sistema i u distribuiranim okruženjima se dominantno oslanja na mehanizme replikacije, zbog čega je detaljno razmatrana u prethodnom poglavlju.
 
-Primena bezbednosnih modela suočava se sa brojnim izazovima, uključujući visoku složenost modernih informacionih sistema, troškove implementacije, organizacioni otpor korisnika, kao i tehnička ograničenja integracije različitih sigurnosnih mehanizama. Prestroge bezbednosne politike mogu značajno umanjiti produktivnost i upotrebljivost sistema, dok previše liberalan pristup povećava rizi kompromitovanja podataka. Savremene bezbednosne arhitekture stoga teže uspostavljanju održive ravnoteže između operativnih potreba i nivoa zaštite.
+Primena bezbednosnih modela suočava se sa brojnim izazovima, uključujući visoku složenost modernih informacionih sistema, troškove implementacije, organizacioni otpor korisnika, kao i tehnička ograničenja integracije različitih sigurnosnih mehanizama. Prestroge bezbednosne politike mogu značajno umanjiti produktivnost i upotrebljivost sistema, dok previše liberalan pristup povećava rizi kompromitovanja podataka \cite{di2022getting}. Savremene bezbednosne arhitekture stoga teže uspostavljanju održive ravnoteže između operativnih potreba i nivoa zaštite.
 
 Međutim operativna svojstva informacionih sistema ne mogu se posmatrati izolovano od njihovih arhitektonskih i performansnih ograničenja, budući da svaki mehanizam za obezbeđivanje bezbednosti, pouzdanosti ili integriteta nužno uvodi dodatne troškove u pogledu latencije, propusnosti i režijskog opterećenja sistema. Ovaj režijski trošak je naročito izražen u distribuiranim sistemima, gde bezbednosni mehanizmi često podrazumevaju dodatne poruke, kriptografske operacije i sinhronizaciju između udaljenih čvorova.
 
@@ -391,26 +391,26 @@ U distribuiranim sistemima, kriptografski mehanizmi ne utiču samo na bezbednost
 U cilju pojednostavljenja opisa kriptografskih protokola i komunikacionih scenarija, u nastavku se učesnici u razmeni poruka konvencionalno označavaju simboličkim imenima: pošiljalac Alisa (A) \eng{Alice}, primaoc Boban (B) \eng{Bob}, prisluškivač Eva (E) \eng{Eve} i zlonamerni napadač Milena (M) \eng{Mallory}, čime se pojednostavljuje analiza bezbednosti i formalna specifikacija protokola.
 
 \subsubsection{Simetrična kriptografija}
-Prvi praktično definisan simetrični kriptografski algoritam projektovan za računare bio je ,,Lucifer'' \cite{smith1971design}, razvijen u IBM-u početkom sedamdesetih godina 20. veka kao odgovor na rastuću potrebu za automatizovanom zaštitom podataka u bankarskim i finansijskim sistemima. U Luciferu je eksplicitno uvedena upotreba tajnog ključa, tj. numeričke vrednosti koja kontroliše procese šifrovanja i dešifrovanja. Ovim je postavljen temelj savremenim blok šiframa i identifikovani su prvi problemi privatnosti i sigurnosti u računarskim sistemima \cite{feistel1973cryptography}.
+Prvi praktično definisan simetrični kriptografski algoritam projektovan za računare je \textit{,,Lucifer''} \cite{smith1971design}, razvijen u IBM-u početkom sedamdesetih godina XX veka kao odgovor na rastuću potrebu za automatizovanom zaštitom podataka u bankarskim i finansijskim sistemima. U Luciferu je eksplicitno uvedena upotreba tajnog ključa, tj. numeričke vrednosti koja kontroliše procese šifrovanja i dešifrovanja. Ovim je postavljen temelj savremenim blok šiframa i identifikovani su prvi problemi privatnosti i sigurnosti u računarskim sistemima \cite{feistel1973cryptography}.
 
 \begin{definicija}
 Simetrična kriptografija predstavlja kriptografski model u kojem se za šifrovanje i dešifrovanje podataka koristi identičan tajni ključ.
 \end{definicija}
 
-Kada Alisa želi da Bobu prenese poverljivu poruku, ona primenjuje simetrični algoritam šifrovanja koristeći unapred usaglašeni tajni ključ. Nakon što Bob primi šifrat, on primenjuje isti tajni ključ kako bi izvršio dešifrovanje i rekonstruisao originalni sadržaj. Bez pristupa tom ključu, nijedna neovlašćena strana ne može rekonstruisati poruku.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.75\textwidth]{chapter3_simetricna.png}
-    \caption{TODO}
-\end{figure}
-
-Simetrični algoritmi mogu se podeliti na:
+Simetrični kriptografski algoritmi mogu se klasifikovati prema kriptografskoj konstrukciji koju koriste na:
 \begin{enumerate}
 \item \textbf{Blok šifre} - obrađuju podatke u blokovima fiksne veličine, primenom višestrukih rundi transformacija, kao što su permutacije, substitucije i mešanje podataka. Ovakav dizajn obezbeđuje visok nivo otpornosti na kriptoanalitičke napade. Najzastupljeniji savremeni predstavnici su AES \cite{daemen2002design} i Camellia \cite{aoki2000camellia}.
 \item \textbf{Strim \eng{stream} šifre} - šifruju podatke kontinuirano, na nivou bitova ili bajtova, generisanjem pseudonasumičnog toka podataka koji se kombinuje sa otvorenim tekstom. One su naročito pogodne za aplikacije koje zahtevaju nisku latenciju ili obradu podataka u realnom vremenu. Danas se najčešće koristi ChaCha20 \cite{bernstein2008chacha}.
 \item \textbf{AEAD \eng{Authenticated Encryption with Associated Data} šeme} - koriste postojeće blok ili strim šifre u kombinaciji sa mehanizmima za autentifikaciju čime se istovremeno obezbeđuje poverljivost i integritet/autentičnost podataka. Najkorišćenije AEAD šeme danas su AES-GCM \cite{kasper2009faster} i ChaCha20-Poly1305 \cite{nir2018chacha20}.
 \end{enumerate}
+
+Kada Alisa želi da Bobu prenese poverljivu poruku, ona primenjuje simetrični algoritam šifrovanja koristeći unapred usaglašeni tajni ključ. Nakon što Bob primi šifrat, on primenjuje isti tajni ključ kako bi izvršio dešifrovanje i rekonstruisao originalni sadržaj. Bez pristupa tom ključu, nijedna neovlašćena strana ne može rekonstruisati poruku.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.85\textwidth]{chapter3_simetricna.png}
+    \caption{Prikaz procesa simetričnog šifrovanja i dešifrovanja u sistemu simetrične kriptografije.}
+\end{figure}
 
 Prednost simetrične kriptografije, pored visokog nivoa sigurnosti, ogleda se u njenoj izuzetnoj brzini i efikasnosti, jer šifrovanje i dešifrovanje troše minimalne resurse i dobro se skaliraju za velike količine podataka. Zbog ovih osobina, simetrična kriptografija predstavlja osnovu za šifrovanje podataka u sistemima sa visokim zahtevima u pogledu propusnosti i niske latencije.
 
@@ -419,29 +419,15 @@ Izazovi simetrične kriptografije uključuju otežano skaliranje sistema sa veli
 U tradicionalnim sistemima to je podrazumevalo da se inicijalna razmena ključeva mora obaviti neposrednim ili prethodno obezbeđenim putem, što predstavlja ozbiljno praktično ograničenje u okruženjima gde se komunikacione strane nalaze na velikim geografskim udaljenostima.
 
 \subsubsection{Asimetrična kriptografija}
-Motivisani problemima simetrične kriptografije, Diffie i Hellman \cite{diffie1976} predlažu prvi praktični algoritam za uspostavljanje zajedničkog tajnog materijala \eng{shared secret} između dve strane tokom inicijalne faze komunikacije preko nezaštićenog kanala. Predloženi mehanizam omogućava da se za svaku novu sesiju nezavisno generiše novi tajni materijal, koji se u savremenim sistemima koristi kao osnova za izvođenje simetričnih privremenih (sesijskih) ključeva.
+Motivisani ograničenjima simetrične kriptografije, predložen je prvi praktični algoritam za uspostavljanje zajedničkog tajnog materijala \eng{shared secret} između dve strane tokom inicijalne faze komunikacije preko nezaštićenog kanala \cite{diffie1976}. Predloženi mehanizam omogućava da se za svaku novu sesiju nezavisno generiše novi tajni materijal, koji se u savremenim sistemima koristi kao osnova za izvođenje simetričnih privremenih (sesijskih) ključeva.
 
-Pored toga, ovaj rad po prvi put formalno uvodi koncept javno dostupnih informacija i privatnih tajni, pri čemu bezbednost sistema više ne zahteva postojanje tajnog kanala za inicijalnu razmenu ključeva. Autori takođe uvode teorijsku ideju digitalnih potpisa, čime postavljaju temelj za dalji razvoj kriptografije i savremenih bezbednosnih protokola.
+Pored toga, po prvi put formalno se uvodi koncept javno dostupnih informacija i privatnih tajni, pri čemu bezbednost sistema više ne zahteva postojanje tajnog kanala za inicijalnu razmenu ključeva. Autori takođe uvode teorijsku ideju digitalnih potpisa, čime postavljaju temelj za dalji razvoj kriptografije i savremenih bezbednosnih protokola.
 
-Dalje, u radu \cite{rivest1978method}, u kojem je predstavljen asimetrični kriptografski algoritam zasnovan na modularnoj aritmetici, autori ističu da se sigurnost sistema u praksi povezuje sa teškoćom faktorizacije velikih kompozitnih brojeva. Ova \textit{asimetrija računarske složenosti} \cite{wigderson2007p} zasniva se na činjenici da postoje efikasne metode za generisanje i proveru prostih brojeva, poput ,,Eratostenovog sita'' \cite{helfgott2020improved}, dok je rastavljanje proizvoljnog prirodnog broja na proste činioce izrazito težak problem za koji do danas nije poznat polinomijalno efikasan algoritam \cite{crandall2005prime}.
+Značajan korak u daljem razvoju predstavlja uvođenje prvog praktičnog asimetričnog kriptografskog algoritma zasnovanog na modularnoj aritmetici, u kome je bezbednost sistema povezana sa računarskom teškoćom faktorizacije velikih kompozitnih brojeva \cite{rivest1978method}. Ova \textit{asimetrija računarske složenosti} \cite{wigderson2007p} zasniva se na činjenici da postoje efikasne metode za generisanje i proveru prostih brojeva, poput ,,Eratostenovog sita'' \cite{helfgott2020improved}, dok je faktorizacija proizvoljnog prirodnog broja na proste činioce izrazito težak problem za koji do danas nije poznat polinomijalno efikasan algoritam \cite{crandall2005prime}.
 
 \begin{definicija}
 Asimetrična kriptografija predstavlja kriptografski model u kojem se za šifrovanje i dešifrovanje podataka koriste dva različita, ali matematički povezana ključa: javni ključ, koji može biti slobodno distribuiran, i privatni ključ, koji mora ostati tajan. Poruka se šifruje javnim ključem primaoca, dok se dešifrovanje vrši odgovarajućim privatnim ključem, čime se obezbeđuje poverljivost komunikacije.
 \end{definicija}
-
-Kada Alisa želi da Bobu prenese poverljive podatke, ona ih šifruje Bobovim javnim ključem, čime obezbeđuje da jedino Bob, koristeći sopstveni privatni ključ, može da rekonstruiše originalnu poruku. Nasuprot tome, ukoliko Alisa primeni sopstveni privatni ključ nad nekom porukom, rezultujući šifrat može biti verifikovan korišćenjem njenog javnog ključa, što svakome omogućava da proveri da poruka potiče upravo od nje. Ovaj princip neposredno vodi ka formalizaciji digitalnog potpisa kao fundamentalnog mehanizma asimetrične kriptografije.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.75\textwidth]{chapter3_asimetricna.png}
-    \caption{TODO}
-\end{figure}
-
-\begin{definicija}
-Digitalni potpis predstavlja kriptografski mehanizam u kojem se privatni ključ koristi za generisanje proverljivog kriptografskog otiska nad porukom, dok se odgovarajući javni ključ koristi za verifikaciju tog otiska. Proces verifikacije potvrđuje autentičnost pošiljaoca, integritet poruke i obezbeđuje neporicivost autorstva.
-\end{definicija}
-
-Međutim, da bi se obezbedila neporecivost i sprečilo naknadno poricanje ili umetanje događaja u prošlost, javlja se potreba za povezivanjem digitalnih potpisa sa preciznim vremenom njihovog nastanka. U ovom kontekstu razvijen je koncept kriptografskog vremenskog obeležavanja \cite{merkleprotocols} \eng{time-stamping} digitalnih dokaza, pri čemu se, radi pojednostavljenja modela, pretpostavlja postojanje centralnog autoriteta odgovornog za verifikaciju potpisa i održavanje pouzdane vremenske evidencije.
 
 Asimetrični kriptografski algoritmi mogu se klasifikovati prema matematičkim problemima na kojima se zasniva njihova sigurnost:
 \begin{enumerate}
@@ -451,9 +437,35 @@ Asimetrični kriptografski algoritmi mogu se klasifikovati prema matematičkim p
 \item \textbf{Postkvantni algoritmi} - Zasnivaju se na matematičkim problemima za koje nisu poznati efikasni kvantni napadi. Posebno su značajni jer bi Šorov algoritam \cite{shor1994algorithms} kompromitovao prethodne tri klase ukoliko se pojave veliki univerzalni kvantni računari.
 \end{enumerate}
 
-Glavna prednost asimetrične kriptografije jeste što eliminiše problem bezbedne distribucije tajnog ključa, koji predstavlja fundamentalno ograničenje simetrične kriptografije. Svaki korisnik poseduje jedinstveni par ključeva, što omogućava skalabilnost u velikim distribuiranim sistemima. Dodatno, asimetrična kriptografija omogućava digitalne potpise, čime obezbeđuje autentičnost, integritet i neporicivost, što nije ostvarivo isključivo simetričnim pristupom.
+Kada Alisa želi da Bobu prenese poverljive podatke, ona ih šifruje Bobovim javnim ključem, čime obezbeđuje da jedino Bob, koristeći sopstveni privatni ključ, može da dešifruje rekonstruiše originalnu poruku.
 
-Međutim, asimetrični algoritmi značajno su sporiji i računski zahtevniji po pitanju procesorske snage u poređenju sa simetričnim, a za isti nivo bezbednosti zahtevaju znatno duže ključeve. Ovo ograničava njihovu praktičnu primenu za šifrovanje velikih količina podataka, naročito u resursno ograničenim sistemima. Zbog značajnog performansnog opterećenja, asimetrična kriptografija nije pogodna za kontinuirano šifrovanje podataka u distribuiranim sistemima sa velikim obimom saobraćaja.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.85\textwidth]{chapter3_asimetricna.png}
+    \caption{Prikaz procesa šifrovanja i dešifrovanja u sistemu asimetrične kriptografije.}
+\end{figure}
+
+Asimetrični algoritmi značajno su sporiji i računski zahtevniji po pitanju procesorske snage u poređenju sa simetričnim, a za isti nivo bezbednosti zahtevaju znatno duže ključeve. Ovo ograničava njihovu praktičnu primenu za šifrovanje velikih količina podataka, naročito u resursno ograničenim sistemima. Zbog značajnog performansnog opterećenja, asimetrična kriptografija nije pogodna za kontinuirano šifrovanje podataka u distribuiranim sistemima sa velikim obimom saobraćaja.
+
+Glavna prednost asimetrične kriptografije jeste što eliminiše problem bezbedne distribucije tajnog ključa, koji predstavlja fundamentalno ograničenje simetrične kriptografije. Svaki korisnik poseduje jedinstveni par ključeva, što omogućava skalabilnost u velikim distribuiranim sistemima.
+
+Dodatno, asimetrična kriptografija omogućava digitalne potpise, čime obezbeđuje autentičnost, integritet i neporicivost, što nije ostvarivo isključivo simetričnim pristupom.
+
+\begin{definicija}
+Digitalni potpis predstavlja kriptografski mehanizam u kojem se privatni ključ koristi za generisanje proverljivog potpisa nad porukom, dok se odgovarajući javni ključ koristi za verifikaciju tog potpisa. Proces verifikacije potvrđuje autentičnost pošiljaoca, integritet poruke i obezbeđuje neporicivost autorstva.
+\end{definicija}
+
+Kada Alisa generiše digitalni potpis korišćenjem sopstvenog privatnog ključa, svako ko poseduje njen javni ključ može da verifikuje potpis i potvrdi da poruka zaista potiče od Alise. Na taj način ostvaruju se autentifikacija pošiljaoca, zaštita integriteta poruke i neporicivost autorstva.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.85\textwidth]{chapter3_digitalni_potpis.png}
+    \caption{Prikaz procesa digitalnog potpisa u sistemu asimetrične kriptografije.}
+\end{figure}
+
+U praksi, savremeni algoritmi digitalnog potpisa najčešće generišu potpis nad hešom poruke, a ne nad samom porukom, čime se postiže veća efikasnost bez promene osnovnog principa rada.
+
+Da bi se obezbedila neporecivost i sprečilo naknadno poricanje ili umetanje događaja u prošlost, javlja se potreba za povezivanjem digitalnih potpisa sa preciznim vremenom njihovog nastanka. U ovom kontekstu razvijen je koncept kriptografskog vremenskog obeležavanja \eng{time-stamping} digitalnih dokaza \cite{merkleprotocols}, pri čemu se, radi pojednostavljenja modela, pretpostavlja postojanje centralnog autoriteta odgovornog za verifikaciju potpisa i održavanje pouzdane vremenske evidencije.
 
 \subsubsection{Hibridna kriptografija}
 Ideja kombinovanja asimetričnih algoritama za uspostavljanje zajedničkog tajnog materijala i simetričnih šema za efikasno šifrovanje podataka prvi put se implicitno pojavljuje u radu Merkle-a \cite{merkleprotocols}, koji se u literaturi često smatra konceptualnom pretečom savremenih hibridnih kriptografskih protokola. Ovaj pristup omogućava da se performansni trošak asimetričnih mehanizama ograniči na inicijalnu fazu uspostavljanja sesije, dok se dalja komunikacija odvija korišćenjem brze i efikasne simetrične kriptografije.
