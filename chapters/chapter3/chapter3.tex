@@ -471,15 +471,20 @@ Da bi se obezbedila neporecivost i sprečilo naknadno poricanje ili umetanje dog
 Ideja kombinovanja asimetričnih algoritama za uspostavljanje zajedničkog tajnog materijala i simetričnih šema za efikasno šifrovanje podataka prvi put se implicitno pojavljuje u radu Merkle-a \cite{merkleprotocols}, koji se u literaturi često smatra konceptualnom pretečom savremenih hibridnih kriptografskih protokola. Ovaj pristup omogućava da se performansni trošak asimetričnih mehanizama ograniči na inicijalnu fazu uspostavljanja sesije, dok se dalja komunikacija odvija korišćenjem brze i efikasne simetrične kriptografije.
 
 \begin{definicija}
-Hibridna kriptografija predstavlja pristup u kojem se za svaku pojedinačnu konekciju (sesiju) najpre uspostavlja glavni zajednički tajni materijal \eng{shared secret} korišćenjem asimetričnih algoritama za razmenu ključeva, nakon čega se celokupna dalja komunikacija šifruje brzim simetričnim algoritmima.
+Hibridna kriptografija predstavlja pristup u kojem se za svaku pojedinačnu konekciju (sesiju) najpre uspostavlja glavni zajednički tajni materijal \eng{shared secret} korišćenjem asimetričnih algoritama za razmenu ključeva, nakon čega se celokupna dalja komunikacija šifruje simetričnim algoritmima.
 \end{definicija}
 
 Iz uspostavljenog zajedničkog tajnog materijala, primenom algoritama za derivaciju ključeva \cite{chen2024recommendation} \eng{Key Derivation Functions}, generiše se čitav skup sesijskih ključeva \eng{session keys} koji se koriste za različite kriptografske potrebe, kao što su šifrovanje, autentikacija poruka, itd. 
 
-Međutim, aktivni napadač može presresti i čuvati sav saobraćaj, što dovodi do problema \textbf{tajnosti unapred} \cite{canetti2001analysis} \eng{forward secrecy}. Naime, ukoliko bi se u budućnosti kompromitovao glavni tajni materijal uspostavljen tokom početnog dogovora, sve ranije razmenjene poruke mogle bi biti dešifrovane. Stoga moderni protokoli koriste algoritme razmene ključeva koji obezbeđuju ovo svojstvo.
+Međutim, aktivni napadač može presresti i čuvati sav saobraćaj, što dovodi do problema \textbf{tajnosti unapred} \cite{canetti2001analysis} \eng{forward secrecy}. Naime, ukoliko bi se u budućnosti kompromitovao glavni tajni materijal uspostavljen tokom početnog dogovora, sve ranije razmenjene poruke mogle bi biti dešifrovane. Stoga moderni protokoli koriste algoritme razmene ključeva koji onemogućuju ovo svojstvo.
 
-% TODO SLIKA
 Najrasprostranjeniji primer hibridne kriptografije jeste protokol TLS \cite{rescorla2018transport} \eng{Transport Layer Security}, koji obezbeđuje poverljivost, integritet i autentičnost podataka tokom komunikacije između klijenta i servera. Prilikom uspostavljanja veze server klijentu dostavlja \textit{digitalni sertifikat} koji sadrži relevantne verifikacione informacije. Nakon verifikacije sertifikata, klijent i server dogovaraju zajednički sesijski tajni materijal, koji se tokom inicijalne razmene štiti asimetričnom kriptografijom. Po uspešnom završetku ovog procesa, dalja komunikacija odvija se primenom efikasnog simetričnog šifrovanja.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.55\textwidth]{chapter3_ca.png}
+    \caption{Prikaz hibridnog kriptografskog modela u TLS protokolu.}
+\end{figure}
 
 Digitalni sertifikat potpisuje autoritet za sertifikate \eng{Certificate Authority}, koji predstavlja entitet od poverenja zadužen za povezivanje identiteta servera sa njegovim javnim ključem. Na taj način autoritet za sertifikate postaje centralna tačka poverenja u TLS modelu, jer kompromitacija tog entiteta može ugroziti bezbednost komunikacije.
 
@@ -506,14 +511,10 @@ Pored bezbednosti, savremene heš funkcije moraju biti dizajnirane za visoku efi
 
 Najčešće korišćene moderne heš funkcije uključuju: porodicu SHA-2 \cite{pub2012secure} (npr. SHA-256), porodicu SHA-3 \cite{dworkin2015sha} zasnovanu na Keccak konstrukciji, kao i RIPEMD-160 \cite{dobbertin1996ripemd}.
 
-% TODO SLIKA
-% MAC SAMO ZA SLADNJE 
-Kada Alisa šalje Bobu fajl proizvoljne veličine, najpre se izračunava heš vrednost sadržaja fajla. U slučaju asimetrične kriptografije, nad dobijenom heš vrednošću se generiše digitalni potpis korišćenjem Alisinog privatnog ključa. Alternativno, u sistemima sa uspostavljenim deljenim tajnim ključem, integritet i autentičnost poruke mogu se obezbediti primenom mehanizma autentikacionog koda poruke \cite{krawczyk1997hmac} \eng{Message Authentication Code, MAC}. Po prijemu fajla, Bob ponovo izračunava heš vrednost primljenih podataka i verifikuje potpis ili MAC koristeći odgovarajući ključ. Ukoliko se vrednosti podudaraju, obezbeđuje se integritet podataka i potvrđuje njihovo poreklo.
-
-Na ovaj način, heš funkcije obezbeđuju \textbf{integritet} poruke.
+Kada Alisa šalje Bobu fajl proizvoljne veličine, najpre se izračunava heš vrednost sadržaja fajla. U slučaju asimetrične kriptografije, nad dobijenom heš vrednošću se generiše digitalni potpis korišćenjem Alisinog privatnog ključa. Alternativno, u sistemima sa uspostavljenim deljenim tajnim ključem, integritet i autentičnost poruke mogu se obezbediti primenom mehanizma autentikacionog koda poruke \cite{krawczyk1997hmac} \eng{Message Authentication Code, MAC}. Po prijemu fajla, Bob ponovo izračunava heš vrednost primljenih podataka i verifikuje potpis ili MAC koristeći odgovarajući ključ. Ukoliko se vrednosti podudaraju, obezbeđuje se \textbf{integritet} podataka i potvrđuje njihovo poreklo.
 
 \subsection{Funkcionalni bezbednosni okvir}
-Raniji informacioni sistemi nisu raspolagali jedinstvenim mehanizmima za upravljanje celokupnim okruženjem, već je svaki uređaj unutar mreže morao biti zasebno konfigurisan i održavan. Identitet korisnika nije bio dosledno verifikovan na svim tačkama pristupa, pravila pristupa bila su gruba i neprecizna, sistemi nisu mogli da vode celovite evidencije o aktivnostima korisnika, a ukupna zaštita zavisila je od individualnih podešavanja svakog pojedinačnog uređaja.
+Raniji informacioni sistemi nisu raspolagali jedinstvenim mehanizmima za upravljanje celokupnim okruženjem, već je svaki uređaj unutar mreže morao biti zasebno konfigurisan i održavan. Identitet korisnika nije bio dosledno verifikovan na svim tačkama pristupa, pravila pristupa bila su gruba i neprecizna, sistemi nisu mogli da vode celovite evidencije o aktivnostima korisnika, a ukupna zaštita zavisila je od individualnih podešavanja svakog pojedinačnog uređaja \cite{cameron2005laws}.
 
 \begin{definicija}
 AAA \cite{metz2002aaa} \eng{Authentication, Authorization, Accounting} predstavlja bezbednosni okvir za proveru identiteta, ograničavanje pristupa i praćenje upotrebe resursa.
