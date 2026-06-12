@@ -1,6 +1,4 @@
-\chapter{Blokčejn kao infrastrukturni sloj distribuiranih sistema}
-
-%\section{Kriptografske i sistemske osnove blokčejn tehnologije}
+\chapter{Blokčejn kao infrastrukturni sloj informacionih sistema}
 Digitalni dokumenti u tekstualnom, audio, slikovnom i video formatu podložni su lakoj i često neprimetnoj izmeni, što nameće problem pouzdanog utvrđivanja vremena njihovog nastanka ili poslednje modifikacije. Ovaj izazov verifikabilnog vremenskog obeležavanja digitalnih podataka u nepouzdanom okruženju rešen je kroz koncepte kriptografskog vremenskog obeležavanja, pri čemu se sadržaj dokumenata najpre kriptografski hešira bez njegovog otkrivanja, a zatim povezuje sa prethodnim zapisima putem heš vrednosti, čime se formira lanac kriptografski zavisnih vremenskih oznaka \cite{haber1990time, bayer1993improving, massias2002timestamp}. Ovakva struktura omogućava detekciju svake naknadne izmene, budući da bi promena jednog zapisa narušila konzistentnost svih narednih veza u lancu. Ključni doprinos ovih radova ogleda se u demonstraciji da se integritet i hronološki redosled podataka mogu garantovati oslanjanjem na kriptografske mehanizme i javno proverljive dokaze, bez potrebe za potpunim poverenjem u centralni autoritet.
 
 Masovno slanje elektronske pošte bez značajnog troška omogućilo je ranu zloupotrebu otvorenih računarskih sistema kroz nepoželjne poruke \eng{spam}. Kao odgovor na ovaj problem, predloženi su mehanizmi u kojima se izvršavanje operacija od značaja uslovljava rešavanjem računski zahtevnih, ali lako proverljivih zadataka. Ovaj pristup uvodi ekonomsku barijeru pristupu resursima, stvarajući asimetriju u kojoj legitimni korisnici snose zanemarljiv dodatni trošak, dok napadači koji pokušavaju da generišu veliki broj zahteva moraju da plate proporcionalno visoku cenu u vidu procesorskog vremena i potrošnje energije \cite{Dwork1992PricingVP, back2002hashcash}. Ovi radovi formalizuju koncept dokazivanja uloženog rada kao mehanizma za regulaciju ponašanja u distribuiranim sistemima i pokazuju da se bezbednost sistema može postići korišćenjem ekonomskog troška, bez oslanjanja na identitet učesnika ili centralnu kontrolu.
@@ -8,30 +6,40 @@ Masovno slanje elektronske pošte bez značajnog troška omogućilo je ranu zlou
 Pokušaji realizacije elektronskog novca sa svojstvima fizičkog gotovinskog novca, kao što su privatnost i nepratljivost transakcija, zasnivali su se na upotrebi slepih potpisa i kriptografskih protokola koji omogućavaju izvršavanje plaćanja bez otkrivanja identiteta korisnika. Međutim, ovi sistemi suočili su se sa fundamentalnim problemom dvostruke potrošnje \eng{double spending}, odnosno mogućnošću da se isti digitalni token iskoristi više puta \cite{chaum1983blind}. Predložena rešenja uglavnom su se oslanjala na centralizovane entitete koji vode evidenciju o već potrošenim jedinicama, čime se implicitno uvodi potreba za poverenjem u treću stranu \cite{chaum1985security}. Kasniji predlozi \cite{szabo2005bit, dai1998b} nastojali su da redukuju ulogu centralnog autoriteta, ali nisu u potpunosti razrešili problem koordinacije i postizanja globalne saglasnosti u otvorenom distribuiranom okruženju. Ovi radovi jasno identifikuju dvostruku potrošnju kao centralni tehnički izazov u dizajnu digitalnih monetarnih sistema.
 
 \section{Geneza blokčejn tehnologije}
-Na prethodno predstavljenim teorijskim i tehničkim osnovama razvija se blokčejn tehnologija, koja svoju prvu široko prihvaćenu praktičnu realizaciju dobija kroz elektronski sistem za plaćanje \textit{Bitcoin} (Bitkoin) \cite{nakamoto2008bitcoin, crosby2016blockchain}. Osnovna inovacija ovog pristupa ogleda se u \textit{objavljivanju svih transakcija kao javno dostupnih}, čime se napušta tradicionalni model privatnih knjiga evidencije \eng{ledger} kakve održavaju centralizovane finansijske institucije, čime se uvodi javno dostupna, distribuirana knjiga evidencije koju zajednički održavaju učesnici mreže.
+Na prethodno predstavljenim teorijskim i tehničkim osnovama razvija se blokčejn tehnologija, koja svoju prvu široko prihvaćenu praktičnu realizaciju dobija kroz elektronski sistem za plaćanje \textit{Bitcoin} (Bitkoin) \cite{nakamoto2008bitcoin, crosby2016blockchain}. Osnovna inovacija ovog pristupa ogleda se u \textit{objavljivanju svih transakcija kao javno dostupnih}, čime se napušta tradicionalni model privatnih knjiga evidencije \eng{ledger} kakve održavaju centralizovane finansijske institucije i uvodi javno dostupna, distribuirana knjiga evidencije koju zajednički održavaju učesnici mreže.
 
 U odsustvu centralnog autoriteta od poverenja, javlja se fundamentalni problem postizanja saglasnosti o stanju distribuirane knjige evidencije među međusobno nepoverljivim učesnicima mreže, kao i obezbeđivanja napredovanja ovako definisanog informacionog sistema. Rešenje ovog problema ostvareno je kroz \textit{Nakamoto konsenzus} \cite{stifter2018agreement}, koji integriše niz prethodno nezavisnih kriptografskih i sistemskih koncepata. 
 
-Ovaj mehanizam zasniva se na uvođenju oskudnog resursa \eng{scarce resource}, na osnovu kojeg učesnici mreže stiču pravo da učestvuju u određivanju narednog stanja sistema, kao i na hronološkoj upotrebi kriptografskog vremenskog obeležavanja svakog napredovanja, čime se implicitno obezbeđuje sigurnost i konzistentnost sistema kroz evidenciju korišćenja tog resursa.
+Ovaj mehanizam zasniva se na uvođenju oskudnog resursa \eng{scarce resource}, čijim dokazivim utroškom učesnici mreže stiču pravo da učestvuju u procesu određivanja narednog stanja sistema. Učesnik čiji predlog bude prihvaćen od strane mreže nagrađuje se prema pravilima protokola. Na taj način tehnički mehanizmi kriptografije dopunjuju se ekonomskim podsticajima, čime nastaje oblast kriptoekonomije \eng{cryptoeconomics} \cite{brekke2021cryptoeconomics}, u okviru koje se bezbednost sistema ostvaruje usklađivanjem individualnih interesa učesnika sa pravilima protokola.
 
-Na ovaj način Bitkoin predstavlja jedinstven, javni i dozvolom neograničen distribuirani sistem koji omogućava postizanje globalne saglasnosti o stanju mreže bez potrebe za centralizovanim autoritetom, uz očuvanje sigurnosti i integriteta podataka. Shodno tome, blokčejn sistemi mogu se posmatrati kao posebna klasa distribuiranih sistema u kojima su mehanizmi replikacije, koordinacije i konsenzusa strogo definisani protokolskim pravilima i kriptografskim ograničenjima.
-
-\begin{definicija}\label{def:blokcejn}
-Blokčejn predstavlja distribuiranu mrežu ravnopravnih čvorova koja održava zajedničku globalnu knjigu podataka evidentiranjem transakcija u blokove, povezane u strogo hronološki lanac pomoću kriptografskih heš referenci, čime se obezbeđuje nepromenljivost i proverljivost zapisa.
+\begin{definicija}
+Kriptoekonomija predstavlja kombinaciju kriptografskih mehanizama i ekonomskih podsticaja za projektovanje robusnih decentralizovanih informacionih sistema.
 \end{definicija}
 
-\begin{figure}[ht]
+Hronološko povezivanje kriptografski vremenski obeleženih zapisa omogućava formiranje jedinstvenog lanca koji predstavlja evidenciju utroška oskudnog resursa potrebnog za održavanje mreže. Na taj način implicitno se obezbeđuju sigurnost i konzistentnost sistema kroz proverljivu istoriju njegovog napredovanja.
+
+Na ovaj način Bitkoin predstavlja jedinstven, javni i dozvolom neograničen distribuirani sistem koji omogućava postizanje globalne saglasnosti o stanju mreže bez potrebe za centralizovanim autoritetom, uz očuvanje sigurnosti i integriteta podataka.
+
+\begin{definicija}\label{def:blokcejn}
+Blokčejn predstavlja distribuiranu mrežu ravnopravnih čvorova koja održava zajedničku globalnu knjigu evidencije evidentiranjem transakcija u blokove povezane u strogo hronološki lanac pomoću kriptografskih heš referenci, čime se obezbeđuju nepromenljivost i proverljivost zapisa.
+\end{definicija}
+
+\begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.7\textwidth]{chapter4_hronoloski_lanac.png}
-    \caption{TODO}
+    \includegraphics[width=0.72\textwidth]{chapter4_hronoloski_lanac.png}
+    \caption{Prikaz hronološkog lanca blokova povezanih heš referencama.}
 \end{figure}
+
+Blokčejn sistemi mogu se posmatrati kao posebna klasa distribuiranih sistema u kojima su mehanizmi replikacije, koordinacije i konsenzusa strogo definisani protokolskim pravilima i kriptografskim ograničenjima.
+
+Iako se u izvornom obliku blokčejn definiše kao linearno uređen niz blokova povezanih u strogo hronološki lanac, u kasnijem razvoju pojavile su se i paradigme zasnovane na usmerenim acikličnim grafovima (DAG), koje odstupaju od klasične blokčejn strukture \cite{benvcic2018distributed}. Ovakvi sistemi zadržavaju određene zajedničke osobine sa tradicionalnim blokčejn mrežama, ali su njihovi mehanizmi konsenzusa, model upravljanja stanjem i struktura podataka suštinski različiti, zbog čega se u daljem tekstu razmatra isključivo klasični blokčejn model zasnovan na linearnoj strukturi blokova.
 
 Budući da se blokčejn posmatra kao distribuirana knjiga evidencije koju zajednički održavaju učesnici mreže, stanje sistema se \textbf{replicira} kod svih čvorova. Pri tome, svaki čvor ne samo da održava lokalnu kopiju trenutnog stanja, već i dosledno beleži sva njegova napredovanja u identičnom redosledu u formi lanca blokova. Na taj način blokčejn ostvaruje osobinu \textbf{replikovane mašine stanja}, što ga čini \textbf{logički centralizovanim} i omogućava determinističku rekonstrukciju stanja sistema u bilo kom trenutku njegove istorije.
 
-\begin{figure}[ht]
+\begin{figure}[!ht]
     \centering
-    \includegraphics[width=1\textwidth]{chapter4_p2p.png}
-    \caption{TODO}
+    \includegraphics[width=0.8\textwidth]{chapter4_p2p.png}
+    \caption{Distribuirana mreža ravnopravnih čvorova blokčejn mreže sa replikovanim stanjem.}
 \end{figure}
 
 Replikacijom se obezbeđuje da svaki čvor mreže održava lokalnu kopiju distribuirane evidencije, čime se postiže visok stepen \textbf{dostupnosti} sistema, kao i otpornost na pojedinačne kvarove i privremenu nedostupnost čvorova. U zavisnosti od arhitektonskih odluka i organizacije sistema, replikacija stanja može biti realizovana u više oblika, među kojima se izdvajaju:
@@ -41,7 +49,9 @@ Replikacijom se obezbeđuje da svaki čvor mreže održava lokalnu kopiju distri
 \item \textbf{slojevita replikacija} \cite{sguanci2021layer}, pri čemu se uvode dodatni slojevi kao proširenja iznad osnovnog blokčejna, koji obuhvataju skup protokolskih mehanizama za komunikaciju i verifikaciju stanja u odnosu na osnovni sloj, u skladu sa Definicijom \ref{def:layering}.
 \end{enumerate}
 
-Iako se u izvornom obliku blokčejn definiše kao linearno uređen niz blokova povezanih u strogo hronološki lanac, u kasnijem razvoju pojavile su se i paradigme zasnovane na usmerenim acikličnim grafovima (DAG), koje odstupaju od klasične blokčejn strukture \cite{benvcic2018distributed}. Ovakvi sistemi zadržavaju određene zajedničke osobine sa tradicionalnim blokčejn mrežama, ali su njihovi mehanizmi konsenzusa, model upravljanja stanjem i struktura podataka suštinski različiti, zbog čega se u daljem tekstu razmatra isključivo klasični blokčejn model zasnovan na linearnoj strukturi blokova.
+Dodatni slojevi u okviru slojevite arhitekture ne poseduju nezavisan konsenzus mehanizam, već se konačna odluka o validnosti stanja delegira osnovnom lancu, koji ima mogućnost da potvrdi ili ospori rezultate izvršavanja. Iz tog razloga, viši slojevi svoju bezbednost zasnivaju na bezbednosnim garancijama osnovnog sloja. U tom kontekstu, slojevita replikacija uvodi određena ograničenja u pogledu fleksibilnosti, budući da dodatni slojevi moraju biti kompatibilni sa pravilima osnovnog lanca.
+
+Kao alternativni pristup, uvode se \textit{bočni lanci} \eng{sidechains} \cite{back2014enabling}, koji omogućavaju uspostavljanje nezavisnih blokčejn sistema povezanih sa osnovnim lancem, bez ograničenja koja nameće slojevita arhitektura, ali uz potencijalnu zavisnost u pogledu vrednosti i dodatni prostor za napade u međulančanoj komunikaciji. Na taj način omogućava se paralelno funkcionisanje raznovrsnih blokčejn sistema sa različitim pravilima izvršavanja i performansnim karakteristikama.
 
 Bez obzira na konkretnu implementaciju, blokčejn sistemi se u literaturi često klasifikuju prema stepenu otvorenosti i modelu kontrole pristupa na dve osnovne kategorije \cite{solat2021permissioned}:
 \begin{enumerate}
@@ -55,10 +65,6 @@ Bez obzira na konkretnu implementaciju, blokčejn sistemi se u literaturi često
 \end{enumerate}
 
 Predviđa se da će budući razvoj blokčejn tehnologije dovesti do okruženja u kojem postoji veliki broj međusobno povezanih, specijalizovanih blokčejn sistema, umesto jedinstvenog dominantnog lanca \cite{vo2018internet}, te će se elektronska trgovina u sve većoj meri proširiti na različite blokčejn platforme \cite{herlihy2019cross}.
-
-Dodatni slojevi u okviru slojevite arhitekture ne poseduju nezavisan konsenzus mehanizam, već se konačna odluka o validnosti stanja delegira osnovnom lancu, koji ima mogućnost da potvrdi ili ospori rezultate izvršavanja. Iz tog razloga, viši slojevi svoju bezbednost zasnivaju na bezbednosnim garancijama osnovnog sloja. U tom kontekstu, slojevita replikacija uvodi određena ograničenja u pogledu fleksibilnosti, budući da dodatni slojevi moraju biti kompatibilni sa pravilima osnovnog lanca.
-
-Kao alternativni pristup, uvode se \textit{bočni lanci} \eng{sidechains} \cite{back2014enabling}, koji omogućavaju uspostavljanje nezavisnih blokčejn sistema povezanih sa osnovnim lancem, bez ograničenja koja nameće slojevita arhitektura, ali uz potencijalnu zavisnost u pogledu vrednosti i dodatni prostor za napade u međulančanoj komunikaciji. Na taj način omogućava se paralelno funkcionisanje raznovrsnih blokčejn sistema sa različitim pravilima izvršavanja i performansnim karakteristikama.
 
 U cilju omogućavanja komunikacije između proizvoljnih blokčejn sistema, uvode se protokoli interoperabilnosti \eng{interoperability} \cite{belchior2021survey}, koji omogućavaju razmenu vrednosti i podataka između lanaca posredstvom \textit{relejnih} čvorova \eng{relayers}. Ovi protokoli mogu omogućiti atomično izvršavanje definisano uslovima zapisanim u pametnim ugovorima na oba blokčejna \cite{tsabary2021mad}. 
 
@@ -84,7 +90,7 @@ U zavisnosti od načina na koji se potpisane transakcije distribuiraju mreži na
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.7\textwidth]{chapter4_mempool.png}
-    \caption{TODO}
+    \caption{Prikaz procesa dostavljanja transakcija korisnika u skup nepotvrđenih transakcija.}
 \end{figure}
 
 U otvorenom i distribuiranom okruženju, obrada, validacija i potvrđivanje transakcija predstavljaju potrošnju zajedničkih računarskih i komunikacionih resursa. Iz tog razloga, javni blokčejn sistemi uvode mehanizam naplate korišćenja mreže u primarnu kriptovalutu blokčejna \eng{native cryptocurrency}, kojim se istovremeno ograničava mogućnost zloupotreba u vidu masovnog slanja beskorisnih transakcija i obezbeđuje ekonomski podsticaj učesnicima koji učestvuju u održavanju i bezbednosti mreže.
@@ -448,6 +454,9 @@ Podaci jednom zapisani na blokčejnu ostaju trajno dostupni, što predstavlja og
 Sigurnost predstavlja fundamentalno svojstvo blokčejn sistema, budući da obezbeđuje jedinstvenost, neizmenljivost i konzistentnost distribuirane knjige evidencije, čak i u prisustvu vizantijskih čvorova. Očuvanje ovih svojstava mora biti garantovano bez izuzetaka, jer kompromitovanje bilo kog od njih dovodi u pitanje osnovnu funkcionalnost i smisao postojanja blokčejn sistema.
 
 Usled asinhrone prirode distribuiranih mreža, blokovi se ne propagiraju istovremeno ka svim čvorovima, što može dovesti do privremenog postojanja konkurentnih verzija lanca, odnosno do pojave račvanja.
+
+%TODO
+%Prva praktična implementacija konsenzusa u prisustvu takozvanih ,,vizantijskih'' čvorova  dala je ideju diskretnih rundama glasanja, gde se u svakoj rundi bira glavni čvor. Glavni čvor inicijalno predlaže vrednost, dok ostali učesnici proveravaju predlog, razmenjuju međurezultate i ažuriraju sopstvene odluke. Ukoliko dovoljan broj učesnika potvrdi predloženu vrednost kroz definisane faze protokola, ona se smatra prihvaćenom. U slučaju nepostojanja jasne većine, proces se može dalje koordinisati preko glavnog čvora. Ove iteracije se ponavljaju sve dok se ne postigne saglasnost među svim ispravnim čvorovima. Takav kombinovani pristup omogućava sistemu da očuva konsenzus čak i u prisustvu čvorova koji pokušavaju da sabotiraju proces.
 
 BFT blokčejn sistemi koriste višefazne konsenzus protokole zasnovane na eksplicitnoj razmeni poruka i glasanju, koji tipično obuhvataju faze predloga bloka \eng{propose}, glasanja o njegovoj ispravnosti \eng{prevote} i konačnog potvrđivanja \eng{precommit}, čime se obezbeđuje da svi ispravni čvorovi usaglase identičnu verziju stanja sistema. Ovakav pristup omogućava determinističku finalnost, zbog čega se BFT sistemi smatraju izuzetno sigurnim.
 
