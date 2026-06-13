@@ -93,7 +93,7 @@ U zavisnosti od načina na koji se potpisane transakcije distribuiraju mreži na
     \caption{Prikaz procesa dostavljanja transakcija korisnika u skup nepotvrđenih transakcija.}
 \end{figure}
 
-U otvorenom i distribuiranom okruženju, obrada, validacija i potvrđivanje transakcija predstavljaju potrošnju zajedničkih računarskih i komunikacionih resursa. Iz tog razloga, javni blokčejn sistemi uvode mehanizam naplate korišćenja mreže u primarnu kriptovalutu blokčejna \eng{native cryptocurrency}, kojim se istovremeno ograničava mogućnost zloupotreba u vidu masovnog slanja beskorisnih transakcija i obezbeđuje ekonomski podsticaj učesnicima koji učestvuju u održavanju i bezbednosti mreže.
+U otvorenom i distribuiranom okruženju, obrada, validacija i potvrđivanje transakcija predstavljaju potrošnju zajedničkih računarskih i komunikacionih resursa. Iz tog razloga, javni blokčejn sistemi uvode mehanizam naplate korišćenja mreže primarnom kriptovalutom blokčejna \eng{native cryptocurrency}, kojim se istovremeno ograničava mogućnost zloupotreba u vidu masovnog slanja beskorisnih transakcija i obezbeđuje ekonomski podsticaj učesnicima koji učestvuju u održavanju i bezbednosti mreže.
 
 \begin{definicija}\label{def:txfee}
 Transakciona naknada \eng{transaction fee, tx fee} predstavlja iznos koji korisnik prilaže uz transakciju kao nadoknadu za korišćenje mrežnih resursa i njeno eventualno uključivanje u blokčejn.
@@ -107,8 +107,8 @@ Blok predstavlja skup transakcija i odgovarajuće zaglavlje koje sadrži metapod
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=1.03\textwidth]{chapter4_genesis.png}
-    \caption{TODO}
+    \includegraphics[width=\textwidth]{chapter4_genesis.png}
+    \caption{Prikaz bloka geneze i početnih blokova Bitkoin mreže.}
 \end{figure}
 
 Početni element lanca naziva se \textit{blok geneze} \eng{Genesis block} i predstavlja jedini blok koji nema prethodnika, te se eksplicitno inicijalizuje kako bi sistem mogao započeti svoj rad, dok je dodavanje svakog narednog bloka definisano protokolom. Transakcije uključene u blok smatraju se potvrđenim, dok se transakcije unutar istog bloka mogu posmatrati kao logički istovremene, budući da dele istu vremensku oznaku zabeleženu u zaglavlju bloka.
@@ -116,18 +116,17 @@ Početni element lanca naziva se \textit{blok geneze} \eng{Genesis block} i pred
 Sve transakcije u okviru bloka organizuju se u Merkleovo stablo, čiji koren predstavlja jedinstvenu heš vrednost koja sažima njihov sadržaj \cite{merkle1987digital}. Svaka izmena bilo koje transakcije dovela bi do promene odgovarajuće heš vrednosti, a time i korena stabla.
 
 \begin{figure}[ht]
-    \centering
-    \begin{minipage}{0.49\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{chapter4_100k_blok.png}
-        \caption{TODO}
-    \end{minipage}
-\hfill
-    \begin{minipage}{0.49\textwidth}
-        \centering
-        \includegraphics[width=1\linewidth]{chapter4_100k_stablo.png}
-        \caption{TODO}
-    \end{minipage}
+\centering
+
+\subfloat[Zaglavlje i sadržaj]{\includegraphics[width=0.28\textwidth]{chapter4_100k_blok.png}}
+\hspace{0.02\textwidth}
+\subfloat[Organizacija transakcija kroz Merkleovo stablo]{
+    \raisebox{1.1cm}[0pt][0pt]{
+        \includegraphics[width=0.65\textwidth]{chapter4_100k_stablo.png}
+    }
+}
+
+\caption{Struktura 100.000. bloka Bitkoin mreže.}
 \end{figure}
 
 Ova vrednost se uključuje u zaglavlje bloka, zajedno sa vremenskom oznakom (koja predstavlja \textbf{logički sat} distribuiranog sistema), kriptografskom heš referencom na prethodni blok i dodatnim protokolskim parametrima (verzijom protokola, parametrima konsenzusa i slično).
@@ -137,7 +136,7 @@ Heširanjem zaglavlja formira se jedinstvena kriptografska referenca bloka, čim
 \subsubsection{Performanse blokčejn sistema}
 U naučnoj literaturi, performanse blokčejn sistema analiziraju se korišćenjem različitih metrika koje se razlikuju prema nivou apstrakcije i perspektivi posmatranja \cite{fan2020performance}. U zavisnosti od ciljne grupe i nivoa analize, najčešće se izdvajaju sledeće kategorije metrika:
 \begin{enumerate}
-\item \textbf{Makro metrike} - pružaju uvid u performanse sistema iz perspektive krajnjeg korisnika i aplikacionog sloja, posmatrajući sistem kao celinu. Najznačajnije makro metrike obuhvataju propusnost transakcija, izraženu kao broj uspešno potvrđenih transakcija u jedinici vremena, i latenciju, koja predstavlja vreme proteklo od trenutka slanja transakcije do njenog potvrđivanja u sistemu.
+\item \textbf{Makro metrike} - pružaju uvid u performanse sistema iz perspektive krajnjeg korisnika i aplikacionog sloja, posmatrajući sistem kao celinu. Najznačajnije makro metrike obuhvataju propusnost transakcija, izraženu kao broj uspešno potvrđenih transakcija u jedinici vremena, i vreme odaziva, koja predstavlja vreme proteklo od trenutka slanja transakcije do njenog potvrđivanja u sistemu.
 
 \item \textbf{Mikro metrike} - odnose se na performanse pojedinačnih komponenti i podprocesa unutar blokčejn sistema, iz perspektive dizajnera i implementatora sistema. Ove metrike obuhvataju, između ostalog, vreme propagacije transakcija i blokova, vreme izvršavanja pametnih ugovora, vreme ažuriranja stanja, trajanje konsenzusnog procesa, kao i efikasnost kriptografskih operacija poput heširanja i digitalnog potpisivanja.
 \end{enumerate}
@@ -178,13 +177,13 @@ Kako bi se formirao kandidat za novi blok, potrebno je najpre prikupiti nepotvr�
 Predlagač bloka \eng{block proposer} je učesnik mreže koji, u skladu sa pravilima konsenzus protokola, ima pravo da predloži sledeći blok u lancu.
 \end{definicija}
 
-U blokčejn sistemima polazi se od pretpostavke da deo učesnika mreže može ispoljavati proizvoljno ili zlonamerno ponašanje, odnosno da sistem mora biti otporan na prisustvo \textbf{vizantijskih čvorova}. Iz tog razloga, konsenzus mehanizam predstavlja centralnu tačku \textbf{koordinacije} i \textbf{kontrolne decentralizacije}, jer definiše skup pravila prema kojima se obezbeđuje konzistentnost globalnog stanja mreže u uslovima nepoverenja među učesnicima.
-
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1.03\textwidth]{chapter4_predlagac.png}
-    \caption{TODO}
+    \caption{Prikaz propagacije novog bloka kroz mrežu nakon njegovog predlaganja.}
 \end{figure}
+
+U blokčejn sistemima polazi se od pretpostavke da deo učesnika mreže može ispoljavati proizvoljno ili zlonamerno ponašanje, odnosno da sistem mora biti otporan na prisustvo \textbf{vizantijskih čvorova}. Iz tog razloga, konsenzus mehanizam predstavlja centralnu tačku \textbf{koordinacije} i \textbf{kontrolne decentralizacije}, jer definiše skup pravila prema kojima se obezbeđuje konzistentnost globalnog stanja mreže u uslovima nepoverenja među učesnicima.
 
 Osnovno pravilo podrazumeva da se svaki predloženi blok nezavisno proverava od strane svih čvorova pre njegovog prihvatanja i uključivanja u lokalnu verziju lanca. Ovaj proces validacije obuhvata proveru ispravnosti svih transakcija i kriptografskih uslova sadržanih u bloku, čime se eliminišu pokušaji vizantijskih čvorova da nametnu nevalidne ili nekonzistentne promene stanja sistema. Iz toga sledi da je korektno funkcionisanje sistema uslovljeno pretpostavkom da većina resursa koji učestvuju u konsenzusu pripada poštenim učesnicima mreže.
 
@@ -243,7 +242,7 @@ Moguće je, međutim, da dva ili više predlagača blokova u približno istom vr
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1.03\textwidth]{chapter4_konflikt.png}
-    \caption{TODO}
+    \caption{Prikaz konflikta nastalog usled istovremenog predlaganja više blokova.}
 \end{figure}
 
 U Bitkoin sistemu ne postoji centralni čvor, međutim, pravilo najdužeg lanca \eng{longest chain rule} Nakamoto konsenzusa efektivno preuzima njegovu ulogu, budući da je za njegovu izgradnju utrošeno najviše računarskih resursa za algoritam dokazivanja uloženog rada. Grana lanca koja se prva produži i postane duža od ostalih prihvata se kao kanonska verzija istorije sistema. Čvorovi koji su prethodno sledili kraću granu odbacuju je i sinhronizuju se sa najdužim važećim lancem, čime se mreža ponovo dovodi u konzistentno stanje. Kako se nad određenim blokom nadograđuje sve veći broj novih blokova, verovatnoća da alternativna grana nadmaši postojeći lanac opada eksponencijalno.
@@ -467,6 +466,7 @@ Iz navedenog sledi da sigurnost blokčejn sistema zavisi od sposobnosti konsenzu
 U tom kontekstu, stopa račvanja lanca $F$ iako ne predstavlja potpunu meru sigurnosti često se koristi kao indikativna metrika stabilnosti konsenzusa, pri čemu se u pojedinim radovima \cite{nakai2023blockchain} njen inverz koristi kao aproksimativna mera sigurnosti sistema:
 $$ Sigurnost = \frac{1}{F} $$
 
+% TODO MAKRO METRIKA
 \subsection{Skalabilnost blokčejn sistema}
 U skladu sa Definicijom 2.6, skalabilnost blokčejn sistema odnosi se na sposobnost mreže da, uz povećanje raspoloživih resursa, ostvari porast efektivnog kapaciteta obrade transakcija, pri čemu se istovremeno očuvaju prihvatljive performansne karakteristike i bezbednosna svojstva sistema.
 
