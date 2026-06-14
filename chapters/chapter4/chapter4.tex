@@ -162,7 +162,7 @@ U Bitkoinu, zaglavlje bloka ima fiksnu veličinu od 80 bajtova i sadrži skup me
 \item \textbf{Heš prethodnog bloka} (32 bajta) - kriptografska referenca na prethodni blok u lancu, kojom se obezbeđuje da bilo kakva izmena sadržaja prethodnog bloka nužno dovodi do promene zaglavlja tekućeg bloka,
 \item \textbf{Merkleov koren transakcija} (\textit{tx\_root}) (32 bajta) - heš vrednost korena Merkleovog stabla formiranog od svih transakcija uključenih u blok,
 \item \textbf{Vremenska oznaka} (4 bajta) - trenutak početka procesa heširanja bloka izražen u \textit{Unix} formatu, blok se smatra validnim ukoliko ova vrednost ne odstupa značajno od lokalnog vremena ostalih čvorova u mreži,
-\item \textbf{\textit{nBits}} (4 bajta) - kompaktno kodirana reprezentacija ciljnog praga \eng{target hash}, kojom se određuje težina kriptografske zagonetke i dinamički reguliše tempo generisanja novih blokova u mreži,
+\item \textbf{\textit{nBits}} (4 bajta) - kompaktno kodirana reprezentacija \textbf{ciljnog praga} \eng{target hash}, kojom se određuje težina kriptografske zagonetke i dinamički reguliše tempo generisanja novih blokova u mreži,
 \item \textbf{Počasna promenljiva} \eng{nonce} (4 bajta) - slučajna ili iterativno menjana vrednost koja predstavlja rešenje prethodne kriptografske zagonetke, u slučaju iscrpljivanja njenog opsega, dodatno se modifikuje Merkleov koren \eng{extra nonce}.
 \end{enumerate}
 
@@ -205,13 +205,13 @@ Režijsko opterećenje javnih blokčejn sistema predstavlja sistemski trošak de
 \end{posledica}
 
 \subsubsection{Algoritam dokazivanja uloženog rada}
-Algoritam dokazivanja uloženog rada \eng{Proof of Work, PoW} zasniva se na rešavanju kriptografske zagonetke definisane nad zaglavljem kandidata za novi blok, pri čemu \textit{ciljni prag} predstavlja gornju granicu dozvoljene heš vrednosti tog zaglavlja. Ovaj zadatak je konstruisan sa ciljem uspostavljanja \textit{asimetrije računarske složenosti}, budući da ne postoji poznata efikasnija strategija od nasumičnog isprobavanja mogućih vrednosti metodom grube sile, dok je validacija pronađenog rešenja brza i deterministička.
+Algoritam dokazivanja uloženog rada \eng{Proof of Work, PoW} zasniva se na rešavanju kriptografske zagonetke definisane u bloku na trenutnom vrhu lanca, pri čemu je zagonetka konstruisana tako da poseduje osobinu \textit{asimetrije računarske složenosti}, odnosno da pronalaženje rešenja bude računski zahtevno, dok je njegova verifikacija efikasna i deterministička.
 
-Da bi novi blok bio prihvaćen, njegova heš vrednost mora biti manja ili jednaka unapred definisanom ciljnom pragu, čime se omogućava da svaki učesnik mreže ravnopravno učestvuje u procesu predlaganja novih blokova, bez oslanjanja na centralizovani autoritet ili unapred dodeljeni identitet.
+Da bi novi blok bio prihvaćen, njegova heš vrednost mora biti manja ili jednaka unapred definisanom ciljnom pragu, čime se omogućava otvoreno učešće u procesu predlaganja novih blokova bez oslanjanja na centralizovani autoritet ili unapred dodeljeni identitet.
 
-U Bitkoin mreži, oskudan resurs na kojem se zasniva Nakamoto konsenzus predstavlja računarska snaga koja se meri brojem izvršenih heš operacija u jedinici vremena, poznatim kao \eng{hashpower}, koji se u praksi najčešće izražava u terahašima u sekundi ($10^{12}$). Ovaj proces zahteva značajnu količinu električne energije i procenjuje se da konzumira oko 0.43\% globalne godišnje potrošnje električne energije \cite{kaneko2025comparing}. 
+U Bitkoin mreži, oskudan resurs na kojem se zasniva Nakamoto konsenzus predstavlja računarska snaga koja se meri brojem izvršenih heš operacija u jedinici vremena \eng{hashpower}, koja se u praksi najčešće izražava u terahašima u sekundi ($10^{12}$). Ovaj proces zahteva značajnu količinu električne energije i procenjuje se da konzumira oko 0.43\% globalne godišnje potrošnje električne energije \cite{kaneko2025comparing}. 
 
-Zbog značajnog računarskog i energetskog napora potrebnog za izvršavanje ovog procesa, učesnici koji obavljaju ovu funkciju nazivaju se rudari \eng{miners}, i verovatnoća da određeni rudar doda novi blok može se izračunati kao odnos njegove računarske snage, izražene u heševima, prema ukupnoj računarskoj snazi mreže, takođe izraženoj u heševima.
+Zbog značajnog računarskog i energetskog napora potrebnog za izvršavanje ovog procesa, učesnici koji obavljaju ovu funkciju nazivaju se rudari \eng{miners}, pri čemu je verovatnoća da određeni rudar predloži naredni blok može se izračunati kao odnos njegove računarske snage, izražene u heševima, prema ukupnoj računarskoj snazi mreže, takođe izraženoj u heševima.
 
 Svaki rudar nezavisno konstruiše kandidat za novi blok, pri čemu samostalno bira skup transakcija koje će u njega uključiti. Tokom izvršavanja algoritma dokazivanja uloženog rada, jedina promenljiva koja se sistematski menja u zaglavlju bloka jeste \textit{nonce}, dok je dominantna i računski najzahtevnija operacija višestruko kriptografsko heširanje kompletnog zaglavlja bloka, koje se vrši sve dok se ne dobije rezultat koji zadovoljava postavljeni uslov (Algoritam \ref{alg:proof_of_work}). 
 
@@ -230,12 +230,12 @@ Svaki rudar nezavisno konstruiše kandidat za novi blok, pri čemu samostalno bi
 \end{algorithmic}
 \end{algorithm}
 
-Ova fundamentalna asimetrija između visokog troška generisanja novog bloka i zanemarljivog troška njegove verifikacije predstavlja ključni razlog zbog kojeg je računarska snaga izabrana za deo Nakamoto konsenzusa, što predstavlja ključni preduslov bezbednog funkcionisanja sistema u otvorenom i nepouzdanom distribuiranom okruženju.
+Ova fundamentalna asimetrija između visokog troška generisanja dokaza i zanemarljivog troška njegove verifikacije predstavlja jedno od ključnih svojstava zbog kojih je računarska snaga izabrana kao oskudan resurs Nakamoto konsenzusa, omogućavajući bezbedno funkcionisanje sistema u otvorenom i nepouzdanom distribuiranom okruženju.
 
 Kako bi se očuvalo približno konstantno prosečno vreme generisanja bloka od deset minuta, Bitkoin protokol periodično prilagođava težinu ciljne heš vrednosti u zavisnosti od ukupne heš snage dostupne u sistemu. Ovo prilagođavanje se vrši na svakih 2016 blokova, čime se omogućava stabilno funkcionisanje sistema uprkos promenama u broju i kapacitetu učesnika koji učestvuju u procesu rudarenja.
 
 \subsubsection{Verovatnosni konsenzus i praktična finalnost transakcija}
-Nakon pronalaska odgovarajuće vrednosti \textit{počasne promenljive} predloženi blok se \textbf{propagira} ostalim čvorovima u mreži, koji nezavisno proveravaju validnost dokaza uloženog rada i usklađenost bloka sa protokolskim pravilima, čime se ostvaruje \textbf{replikacija} globalnog stanja kod svih učesnika. Ukoliko su svi uslovi zadovoljeni, blok se prihvata kao naredni blok u lancu. 
+Nakon pronalaska odgovarajuće vrednosti \textit{počasne promenljive} predloženi blok se \textbf{propagira} ostalim čvorovima u mreži, koji nezavisno proveravaju validnost dokaza uloženog rada i usklađenost bloka sa protokolskim pravilima. Ukoliko su svi uslovi zadovoljeni, blok se prihvata kao naredni blok u lancu, čime se ostvaruje \textbf{replikacija} globalnog stanja kod svih učesnika. 
 
 Moguće je, međutim, da dva ili više predlagača blokova u približno istom vremenskom intervalu pronađu i propagiraju različite, ali međusobno validne kandidate za $(n+1)$-ti blok koji se nadovezuju na isti prethodni $n$-ti blok. U tom slučaju, različiti podskupovi čvorova mogu privremeno prihvatiti različite verzije lanca kao važeće, što dovodi do kratkotrajnog račvanja stanja mreže u više verzija, čime se javlja privremeni \textbf{konflikt} u distribuiranom okruženju. Ovo stanje se razrešava pronalaženjem narednog $(n+2)$-og bloka, budući da se svaki novi blok može nadovezati isključivo na jedan od postojećih kandidata.
 
@@ -285,17 +285,17 @@ Budući da se ulazi transakcije odnose na prethodno kreirane, ali još uvek nepo
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.7\textwidth]{chapter4_utxo.png}
-    \caption{TODO}
+    \includegraphics[width=0.65\textwidth]{chapter4_utxo.png}
+    \caption{Prikaz nastanka i potrošnje UTXO zapisa kroz blokove, pri čemu boje označavaju korisnike, dok pune i isprekidane linije predstavljaju potrošene, odnosno nepotrošene UTXO zapise.}
 \end{figure}
 
 Ukoliko korisnik želi da prenese samo deo vrednosti raspoloživog UTXO zapisa određenoj adresi, on kao ulaz koristi taj UTXO u celosti, dok se na izlazu generišu dva nova UTXO zapisa: jedan u iznosu namenjenom primaocu i drugi koji predstavlja ostatak sredstava i vraća se na adresu pošiljaoca \eng{change output}. 
 
 Slično tome, u slučaju kada vrednost pojedinačnog UTXO zapisa nije dovoljna za izvršenje željene transakcije, korisnik može kombinovati više sopstvenih UTXO zapisa kao ulaze, čime se njihova zbirna vrednost koristi za formiranje proizvoljnog broja izlaza transakcije. 
 
-Međutim, broj i struktura ulaznih i izlaznih UTXO zapisa direktno određuju veličinu transakcije, odnosno količinu prostora (izraženu u bajtovima) koju ona zauzima u bloku. Zbog toga je potrebno platiti naknadu po jedinici iskorišćenog virtuelnog bajta (\textit{vByte}) \cite{zhang2024transaction}.
+Međutim, broj i struktura ulaznih i izlaznih UTXO zapisa direktno utiču na veličinu transakcije, a samim tim i na količinu prostora koju ona zauzima u bloku. Kako je kapacitet bloka ograničen, transakcije se vrednuju prema broju iskorišćenih virtuelnih bajtova (\textit{vByte}) \cite{zhang2024transaction}.
 
-Iznos transakcione naknade se izračunava kao proizvod dužine transakcije i dinamične stope naknade po bajtu izražene u primarnoj kriptovaluti, koja varira u zavisnosti od opterećenja mreže. Ukoliko je prioritet transakcije veći, korisnik će ponuditi višu cenu po bajtu.
+Ukupna transakciona naknada izračunava se kao proizvod veličine transakcije izražene u virtuelnim bajtovima i stope naknade po virtuelnom bajtu. Navedena stopa formira se tržišno i menja se u zavisnosti od opterećenja mreže, pri čemu viša stopa naknade povećava verovatnoću da transakcija bude uključena u naredne blokove.
 
 Prilikom trošenja UTXO-a transakciona naknada se implicitno definiše kao razlika između ukupne vrednosti ulaznih i izlaznih UTXO zapisa, što se formalno može izraziti sledećom relacijom:
 $$ tx\_fee = \sum_{x \in UTXO_{in}} value(x) - \sum_{y \in UTXO_{out}} value(y)$$
@@ -310,13 +310,13 @@ Ovaj skriptni jezik omogućava sprovođenje \textbf{autorizacije} nad sredstvima
 
 Svaki UTXO sadrži pridruženu skriptu zaključavanja \eng{scriptPubKey}, kojom se definišu uslovi pod kojima taj izlaz može biti potrošen. Da bi određena transakcija validno potrošila UTXO, njen ulaz mora da obezbedi odgovarajuće podatke u okviru skripte otključavanja \eng{scriptSig}, tako da kombinacija ove dve skripte, nakon izvršavanja nad stekom, rezultuje nenultom bajt-vrednošću (najčešće 0x01), što označava uspešnu validaciju. Potrošnja UTXO zapisa smatra se nevalidnom ukoliko tokom izvršavanja dođe do prekida skripte, ukoliko stek ostane prazan ili ukoliko se na vrhu steka nalazi negativna nula (0x80), koja se u Bitkoin skriptnoj semantici tretira kao netačna vrednost.
 
+Iako Bitkoin Skript omogućava definisanje proizvoljno složenih uslova korišćenjem dostupnog skupa instrukcija, u praksi se najčešće koristi obrazac \textit{plaćanja na heš javnog ključa} \eng{Pay-to-Public-Key-Hash, P2PKH} \cite{decker2014bitcoin}. U ovom slučaju, pošiljalac prilaže digitalni potpis i odgovarajući javni ključ, dok skriptni mehanizam proverava da li heš dostavljenog javnog ključa odgovara vrednosti zaključanoj u referenciranom UTXO zapisu.
+
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1\textwidth]{chapter4_p2pkh.png}
-    \caption{TODO}
+    \caption{Prikaz validacije P2PKH skripte izvršavanjem nad stekom.}
 \end{figure}
-
-Iako Bitkoin Skript omogućava definisanje proizvoljno složenih uslova korišćenjem dostupnog skupa instrukcija, u praksi se najčešće koristi obrazac \textit{plaćanja na heš javnog ključa} \eng{Pay-to-Public-Key-Hash, P2PKH} \cite{decker2014bitcoin}. U ovom slučaju, pošiljalac prilaže digitalni potpis i odgovarajući javni ključ, dok skriptni mehanizam proverava da li heš dostavljenog javnog ključa odgovara vrednosti zaključanoj u referenciranom UTXO zapisu.
 
 \subsubsection{Pametni ugovori}
 Posmatrano iz apstraktnog ugla, svaki UTXO zapis, zbog svog jedinstvenog identifikatora i determinističkog mehanizma validacije, može se interpretirati kao instanca jednostavnog programa koji se može izvršiti tačno jednom. Ovaj program poseduje jednu implicitnu funkciju čije telo čini skripta zaključavanja \textit{scriptPubKey}, dok se ulazni parametri prosleđuju putem skripte otključavanja \textit{scriptSig}. Nakon uspešnog izvršavanja, dati UTXO prestaje da postoji i ne može biti ponovo iskorišćen, čime se obezbeđuje njegova jednokratna potrošivost.

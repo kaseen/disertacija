@@ -631,9 +631,9 @@ Kao što je očekivano, standard ERC-721 ostvaruje najveće troškove gasa u por
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{c|c c c}
 & 
-\textbf{\tikz{\draw[black, fill=gray!20] (0,0) rectangle (0.15,0.15);} ERC-721} &
-\textbf{\tikz{\draw[black, fill=gray!90] (0,0) rectangle (0.15,0.15);} ERC-721A} &
-\textbf{\tikz{\draw[black, fill=black!80] (0,0) rectangle (0.15,0.15);} ERC-721Psi} \\
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721] (0,0) rectangle (0.15,0.15);} ERC-721} &
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721A] (0,0) rectangle (0.15,0.15);} ERC-721A} &
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721Psi] (0,0) rectangle (0.15,0.15);} ERC-721Psi} \\
 \hline
 \textbf{1} & 54.095 & 52.104 & 59.089 \\
 \textbf{2} & 81.189 & 54.035 & 61.077 \\
@@ -676,9 +676,9 @@ Kao što je očekivano, standard ERC-721 ostvaruje najveće troškove gasa u por
     xtick style={draw=none}
 ]
 
-\addplot[fill=gray!20] coordinates {(1,54095) (2,81189) (3,108194) (5,162424) (10,297718) (20,568444)};
-\addplot[fill=gray!90] coordinates {(1,52104) (2,54035) (3,56010) (5,59827) (10,69520) (20,88819)};
-\addplot[fill=black!80]  coordinates {(1,59089) (2,61077) (3,62994) (5,66856) (10,76559) (20,95993)};
+\addplot[fill=COLOR_Erc721] coordinates {(1,54095) (2,81189) (3,108194) (5,162424) (10,297718) (20,568444)};
+\addplot[fill=COLOR_Erc721A] coordinates {(1,52104) (2,54035) (3,56010) (5,59827) (10,69520) (20,88819)};
+\addplot[fill=COLOR_Erc721Psi]  coordinates {(1,59089) (2,61077) (3,62994) (5,66856) (10,76559) (20,95993)};
 
 \end{axis}
 \end{tikzpicture}
@@ -704,9 +704,9 @@ Dalja analiza pokazuje da, analogno operaciji kreiranja, trošak prenosa opada z
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{c|c c c}
 & 
-\textbf{\tikz{\draw[black, fill=gray!20] (0,0) rectangle (0.15,0.15);} ERC-721} &
-\textbf{\tikz{\draw[black, fill=gray!90] (0,0) rectangle (0.15,0.15);} ERC-721A} &
-\textbf{\tikz{\draw[black, fill=black!80] (0,0) rectangle (0.15,0.15);} ERC-721Psi} \\
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721] (0,0) rectangle (0.15,0.15);} ERC-721} &
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721A] (0,0) rectangle (0.15,0.15);} ERC-721A} &
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721Psi] (0,0) rectangle (0.15,0.15);} ERC-721Psi} \\
 \hline
 \textbf{1} & 46.844 & 89.248 & 105.088 \\
 \textbf{2} & 46.844 & 91.488 & 105.108 \\
@@ -749,9 +749,9 @@ Dalja analiza pokazuje da, analogno operaciji kreiranja, trošak prenosa opada z
     xtick style={draw=none}
 ]
 
-\addplot[fill=gray!20] coordinates {(1,46844) (2,46844) (3,46844) (5,46844) (10,46844) (20,46844)};
-\addplot[fill=gray!90] coordinates {(1,89248) (2,91488) (3,93708) (5,98213) (10,109392) (20,131869)};
-\addplot[fill=black!80] coordinates {(1,105088) (2,105108) (3,105108) (5,105064) (10,105106) (20,105065)};
+\addplot[fill=COLOR_Erc721] coordinates {(1,46844) (2,46844) (3,46844) (5,46844) (10,46844) (20,46844)};
+\addplot[fill=COLOR_Erc721A] coordinates {(1,89248) (2,91488) (3,93708) (5,98213) (10,109392) (20,131869)};
+\addplot[fill=COLOR_Erc721Psi] coordinates {(1,105088) (2,105108) (3,105108) (5,105064) (10,105106) (20,105065)};
 
 \end{axis}
 \end{tikzpicture}
@@ -779,9 +779,9 @@ Sa druge strane, standard ERC-721A ostvaruje najveće troškove, posebno pri ve�
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{c|c c c}
 & 
-\textbf{\tikz{\draw[black, fill=gray!20] (0,0) rectangle (0.15,0.15);} ERC-721} &
-\textbf{\tikz{\draw[black, fill=gray!90] (0,0) rectangle (0.15,0.15);} ERC-721A} &
-\textbf{\tikz{\draw[black, fill=black!80] (0,0) rectangle (0.15,0.15);} ERC-721Psi} \\
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721] (0,0) rectangle (0.15,0.15);} ERC-721} &
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721A] (0,0) rectangle (0.15,0.15);} ERC-721A} &
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721Psi] (0,0) rectangle (0.15,0.15);} ERC-721Psi} \\
 \hline
 \textbf{1} & 13.873 & 65.199 & 22.006 \\
 \textbf{2} & 13.873 & 67.485 & 22.007 \\
@@ -824,9 +824,9 @@ Sa druge strane, standard ERC-721A ostvaruje najveće troškove, posebno pri ve�
     xtick style={draw=none}
 ]
 
-\addplot[fill=gray!20] coordinates {(1,13873) (2,13873) (3,13873) (5,13873) (10,13873) (20,13873)};
-\addplot[fill=gray!90] coordinates {(1,65199) (2,67485) (3,69745) (5,74209) (10,85435) (20,107822)};
-\addplot[fill=black!80] coordinates {(1,22006) (2,22007) (3,22008) (5,22006) (10,22072) (20,22050)};
+\addplot[fill=COLOR_Erc721] coordinates {(1,13873) (2,13873) (3,13873) (5,13873) (10,13873) (20,13873)};
+\addplot[fill=COLOR_Erc721A] coordinates {(1,65199) (2,67485) (3,69745) (5,74209) (10,85435) (20,107822)};
+\addplot[fill=COLOR_Erc721Psi] coordinates {(1,22006) (2,22007) (3,22008) (5,22006) (10,22072) (20,22050)};
 
 \end{axis}
 \end{tikzpicture}
@@ -854,9 +854,9 @@ Standard ERC-721A ostvaruje najveće troškove u ovom scenariju, budući da se z
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{c|c c c}
 & 
-\textbf{\tikz{\draw[black, fill=gray!20] (0,0) rectangle (0.15,0.15);} ERC-721} &
-\textbf{\tikz{\draw[black, fill=gray!90] (0,0) rectangle (0.15,0.15);} ERC-721A} &
-\textbf{\tikz{\draw[black, fill=black!80] (0,0) rectangle (0.15,0.15);} ERC-721Psi} \\
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721] (0,0) rectangle (0.15,0.15);} ERC-721} &
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721A] (0,0) rectangle (0.15,0.15);} ERC-721A} &
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721Psi] (0,0) rectangle (0.15,0.15);} ERC-721Psi} \\
 \hline
 \textbf{1} & 13.786 & 45.770 & 22.051 \\
 \textbf{2} & 22.580 & 74.880 & 28.196 \\
@@ -907,9 +907,9 @@ Standard ERC-721A ostvaruje najveće troškove u ovom scenariju, budući da se z
     }
 ]
 
-\addplot[fill=gray!20] coordinates {(1a,13786) (2a,22580) (3a,32493) (4a,43332) (5a,54191)};
-\addplot[fill=gray!90] coordinates {(1b,45770) (2b,74880) (3b,104079) (4b,133149) (5b,162327)};
-\addplot[fill=black!80] coordinates {(1c,22051) (2c,28196) (3c,34412) (4c,40627) (5c,46773)};
+\addplot[fill=COLOR_Erc721] coordinates {(1a,13786) (2a,22580) (3a,32493) (4a,43332) (5a,54191)};
+\addplot[fill=COLOR_Erc721A] coordinates {(1b,45770) (2b,74880) (3b,104079) (4b,133149) (5b,162327)};
+\addplot[fill=COLOR_Erc721Psi] coordinates {(1c,22051) (2c,28196) (3c,34412) (4c,40627) (5c,46773)};
 
 \end{axis}
 \end{tikzpicture}
@@ -931,8 +931,8 @@ Kao što je pokazano u formulama \ref{eq:erc721a} i \ref{eq:erc721psi}, prednost
 \renewcommand{\arraystretch}{1.7}
 \begin{tabular}{c c|c c}
 &  & 
-\textbf{\tikz{\draw[black, fill=gray!20] (0,0) rectangle (0.15,0.15);} ERC-721} &
-\textbf{\tikz{\draw[black, fill=gray!90] (0,0) rectangle (0.15,0.15);} ERC-721A}\\
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721A] (0,0) rectangle (0.15,0.15);} ERC-721A} &
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721Psi] (0,0) rectangle (0.15,0.15);} ERC-721Psi}\\
 \hline
 
 \multirow{3}{*}{\rotatebox{90}{\textbf{Kreiranje}}}
@@ -1010,12 +1010,12 @@ Kao što je pokazano u formulama \ref{eq:erc721a} i \ref{eq:erc721psi}, prednost
     },
 ]
 
-\addplot[fill=gray!20] coordinates {
+\addplot[fill=COLOR_Erc721A] coordinates {
     (m100,243154) (m1000,1980198) (m10000,19350153)
     (t100,311083) (t1000,2328005) (t10000,22476835)
     (b100,287103) (b1000,2304024) (b10000,22452766)
 };
-\addplot[fill=gray!90] coordinates {
+\addplot[fill=COLOR_Erc721Psi] coordinates {
     (m100,251272) (m1000,1998171) (m10000,19467128)
     (t100,105108) (t1000,130779) (t10000,194654)
     (b100,22050) (b1000,46000) (b10000,128628)
@@ -1043,15 +1043,15 @@ Kao što se može očekivati, standard ERC-721Psi ostvaruje najveći trošak pos
 
 \small
 \renewcommand{\arraystretch}{1.4}
-\begin{tabular}{c|c@{\hspace{0cm}}c}
+\begin{tabular}{l|c@{\hspace{0cm}}c}
  & \textbf{\parbox{2.5cm}{\centering optimizator \\
 isključen}} & 
 \textbf{\parbox{2.5cm}{\centering optimizator \\
 uključen}} \\
 \hline
-\textbf{\tikz{\draw[black, fill=gray!20] (0,0) rectangle (0.15,0.15);} ERC-721} & 1.461.405 & 814.973 \\
-\textbf{\tikz{\draw[black, fill=gray!90] (0,0) rectangle (0.15,0.15);} ERC-721A} & 1.346.155 & 783.314 \\
-\textbf{\tikz{\draw[black, fill=black!80] (0,0) rectangle (0.15,0.15);} ERC-721Psi} & 2.308.873 & 1.331.204 \\
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721] (0,0) rectangle (0.15,0.15);} ERC-721} & 1.461.405 & 814.973 \\
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721A] (0,0) rectangle (0.15,0.15);} ERC-721A} & 1.346.155 & 783.314 \\
+\textbf{\tikz{\draw[black, fill=COLOR_Erc721Psi] (0,0) rectangle (0.15,0.15);} ERC-721Psi} & 2.308.873 & 1.331.204 \\
 \end{tabular}
 \end{minipage}
 \hfill
@@ -1091,9 +1091,9 @@ uključen}} \\
     enlarge x limits=0.2
 ]
 
-\addplot[fill=gray!20] coordinates {(1,1461405) (2,814973)};
-\addplot[fill=gray!90] coordinates {(1A,1346155) (2A,783314)};
-\addplot[fill=black!80] coordinates {(1Psi,2308873) (2Psi,1331204)};
+\addplot[fill=COLOR_Erc721] coordinates {(1,1461405) (2,814973)};
+\addplot[fill=COLOR_Erc721A] coordinates {(1A,1346155) (2A,783314)};
+\addplot[fill=COLOR_Erc721Psi] coordinates {(1Psi,2308873) (2Psi,1331204)};
 
 \end{axis}
 \end{tikzpicture}
