@@ -454,10 +454,11 @@ Sigurnost predstavlja fundamentalno svojstvo blokčejn sistema, budući da obezb
 
 Usled asinhrone prirode distribuiranih mreža, blokovi se ne propagiraju istovremeno ka svim čvorovima, što može dovesti do privremenog postojanja konkurentnih verzija lanca, odnosno do pojave račvanja.
 
-%TODO
-%Prva praktična implementacija konsenzusa u prisustvu takozvanih ,,vizantijskih'' čvorova  dala je ideju diskretnih rundama glasanja, gde se u svakoj rundi bira glavni čvor. Glavni čvor inicijalno predlaže vrednost, dok ostali učesnici proveravaju predlog, razmenjuju međurezultate i ažuriraju sopstvene odluke. Ukoliko dovoljan broj učesnika potvrdi predloženu vrednost kroz definisane faze protokola, ona se smatra prihvaćenom. U slučaju nepostojanja jasne većine, proces se može dalje koordinisati preko glavnog čvora. Ove iteracije se ponavljaju sve dok se ne postigne saglasnost među svim ispravnim čvorovima. Takav kombinovani pristup omogućava sistemu da očuva konsenzus čak i u prisustvu čvorova koji pokušavaju da sabotiraju proces.
+Blokčejn sistemi zasnovani na BFT konsenzus mehanizmima postižu saglasnost kroz razmenu poruka i glasanje između učesnika mreže. U većini implementacija proces konsenzusa organizovan je kroz više uzastopnih faza ili rundi, pri čemu jedan od čvorova privremeno preuzima ulogu glavnog čvora i predlaže narednu vrednost ili blok \cite{buchman2016tendermint}. Ostali učesnici zatim proveravaju predlog, razmenjuju poruke i glasaju o njegovom prihvatanju u skladu sa pravilima konkretnog protokola.
 
-BFT blokčejn sistemi koriste višefazne konsenzus protokole zasnovane na eksplicitnoj razmeni poruka i glasanju, koji tipično obuhvataju faze predloga bloka \eng{propose}, glasanja o njegovoj ispravnosti \eng{prevote} i konačnog potvrđivanja \eng{precommit}, čime se obezbeđuje da svi ispravni čvorovi usaglase identičnu verziju stanja sistema. Ovakav pristup omogućava determinističku finalnost, zbog čega se BFT sistemi smatraju izuzetno sigurnim.
+Ukoliko se tokom izvršavanja protokola postigne potreban kvorum glasova, predložena vrednost smatra se prihvaćenom. U suprotnom, pokreće se procedura promene pogleda \eng{view change} ili nova runda glasanja, nakon čega se proces konsenzusa nastavlja sa novim predlogom ili novim glavnim čvorom. Na taj način sistem može da očuva saglasnost čak i u prisustvu zlonamernih ili neispravnih učesnika.
+
+Ovakav pristup obezbeđuje determinističku finalnost, zbog čega BFT sistemi pružaju visok nivo bezbednosti i konzistentnosti stanja. Dodatno, radi prilagođavanja blokčejn okruženju i ostvarivanja boljih performansi, razvijene su modernije varijante BFT protokola \cite{alqahtani2021bottlenecks}.
 
 Nasuprot tome, Nakamoto konsenzus dozvoljava privremeno postojanje konkurentnih verzija lanca, koje same po sebi ne predstavljaju narušavanje sigurnosti, budući da protokol garantuje njihovo naknadno razrešenje i konvergenciju ka jedinstvenoj globalnoj istoriji transakcija. Međutim, ukoliko napadač raspolaže dovoljnim udelom resursa relevantnih za proces konsenzusa, može proizvesti alternativnu istoriju transakcija koja biva prihvaćena kao validna od većine čvorova. Time postaje moguće izvršiti reorganizaciju lanca, poništiti prethodno potvrđene transakcije, ostvariti dvostruku potrošnju i narušiti neizmenljivost evidencije, čime se sigurnost sistema direktno kompromituje.
 
@@ -466,15 +467,14 @@ Iz navedenog sledi da sigurnost blokčejn sistema zavisi od sposobnosti konsenzu
 U tom kontekstu, stopa račvanja lanca $F$ iako ne predstavlja potpunu meru sigurnosti često se koristi kao indikativna metrika stabilnosti konsenzusa, pri čemu se u pojedinim radovima \cite{nakai2023blockchain} njen inverz koristi kao aproksimativna mera sigurnosti sistema:
 $$ Sigurnost = \frac{1}{F} $$
 
-% TODO MAKRO METRIKA
 \subsection{Skalabilnost blokčejn sistema}
-U skladu sa Definicijom 2.6, skalabilnost blokčejn sistema odnosi se na sposobnost mreže da, uz povećanje raspoloživih resursa, ostvari porast efektivnog kapaciteta obrade transakcija, pri čemu se istovremeno očuvaju prihvatljive performansne karakteristike i bezbednosna svojstva sistema.
+U skladu sa Definicijom \ref{def:skalabilnost}, skalabilnost blokčejn sistema odnosi se na sposobnost mreže da, uz povećanje raspoloživih resursa, ostvari porast efektivnog kapaciteta obrade transakcija, pri čemu se istovremeno očuvaju prihvatljive performansne karakteristike i bezbednosna svojstva sistema.
 
 Uprkos intenzivnom razvoju ove tehnologije, skalabilnost i dalje predstavlja jedno od ključnih otvorenih istraživačkih pitanja, budući da se upravo ograničenja u pogledu kapaciteta i performansi često identifikuju kao glavna prepreka širem usvajanju blokčejn tehnologije u savremenim informacionim sistemima. Sistematična analiza izazova skalabilnosti u blokčejn mrežama \cite{khan2021systematic} ukazuje da na skalabilnost utiče skup međuzavisnih faktora, uključujući propusnost transakcija, broj čvorova u mreži, veličinu distribuirane evidencije, veličinu bloka, troškove i kašnjenja komunikacije između čvorova, vreme finalizacije transakcija, kao i trošak izvršavanja transakcija.
 
 Navedeni faktori su snažno međusobno povezani i u velikoj meri \textit{određeni svojstvima primenjenog konsenzusnog mehanizma}, budući da upravo konsenzus definiše ključne protokolske parametre, kao što su veličina bloka i vremenski interval između uzastopnih blokova. Savremeni konsenzusni mehanizmi, u svom osnovnom obliku, još uvek ne uspevaju da obezbede nivo propusnosti i latencije neophodan za širok spektar industrijskih primena, pri čemu se ograničenje dodatno izražava činjenicom da se efektivna vrednost TPS ne povećava sa rastom broja čvorova.
 
-Propusnost transakcija se najčešće izdvaja kao centralna metrika u analizi skalabilnosti, budući da kvantitativno odražava sposobnost sistema da obradi zahteve u jedinici vremena. Iako propusnost ne predstavlja samu skalabilnost, već njenu operativnu meru, ona se u praksi najčešće koristi kao njen neposredni pokazatelj.
+Propusnost transakcija se najčešće izdvaja kao centralna metrika u analizi skalabilnosti blokčejn sistema, budući da kvantitativno odražava sposobnost sistema da obradi zahteve u jedinici vremena. Iako propusnost ne predstavlja samu skalabilnost, već njenu operativnu meru, ona se u praksi najčešće koristi kao njen neposredni pokazatelj.
 $$ Skalabilnost = \frac{n}{T} $$
 
 U savremenim javnim blokčejn sistemima osnovni sloj (L1) projektovan je sa primarnim ciljem očuvanja visokog stepena decentralizacije i bezbednosti. Ovaj sloj obezbeđuje autoritativnu verziju globalnog stanja sistema i predstavlja krajnju instancu verifikacije i konsenzusne finalnosti.
@@ -482,78 +482,3 @@ U savremenim javnim blokčejn sistemima osnovni sloj (L1) projektovan je sa prim
 Paralelno sa tim, razvijaju se zasebni blokčejn sistemi koji predstavljaju više slojeve (L2), a koji funkcionišu izvan osnovnog lanca i imaju za cilj povećanje efektivne propusnosti sistema \cite{sguanci2021layer}. Ovi sistemi često primenjuju različite modele izvršavanja i konsenzusa u odnosu na osnovni sloj, te su u praksi često centralizovaniji. Njihova primarna uloga ogleda se u obradi transakcija i privremenom održavanju stanja, dok se agregirani rezultati periodično zapisuju na osnovni sloj, gde se obezbeđuje njihova kriptografska verifikacija i konačna sigurnost.
 
 Na ovaj način se postiže povećanje skalabilnosti sistema, budući da se osnovni sloj rasterećuje od neposredne obrade svih transakcija, dok se istovremeno zadržavaju njegova bezbednosna i decentralizovana svojstva. Slojevita arhitektura omogućava paralelizaciju obrade, smanjenje komunikacionog opterećenja i povećanje efektivne propusnosti bez narušavanja sigurnosnog modela osnovnog lanca.
-
-\section{Distribuirana arhitektura IPFS mreže}
-Iako blokčejn sistemi omogućavaju pouzdano izvršavanje poslovne logike i verifikaciju stanja u distribuiranom okruženju, njihova arhitektura nije pogodna za trajno skladištenje podataka zbog ograničenja povezanih sa skalabilnošću i visokim troškovima, pa se izbegava direktno čuvanje velikih datoteka (npr. JPG, PNG, MP3, PDF) unutar samog blokčejna.
-
-Zbog toga se u savremenim distribuiranim aplikacijama blokčejn često kombinuje sa spoljašnjim sistemima za skladištenje podataka, pri čemu se ostvaruje razdvajanje odgovornosti između sloja za verifikaciju i sloja za čuvanje sadržaja \cite{steichen2018blockchain}.
-
-Međutim, kako se većina savremenih web aplikacija i internet servisa oslanja na centralizovanu infrastrukturu, sadržaj se skladišti i distribuira sa serverskih sistema pod upravom velikih korporativnih provajdera. U takvom modelu, dostupnost podataka direktno zavisi od operativnog stanja centralnih servera, pri čemu njihov prekid rada dovodi do potpunog gubitka pristupa sadržaju. Centralizovana arhitektura istovremeno omogućava jednostavno sprovođenje kontrole i filtriranja sadržaja, čime se olakšava cenzura i ograničavanje pristupa.
-
-Ipak, ključna prednost centralizovanih sistema ogleda se u visokom stepenu optimizacije performansi. Isporuka statičkog i multimedijalnog sadržaja realizuje se uz minimalno kašnjenje i u visokom kvalitetu, zahvaljujući infrastrukturi zasnovanoj na lokacijskom adresiranju, kako je objašnjeno u Odeljku \ref{section:location-based}. Takav pristup, međutim, podrazumeva da operater infrastrukture zadržava potpunu kontrolu nad brzinom isporuke sadržaja.
-
-Međuplanetarni fajl sistem \eng{InterPlanetary File System, IPFS} \cite{benet2014ipfs} predstavlja distribuirani sistem zasnovan na mreži ravnopravnih čvorova, namenjen skladištenju i razmeni podataka bez centralne tačke upravljanja. U kontekstu sistema e-trgovine zasnovanih na blokčejnu, upotreba IPFS-a nije neophodna, ali predstavlja značajno unapređenje u pogledu distribuiranosti i efikasnosti skladištenja podataka, čime se omogućava izgradnja potpuno decentralizovanih platformi.
-
-Podrazumevani način objavljivanja i pribavljanja sadržaja u IPFS mreži podrazumeva da korisnik lokalno pokrene IPFS servis u pozadini \eng{daemon}, koji funkcioniše kao \textbf{koordinacioni} čvor u procesu razmene podataka. Ovaj čvor uspostavlja izlazne \eng{outbound} konekcije ka drugim čvorovima u mreži, dok istovremeno može prihvatati dolazne \eng{inbound} konekcije. Alternativno, korisnik može koristiti spoljne servise koji omogućavaju pristup IPFS mreži bez pokretanja lokalnog čvora, o čemu će biti reči nakon objašnjenja osnovnih principa rada sistema u narednim pododeljcima.
-
-\subsection{Strukturiranje i adresiranje sadržaja}
-Prilikom postavljanja fajla na IPFS mrežu, sadržaj fajla se deli na manje blokove veličine 256KB-1MB. Dobijeni blokovi se zatim organizuju u strukturu podataka tipa \textit{Merkle Directed Acyclic Graph (Merkle DAG)} \cite{sanjuan2020merkle}, gde listovi grafa predstavljaju sirove blokove podataka koji sadrže isključivo segmente originalnog binarnog sadržaja. Koren grafa predstavlja čvor koji enkapsulira metapodatke o fajlu (npr. tip objekta i ukupnu veličinu), zajedno sa referencama ka podređenim čvorovima. Ukoliko broj blokova prevazilazi kapacitet korenog čvora, referenciranje se hijerarhijski organizuje kroz dodatne međučvorove, čime se formira balansirani Merkle DAG.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.7\textwidth]{chapter4_merkledag.png}
-    \caption{TODO}
-\end{figure}
-
-Jedinstveni identifikator sadržaja \eng{Content Identifier, CID} je nepromenljiv i formira se kombinovanjem sledećih informacija:
-\begin{enumerate}
-\item Verzija identifikatora, radi obezbeđivanja kompatibilnosti unapred.
-\item Višekodek \eng{multicodec}, koji označava format i tip kodiranja sadržaja.
-\item Višeheš \eng{multihash}, koji sadrži informaciju o korišćenoj heš funkciji, dužini heš vrednosti i samoj heš vrednosti korenog čvora grafa.
-\item Višebazno \eng{multibase} enkodiranje, koje se primenjuje samo prilikom prikaza CID-a u obliku tekstualne niske.
-\end{enumerate}
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.9\textwidth]{chapter4_cid.png}
-    %\caption{TODO}
-\end{figure}
-
-Važno je napomenuti da identični fajlovi mogu imati različite CID identifikatore ukoliko su generisani korišćenjem različitih parametara kodiranja, kao što su drugačija verzija identifikatora, drugačiji tip formata ili drugačija heš funkcija, a ako se koriste isti parametri, tada isti sadržaj uvek rezultuje istim identifikatorom. Ukoliko više korisnika u mreži dodaje isti fajl, generisaće se isti CID, što omogućava ponovnu upotrebu već postojećih blokova podataka, tj. implicitnu deduplikaciju sadržaja na nivou blokova.
-
-Dodatno, sadržajno adresiranje omogućava kriptografsku proveru integriteta podataka. Pošto CID uključuje heš vrednost korenog čvora strukture podataka, svaka promena u sadržaju rezultuje drugačijom heš vrednošću, a samim tim i drugačijim identifikatorom. Na taj način korisnik može lokalno proveriti da li preuzeti sadržaj odgovara očekivanom identifikatoru.
-
-Međutim, u mnogim praktičnim scenarijima javlja se potreba za ažuriranjem sadržaja, na primer u slučaju web stranica hostovanih na IPFS-u. Budući da je CID nepromenljiv identifikator koji direktno zavisi od sadržaja podataka, svaka izmena fajla rezultuje generisanjem novog CID-a. Zbog toga održavanje referenci na najnoviju verziju sadržaja može postati nepraktično.
-
-Radi rešavanja ovog problema koristi se međuplanetarni sistem imena \eng{InterPlanetary Name System, IPNS}, koji predstavlja distribuirani sistem imenovanja zasnovan na kriptografskim ključevima. U okviru ovog sistema identitet prostora \textit{pokazivača} definiše se parom javnog i privatnog ključa, pri čemu javni ključ određuje jedinstveni prostor imena u kojem je moguće ažurirati promenljive reference ka nepromenljivim CID identifikatorima.
-
-Ažuriranje fajla u okviru IPNS zapisa zapravo predstavlja ažuriranje reference datog imena tako da pokazuje na željeni CID, pri čemu se autentičnost ažuriranja obezbeđuje privatnim ključem odgovarajućeg identiteta. Na taj način IPNS omogućava postojanje stabilnih i promenljivih identifikatora koji mogu referencirati različite verzije sadržaja tokom vremena.
-
-Važno je napomenuti da \textbf{replikacija} sadržaja objavljenog u IPFS mreži nije automatski zagarantovana. Podaci ostaju dostupni u mreži sve dok ih najmanje jedan čvor poseduje i aktivno deli sa ostalim učesnicima. U najjednostavnijem slučaju to je čvor korisnika koji je prvobitno objavio sadržaj. Ukoliko korisnik ne želi da održava sopstveni čvor stalno aktivnim, dugoročna dostupnost sadržaja može se obezbediti korišćenjem usluge kačenja \eng{pinning service}, koja trajno čuva određene blokove podataka na infrastrukturi treće strane. Ovakve usluge se u praksi najčešće komercijalno naplaćuju.
-
-\subsection{Distribuirano pribavljanje sadržaja}
-Na osnovu CID-a moguće je deterministički rekonstruisati strukturu grafa i time pribaviti originalni fajl, pod uslovom da su svi njegovi blokovi dostupni u mreži. Na ovaj način IPFS zamenjuje lokacijski zasnovano adresiranje sadržajnim adresiranjem \eng{content-based addressing}. Korisnik ne zahteva podatak sa određene fizičke ili mrežne lokacije, već specificira kriptografski identifikator željenog sadržaja. Time se konceptualni fokus pomera sa pitanja ,,gde se podatak nalazi'' na pitanje ,,koji podatak je potreban'', čime se povećava otpornost sistema na cenzuru i prekide rada pojedinačnih čvorova.
-
-Razmena blokova između povezanih čvorova realizuje se korišćenjem protokola \textit{Bitswap}, koji predstavlja mehanizam za distribuiranu razmenu blokova između ravnopravnih čvorova. Prilikom zahteva za određenim sadržajem lokalni čvor formira listu željenih blokova \eng{want-list}, koja sadrži identifikatore potrebnih blokova. Ova lista se \textbf{propagira} putem poruka sa svim trenutno povezanim čvorovima, dok povezani čvorovi razmenjuju sopstvene liste želja.
-
-Proces pribavljanja sadržaja započinje dodavanjem CID identifikatora korenog čvora traženog sadržaja u listu željenih blokova. Nakon pribavljanja ovog bloka iz njegove strukture izdvajaju se reference na podređene blokove, koji se zatim dodaju u listu željenih blokova. Na taj način se postupno otkriva kompletna struktura grafa i proširuje skup blokova koje je potrebno pribaviti.
-
-Preuzimanje blokova realizuje se paralelno sa više čvorova ukoliko je sadržaj dostupan na više lokacija u mreži, čime se povećava stepen paralelizacije i efikasnost prenosa podataka.
-
-Ukoliko traženi blokovi nisu dostupni među trenutno povezanim čvorovima, IPFS koristi distribuiranu heš tabelu zasnovanu na protokolu \textit{Kademlia DHT} \cite{maymounkov2002kademlia} radi pronalaženja čvorova koji mogu obezbediti traženi sadržaj. Pretraga u ovoj strukturi zasniva se na iterativnom pronalaženju čvorova čiji identifikatori imaju manju udaljenost u odnosu na traženi ključ. Ovakav pristup omogućava pronalaženje odgovarajućih čvorova uz logaritamsku složenost u odnosu na veličinu mreže.
-
-Nakon pronalaženja čvorova koji mogu obezbediti tražene blokove, lokalni čvor uspostavlja izlaznu konekciju ka njima, nakon čega se razmena blokova nastavlja korišćenjem protokola \textit{Bitswap}. Proces se ponavlja sve dok svi potrebni blokovi ne budu pribavljeni, čime se omogućava rekonstrukcija originalnog fajla.
-
-Blokovi podataka koji se preuzmu tokom procesa pribavljanja sadržaja privremeno se skladište na lokalnom čvoru, čime taj čvor može postati dodatni izvor podataka za druge učesnike u mreži. Na taj način IPFS mreža prirodno ostvaruje efekat distribuirane replikacije sadržaja kroz proces razmene blokova između ravnopravnih čvorova. Međutim, blokovi koji nisu eksplicitno zakačeni smatraju se privremenim i mogu biti uklonjeni tokom procesa prikupljanja otpatka \eng{garbage collection}. Ovaj proces periodično oslobađa prostor u lokalnom skladištu uklanjanjem blokova koji nisu dugo referencirani.
-
-Ukoliko korisnik ne želi da pokreće lokalni IPFS čvor, pristup sadržaju moguće je ostvariti putem IPFS pristupnika \eng{gateway}. Pristupnik predstavlja servis koji izlaže standardizovani HTTP interfejs za pribavljanje sadržaja adresiranog putem CID identifikatora. Na ovaj način IPFS sadržaj postaje dostupan kroz konvencionalni web protokol, što omogućava pristup podacima i korisnicima koji ne učestvuju direktno u mreži ravnopravnih korisnika.
-
-Pristupnik prima HTTP zahtev koji sadrži CID identifikator u URL adresi, nakon čega pokušava da pronađe odgovarajući sadržaj. Ukoliko pristupnik već poseduje tražene blokove u lokalnom skladištu, sadržaj se odmah vraća klijentu. U suprotnom, ponašanje zavisi od konfiguracije pristupnika:
-\begin{enumerate}
-\item Rekurzivni pristupnik pokušava da pribavi traženi sadržaj iz IPFS mreže pre nego što ga prosledi korisniku.
-\item Nerekurzivni pristupnik vraća poruku o nedostupnosti podataka.
-\end{enumerate}
-
-Oslanjanje na pristupnike trećih strana uvodi određene kompromise u pogledu decentralizacije sistema. Budući da pristupnike obično održava jedan administrativni entitet, oni mogu predstavljati tačke centralizovane kontrole nad pristupom sadržaju. Operateri pristupnika imaju tehničku mogućnost da evidentiraju zahteve korisnika i sadržaj koji se pribavlja, što može imati implikacije na privatnost. Pored toga, veliki broj korisnika može koristiti isti javni pristupnik, što potencijalno dovodi do zagušenja i smanjenja propusnosti.
-
-Kao potencijalno rešenje razvijaju se tzv. pristupnici bez poverenja \eng{trustless gateways}, koji omogućavaju verifikaciju sadržaja direktno na strani klijenta. U tom slučaju pregledač može kriptografski proveriti da li preuzeti sadržaj odgovara očekivanom CID identifikatoru, čime se smanjuje potreba za poverenjem u operatera pristupnika. Ipak, podrška za ovakav način rada još uvek nije široko implementirana u savremenim web pregledačima.

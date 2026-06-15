@@ -1,0 +1,117 @@
+\chapter{Diskusija}
+U prethodnom poglavlju predstavljen je koncept dizajna proizvoda ili usluga sa jedinstvenim identifikatorom u okviru sistema elektronske trgovine, zasnovan na primeni NFT standarda na Eterijum blokčejnu kao najzastupljenijoj platformi za razvoj decentralizovanih aplikacija. Poseban akcenat stavljen je na optimizaciju operacija nad skladištem podataka, pri čemu se model mape vlasništva NFT standarda proširuje enkodiranjem dodatnih informacija o proizvodima ili uslugama u preostali prostor skladišne jedinice, sa ciljem minimizacije računarskog napora potrebnog za izvršavanje korisničkih transakcija.
+
+S obzirom na to da Eterijum predstavlja javnu blokčejn mrežu sa visokim nivoom decentralizacije, koja obezbeđuje povećanu otpornost sistema i distribuiranu kontrolu, neminovno se javlja problem transakcionih troškova za krajnje korisnike. Ovaj problem je u radu detaljno analiziran, pri čemu su predložene odgovarajuće metode optimizacije sa ciljem smanjenja troškova transakcionih naknada, čime se direktno unapređuje korisničko iskustvo.
+
+U ovom poglavlju razmatraju se mogućnosti za dalje unapređenje i proširenje funkcionalnosti pametnih ugovora u okviru NFT-zasnovane platforme za elektronsku trgovinu. Diskusija obuhvata dodatne funkcionalnosti NFT standarda koje nisu od primarnog značaja, kao i primenu postojećih, testiranih i optimizovanih modula. Takođe se analiziraju obrasci modularnog dizajna pametnih ugovora u kontekstu razvoja kompleksnih decentralizovanih aplikacija koje treba da budu dugoročno održive, kao i integracija sa spoljnim izvorima podataka, imajući u vidu da blokčejn sistemi inherentno funkcionišu kao zatvoreni sistemi.
+
+Na kraju se analiziraju ograničenja predložene metodologije obrađene u prethodnom poglavlju, kao i dodatna razmatranja proistekla iz ove diskusije.
+
+\section{Proširene funkcionalnosti NFT standarda u sistemima e-trgovine}
+NFT standardi takođe predviđaju mehanizam tzv. zakačaljki \eng{hooks}, odnosno funkcija koje se pozivaju pre i nakon svake osnovne operacije, kroz interne funkcije \textit{\_beforeTokenTransfer} i \textit{\_afterTokenTransfer}. Ove funkcije su podrazumevano prazne, ali omogućavaju proširenje osnovnog ponašanja bez izmene standardne logike. Na primer, pre izvršenja prenosa može se implementirati dodatna provera autorizacije, kojom se potvrđuje da pošiljalac ili primalac pripada unapred definisanoj grupi korisnika.
+
+Pored osnovnih operacija kreiranja, prenosa i uništavanja, NFT standardi predviđaju i funkciju odobravanja \eng{approve}, koja omogućava vlasniku NFT-a da ovlasti drugu adresu da prenese konkretan token u njegovo ime. Time se uvodi mehanizam imenovanja prava raspolaganja, bez prenosa vlasništva. Zbog prilagodljive prirode pametnih ugovora, ova funkcionalnost može se proširiti ili modifikovati, na primer tako da ovlašćena adresa može izvršiti i operaciju uništavanja tokena u ime vlasnika, u skladu sa poslovnom logikom platforme.
+
+NFT aplikacije se oslanjaju na mehanizam metapodataka, pri čemu se dodatne informacije o tokenu čuvaju na eksternim servisima u JSON formatu, pri čemu ti podaci nisu direktno dostupni unutar same blokčejn mreže. Pristup tim podacima za određeni identifikator ostvaruje se putem funkcije \textit{tokenURI(uint256 tokenId)}, koja vraća referencu (najčešće URL) ka resursu dostupnom van mreže \cite{salem2025hidden}. U zavisnosti od arhitekture sistema, servisi za skladištenje mogu biti centralizovani (npr. baze podataka) ili decentralizovani (npr. IPFS).
+
+Budući da se transakcione naknade plaćaju u primarnoj kriptovaluti blokčejn mreže, korisnik se može naći u situaciji da poseduje NFT, ali nema dovoljno sredstava za pokrivanje troškova izvršavanja transakcije. Ovaj problem moguće je ublažiti fleksibilnijim modelom interakcije primenom ekstenzije za \textit{dozvolu} \cite{NFTPERMITeip4494} \eng{permit}, koja je još u fazi standardizacije. Navedeni mehanizam omogućava vlasniku tokena da van mreže potpiše kriptografsku poruku kojom odobrava određenu operaciju, prosledi je drugoj strani, koja na osnovu tog potpisa može izvršiti odobrenu operaciju u njegovo ime i snositi troškove transakcione naknade.
+
+Dodatno, ukoliko je NFT tržišno prenosiv, moguće je u sam pametni ugovor ugraditi mehanizam kojim se pri svakoj sekundarnoj prodaji ili pretprodaji automatski alocira određeni procenat sredstava ka unapred definisanoj adresi \cite{MARKETeip2981}. Ovakav pristup omogućava implementaciju modela trajnih autorskih naknada \eng{royalties}, čime se obezbeđuje kontinuirano finansiranje izdavaoca proizvoda. Time se finansijska logika distribucije prihoda ugrađuje direktno u izvršni kod pametnog ugovora, čime se eliminiše potreba za posrednicima i povećava transparentnost obračuna.
+
+Za razliku od prethodno opisanih proširenja koja su specifično vezana za NFT standard, u praksi se široko primenjuju i generičke ekstenzije pametnih ugovora koje unapređuju bezbednost, kontrolu pristupa i upravljanje životnim ciklusom sistema. Ove komponente nisu ograničene na NFT logiku, već predstavljaju opšte obrasce modularnog dizajna primenljive na različite tipove pametnih ugovora. Biblioteka \textit{OpenZeppelin} obezbeđuje skup standardizovanih, bezbednosno proverenih i optimizovanih implementacija takvih ekstenzija, koje su postale industrijski standard.
+
+Najčešće korišćene ekstenzije ove vrste uključuju:
+\begin{enumerate}
+\item \textit{Pausable} - mehanizam koji omogućava privremenu obustavu izvršavanja odabranih funkcija ugovora u vanrednim okolnostima, bez trajne izmene stanja sistema.
+\item \textit{AccessControl} - model kontrole pristupa zasnovan na ulogama, kojim se precizno definišu privilegije i nadležnosti različitih uloga unutar sistema.
+\item \textit{ReentrancyGuard} - zaštitni mehanizam koji sprečava ponovni ulazak u funkciju pre završetka njenog prethodnog izvršavanja, čime se sprečavaju napadi zasnovani na rekurzivnim pozivima \cite{samreen2020reentrancy}.
+\item \textit{MultiSigner} - obrazac kolektivnog odlučivanja u kojem je za izvršavanje osetljivih operacija potrebno više nezavisnih ovlašćenih potpisa tzv. višepotpisnih novčanika, čime se smanjuje rizik centralizovanog upravljanja.
+\end{enumerate}
+
+Pored toga, moguće je delimično ili u određenim slučajevima u potpunosti ograničiti transparentnost javnih blokčejn mreža primenom potpuno homomorfnog šifrovanja \eng{fully homomorphic encryption}, koje omogućava izvršavanje operacija direktno nad šifrovanim podacima bez potrebe za njihovim dešifrovanjem \cite{fhevm}. U ovom modelu pametni ugovori primaju šifrovane ulaze, izvršavaju operacije nad njima i održavaju šifrovano stanje, bez pristupa originalnim vrednostima, koje mogu biti selektivno dekriptovane od strane ovlašćenih aktera. Tokom obrade transakcija u okviru konsenzusnog mehanizma operacije se izvršavaju nad šifrovanim vrednostima, pri čemu svi čvorovi deterministički dolaze do istog rezultata. Ovakav pristup predstavlja značajan korak ka širem usvajanju blokčejn tehnologije, iako se i dalje nalazi u fazi aktivnog razvoja.
+
+Korišćenjem ovih mehanizama pametnih ugovora, distribuirana platforma za e-trgovinu može obezbediti širok spektar funkcionalnosti, uz zadržavanje formalne konzistentnosti i sigurnosnih garancija javne blokčejn mreže gde se poslovna pravila mogu implementirati direktno na nivou ugovora.
+
+\section{Obrasci modularnog dizajna pametnih ugovora}
+U arhitekturi platforme moguće je predvideti postojanje više međusobno povezanih pametnih ugovora, pri čemu pojedini ugovori preuzimaju specifične sistemske uloge. Ugovor o registru \cite{xu2018pattern} \eng{registry contract} predstavlja pametni ugovor koji funkcioniše kao decentralizovana baza podataka, čuvajući mape između imena, identifikatora ili drugih podataka i odgovarajućih adresa pametnih ugovora. Na taj način omogućava centralizovano usmeravanje poziva ka postojećim NFT kolekcijama.
+
+Ukoliko je potrebno masovno kreiranje novih instanci kojima upravlja ugovor o registru, mogu se primeniti sledeći obrasci:
+\begin{enumerate}
+\item \textbf{Fabrički ugovor} \eng{factory contract} je pametni ugovor čija je osnovna funkcija postavljanje novih ugovora na mrežu. Njegova prednost ogleda se u mogućnosti dinamičkog kreiranja proizvoljnih instanci po potrebi, pri čemu je za postavljanje dovoljan bajtkod ugovora koji se implementira.
+
+\item \textbf{Minimalni zastupnički ugovor} \cite{CLONEeip1167} \eng{minimal proxy contract} predstavlja specifičan slučaj kada se kreiraju identične instance ugovora, poznate kao klonovi \eng{clones}. U ovom obrascu izvršna logika nalazi se u jedinstvenom implementacionom ugovoru \eng{implementation contract}, dok klonovi poseduju sopstveno skladište podataka. Izvršni kod se delegira ka implementacionom ugovoru, čija se adresa nalazi u bajtkodu klona. Budući da je izvršni deo bajtkoda minimalnog zastupničkog ugovora dugačak svega 45 bajtova, troškovi postavljanja značajno su niži u odnosu na potpuno postavljanje ugovora sa identičnom logikom.
+\end{enumerate}
+
+Iako je kod pametnih ugovora po svojoj prirodi neizmenljiv nakon njihovog postavljanja na mrežu, ovo ograničenje može se prevazići primenom nadogradivih arhitektura \cite{meisami2023comprehensive}. Uobičajeni pristup podrazumeva razdvajanje skladišne i izvršne logike kroz dva međusobno povezana ugovora:
+
+\begin{enumerate}
+\item \textbf{Zastupnički ugovor} \cite{PROXYeip1967}, koji čuva skladišne promenljive i predstavlja stabilnu tačku interakcije sa korisnicima.
+\item \textbf{Implementacioni ugovor}, koji sadrži izvršni kod i može se zameniti u procesu nadogradnje bez promene adrese zastupničkog ugovora.
+\end{enumerate}
+U zavisnosti od načina implementacije nadogradnje razlikuju se transparentni zastupnički ugovor \eng{Transparent Proxy} i univerzalni nadogradivi zastupnički ugovor \eng{Universal Upgradeable Proxy Standard, UUPS}.
+
+Kod kompleksnijih sistema mogu se primeniti dodatni obrasci:
+\begin{enumerate}
+\item U slučaju postojanja većeg broja zastupničkih ugovora, radi pojednostavljenja nadogradnje može se primeniti obrazac svetionika \eng{beacon}. U tom slučaju zastupnički ugovori u svom bajtkodu čuvaju adresu ugovora svetionika, koji centralno upravlja adresom aktuelne implementacije. Izmena implementacije na nivou ugovora svetionika automatski utiče na sve povezane zastupničke ugovore.
+
+\item Kada je potrebno modularizovati implementacioni ugovor i prevazići ograničenje maksimalne veličine bajtkoda, može se primeniti dijamantski obrazac \cite{DIAMONDeip2535} \eng{diamond pattern}. Ovaj pristup omogućava razdvajanje funkcionalnosti na više međusobno povezanih komponenti \eng{facets}, pri čemu centralni ugovor \eng{diamond} delegira pozive odgovarajućim modulima. Time se omogućava nadogradnja pojedinačnih delova sistema i fleksibilno proširenje funkcionalnosti.
+\end{enumerate}
+
+U praksi, proces nadogradnje i upravljanja implementacijama često se organizuje kroz višepotpisnih novčanika ili kroz DAO mehanizme, kako bi se smanjila centralizovana kontrola i povećala decentralizacija odluka o promenama koda, posebno u slučajevima kada promena utiče na velike korisničke baze.
+
+Ovakav arhitektonski pristup omogućava da pametni ugovori preuzmu ulogu aplikativnog sloja platforme, pri čemu korisnici, nakon autentikacije putem kriptografskih ključeva, neposredno komuniciraju sa blokčejn infrastrukturom, dok se logika sistema izvršava u determinističkom okruženju distribuirane mreže.
+
+\section{Integracija blokčejn sistema sa spoljašnjim izvorima podataka}
+Blokčejn sistem predstavlja zatvoreno determinističko okruženje u kome svaki čvor, nakon prijema novog bloka, mora izračunati identično globalno stanje sistema. Ovakav model obezbeđuje visok stepen integriteta i neizmenljivosti podataka, jer naknadna manipulacija već potvrđenim zapisima praktično nije moguća. Međutim, posledica takve arhitekture jeste \textit{odsustvo ugrađenih mehanizama za pristup informacijama van same mreže}, što značajno ograničava funkcionalni domet pametnih ugovora.
+
+Da bi se podaci javno dostupni na klasičnom internetu uveli u blokčejn sistem i učinili dostupnim pametnim ugovorima, koristi se mehanizam tzv. proročišta \cite{beniiche2020study} \eng{oracles}, koji predstavlja posrednički sloj između blokčejn sistema i spoljašnjih izvora podataka. S obzirom na to da blokčejn ne može direktno pozivati eksterne API servise, proročište tu operaciju izvršava van mreže, preuzima relevantne podatke iz eksternih izvora, obrađuje ih i potom putem transakcije upisuje rezultat u sopstveni pametni ugovor na blokčejn mreži. Ostali pametni ugovori zatim pristupaju tim podacima pozivanjem funkcija ugovora proročišta.
+
+Osnovni izazov ovakvog modela jeste obezbeđivanje poverenja i očuvanje decentralizacije. Ukoliko decentralizovani blokčejn sistem zavisi od centralizovanog proročišta, uvodi se jedinstvena tačka otkaza, što je u literaturi poznato kao \textit{problem proročišta} \eng{The Oracle Problem}. Kompromitovano proročište ili nepouzdan izvor podataka može uticati na izvršavanje svih pametnih ugovora koji se na njega oslanjaju, što potencijalno dovodi do bezbednosnih incidenata i finansijskih gubitaka \cite{arora2024secplf}.
+
+Radi prevazilaženja ovog problema razvijene su decentralizovane mreže proročišta \cite{breidenbach2021chainlink} \eng{Decentralized Oracle Networks, DON}, koje agregiraju podatke iz više nezavisnih čvorova i različitih izvora. Agregacijom i mehanizmima konsenzusa umanjuje se rizik manipulacije pojedinačnog entiteta, čime se povećavaju pouzdanost i bezbednost sistema.
+
+Pored dostavljanja eksternih podataka, decentralizovane mreže proročišta omogućavaju i druge funkcionalnosti, uključujući generisanje verifikabilne slučajnosti, automatizaciju izvršavanja pametnih ugovora, međulančanu komunikaciju, izvršavanje određenih proračuna van lanca, kao i mehanizme dokaza o rezervama. Time se značajno proširuje primenljivost blokčejn sistema u realnim poslovnim okruženjima.
+
+Mehanizmi proročišta su danas visoko razvijeni kada je reč o javno dostupnim podacima. Međutim, u savremenim primenama javlja se potreba za pouzdanim uvozom privatnih korisničkih podataka iz postojećih informacionih sistema, kao što su bankarski servisi, sistemi elektronskog identiteta, društvene mreže, servisi za elektronsku trgovinu i drugi centralizovani internet servisi.
+
+U okviru standardnog TLS protokola, nakon uspostavljanja sigurne komunikacione sesije, podaci koje klijent preuzima od servera jesu kriptografski zaštićeni tokom prenosa, ali nisu kriptografski dokazivi trećoj strani. Drugim rečima, klijent ne poseduje dokaz koji bi nezavisno potvrdio da su konkretni podaci zaista potekli od određenog servera.
+
+Nadogradnja TLS protokola, poznata kao zkTLS \cite{kireieva2024zktls}, uvodi mehanizam generisanja kriptografskog dokaza kojim se potvrđuje da su pribavljeni podaci zaista dostavljeni od strane servera koji poseduje važeći digitalni sertifikat. Ovako definisan pristup omogućava da se selektivno izdvojene informacije iz postojećih internet servisa, koji već koriste TLS infrastrukturu, pouzdano prenesu u blokčejn sistem zajedno sa kriptografskim dokazom o njihovom poreklu, bez potrebe za modifikacijom samih servisa. Na taj način ostvaruje se visok potencijal za globalno skaliranje blokčejn sistema.
+
+Ipak, bezbednosni model ostaje uslovljen pretpostavkom ispravnosti i integriteta eksternih servisa koji generišu podatke, kao i poverenjem u autoritete za sertifikate u okviru TLS infrastrukture. Stoga se sigurnost sistema delimično oslanja na spoljne entitete, što predstavlja dodatnu tačku rizika u ukupnoj arhitekturi.
+
+\section{Decentralizacija prezentacionog sloja i korisničkog pristupa}
+Do sada je razmatran dizajn poslovne logike decentralizovanih aplikacija zasnovanih na blokčejnu, sa ciljem obezbeđivanja sigurnosti, otpornosti na cenzuru i izostanka centralizovanog upravljanja. Međutim, direktna interakcija korisnika sa blokčejn mrežom u praksi nije pogodna, te se uvodi prezentacioni sloj koji posreduje između korisnika i pametnih ugovora, apstrahujući složenost direktne interakcije sa blokčejnom i upravljanja transakcijama.
+
+Ipak, da bi platforma zaista zadržala svoj decentralizovani karakter, neophodno je da korisnici zadrže kontrolu nad svojim privatnim ključevima. Ovakav pristup odgovara principu potpune decentralizacije sistema \eng{end-to-end decentralization}, uz očuvanje korisničkog suvereniteta nad kriptografskim identitetom \eng{self-custody}. Ukoliko platforma upravlja privatnim ključevima korisnika \eng{custodial model}, narušava se princip minimizacije poverenja \eng{trust minimization}, jer korisnici postaju zavisni od centralizovanog entiteta \cite{levitin2022not}.
+
+U cilju obezbeđivanja decentralizovanog pristupa pametnim ugovorima, platforme koriste različite mehanizme potpisivanja transakcija \eng{signer}, koji mogu biti realizovani u sledećim oblicima \cite{syed2025systematic}:
+\begin{enumerate}
+\item Topli novčanik \eng{hot wallet} u obliku ekstenzije pretraživača koji skladišti privatne ključeve u okviru korisničkog okruženja (npr. \textit{MetaMask, Phantom}), pri čemu se potpisivanje transakcija vrši direktno iz pretraživača,
+\item Hladni novčanik \eng{cold wallet}, odnosno hardverski uređaj koji čuva privatne ključeve izolovano od mreže (npr. \textit{Ledger, Trezor}), gde se transakcija potpisuje na samom uređaju, a zatim se potpisana transakcija prosleđuje mreži putem posredničkog kanala (npr. USB ili QR kod).
+\item Hibridni novčanik \eng{hybrid wallet} koji kombinuje karakteristike toplih i hladnih novčanika, gde se deo funkcionalnosti, poput interakcije sa aplikacijom i pripreme transakcije, izvršava u softverskom okruženju, dok se kritične operacije potpisivanja obavljaju u sigurnom, izolovanom modulu, čime se postiže balans između upotrebljivosti i bezbednosti.
+\end{enumerate}
+
+Hardverski novčanici se mogu posmatrati kao najsigurnija varijanta, budući da privatni ključevi nikada ne napuštaju namenski uređaj. Na taj način se smanjuje rizik od kompromitacije usled prisustva zlonamernog softvera na korisničkom računaru, koji bi u suprotnom mogao omogućiti neovlašćeno potpisivanje transakcija ili pristup privatnim ključevima.
+
+Iako se pametni ugovori izvršavaju na javnom blokčejnu, postojanje centralizovanog prezentacionog sloja uvodi jedinstvenu tačku otkaza i kontrole. U takvom modelu, operater prezentacionog sloja može ograničiti ili u potpunosti onemogućiti pristup aplikaciji, čime se korisnici dovode u situaciju da samostalno pronalaze alternativne načine interakcije sa pametnim ugovorima javne blokčejn mreže.
+
+Dodatno, savremeni internet u velikoj meri zavisi od centralizovanih provajdera infrastrukture, poput mreža za isporuku sadržaja. Kompanije poput \textit{Cloudflare} deluju kao posrednici između korisnika i veb servera, pružajući usluge kao što su optimizacija isporuke sadržaja, zaštita od napada i upravljanje mrežnim saobraćajem. Ovakva arhitektura, iako efikasna, uvodi sistemski rizik, jer kvar ili prekid rada jednog takvog entiteta može imati široke posledice po dostupnost velikog broja internet servisa.
+
+U praksi, incidenti u radu centralizovanih provajdera pokazali su da poremećaji ovog tipa mogu značajno uticati na dostupnost finansijskih sistema, zdravstvenih usluga i državnih servisa, što ukazuje na strukturnu ranjivost interneta kao sistema \cite{youvan2025internet}.
+
+Jedan od uzroka ovog problema leži u činjenici da se savremeni internet zasniva na lokacijski orijentisanom adresiranju. Kao alternativa, predlaže se upotreba sadržajno orijentisanih sistema, poput IPFS, gde se podaci adresiraju na osnovu njihovog sadržaja, a ne njihove lokacije. U takvom modelu, prezentacioni sloj može biti distribuiran i kriptografski verifikovan, čime se eliminiše potreba za centralizovanim posrednikom \cite{olofsson2022decentralized}.
+
+Korišćenjem decentralizovanih veb aplikacija, korisnici mogu direktno pristupati pametnim ugovorima, čime se ostvaruje vizija otvorenog i cenzuri otpornog interneta. Međutim, ovakav pristup može dovesti do povećanog latencijskog kašnjenja i degradacije korisničkog iskustva u poređenju sa centralizovanim rešenjima, usled distribuirane prirode izvršavanja i pristupa podacima.
+
+Dalje, s obzirom na to da su adrese u sistemima poput Eterijuma i IPFS-a predstavljene kao heksadecimalni nizovi ili kriptografski identifikatori, njihova upotreba je nepogodna za krajnje korisnike. Iz tog razloga razvijeni su sistemi imenovanja, među kojima se izdvaja usluga imenovanja Eterijuma \eng{Ethereum naming service, ENS} \cite{xia2021ethereum} kao decentralizovani sistem koji mapira ljudima čitljiva imena na blokčejn adrese ili lokacije sadržaja.
+
+ENS se oslanja na dva osnovna tipa pametnih ugovora za upravljanje domenima:
+\begin{enumerate}
+\item Ugovor o registru, koji održava evidenciju svih domena i definiše pravila njihovog upravljanja, uključujući vlasništvo i delegiranje poddomena.
+\item Ugovor o razrešavanju, koji omogućava mapiranje domena na odgovarajuće resurse, kao što su adrese novčanika ili lokacije decentralizovanog sadržaja.
+\end{enumerate}
+
+Proces razrešavanja ENS domena podrazumeva slanje zahteva ugovoru o registru, koji vraća adresu odgovarajućeg ugovora o razrešavanju, nakon čega se putem tog ugovora dobija konkretan resurs povezan sa datim domenom.
+
+Korišćenjem ovako definisane arhitekture omogućava se funkcionalnost prenosa kontrole nad celokupnom platformom putem jedne transakcije na blokčejnu. Time se značajno smanjuje potreba za tradicionalnim administrativnim procedurama, koje u klasičnim sistemima mogu trajati nedeljama. Ipak, praktična primena ovakvog pristupa i dalje zavisi od regulatornog okvira i pravnog priznavanja blokčejn transakcija u različitim pravnim sistemima, što predstavlja jedno od ključnih otvorenih pitanja i pravaca budućih istraživanja \cite{finck2018blockchain}.
