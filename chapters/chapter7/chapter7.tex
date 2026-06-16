@@ -1,15 +1,25 @@
-\chapter{Distribuirana arhitektura IPFS mreže}
-Iako blokčejn sistemi omogućavaju pouzdano izvršavanje poslovne logike i verifikaciju stanja u distribuiranom okruženju, njihova arhitektura nije pogodna za trajno skladištenje podataka zbog ograničenja povezanih sa skalabilnošću i visokim troškovima, pa se izbegava direktno čuvanje velikih datoteka (npr. JPG, PNG, MP3, PDF) unutar samog blokčejna.
+\chapter{Arhitektura IPFS mreže}
+Iako blokčejn sistemi omogućavaju pouzdano izvršavanje poslovne logike i verifikaciju stanja u distribuiranom okruženju, njihova arhitektura nije pogodna za trajno skladištenje podataka zbog ograničenja povezanih sa skalabilnošću i visokim troškovima. Iz tog razloga se u praksi izbegava direktno čuvanje velikih datoteka, kao što su slike, audio zapisi, video sadržaji i dokumenti, unutar samog blokčejna.
 
-Zbog toga se u savremenim distribuiranim aplikacijama blokčejn često kombinuje sa spoljašnjim sistemima za skladištenje podataka, pri čemu se ostvaruje razdvajanje odgovornosti između sloja za verifikaciju i sloja za čuvanje sadržaja \cite{steichen2018blockchain}.
+Zbog toga se u savremenim distribuiranim aplikacijama blokčejn često kombinuje sa spoljašnjim sistemima za skladištenje podataka, pri čemu se ostvaruje razdvajanje odgovornosti između sloja za verifikaciju i sloja za čuvanje sadržaja \cite{steichen2018blockchain}. Pored toga, direktna interakcija korisnika sa blokčejn mrežom u praksi nije pogodna, pa se uvodi prezentacioni sloj koji posreduje između korisnika i pametnih ugovora, apstrahujući složenost upravljanja transakcijama i komunikacije sa mrežom.
 
-Međutim, kako se većina savremenih web aplikacija i internet servisa oslanja na centralizovanu infrastrukturu, sadržaj se skladišti i distribuira sa serverskih sistema pod upravom velikih korporativnih provajdera. U takvom modelu, dostupnost podataka direktno zavisi od operativnog stanja centralnih servera, pri čemu njihov prekid rada dovodi do potpunog gubitka pristupa sadržaju. Centralizovana arhitektura istovremeno omogućava jednostavno sprovođenje kontrole i filtriranja sadržaja, čime se olakšava cenzura i ograničavanje pristupa.
+Međutim, kako se većina savremenih web aplikacija i internet servisa oslanja na centralizovanu infrastrukturu, prezentacioni sloj i sistemi za skladištenje podataka najčešće se izvršavaju na serverskim sistemima pod upravom velikih korporativnih provajdera.
 
-Ipak, ključna prednost centralizovanih sistema ogleda se u visokom stepenu optimizacije performansi. Isporuka statičkog i multimedijalnog sadržaja realizuje se uz minimalno kašnjenje i u visokom kvalitetu, zahvaljujući infrastrukturi zasnovanoj na lokacijskom adresiranju, kako je objašnjeno u Odeljku \ref{section:location-based}. Takav pristup, međutim, podrazumeva da operater infrastrukture zadržava potpunu kontrolu nad brzinom isporuke sadržaja.
+Ključna prednost centralizovanih sistema ogleda se u visokom stepenu optimizacije performansi. Isporuka statičkog i multimedijalnog sadržaja realizuje se uz minimalno kašnjenje i visok kvalitet zahvaljujući infrastrukturi zasnovanoj na lokacijskom adresiranju, kako je objašnjeno u Odeljku \ref{section:location-based}. Takav pristup omogućava veoma efikasnu distribuciju sadržaja, ali podrazumeva da operater infrastrukture zadržava potpunu kontrolu nad njegovom dostupnošću i načinom isporuke.
+
+U takvom modelu dostupnost aplikacije i sadržaja direktno zavisi od operativnog stanja centralnih servera, pri čemu njihov prekid rada može dovesti do potpunog gubitka pristupa usluzi. Istovremeno, centralizovana arhitektura omogućava jednostavno sprovođenje kontrole i filtriranja sadržaja, čime se olakšava cenzura i ograničavanje pristupa.
+
+Ovaj problem dodatno je izražen činjenicom da savremeni internet u velikoj meri zavisi od centralizovanih infrastrukturnih provajdera, poput mreža za isporuku sadržaja. Kompanije kao što je \textit{Cloudflare} posreduju između korisnika i serverskih sistema, pružajući optimizaciju isporuke sadržaja, zaštitu od napada i upravljanje mrežnim saobraćajem.
+
+Iako ovakav pristup značajno unapređuje performanse i pouzdanost servisa, istovremeno uvodi sistemski rizik, jer kvar ili prekid rada jednog takvog entiteta može uticati na dostupnost velikog broja internet servisa. Praktični incidenti pokazali su da ovakvi poremećaji mogu značajno ugroziti rad finansijskih sistema, zdravstvenih usluga i državnih servisa, što ukazuje na strukturnu ranjivost savremenog interneta \cite{youvan2025internet}.
+
+Jedan od uzroka navedenih ograničenja leži upravo u činjenici da se savremeni internet dominantno zasniva na lokacijski orijentisanom adresiranju. Kao alternativa predlažu se sadržajno orijentisani sistemi, u kojima se podaci adresiraju na osnovu njihovog sadržaja, a ne njihove fizičke lokacije. U takvom modelu prezentacioni sloj i skladištenje sadržaja mogu biti distribuirani i kriptografski verifikovani, čime se eliminiše potreba za centralizovanim posrednicima \cite{olofsson2022decentralized}.
+
+Korišćenjem decentralizovanih web aplikacija korisnici mogu direktno pristupati pametnim ugovorima i distribuiranom sadržaju, čime se ostvaruje vizija otvorenijeg i cenzuri otpornijeg interneta. Međutim, ovakav pristup često podrazumeva povećano latencijsko kašnjenje i potencijalnu degradaciju korisničkog iskustva u poređenju sa centralizovanim rešenjima, kao posledicu distribuirane prirode skladištenja, isporuke sadržaja i izvršavanja aplikacija.
 
 Međuplanetarni fajl sistem \eng{InterPlanetary File System, IPFS} \cite{benet2014ipfs} predstavlja distribuirani sistem zasnovan na mreži ravnopravnih čvorova, namenjen skladištenju i razmeni podataka bez centralne tačke upravljanja. U kontekstu sistema e-trgovine zasnovanih na blokčejnu, upotreba IPFS-a nije neophodna, ali predstavlja značajno unapređenje u pogledu distribuiranosti i efikasnosti skladištenja podataka, čime se omogućava izgradnja potpuno decentralizovanih platformi.
 
-Podrazumevani način objavljivanja i pribavljanja sadržaja u IPFS mreži podrazumeva da korisnik lokalno pokrene IPFS servis u pozadini \eng{daemon}, koji funkcioniše kao \textbf{koordinacioni} čvor u procesu razmene podataka. Ovaj čvor uspostavlja izlazne \eng{outbound} konekcije ka drugim čvorovima u mreži, dok istovremeno može prihvatati dolazne \eng{inbound} konekcije. Alternativno, korisnik može koristiti spoljne servise koji omogućavaju pristup IPFS mreži bez pokretanja lokalnog čvora, o čemu će biti reči nakon objašnjenja osnovnih principa rada sistema u narednim pododeljcima.
+Podrazumevani način objavljivanja i pribavljanja sadržaja u IPFS mreži podrazumeva da korisnik lokalno pokrene IPFS servis u pozadini \eng{daemon}, koji funkcioniše kao \textbf{koordinacioni} čvor u procesu razmene podataka. Ovaj čvor uspostavlja izlazne \eng{outbound} konekcije ka drugim čvorovima u mreži, dok istovremeno može prihvatati dolazne \eng{inbound} konekcije. Alternativno, korisnik može koristiti spoljne servise koji omogućavaju pristup IPFS mreži bez pokretanja lokalnog čvora.
 
 \section{Strukturiranje i adresiranje sadržaja}
 Prilikom postavljanja fajla na IPFS mrežu, sadržaj fajla se deli na manje blokove veličine 256KB-1MB. Dobijeni blokovi se zatim organizuju u strukturu podataka tipa \textit{Merkle Directed Acyclic Graph (Merkle DAG)} \cite{sanjuan2020merkle}, gde listovi grafa predstavljaju sirove blokove podataka koji sadrže isključivo segmente originalnog binarnog sadržaja. Koren grafa predstavlja čvor koji enkapsulira metapodatke o fajlu (npr. tip objekta i ukupnu veličinu), zajedno sa referencama ka podređenim čvorovima. Ukoliko broj blokova prevazilazi kapacitet korenog čvora, referenciranje se hijerarhijski organizuje kroz dodatne međučvorove, čime se formira balansirani Merkle DAG.
@@ -17,7 +27,7 @@ Prilikom postavljanja fajla na IPFS mrežu, sadržaj fajla se deli na manje blok
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.7\textwidth]{chapter4_merkledag.png}
-    \caption{TODO}
+    \caption{Formiranje Merkle DAG strukture iz sadržaja fajla.}
 \end{figure}
 
 Jedinstveni identifikator sadržaja \eng{Content Identifier, CID} je nepromenljiv i formira se kombinovanjem sledećih informacija:
@@ -31,7 +41,7 @@ Jedinstveni identifikator sadržaja \eng{Content Identifier, CID} je nepromenlji
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.9\textwidth]{chapter4_cid.png}
-    %\caption{TODO}
+    \caption{Komponente CID identifikatora.}
 \end{figure}
 
 Važno je napomenuti da identični fajlovi mogu imati različite CID identifikatore ukoliko su generisani korišćenjem različitih parametara kodiranja, kao što su drugačija verzija identifikatora, drugačiji tip formata ili drugačija heš funkcija, a ako se koriste isti parametri, tada isti sadržaj uvek rezultuje istim identifikatorom. Ukoliko više korisnika u mreži dodaje isti fajl, generisaće se isti CID, što omogućava ponovnu upotrebu već postojećih blokova podataka, tj. implicitnu deduplikaciju sadržaja na nivou blokova.
@@ -72,3 +82,38 @@ Pristupnik prima HTTP zahtev koji sadrži CID identifikator u URL adresi, nakon 
 Oslanjanje na pristupnike trećih strana uvodi određene kompromise u pogledu decentralizacije sistema. Budući da pristupnike obično održava jedan administrativni entitet, oni mogu predstavljati tačke centralizovane kontrole nad pristupom sadržaju. Operateri pristupnika imaju tehničku mogućnost da evidentiraju zahteve korisnika i sadržaj koji se pribavlja, što može imati implikacije na privatnost. Pored toga, veliki broj korisnika može koristiti isti javni pristupnik, što potencijalno dovodi do zagušenja i smanjenja propusnosti.
 
 Kao potencijalno rešenje razvijaju se tzv. pristupnici bez poverenja \eng{trustless gateways}, koji omogućavaju verifikaciju sadržaja direktno na strani klijenta. U tom slučaju pregledač može kriptografski proveriti da li preuzeti sadržaj odgovara očekivanom CID identifikatoru, čime se smanjuje potreba za poverenjem u operatera pristupnika. Ipak, podrška za ovakav način rada još uvek nije široko implementirana u savremenim web pregledačima.
+
+\section{Korisnički pristup decentralizovanim aplikacijama}
+Iako IPFS omogućava decentralizovano skladištenje i distribuciju sadržaja, potpuno decentralizovana aplikacija zahteva i mehanizam putem kojeg korisnici mogu bezbedno upravljati svojim identitetom i ostvarivati interakciju sa pametnim ugovorima. U tom kontekstu posebnu ulogu imaju kriptografski novčanici, koji omogućavaju čuvanje privatnih ključeva i autorizaciju transakcija bez potrebe za centralizovanim posrednikom.
+
+Da bi platforma zadržala svoj decentralizovani karakter, neophodno je da korisnici zadrže kontrolu nad sopstvenim privatnim ključevima. Ovakav pristup odgovara principu potpune decentralizacije sistema \eng{end-to-end decentralization}, pri kome se poverenje ne prenosi na centralizovane posrednike, već ostaje u rukama krajnjih korisnika.
+
+Time se istovremeno ostvaruje i princip korisničkog suvereniteta nad kriptografskim identitetom \eng{self-custody}. Ukoliko platforma upravlja privatnim ključevima korisnika \eng{custodial model}, narušava se princip minimizacije poverenja \eng{trust minimization}, jer korisnici postaju zavisni od centralizovanog entiteta \cite{levitin2022not}.
+
+U cilju obezbeđivanja decentralizovanog pristupa pametnim ugovorima, platforme koriste različite mehanizme potpisivanja transakcija \eng{signer}, koji mogu biti realizovani u sledećim oblicima \cite{syed2025systematic}:
+
+\begin{enumerate}
+\item Topli novčanik \eng{hot wallet} u obliku ekstenzije pretraživača koja skladišti privatne ključeve u okviru korisničkog okruženja (npr. \textit{MetaMask}, \textit{Phantom}), pri čemu se potpisivanje transakcija vrši direktno iz pretraživača.
+
+\item Hladni novčanik \eng{cold wallet}, odnosno hardverski uređaj koji čuva privatne ključeve izolovano od mreže (npr. \textit{Ledger}, \textit{Trezor}), gde se transakcija potpisuje na samom uređaju, a zatim se potpisana transakcija prosleđuje mreži putem posredničkog kanala (npr. USB ili QR kod).
+
+\item Hibridni novčanik \eng{hybrid wallet} koji kombinuje karakteristike toplih i hladnih novčanika, gde se deo funkcionalnosti, poput interakcije sa aplikacijom i pripreme transakcije, izvršava u softverskom okruženju, dok se kritične operacije potpisivanja obavljaju u sigurnom, izolovanom modulu, čime se postiže kompromis između upotrebljivosti i bezbednosti.
+\end{enumerate}
+
+Hardverski novčanici se mogu posmatrati kao najsigurnija varijanta, budući da privatni ključevi nikada ne napuštaju namenski uređaj. Na taj način smanjuje se rizik od kompromitacije usled prisustva zlonamernog softvera na korisničkom računaru, koji bi u suprotnom mogao omogućiti neovlašćeno potpisivanje transakcija ili pristup privatnim ključevima.
+
+Iako IPFS i blokčejn sistemi koriste kriptografske identifikatore radi obezbeđivanja integriteta i jedinstvenosti resursa, takvi identifikatori nisu pogodni za svakodnevnu upotrebu od strane krajnjih korisnika. Adrese novčanika, CID identifikatori i drugi kriptografski identifikatori predstavljeni su dugim heksadecimalni nizovima karaktera koji su podložni greškama prilikom unosa, a i nije ih lako zapamtiti. 
+
+Iz tog razloga razvijeni su sistemi imenovanja, među kojima se izdvaja usluga imenovanja Eterijuma \eng{Ethereum naming service, ENS} \cite{xia2021ethereum} kao decentralizovani sistem koji mapira ljudima čitljiva imena na blokčejn adrese ili lokacije sadržaja.
+
+ENS se oslanja na dva osnovna tipa pametnih ugovora za upravljanje domenima:
+
+\begin{enumerate}
+\item Ugovor o registru, koji održava evidenciju svih domena i definiše pravila njihovog upravljanja, uključujući vlasništvo i delegiranje poddomena.
+
+\item Ugovor o razrešavanju, koji omogućava mapiranje domena na odgovarajuće resurse, kao što su adrese novčanika ili lokacije decentralizovanog sadržaja.
+\end{enumerate}
+
+Proces razrešavanja ENS domena podrazumeva slanje zahteva ugovoru o registru, koji vraća adresu odgovarajućeg ugovora o razrešavanju, nakon čega se putem tog ugovora dobija konkretan resurs povezan sa datim domenom.
+
+Kombinacijom ENS sistema, decentralizovanog skladištenja sadržaja i pametnih ugovora moguće je uspostaviti model u kome se kontrola nad digitalnim resursima i funkcionalnostima platforme prenosi direktno putem blokčejn transakcija. Time se značajno smanjuje potreba za tradicionalnim administrativnim procedurama zasnovanim na centralizovanim registrima i posrednicima. Ipak, praktična primena ovakvog pristupa i dalje zavisi od regulatornog okvira i pravnog priznavanja blokčejn transakcija u različitim pravnim sistemima, što predstavlja jedno od značajnih otvorenih pitanja i pravaca budućih istraživanja \cite{finck2018blockchain}.

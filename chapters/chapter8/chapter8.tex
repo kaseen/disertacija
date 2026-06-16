@@ -79,39 +79,3 @@ U okviru standardnog TLS protokola, nakon uspostavljanja sigurne komunikacione s
 Nadogradnja TLS protokola, poznata kao zkTLS \cite{kireieva2024zktls}, uvodi mehanizam generisanja kriptografskog dokaza kojim se potvrđuje da su pribavljeni podaci zaista dostavljeni od strane servera koji poseduje važeći digitalni sertifikat. Ovako definisan pristup omogućava da se selektivno izdvojene informacije iz postojećih internet servisa, koji već koriste TLS infrastrukturu, pouzdano prenesu u blokčejn sistem zajedno sa kriptografskim dokazom o njihovom poreklu, bez potrebe za modifikacijom samih servisa. Na taj način ostvaruje se visok potencijal za globalno skaliranje blokčejn sistema.
 
 Ipak, bezbednosni model ostaje uslovljen pretpostavkom ispravnosti i integriteta eksternih servisa koji generišu podatke, kao i poverenjem u autoritete za sertifikate u okviru TLS infrastrukture. Stoga se sigurnost sistema delimično oslanja na spoljne entitete, što predstavlja dodatnu tačku rizika u ukupnoj arhitekturi.
-
-\section{Decentralizacija prezentacionog sloja i korisničkog pristupa}
-Do sada je razmatran dizajn poslovne logike decentralizovanih aplikacija zasnovanih na blokčejnu, sa ciljem obezbeđivanja sigurnosti, otpornosti na cenzuru i izostanka centralizovanog upravljanja. Međutim, direktna interakcija korisnika sa blokčejn mrežom u praksi nije pogodna, te se uvodi prezentacioni sloj koji posreduje između korisnika i pametnih ugovora, apstrahujući složenost direktne interakcije sa blokčejnom i upravljanja transakcijama.
-
-Ipak, da bi platforma zaista zadržala svoj decentralizovani karakter, neophodno je da korisnici zadrže kontrolu nad svojim privatnim ključevima. Ovakav pristup odgovara principu potpune decentralizacije sistema \eng{end-to-end decentralization}, uz očuvanje korisničkog suvereniteta nad kriptografskim identitetom \eng{self-custody}. Ukoliko platforma upravlja privatnim ključevima korisnika \eng{custodial model}, narušava se princip minimizacije poverenja \eng{trust minimization}, jer korisnici postaju zavisni od centralizovanog entiteta \cite{levitin2022not}.
-
-U cilju obezbeđivanja decentralizovanog pristupa pametnim ugovorima, platforme koriste različite mehanizme potpisivanja transakcija \eng{signer}, koji mogu biti realizovani u sledećim oblicima \cite{syed2025systematic}:
-\begin{enumerate}
-\item Topli novčanik \eng{hot wallet} u obliku ekstenzije pretraživača koji skladišti privatne ključeve u okviru korisničkog okruženja (npr. \textit{MetaMask, Phantom}), pri čemu se potpisivanje transakcija vrši direktno iz pretraživača,
-\item Hladni novčanik \eng{cold wallet}, odnosno hardverski uređaj koji čuva privatne ključeve izolovano od mreže (npr. \textit{Ledger, Trezor}), gde se transakcija potpisuje na samom uređaju, a zatim se potpisana transakcija prosleđuje mreži putem posredničkog kanala (npr. USB ili QR kod).
-\item Hibridni novčanik \eng{hybrid wallet} koji kombinuje karakteristike toplih i hladnih novčanika, gde se deo funkcionalnosti, poput interakcije sa aplikacijom i pripreme transakcije, izvršava u softverskom okruženju, dok se kritične operacije potpisivanja obavljaju u sigurnom, izolovanom modulu, čime se postiže balans između upotrebljivosti i bezbednosti.
-\end{enumerate}
-
-Hardverski novčanici se mogu posmatrati kao najsigurnija varijanta, budući da privatni ključevi nikada ne napuštaju namenski uređaj. Na taj način se smanjuje rizik od kompromitacije usled prisustva zlonamernog softvera na korisničkom računaru, koji bi u suprotnom mogao omogućiti neovlašćeno potpisivanje transakcija ili pristup privatnim ključevima.
-
-Iako se pametni ugovori izvršavaju na javnom blokčejnu, postojanje centralizovanog prezentacionog sloja uvodi jedinstvenu tačku otkaza i kontrole. U takvom modelu, operater prezentacionog sloja može ograničiti ili u potpunosti onemogućiti pristup aplikaciji, čime se korisnici dovode u situaciju da samostalno pronalaze alternativne načine interakcije sa pametnim ugovorima javne blokčejn mreže.
-
-Dodatno, savremeni internet u velikoj meri zavisi od centralizovanih provajdera infrastrukture, poput mreža za isporuku sadržaja. Kompanije poput \textit{Cloudflare} deluju kao posrednici između korisnika i veb servera, pružajući usluge kao što su optimizacija isporuke sadržaja, zaštita od napada i upravljanje mrežnim saobraćajem. Ovakva arhitektura, iako efikasna, uvodi sistemski rizik, jer kvar ili prekid rada jednog takvog entiteta može imati široke posledice po dostupnost velikog broja internet servisa.
-
-U praksi, incidenti u radu centralizovanih provajdera pokazali su da poremećaji ovog tipa mogu značajno uticati na dostupnost finansijskih sistema, zdravstvenih usluga i državnih servisa, što ukazuje na strukturnu ranjivost interneta kao sistema \cite{youvan2025internet}.
-
-Jedan od uzroka ovog problema leži u činjenici da se savremeni internet zasniva na lokacijski orijentisanom adresiranju. Kao alternativa, predlaže se upotreba sadržajno orijentisanih sistema, poput IPFS, gde se podaci adresiraju na osnovu njihovog sadržaja, a ne njihove lokacije. U takvom modelu, prezentacioni sloj može biti distribuiran i kriptografski verifikovan, čime se eliminiše potreba za centralizovanim posrednikom \cite{olofsson2022decentralized}.
-
-Korišćenjem decentralizovanih veb aplikacija, korisnici mogu direktno pristupati pametnim ugovorima, čime se ostvaruje vizija otvorenog i cenzuri otpornog interneta. Međutim, ovakav pristup može dovesti do povećanog latencijskog kašnjenja i degradacije korisničkog iskustva u poređenju sa centralizovanim rešenjima, usled distribuirane prirode izvršavanja i pristupa podacima.
-
-Dalje, s obzirom na to da su adrese u sistemima poput Eterijuma i IPFS-a predstavljene kao heksadecimalni nizovi ili kriptografski identifikatori, njihova upotreba je nepogodna za krajnje korisnike. Iz tog razloga razvijeni su sistemi imenovanja, među kojima se izdvaja usluga imenovanja Eterijuma \eng{Ethereum naming service, ENS} \cite{xia2021ethereum} kao decentralizovani sistem koji mapira ljudima čitljiva imena na blokčejn adrese ili lokacije sadržaja.
-
-ENS se oslanja na dva osnovna tipa pametnih ugovora za upravljanje domenima:
-\begin{enumerate}
-\item Ugovor o registru, koji održava evidenciju svih domena i definiše pravila njihovog upravljanja, uključujući vlasništvo i delegiranje poddomena.
-\item Ugovor o razrešavanju, koji omogućava mapiranje domena na odgovarajuće resurse, kao što su adrese novčanika ili lokacije decentralizovanog sadržaja.
-\end{enumerate}
-
-Proces razrešavanja ENS domena podrazumeva slanje zahteva ugovoru o registru, koji vraća adresu odgovarajućeg ugovora o razrešavanju, nakon čega se putem tog ugovora dobija konkretan resurs povezan sa datim domenom.
-
-Korišćenjem ovako definisane arhitekture omogućava se funkcionalnost prenosa kontrole nad celokupnom platformom putem jedne transakcije na blokčejnu. Time se značajno smanjuje potreba za tradicionalnim administrativnim procedurama, koje u klasičnim sistemima mogu trajati nedeljama. Ipak, praktična primena ovakvog pristupa i dalje zavisi od regulatornog okvira i pravnog priznavanja blokčejn transakcija u različitim pravnim sistemima, što predstavlja jedno od ključnih otvorenih pitanja i pravaca budućih istraživanja \cite{finck2018blockchain}.
