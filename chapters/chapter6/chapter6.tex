@@ -114,8 +114,8 @@ Svi razmatrani NFT standardi dele istu osnovnu logiku za ključne operacije. Alg
     \RequireState{quantity \Gg 0}
     \RequireState{percentage \Gg 0 \Andd percentage \Leq  100}
     \RequireState{numOfBlocks \Gg 0 \Andd numOfBlocks \Ll $2^{16}$}
-    \State owners[currentIndex] \Eq Coupon(to, startTimestamp, giftable, percentage, numOfBlocks)
-    \State balances[to]\PlusPlus
+    \State \_owners[currentIndex] \Eq Coupon(to, startTimestamp, giftable, percentage, numOfBlocks)
+    \State \_balances[to] \PlusEq quantity
     \State currentIndex \PlusEq quantity
 \EndFunction
 \end{algorithmic}
@@ -124,10 +124,10 @@ Svi razmatrani NFT standardi dele istu osnovnu logiku za ključne operacije. Alg
     \State owner \Eq ownerOf(id)
     \RequireState{owner \EqEq from}
     \RequireState{to \Neq address(0)}
-    \RequireState{owners[id].giftable \EqEq true}
-    \State balances[from]\MinusMinus
-    \State balances[to]\PlusPlus
-    \State owners[id].owner \Eq to
+    \RequireState{\_owners[id].giftable \EqEq true}
+    \State \_balances[from]\MinusMinus
+    \State \_balances[to]\PlusPlus
+    \State \_owners[id].owner \Eq to
 \EndFunction
 \end{algorithmic}
 \begin{algorithmic}[1]
@@ -135,13 +135,13 @@ Svi razmatrani NFT standardi dele istu osnovnu logiku za ključne operacije. Alg
     \State owner \Eq ownerOf(id)
     \State coupon \Eq owners[id]
     \RequireState{coupon.startTimestamp \Plus coupon.numOfBlock \Times \_BLOCK\_DURATION \Geq block.timestamp}
-    \State balances[owner]\MinusMinus
+    \State \_balances[owner]\MinusMinus
     \State \textbf{delete} owners[id]
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
-U narednim pododeljcima dat je hronološki pregled razvoja NFT standarda. Sistematski su opisani nedostaci identifikovani u svakom standardu, koji su poslužili kao podsticaji za razvoj narednih. Za svaki standard predstavljena je logika operacija kreiranja, prenosa i uništavanja, sa detaljnom analizom instrukcija koje pristupaju skladištu, jer one predstavljaju glavne faktore koji utiču na potrošnju gasa. Uticaj ostalih operacija je minimalan i biće aproksimiran po potrebi. Na kraju svakog standarda demonstrirane su modifikacije datog NFT standarda za implementaciju kuponskog rešenja koje se dalje koristi u merenju.
+U narednim pododeljcima dat je hronološki pregled razvoja NFT standarda. Sistematski su opisani nedostaci identifikovani u svakom standardu, koji su poslužili kao podsticaji za razvoj narednih. Za svaki standard predstavljena je logika operacija kreiranja, prenosa i uništavanja, sa detaljnom analizom instrukcija koje pristupaju skladištu, jer one predstavljaju glavne faktore koji utiču na potrošnju gasa. Uticaj ostalih operacija je minimalan i biće aproksimiran po potrebi.
 
 \subsection{ERC-721}
 ERC-721 predstavlja osnovni standard za implementaciju nezamenljivih tokena, definišući interfejs i minimalni skup funkcionalnosti neophodnih za njihovo kreiranje, praćenje vlasništva i prenos. Osnovna logika operacija kreiranja, prenosa i uništavanja ostaje konceptualno identična opštem modelu prikazanom u Algoritmu \ref{alg:nft}, te se u ovom pododeljku fokus stavlja isključivo na specifičnosti implementacije i njihove implikacije na pristup skladištu i potrošnju gasa. 
@@ -351,6 +351,15 @@ gde prvi član predstavlja trošak operacija učitavanja iz skladišta, dok drug
 
 Nakon pronalaženja vlasnika, ažuriraju se odgovarajući podaci o vlasništvu i stanju adresa. Ukoliko se prenosi token čije je vlasništvo implicitno definisano, potrebno je eksplicitno inicijalizovati skladišnu jedinicu za taj token, čime se implicitno grupno vlasništvo deli na dva segmenta, koje je zatim potrebno eksplicitno evidentirati. Ovo predstavlja dodatni trošak u odnosu na standard ERC-721.
 
+Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
+\begin{enumerate}
+\item Trošak određivanja implicitnog vlasništva, izračunat formulom \ref{eq:erc721a}.
+\item Smanjenje stanja pošiljaoca, što uzrokuje trošak hladne operacije \Sd.
+\item Povećanje stanja primaoca, što uzrokuje trošak hladne operacije \Sd, ako nije nula.
+\item Ažuriranje informacija o vlasništvu za preneti token, što uzrokuje trošak tople operacije \Sd.
+\item Potencijalni dodatni upis u narednu skladišnu jedinicu radi očuvanja implicitnog vlasništva preostalih tokena u grupi, što uzrokuje trošak hladne operacije \Sj.
+\end{enumerate}
+
 \begin{algorithm}
 \caption{Funkcija prenosa elektronskih kupona u okviru ERC-721A standarda}
 \label{alg:erc721a_transfer}
@@ -377,15 +386,6 @@ Nakon pronalaženja vlasnika, ažuriraju se odgovarajući podaci o vlasništvu i
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
-
-Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
-\begin{enumerate}
-\item Trošak određivanja implicitnog vlasništva, izračunat formulom \ref{eq:erc721a}.
-\item Smanjenje stanja pošiljaoca, što uzrokuje trošak hladne operacije \Sd.
-\item Povećanje stanja primaoca, što uzrokuje trošak hladne operacije \Sd, ako nije nula.
-\item Ažuriranje informacija o vlasništvu za preneti token, što uzrokuje trošak tople operacije \Sd.
-\item Potencijalni dodatni upis u narednu skladišnu jedinicu radi očuvanja implicitnog vlasništva preostalih tokena u grupi, što uzrokuje trošak hladne operacije \Sj.
-\end{enumerate}
 
 \begin{figure}[!ht]
 \centering
@@ -478,15 +478,6 @@ Postupak postavljanja odgovarajućeg bita sastoji se od određivanja indeksa blo
 \end{algorithmic}
 \end{algorithm}
 
-\begin{figure}[ht]
-    \centering
-    \makebox[\textwidth][c]{
-        \includegraphics[width=1.1\textwidth]{chapter6_erc721psi_mint.png}
-    }
-    \caption{Višestruko kreiranje kupona u standardu ERC-721Psi sa fokusom na implicitno vlasništvo označeno zelenom bojom, omogućeno pomoću bitmape početaka, i trošak skladištenja označen crvenom bojom.}
-\end{figure}
-
-
 Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \begin{enumerate}
 \item Učitavanje vrednosti pokazivača na naredni identifikator tokena uzrokuje trošak hladne operacije \Sl.
@@ -495,6 +486,14 @@ Tokom ove operacije realizuju se sledeće naplate pristupa skladištu:
 \item Ažuriranje stanja primaoca uzrokuje trošak hladne operacije \Sd, ako nije nula.
 \item Ažuriranje vrednosti pokazivača na naredni identifikator realizuje se kao topla \Sd\ operacija, ako nije nula, jer je skladišna jedinica već pristupljena tokom validacije funkcije.
 \end{enumerate}
+
+\begin{figure}[ht]
+    \centering
+    \makebox[\textwidth][c]{
+        \includegraphics[width=1.1\textwidth]{chapter6_erc721psi_mint.png}
+    }
+    \caption{Višestruko kreiranje kupona u standardu ERC-721Psi sa fokusom na implicitno vlasništvo označeno zelenom bojom, omogućeno pomoću bitmape početaka, i trošak skladištenja označen crvenom bojom.}
+\end{figure}
 
 \subsubsection{Prenos}
 Operacija prenosa kupona zadržava istu osnovnu funkcionalnu logiku kao u standardu ERC-721A, uz dodatni korak ažuriranja bitmape. Određivanje vlasnika tokena zasniva se na pronalaženju identifikatora prvog tokena u grupi označenog u bitmapi, nakon čega se na osnovu te informacije očitava vlasništvo tokena iz mape upakovanih vlasničkih podataka.
@@ -916,6 +915,9 @@ Standard ERC-721A ostvaruje najveće troškove u ovom scenariju, budući da se z
 \end{minipage}
 \caption{Potrošnja gasa različitih NFT standarda prilikom višestrukog uništavanja kupona u jednoj transakciji}
 \end{rezultati}
+
+% POGURAJ U NOVI RED
+\text{}
 
 \item \textbf{Ponašanje operacija ERC-721A i ERC-721Psi pri velikim grupnim operacijama}
 
