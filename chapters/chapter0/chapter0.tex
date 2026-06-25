@@ -1,5 +1,32 @@
 \input{chapters/chapter0/titlepage}
 
+\cleardoublepage
+\thispagestyle{empty}
+
+\vspace*{3cm}
+
+\begin{center}
+{\Large\bfseries Zahvalnica}
+\end{center}
+
+\vspace{.5cm}
+
+Zahvaljujem se svom mentoru, prof. dr Mladenu Veinoviću, na ukazanom poverenju, stručnoj podršci, korisnim savetima i kontinuiranom usmeravanju tokom studija i izrade ove doktorske disertacije.
+
+\vspace{.5cm}
+
+Posebnu zahvalnost upućujem svom prijatelju Branislavu Đaliću. Kroz dugogodišnje prijateljstvo i zajednički rad na velikom broju projekata imao sam priliku da naučim mnogo o blokčejn tehnologijama, njihovoj praktičnoj primeni i izazovima industrije. Znanje i iskustvo koje je nesebično delio sa mnom imali su značajan uticaj na moje profesionalno usmerenje i razvoj.
+
+\vspace{.5cm}
+
+Najveću zahvalnost dugujem svojoj porodici, ocu Srđanu, majci Ireni i bratu Nemanji, na razumevanju, strpljenju i bezuslovnoj podršci tokom svih godina studiranja. Njihova podrška predstavljala je oslonac u trenucima izazova i bila neophodna za uspešan završetak ovog rada.
+
+\vspace{2cm}
+
+\vfill
+
+\newpage
+
 \section*{Sažetak}
 Elektronska trgovina predstavlja jedan od najznačajnijih domena primene informacionih sistema. Savremene platforme omogućavaju visok nivo funkcionalnosti i upotrebljivosti, ali istovremeno uvode ograničenja u pogledu transparentnosti, autonomije korisnika i raspodele kontrole nad sistemom, budući da se zasnivaju na centralizovanom modelu poverenja.
 
@@ -17,9 +44,30 @@ Eksperimentalna evaluacija sprovedena u kontrolisanom okruženju pokazuje znača
 
 Na osnovu teorijske analize, konstruktivnog modelovanja i eksperimentalnih rezultata predložen je arhitektonski okvir za razvoj decentralizovanih platformi elektronske trgovine koji integriše \textit{Ethereum} kao sloj za realizaciju poslovne logike i \textit{IPFS} kao sloj za skladištenje i distribuciju sadržaja.
 
-\text{}
+\vspace{0.5em}
 
 \textbf{Ključne reči:} elektronska trgovina, blokčejn, Eterijum, pametni ugovori, NFT, optimizacija skladištenja podataka, IPFS, decentralizovane aplikacije.
+
+\section*{Abstract}
+Electronic commerce represents one of the most significant application domains of information systems. Modern platforms provide a high level of functionality and usability, but they simultaneously introduce limitations regarding transparency, user autonomy, and the distribution of control within the system, as they are predominantly based on a centralized trust model.
+
+The subject of this dissertation is the analysis of the applicability of public blockchain systems as an infrastructural foundation for implementing the business logic of electronic commerce platforms, as well as the examination of content-addressed networks for decentralized data storage with the aim of increasing user autonomy.
+
+Starting from a theoretical analysis of modern information technologies, the concept of decentralization, and blockchain systems, a reference model for evaluating the applicability of public blockchain networks in electronic commerce was developed.
+
+However, the execution of operations on such systems involves transaction costs arising from the consumption of network computational resources, which represents a significant limitation to their wider adoption in electronic commerce.
+
+Considering the dominant role of \textit{Ethereum} in the development of decentralized applications, the research is focused on the design of a platform based on this technology through the analysis and optimization of electronic commerce entity representation models, with particular emphasis on reducing the execution costs of fundamental operations on uniquely identifiable entities.
+
+Based on modifications of existing non-fungible token standards, an optimized data-packing model within a single storage slot is proposed, aiming to reduce the number of accesses to persistent storage, which constitutes the dominant source of execution costs.
+
+Experimental evaluation conducted in a controlled environment demonstrates significant differences in the costs of token minting, transfer, and burning operations among the observed standards. The results confirm that data structure optimization and efficient utilization of storage resources can significantly improve the economic efficiency of decentralized applications.
+
+Based on theoretical analysis, constructive modeling, and experimental results, an architectural framework for the development of decentralized electronic commerce platforms is proposed, which integrates \textit{Ethereum} as the business logic execution layer and \textit{IPFS} as the content storage and distribution layer.
+
+\vspace{0.5em}
+
+\textbf{Keywords:} electronic commerce, blockchain, Ethereum, smart contracts, NFT, data storage optimization, IPFS, decentralized applications.
 
 \tableofcontents
 \hypersetup{pageanchor=true}
