@@ -28,7 +28,7 @@ pdflatex main.tex
 
 ## Statistics
 
-* Total time spent: **419 hours**
+* Total time spent: **420 hours**
 * Language: Serbian
 * Degree: PhD Dissertation
 * Year: 2026
