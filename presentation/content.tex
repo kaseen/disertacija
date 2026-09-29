@@ -61,12 +61,12 @@
 
 Elektronska trgovina predstavlja prodaju ili kupovinu robe i usluga realizovanu putem računarskih mreža korišćenjem metoda posebno projektovanih za prijem ili izdavanje porudžbina.
 
-\metodologijaCilj{Formalizacija referentog modela elektronske trgovine kroz identifikaciju ključnih elemenata sistema, radi omogućavanja analize dizajna sistema elektronske trgovine.}
-
+\metodologijaCilj{Formalizacija \blueColor{referentog modela elektronske trgovine} kroz identifikaciju ključnih elemenata sistema, radi omogućavanja analize dizajna sistema elektronske trgovine.}
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.6\textwidth]{slide2.png}
+    \caption*{TODO}
 \end{figure}
 
 \end{frame}
@@ -81,7 +81,7 @@ Elektronska trgovina predstavlja prodaju ili kupovinu robe i usluga realizovanu 
 
 To smanjuje autonomiju korisnika i stvara asimetriju moći, koja se ogleda u: \redColor{algoritamskoj kontroli}, \redColor{cenzuri i kontroli pristupa}, \redColor{koncentraciji moći}, \redColor{nadzornom kapitalizmu} i \redColor{zloupotrebi ličnih podataka}.
 
-\metodologijaCilj{Analiza savremenih informacionih sistema elektronske trgovine, sa ciljem identifikacije njihovih ograničenja i implicitnih pretpostavki u pogledu poverenja i upravljanja podacima korisnika.}
+\metodologijaCilj{Analiza savremenih informacionih sistema elektronske trgovine, sa ciljem identifikacije njihovih ograničenja i implicitnih \blueColor{pretpostavki u pogledu poverenja} i upravljanja podacima korisnika.}
 
 \end{frame}
 
@@ -93,11 +93,11 @@ To smanjuje autonomiju korisnika i stvara asimetriju moći, koja se ogleda u: \r
 
 \vspace{-0.35cm}
 
-\metodologijaProblem{} Uklanjanje centralizovanog autoriteta uvodi mogućnost neispravnog ili malicioznog ponašanja pojedinih učesnika, pri čemu sistem mora očuvati konzistentnost.
-
 Decentralizacija zahteva \blueColor{otvoren sistem} bez \redColor{centralne kontrole} ili jedne tačke otkaza.
 
-\metodologijaCilj{Uvođenje i formalizacija pojma decentralizacije kao proširenja klasične sociotehničke paradigme informacionih sistema.}
+Savremeni informacioni sistemi se horizontalno skaliraju tj. proširuju kapacitet \blueColor{dodavanjem instanci} i raspodelom opterećenja.
+
+\metodologijaCilj{Uvođenje i formalizacija pojma \blueColor{decentralizacije} kao proširenja klasične sociotehničke paradigme informacionih sistema.}
 
 \vspace{-0.7cm}
 
@@ -121,15 +121,37 @@ Decentralizacija zahteva \blueColor{otvoren sistem} bez \redColor{centralne kont
 
 \begin{frame}{Savremeni informacioni sistemi}
 
-Savremeni informacioni sistemi visokog kapaciteta proširuju kapacitet dodavanjem instanci i raspodelom opterećenja.
-
 Iako je infrastrukturno distribuiran, sistem zadržava centralizovan model upravljanja kroz \redColor{klijent-server komunikaciju} zasnovanu na \redColor{lokacijskom adresiranju}.
 
-Zato je potrebno uvesti model komunikacije zasnovan na \blueColor{mreži ravnopravnih čvorova} (\emph{peer-to-peer}), koji sistem čini otvorenim za učešće.
+Potrebno je uvesti model komunikacije zasnovan na \blueColor{mreži ravnopravnih čvorova} \eng{peer-to-peer}, koji sistem čini otvorenim za učešće.
 
-Koordinacija se ostvaruje algoritmima konsenzusa, među kojima su i deterministički BFT algoritmi zasnovani na razmeni poruka i glasanju između čvorova.
+\metodologijaProblem{} Uklanjanje centralizovanog autoriteta uvodi mogućnost neispravnog ili \redColor{malicioznog ponašanja pojedinih učesnika}, pri čemu sistem mora očuvati konzistentnost.
+
+Visok stepen koordinacije u distribuiranim sistemima postiže se \blueColor{konsenzusom}, pri čemu se u otvorenim sistemima koriste algoritmi koji pripadaju \blueColor{BFT klasi}, zasnovani na razmeni poruka i glasanju između čvorova.
 
 \metodologijaProblem{} Performanse opadaju sa porastom broja čvorova usled povećanja komunikacionog opterećenja.
+
+\end{frame}
+
+% =========================================================
+% SLIDE 6
+% =========================================================
+
+\begin{frame}{Savremeni informacioni sistemi}
+
+\vspace{-0.35cm}
+
+\metodologijaProblem{} Komunikacioni zahtev tipično raste $O(n^{2})$ sa brojem validatora, čime se praktično ograničava veličina validacionog skupa.
+
+\metodologijaCilj{Definisanje analitičkog okvira za evaluaciju informacionih sistema, koji uključuje metrike za procenu tehničkih atributa infrastrukture, performansi i operativnih svojstava sistema.}
+
+\vspace{-0.3cm}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.55\textwidth]{slide6.png}
+    \caption*{TODO}
+\end{figure}
 
 \end{frame}
 
