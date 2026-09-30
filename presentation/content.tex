@@ -54,7 +54,18 @@
 \end{frame}
 
 % =========================================================
-% SLIDE 2
+% =========================================================
+% SECTION: Savremeni informacioni istemi
+% =========================================================
+% =========================================================
+
+\sectionframe
+    {01}
+    {Savremeni informacioni sistemi}
+    {E-trgovina · Centralizacija · Performanse}
+
+% =========================================================
+% SLIDE 1.1
 % =========================================================
 
 \begin{frame}{Savremeni informacioni sistemi}
@@ -66,18 +77,18 @@ Elektronska trgovina predstavlja prodaju ili kupovinu robe i usluga realizovanu 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.6\textwidth]{slide2.png}
-    \caption*{TODO}
+    \caption{Referentni model elektronske trgovine}
 \end{figure}
 
 \end{frame}
 
 % =========================================================
-% SLIDE 3
+% SLIDE 1.2
 % =========================================================
 
 \begin{frame}{Savremeni informacioni sistemi}
 
-\metodologijaProblem{} Savremeni informacioni sistemi, uključujući sisteme elektronske trgovine, dominantno se zasnivaju na centralizovanom modelu u kojem se poverenje delegira trećim stranama sa kontrolom nad podacima i pravilima sistema.
+\metodologijaProblem{Savremeni informacioni sistemi, uključujući sisteme elektronske trgovine, dominantno se zasnivaju na centralizovanom modelu u kojem se poverenje delegira trećim stranama sa kontrolom nad podacima i pravilima sistema.}
 
 To smanjuje autonomiju korisnika i stvara asimetriju moći, koja se ogleda u: \redColor{algoritamskoj kontroli}, \redColor{cenzuri i kontroli pristupa}, \redColor{koncentraciji moći}, \redColor{nadzornom kapitalizmu} i \redColor{zloupotrebi ličnih podataka}.
 
@@ -86,7 +97,7 @@ To smanjuje autonomiju korisnika i stvara asimetriju moći, koja se ogleda u: \r
 \end{frame}
 
 % =========================================================
-% SLIDE 4
+% SLIDE 1.3
 % =========================================================
 
 \begin{frame}{Savremeni informacioni sistemi}
@@ -116,7 +127,7 @@ Savremeni informacioni sistemi se horizontalno skaliraju tj. proširuju kapacite
 \end{frame}
 
 % =========================================================
-% SLIDE 5
+% SLIDE 1.4
 % =========================================================
 
 \begin{frame}{Savremeni informacioni sistemi}
@@ -125,33 +136,88 @@ Iako je infrastrukturno distribuiran, sistem zadržava centralizovan model uprav
 
 Potrebno je uvesti model komunikacije zasnovan na \blueColor{mreži ravnopravnih čvorova} \eng{peer-to-peer}, koji sistem čini otvorenim za učešće.
 
-\metodologijaProblem{} Uklanjanje centralizovanog autoriteta uvodi mogućnost neispravnog ili \redColor{malicioznog ponašanja pojedinih učesnika}, pri čemu sistem mora očuvati konzistentnost.
+\metodologijaProblem{Uklanjanje centralizovanog autoriteta uvodi mogućnost neispravnog ili \redColor{malicioznog ponašanja pojedinih učesnika}, pri čemu sistem mora očuvati konzistentnost.}
 
-Visok stepen koordinacije u distribuiranim sistemima postiže se \blueColor{konsenzusom}, pri čemu se u otvorenim sistemima koriste algoritmi koji pripadaju \blueColor{BFT klasi}, zasnovani na razmeni poruka i glasanju između čvorova.
+Visok stepen koordinacije u distribuiranim sistemima postiže se \blueColor{konsenzusom}, pri čemu se u otvorenim sistemima koriste algoritmi koji pripadaju \blueColor{BFT klasi}, zasnovani na razmeni poruka i glasanju između čvorova \blueColor{($n \ge 3f + 1$)}.
 
-\metodologijaProblem{} Performanse opadaju sa porastom broja čvorova usled povećanja komunikacionog opterećenja.
+\metodologijaProblem{Performanse opadaju sa porastom broja čvorova usled povećanja komunikacionog opterećenja.}
 
 \end{frame}
 
 % =========================================================
-% SLIDE 6
+% SLIDE 1.5
 % =========================================================
 
 \begin{frame}{Savremeni informacioni sistemi}
 
-\vspace{-0.35cm}
+\vspace{-0.25cm}
 
-\metodologijaProblem{} Komunikacioni zahtev tipično raste $O(n^{2})$ sa brojem validatora, čime se praktično ograničava veličina validacionog skupa.
+\metodologijaProblem{Komunikacioni zahtev tipično raste $O(n^{2})$ sa brojem validatora, čime se praktično ograničava veličina validacionog skupa.}
 
 \metodologijaCilj{Definisanje analitičkog okvira za evaluaciju informacionih sistema, koji uključuje metrike za procenu tehničkih atributa infrastrukture, performansi i operativnih svojstava sistema.}
+
+\vspace{-0.55cm}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.6\textwidth]{slide6.png}
+    \setlength{\abovecaptionskip}{6pt}
+    \caption{Referentni model PBFT konsenzusa}
+\end{figure}
+
+\end{frame}
+
+% =========================================================
+% =========================================================
+% SECTION: Blokčejn kao infrastrukturni sloj
+% =========================================================
+% =========================================================
+
+\sectionframe
+    {02}
+    {Blokčejn kao infrastrukturni sloj}
+    {TODO}
+
+% =========================================================
+% SLIDE 2.1
+% =========================================================
+
+\begin{frame}{Blokčejn kao infrastrukturni sloj}
+
+\vspace{-0.2cm}
+    
+\metodologijaProblem{BFT modeli pretpostavljaju poznat skup učesnika i ne mogu biti otvoreni.}
+                        
+Pojava Bitkoina uvodi model informacionog sistema zasnovan na \blueColor{kriptografskom dokazu} umesto \redColor{poverenja} u centralni autoritet.
+
+Sistem se zasniva na javno dostupnoj evidenciji transakcija i njihovom redosledu kroz \blueColor{javnu distribuiranu knjigu evidencije}, koju održava decentralizovana mreža čvorova.
 
 \vspace{-0.3cm}
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.55\textwidth]{slide6.png}
-    \caption*{TODO}
+    \includegraphics[width=1\textwidth]{slide7.png}
+    \setlength{\abovecaptionskip}{6pt}
+    \caption{Prikaz bloka geneze i početnih blokova Bitkoin mreže}
 \end{figure}
+
+\end{frame}
+
+% =========================================================
+% SLIDE 2.2
+% =========================================================
+
+\begin{frame}{Blokčejn kao infrastrukturni sloj}
+    
+Nakamoto konsenzus uvodi \blueColor{oskudan resurs}, čijim dokazivanjem učesnici mreže stiču pravo da učestvuju u određivanju narednog stanja sistema.
+
+Sistem je \blueColor{otvoren} i svaki učesnik može predložiti naredno stanje, dok kriptografske mehanizme dopunjuju \blueColor{ekonomski podsticaji}, čime nastaje kriptoekonomija.
+
+\metodologijaProblem{Da li javni blokčejn sistemi zadovoljavaju operativna svojstva savremenih informacionih sistema?}
+
+\metodologijaCilj{Analiza javnih blokčejn sistema kao posebne klase distribuiranih informacionih sistema, u okviru prethodno definisanog analitičkog okvira, sa posebnim osvrtom na uticaj decentralizacije na složenost sistema i ograničenja koja iz toga proizlaze.}
+
+\metodologijaProblem{Javni blokčejn sistemi imaju inherentan kompromis između \blueColor{decentralizacije}, \blueColor{sigurnosti} i \redColor{skalabilnosti}.}
 
 \end{frame}
 

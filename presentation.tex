@@ -44,12 +44,8 @@
 \newcommand{\redColor}[1]{\textcolor{redColorLight}{#1}}
 
 \newcounter{ciljcounter}
-\newcommand{\metodologijaCilj}[1]{%
-    \stepcounter{ciljcounter}%
-    \textcolor{blueColor}{\uline{Cilj \theciljcounter:}} #1%
-}
-
-\newcommand{\metodologijaProblem}{\textcolor{redColorHard}{\uline{problem:}}}
+\newcommand{\metodologijaCilj}[1]{\stepcounter{ciljcounter}\textcolor{blueColor}{\uline{Cilj \theciljcounter:}} #1}
+\newcommand{\metodologijaProblem}[1]{\textcolor{redColorHard}{\uline{problem:}} #1}
 
 % =========================================================
 % BEAMER COLORS
@@ -57,6 +53,7 @@
 
 \setbeamercolor{background canvas}{bg=background}
 \setbeamercolor{normal text}{fg=whiteColor}
+\setbeamercolor{caption name}{fg=whiteColor}
 \captionsetup[subfloat]{labelfont={color=whiteColor}}
 
 % =========================================================
