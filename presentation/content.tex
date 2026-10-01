@@ -88,7 +88,7 @@ Elektronska trgovina predstavlja prodaju ili kupovinu robe i usluga realizovanu 
 
 \begin{frame}{Savremeni informacioni sistemi}
 
-\metodologijaProblem{Savremeni informacioni sistemi, uključujući sisteme elektronske trgovine, dominantno se zasnivaju na centralizovanom modelu u kojem se poverenje delegira trećim stranama sa kontrolom nad podacima i pravilima sistema.}
+\metodologijaProblem{Savremeni informacioni sistemi, uključujući sisteme elektronske trgovine, dominantno se zasnivaju na \redColor{centralizovanom modelu} u kojem se poverenje delegira trećim stranama sa kontrolom nad podacima i pravilima sistema.}
 
 To smanjuje autonomiju korisnika i stvara asimetriju moći, koja se ogleda u: \redColor{algoritamskoj kontroli}, \redColor{cenzuri i kontroli pristupa}, \redColor{koncentraciji moći}, \redColor{nadzornom kapitalizmu} i \redColor{zloupotrebi ličnih podataka}.
 
@@ -152,7 +152,7 @@ Visok stepen koordinacije u distribuiranim sistemima postiže se \blueColor{kons
 
 \vspace{-0.25cm}
 
-\metodologijaProblem{Komunikacioni zahtev tipično raste $O(n^{2})$ sa brojem validatora, čime se praktično ograničava veličina validacionog skupa.}
+\metodologijaProblem{Komunikacioni zahtev tipično raste \redColor{$O(n^{2})$} sa brojem validatora, čime se praktično ograničava veličina validacionog skupa.}
 
 \metodologijaCilj{Definisanje analitičkog okvira za evaluaciju informacionih sistema, koji uključuje metrike za procenu tehničkih atributa infrastrukture, performansi i operativnih svojstava sistema.}
 
@@ -176,7 +176,7 @@ Visok stepen koordinacije u distribuiranim sistemima postiže se \blueColor{kons
 \sectionframe
     {02}
     {Blokčejn kao infrastrukturni sloj}
-    {TODO}
+    {Javna knjiga evidencije · Konsenzus · Problem transakcionih naknada}
 
 % =========================================================
 % SLIDE 2.1
@@ -186,9 +186,9 @@ Visok stepen koordinacije u distribuiranim sistemima postiže se \blueColor{kons
 
 \vspace{-0.2cm}
     
-\metodologijaProblem{BFT modeli pretpostavljaju poznat skup učesnika i ne mogu biti otvoreni.}
+\metodologijaProblem{BFT modeli pretpostavljaju poznat skup učesnika i \redColor{ne mogu biti otvoreni}.}
                         
-Pojava Bitkoina uvodi model informacionog sistema zasnovan na \blueColor{kriptografskom dokazu} umesto \redColor{poverenja} u centralni autoritet.
+Pojava \blueColor{\emph{Bitcoin}-a} uvodi model informacionog sistema zasnovan na \blueColor{kriptografskom dokazu} umesto \redColor{poverenja} u centralni autoritet.
 
 Sistem se zasniva na javno dostupnoj evidenciji transakcija i njihovom redosledu kroz \blueColor{javnu distribuiranu knjigu evidencije}, koju održava decentralizovana mreža čvorova.
 
@@ -218,6 +218,53 @@ Sistem je \blueColor{otvoren} i svaki učesnik može predložiti naredno stanje,
 \metodologijaCilj{Analiza javnih blokčejn sistema kao posebne klase distribuiranih informacionih sistema, u okviru prethodno definisanog analitičkog okvira, sa posebnim osvrtom na uticaj decentralizacije na složenost sistema i ograničenja koja iz toga proizlaze.}
 
 \metodologijaProblem{Javni blokčejn sistemi imaju inherentan kompromis između \blueColor{decentralizacije}, \blueColor{sigurnosti} i \redColor{skalabilnosti}.}
+
+\end{frame}
+
+% =========================================================
+% SLIDE 2.3
+% =========================================================
+
+\begin{frame}{Blokčejn kao infrastrukturni sloj}
+
+Javni blokčejn sistemi mogu se posmatrati kao \blueColor{sistemi zasnovani na odnosu ponude i potražnje}, gde ponudu čine raspoloživi računarski resursi mreže, a potražnju ukupni zahtev za njihovim korišćenjem.
+
+\metodologijaProblem{Javni blokčejn sistemi uvode eksplicitne \redColor{transakcione naknade} proporcionalne računarskom naporu potrebnom za izvršavanje transakcije.}
+
+\metodologijaProblem{Transakcione naknade uvode dodatnu \redColor{složenost u model ponašanja kupca} te direktno utiču na kvalitet korisničkog iskustva.}
+
+\metodologijaProblem{Ograničena dostupnost i visoka cena skladištenja čine blokčejn nepogodnim za \redColor{čuvanje velikih datoteka}, poput slika, audio i video zapisa i dokumenata.}
+
+\metodologijaProblem{Blokčejn funkcioniše kao \redColor{zatvoreno} i determinističko izvršno okruženje, što onemogućava integraciju sa spoljašnjim izvorima podataka.}
+
+\end{frame}
+
+% =========================================================
+% =========================================================
+% SECTION: Konstruktivni pristup
+% =========================================================
+% =========================================================
+
+\sectionframe
+    {03}
+    {Konstruktivni pristup}
+    {TODO}
+
+% =========================================================
+% SLIDE 3.1
+% =========================================================
+
+\begin{frame}{Konstruktivni pristup}
+
+Sistem elektronske trgovine treba da podrži \blueColor{proizvoljne zahteve} i pojavu nove poslovne logike, zbog čega informacioni sistem mora biti \blueColor{Tjuring-kompletan}.
+
+\blueColor{Pametni ugovori} (Nick Szabo, 1994.) omogućavaju formalizaciju i automatizaciju pravila sistema kroz autonomne programe.
+
+Integracijom pametnih ugovora sa javnom distribuiranom knjigom evidencije nastaje \blueColor{Tjuring-kompletna distribuirana računarska platforma}.
+
+\blueColor{\emph{Ethereum}} predstavlja jednu od najrazvijenijih platformi za razvoj \blueColor{decentralizovanih aplikacija}.
+
+\metodologijaCilj{Ispitivanje decentralizacije, sigurnosti i performansi Eterijum platforme, kao i formalizacija pojma gasa kao osnovne jedinice troškovnog modela za utrošeni računarski napor kroz analizu konsenzusnog i izršnog sloja.}
 
 \end{frame}
 
