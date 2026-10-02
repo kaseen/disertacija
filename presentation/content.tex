@@ -77,7 +77,7 @@ Elektronska trgovina predstavlja prodaju ili kupovinu robe i usluga realizovanu 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.6\textwidth]{slide2.png}
-    \caption{Referentni model elektronske trgovine}
+    \caption{Referentni model elektronske trgovine.}
 \end{figure}
 
 \end{frame}
@@ -161,7 +161,7 @@ Visok stepen koordinacije u distribuiranim sistemima postiže se \blueColor{kons
     \centering
     \includegraphics[width=0.6\textwidth]{slide6.png}
     \setlength{\abovecaptionskip}{6pt}
-    \caption{Referentni model PBFT konsenzusa}
+    \caption{Referentni model PBFT konsenzusa.}
 \end{figure}
 
 \end{frame}
@@ -197,7 +197,7 @@ Sistem se zasniva na javno dostupnoj evidenciji transakcija i njihovom redosledu
     \centering
     \includegraphics[width=1\textwidth]{slide7.png}
     \setlength{\abovecaptionskip}{6pt}
-    \caption{Prikaz bloka geneze i početnih blokova Bitkoin mreže}
+    \caption{Prikaz bloka geneze i početnih blokova Bitkoin mreže.}
 \end{figure}
 
 \end{frame}
@@ -308,7 +308,7 @@ Analiziraju se osnovne operacije \blueColor{kreiranja}, \blueColor{prenosa} i \b
     \centering
     \includegraphics[width=0.7\textwidth]{slide15.png}
     \setlength{\abovecaptionskip}{0pt}
-    \caption{Enkodirane informacije kupona kao reprezentativnog studijskog slučaja}
+    \caption{Enkodirane informacije kupona kao reprezentativnog studijskog slučaja.}
 \end{figure}
 
 \end{frame}
@@ -342,7 +342,7 @@ Standardi sa implicitnim vlasništvom omogućavaju \blueColor{grupno kreiranje t
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.85\textwidth]{slide16.png}
-    \caption{Višestruko kreiranje kupona u standardu sa implicitnim vlasništvom}
+    \caption{Višestruko kreiranje kupona u standardu sa implicitnim vlasništvom.}
 \end{figure}
 
 \end{frame}
@@ -359,12 +359,382 @@ Standardi sa implicitnim vlasništvom omogućavaju \blueColor{grupno kreiranje t
     \vspace{-0.8cm}
 
     \makebox[\textwidth][c]{%
-        \subfloat[ERC721A]{\includegraphics[width=0.56\textwidth]{slide17a.png}}
+        \subfloat[ERC-721A]{\includegraphics[width=0.56\textwidth]{slide17a.png}}
         \hspace{0.1cm}
-        \subfloat[ERC721Psi]{\includegraphics[width=0.56\textwidth]{slide17b.png}}
+        \subfloat[ERC-721Psi]{\includegraphics[width=0.56\textwidth]{slide17b.png}}
     }
 
-    \subfloat[ERC721A vs ERC721Psi]{\includegraphics[width=0.9\textwidth]{slide17c.png}}
+    \subfloat[ERC-721A vs. ERC721-Psi]{\includegraphics[width=0.9\textwidth]{slide17c.png}}
+
+\end{figure}
+
+\end{frame}
+
+% =========================================================
+% =========================================================
+% SECTION: Eksperimentalni pristup
+% =========================================================
+% =========================================================
+
+\sectionframe
+    {04}
+    {Eksperimentalni pristup}
+    {Eksperimentalna evaluacija potrošnje gasa}
+
+% =========================================================
+% SLIDE 4.1
+% =========================================================
+
+\begin{frame}{Eksperimentalni pristup}
+
+\vspace{-0.4cm}
+
+Za analizu potrošnje gasa korišćen je \blueColor{\emph{Foundry}}, skup alata za izgradnju, testiranje i implementaciju pametnih ugovora, sa lokalnim čvorom Eterijum testne mreže.
+
+\metodologijaProblem{Obezbeđivanje doslednosti i uporedivosti rezultata pri poređenju troškova izvršavanja u različitim scenarijima.}
+
+\metodologijaCilj{Eksperimentalna evaluacija performansi ovako definisanih e-kupona, uz merenje troškova izvršavanja osnovnih operacija u različitim standardima i scenarijima parametara.}
+
+\vspace{-0.5cm}
+
+\begin{center}
+\footnotesize
+\tikz{\draw[black, fill=COLOR_Erc721] (0,0) rectangle (0.15,0.15);} ERC-721
+\hspace{0.2cm}
+\tikz{\draw[black, fill=COLOR_Erc721A] (0,0) rectangle (0.15,0.15);} ERC-721A
+\hspace{0.2cm}
+\tikz{\draw[black, fill=COLOR_Erc721Psi] (0,0) rectangle (0.15,0.15);} ERC-721Psi
+\end{center}
+
+\vspace{-0.6cm}
+
+\begin{figure}[ht]
+
+\makebox[\textwidth][c]{%
+    \begin{minipage}{0.55\textwidth}
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}[
+            % Velicina
+            width=\textwidth,
+            height=\expH,
+            % Tip
+            ybar,
+            bar width=6pt,
+            % y osa
+            ymin=0,
+            ymax=600000,
+            ytick={0,60000,120000,180000,240000,300000,360000,420000,480000,540000,600000},
+            scaled y ticks=false,
+            y tick label style={
+                font=\tiny,
+                /pgf/number format/fixed,
+                /pgf/number format/1000 sep={.}
+            },
+            ymajorgrids=true,
+            grid style={dashed,gray!40},
+            % x osa
+            symbolic x coords={1,2,3,5,10,20},
+            xtick=data,
+            xticklabel style={
+                font=\tiny,
+                yshift=5pt
+            },
+            xtick style={draw=none}
+        ]
+
+        \addplot[fill=COLOR_Erc721] coordinates {(1,54095) (2,81189) (3,108194) (5,162424) (10,297718) (20,568444)};
+        \addplot[fill=COLOR_Erc721A] coordinates {(1,52104) (2,54035) (3,56010) (5,59827) (10,69520) (20,88819)};
+        \addplot[fill=COLOR_Erc721Psi]  coordinates {(1,59089) (2,61077) (3,62994) (5,66856) (10,76559) (20,95993)};
+
+        \end{axis}
+        \end{tikzpicture}
+
+        \vspace{-0.35cm}
+        \caption*{\footnotesize \phantom{xxxxxx}Potrošnja gasa prilikom kreiranja kupona}
+    \end{minipage}%
+    \hspace{0.02\textwidth}%
+    \begin{minipage}{0.55\textwidth}
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}[
+            % Velicina
+            width=\textwidth,
+            height=\expH,
+            % Tip
+            ybar,
+            bar width=6pt,
+            % y osa
+            ymin=0,
+            ymax=180000,
+            ytick={0,20000,40000,60000,80000,100000,120000,140000,160000,180000},
+            scaled y ticks=false,
+            y tick label style={
+                font=\tiny,
+                /pgf/number format/fixed,
+                /pgf/number format/1000 sep={.}
+            },
+            ymajorgrids=true,
+            grid style={dashed,gray!40},
+            % x osa
+            symbolic x coords={1,2,3,5,10,20},
+            xtick=data,
+            xticklabel style={
+                font=\tiny,
+                yshift=5pt
+            },
+            xtick style={draw=none}
+        ]
+
+        \addplot[fill=COLOR_Erc721] coordinates {(1,46844) (2,46844) (3,46844) (5,46844) (10,46844) (20,46844)};
+        \addplot[fill=COLOR_Erc721A] coordinates {(1,89248) (2,91488) (3,93708) (5,98213) (10,109392) (20,131869)};
+        \addplot[fill=COLOR_Erc721Psi] coordinates {(1,105088) (2,105108) (3,105108) (5,105064) (10,105106) (20,105065)};
+
+        \end{axis}
+        \end{tikzpicture}
+
+        \vspace{-0.35cm}
+        \caption*{\footnotesize \phantom{xxxxxx}Potrošnja gasa prilikom prenosa kupona}
+    \end{minipage}%
+}
+
+\end{figure}
+
+\end{frame}
+
+% =========================================================
+% SLIDE 4.2
+% =========================================================
+
+\begin{frame}{Eksperimentalni pristup}
+
+\vspace{-0.6cm}
+
+\begin{figure}[ht]
+
+\makebox[\textwidth][c]{%
+    \begin{minipage}{0.55\textwidth}
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}[
+            % Velicina
+            width=\textwidth,
+            height=\expH,
+            % Tip
+            ybar,
+            bar width=6pt,
+            % y osa
+            ymin=0,
+            ymax=180000,
+            ytick={0,20000,40000,60000,80000,100000,120000,140000,160000,180000},
+            scaled y ticks=false,
+            y tick label style={
+                font=\tiny,
+                /pgf/number format/fixed,
+                /pgf/number format/1000 sep={.}
+            },
+            ymajorgrids=true,
+            grid style={dashed,gray!40},
+            % x osa
+            symbolic x coords={1,2,3,5,10,20},
+            xtick=data,
+            xticklabel style={
+                font=\tiny,
+                yshift=5pt
+            },
+            xtick style={draw=none}
+        ]
+
+        \addplot[fill=COLOR_Erc721] coordinates {(1,13873) (2,13873) (3,13873) (5,13873) (10,13873) (20,13873)};
+        \addplot[fill=COLOR_Erc721A] coordinates {(1,65199) (2,67485) (3,69745) (5,74209) (10,85435) (20,107822)};
+        \addplot[fill=COLOR_Erc721Psi] coordinates {(1,22006) (2,22007) (3,22008) (5,22006) (10,22072) (20,22050)};
+
+        \end{axis}
+        \end{tikzpicture}
+
+        \vspace{-0.35cm}
+        \caption*{\footnotesize \phantom{xxxxx}Potrošnja gasa prilikom uništavanja kupona}
+    \end{minipage}%
+    \hspace{0.02\textwidth}%
+    \begin{minipage}{0.55\textwidth}
+        \vspace{-0.1cm}
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}[
+            % Velicina
+            width=\textwidth,
+            height=\expH,
+            % Tip
+            ybar,
+            bar width=6pt,
+            % y osa
+            ymin=0,
+            ymax=180000,
+            ytick={0,20000,40000,60000,80000,100000,120000,140000,160000,180000},
+            scaled y ticks=false,
+            y tick label style={
+                font=\tiny,
+                /pgf/number format/fixed,
+                /pgf/number format/1000 sep={.}
+            },
+            ymajorgrids=true,
+            grid style={dashed,gray!40},
+            % x osa
+            symbolic x coords={
+                1a,2a,3a,4a,5a,
+                gap1,
+                1b,2b,3b,4b,5b,
+                gap2,
+                1c,2c,3c,4c,5c
+            },
+            xtick=\empty,
+            xtick style={draw=none},
+            extra x ticks={2a,3b,4c},
+            extra x tick labels={\text{\phantom{ab}ERC-721}, ERC-721A, ERC-721Psi},
+            extra x tick style={
+                tick style={draw=none},
+                yshift=5pt,
+                font=\tiny
+            }
+        ]
+
+        \addplot[fill=COLOR_Erc721] coordinates {(1a,13786) (2a,22580) (3a,32493) (4a,43332) (5a,54191)};
+        \addplot[fill=COLOR_Erc721A] coordinates {(1b,45770) (2b,74880) (3b,104079) (4b,133149) (5b,162327)};
+        \addplot[fill=COLOR_Erc721Psi] coordinates {(1c,22051) (2c,28196) (3c,34412) (4c,40627) (5c,46773)};
+
+        \end{axis}
+        \end{tikzpicture}
+
+        \vspace{-0.35cm}
+        \caption*{\footnotesize Potrošnja gasa prilikom višestrukog uništavanja kupona}
+    \end{minipage}%
+}
+
+\vspace{-0.35cm}
+
+\makebox[\textwidth][c]{%
+    \begin{minipage}{0.55\textwidth}
+        \hspace{-0.3cm}
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}[
+            % Velicina
+            width=\textwidth,
+            height=\expH,
+            % Tip
+            ybar,
+            bar width=5pt,
+            % y osa
+            ymin=0,
+            ymax=23000000,
+            ytick={0,2500000,5000000,7500000,10000000,12500000,15000000,17500000,20000000,22500000},
+            scaled y ticks=false,
+            y tick label style={
+                font=\tiny,
+                /pgf/number format/.cd,
+                sci,
+                sci zerofill,
+                precision=2
+            },
+            ymajorgrids=true,
+            grid style={dashed,gray!40},
+            % x osa
+            symbolic x coords={
+                m100,m1000,m10000,
+                gap1,
+                t100,t1000,t10000,
+                gap2,
+                b100,b1000,b10000,
+            },
+            xtick=\empty,
+            xtick style={draw=none},
+            extra x ticks={m100,m1000,m10000,t100,t1000,t10000,b100,b1000,b10000},
+            extra x tick labels={
+                $10^{2}$,
+                $10^{3}$\\\tiny Kreiranje,
+                $10^{4}$,
+                $10^{2}$,
+                $10^{3}$\\\tiny Prenos,
+                $10^{4}$,
+                $10^{2}$,
+                $10^{3}$\\\tiny Uništavanje,
+                $10^{4}$,
+            },
+            extra x tick style={
+                tick style={draw=none},
+                yshift=5pt,
+                font=\tiny,
+                align=center
+            },
+        ]
+
+        \addplot[fill=COLOR_Erc721A] coordinates {
+            (m100,243154) (m1000,1980198) (m10000,19350153)
+            (t100,311083) (t1000,2328005) (t10000,22476835)
+            (b100,287103) (b1000,2304024) (b10000,22452766)
+        };
+        \addplot[fill=COLOR_Erc721Psi] coordinates {
+            (m100,251272) (m1000,1998171) (m10000,19467128)
+            (t100,105108) (t1000,130779) (t10000,194654)
+            (b100,22050) (b1000,46000) (b10000,128628)
+        };
+
+        \end{axis}
+        \end{tikzpicture}
+
+        \vspace{-0.35cm}
+        \caption*{\footnotesize \phantom{xxxxxx}Analiza potrošnje gasa ERC-721A i ERC-721Psi}
+    \end{minipage}%
+    \hspace{0.02\textwidth}%
+    \begin{minipage}{0.55\textwidth}
+        \vspace{-0.35cm}
+        \hspace{-0.3cm}
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}[
+            % Velicina
+            width=\textwidth,
+            height=\expH,
+            % Tip
+            ybar,
+            bar width=6pt,
+            % y osa
+            ymin=0,
+            ymax=2350000,
+            ytick={0,250000,500000,750000,1000000,1250000,1500000,1750000,2000000,2250000},
+            scaled y ticks=false,
+            y tick label style={
+                font=\tiny,
+                /pgf/number format/fixed,
+                /pgf/number format/1000 sep={.}
+            },
+            ymajorgrids=true,
+            grid style={dashed,gray!40},
+            % x osa
+            symbolic x coords={1,2,gap1,1A,2A,gap2,1Psi,2Psi},
+            xtick=\empty,
+            xtick style={draw=none},
+            extra x ticks={1,1A,2Psi},
+            extra x tick labels={ERC-721, \phantom{abcd}ERC-721A, ERC-721Psi},
+            extra x tick style={
+                tick style={draw=none},
+                yshift=5pt,
+                font=\tiny
+            },
+            enlarge x limits=0.2
+        ]
+
+        \addplot[fill=COLOR_Erc721] coordinates {(1,1461405) (2,814973)};
+        \addplot[fill=COLOR_Erc721A] coordinates {(1A,1346155) (2A,783314)};
+        \addplot[fill=COLOR_Erc721Psi] coordinates {(1Psi,2308873) (2Psi,1331204)};
+
+        \end{axis}
+        \end{tikzpicture}
+
+        \vspace{-0.35cm}
+        \caption*{\footnotesize Potrošnja gasa prilikom postavljanja pametnih ugovora}
+    \end{minipage}%
+}
 
 \end{figure}
 
