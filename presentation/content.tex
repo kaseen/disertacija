@@ -247,7 +247,7 @@ Javni blokčejn sistemi mogu se posmatrati kao \blueColor{sistemi zasnovani na o
 \sectionframe
     {03}
     {Konstruktivni pristup}
-    {TODO}
+    {\emph{Ethereum} · Model skladištenja podataka · Nezamenljivi tokeni}
 
 % =========================================================
 % SLIDE 3.1
@@ -261,7 +261,7 @@ Sistem elektronske trgovine treba da podrži \blueColor{proizvoljne zahteve} i p
 
 Integracijom pametnih ugovora sa javnom distribuiranom knjigom evidencije nastaje \blueColor{Tjuring-kompletna distribuirana računarska platforma}.
 
-\blueColor{\emph{Ethereum}} predstavlja jednu od najrazvijenijih platformi za razvoj \blueColor{decentralizovanih aplikacija}.
+\blueColor{Eterijum} predstavlja jednu od najrazvijenijih platformi za razvoj \blueColor{decentralizovanih aplikacija}.
 
 \metodologijaCilj{Ispitivanje decentralizacije, sigurnosti i performansi Eterijum platforme, kao i formalizacija pojma gasa kao osnovne jedinice troškovnog modela za utrošeni računarski napor kroz analizu konsenzusnog i izršnog sloja.}
 
@@ -319,8 +319,6 @@ Analiziraju se osnovne operacije \blueColor{kreiranja}, \blueColor{prenosa} i \b
 
 \begin{frame}{Konstruktivni pristup}
 
-\vspace{-0.35cm}
-
 Pretpostavlja se da korisnik u transakciji može kreirati \blueColor{proizvoljan broj istih instanci}.
 
 \metodologijaProblem{Standard ERC-721 kreira tokene pojedinačno, što pri kreiranju identičnih tokena dovodi do višestrukog upisivanja \redColor{istih podataka} o vlasništvu u skladište.}
@@ -329,13 +327,45 @@ Standardi sa implicitnim vlasništvom omogućavaju \blueColor{grupno kreiranje t
 
 \metodologijaCilj{Komparativna analiza standarda ERC-721, ERC-721A i ERC-721Psi modifikovanih za rad sa e-kuponima kao reprezentativnim studijskim slučajem, sa fokusom na troškove skladišnih operacija nad entitetima prilikom izvršavanja osnovnih funkcija, uključujući kreiranje, prenos i uništavanje.}
 
-\vspace{-0.4cm}
+\end{frame}
+
+% =========================================================
+% SLIDE 3.5
+% =========================================================
+
+\begin{frame}{Konstruktivni pristup}
+
+\metodologijaProblem{Implicitno vlasništvo uvodi dodatne troškove pri \redColor{eksplicitnom razrešavanju}.}
+
+\metodologijaCilj{Analiza mehanizma razrešavanja implicitnog vlasništva u standardima ERC-721A i ERC-721Psi, koji nastaje tokom operacija prenosa i uništavanja tokena, uz izvođenje formule za određivanje troška njegovog razrešavanja u zavisnosti od prvog tokena u grupi.}
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.85\textwidth]{slide16.png}
-    \setlength{\abovecaptionskip}{4pt}
     \caption{Višestruko kreiranje kupona u standardu sa implicitnim vlasništvom}
+\end{figure}
+
+\end{frame}
+
+% =========================================================
+% SLIDE 3.6
+% =========================================================
+
+\begin{frame}{Konstruktivni pristup}
+
+\begin{figure}[ht]
+    \centering
+
+    \vspace{-0.8cm}
+
+    \makebox[\textwidth][c]{%
+        \subfloat[ERC721A]{\includegraphics[width=0.56\textwidth]{slide17a.png}}
+        \hspace{0.1cm}
+        \subfloat[ERC721Psi]{\includegraphics[width=0.56\textwidth]{slide17b.png}}
+    }
+
+    \subfloat[ERC721A vs ERC721Psi]{\includegraphics[width=0.9\textwidth]{slide17c.png}}
+
 \end{figure}
 
 \end{frame}
