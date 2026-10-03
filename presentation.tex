@@ -15,8 +15,9 @@
 \setbeamertemplate{navigation symbols}{}
 
 \usepackage{ragged2e}
-%\usepackage{etoolbox}
-%\apptocmd{\frame}{}{\justifying}{}
+\usepackage{etoolbox}
+\apptocmd{\frame}{}{\justifying}{}
+\setlength{\emergencystretch}{2em}
 \setlength{\parskip}{0.2cm}
 
 \usepackage{subfig}
@@ -50,7 +51,7 @@
 
 \newcounter{ciljcounter}
 \newcommand{\metodologijaCilj}[1]{\stepcounter{ciljcounter}\textcolor{blueColor}{\uline{Cilj \theciljcounter:}} #1}
-\newcommand{\metodologijaProblem}[1]{\textcolor{redColorHard}{\uline{problem:}} #1}
+\newcommand{\metodologijaProblem}[1]{\textcolor{redColorHard}{\uline{Problem:}} #1}
 
 % =========================================================
 % BEAMER COLORS
@@ -215,13 +216,5 @@
 \date{2026.}
 
 \begin{document}
-
-\makeatletter
-\typeout{FONT FAMILY: \f@family}
-\typeout{FONT SERIES: \f@series}
-\typeout{FONT SHAPE: \f@shape}
-\makeatother
-
 \include{presentation/content}
-
 \end{document}

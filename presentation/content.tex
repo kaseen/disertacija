@@ -6,7 +6,22 @@
 
     \networkbackground
 
-    \vspace{1cm}
+    \vspace{-0.5cm}
+
+    \begin{figure}[t]
+    \centering\includegraphics[width=0.1\textwidth]{singidunum-logo.png}
+    \end{figure}
+
+    \vspace{-0.8cm}
+
+    \begin{center}
+        {\LARGE
+        \textcolor{whiteColor}{
+            Univerzitet Singidunum
+        }}
+    \end{center}
+
+    \vspace{-0.3cm}
 
     {\small
     \textcolor{blueColor}{
@@ -43,13 +58,6 @@
         \end{column}
 
     \end{columns}
-
-    \begin{center}
-        {\Large
-        \textcolor{whiteColor}{
-            Univerzitet Singidunum
-        }}
-    \end{center}
 
 \end{frame}
 
@@ -395,7 +403,7 @@ Za analizu potrošnje gasa korišćen je \blueColor{\emph{Foundry}}, skup alata 
 
 \metodologijaCilj{Eksperimentalna evaluacija performansi ovako definisanih e-kupona, uz merenje troškova izvršavanja osnovnih operacija u različitim standardima i scenarijima parametara.}
 
-\vspace{-0.5cm}
+\vspace{-0.3cm}
 
 \begin{center}
 \footnotesize
@@ -737,6 +745,55 @@ Za analizu potrošnje gasa korišćen je \blueColor{\emph{Foundry}}, skup alata 
 }
 
 \end{figure}
+
+\end{frame}
+
+% =========================================================
+% =========================================================
+% SECTION: Dodatak
+% =========================================================
+% =========================================================
+
+\sectionframe
+    {05}
+    {Dodatak}
+    {Proširenje funkcionalnosti pametnih ugovora · Skladišni i prezentacioni sloj}
+
+% =========================================================
+% SLIDE 5.1
+% =========================================================
+
+\begin{frame}{Dodatak}
+
+Tjuringova potpunost dopušta proširenje pametnih ugovora izvan osnovnih operacija.
+
+\metodologijaProblem{Povećanje funkcionalnosti može povećati troškove eksperimentalno potvrđenih rezultata na nelinearan i teško predvidiv način.}
+
+Da bi se koristio u sistemima e-trgovine blokčejn se mora kombinovati sa spoljašnjim sistemima za skladištenje.
+
+Za javno dostupne podatke, \blueColor{proročišta} predstavljaju posrednički sloj koji uvode \redColor{problem proročišta}.
+
+Za privatne korisničke podatke, \blueColor{\emph{zkTLS}} omogućava verifikabilan prenos podataka korisnika iz spoljašnjih izvora.
+
+\metodologijaCilj{Ispitivanje proširenja funkcionalnosti standarda za nezamenljive tokene, uključujući modularni dizajn pametnih ugovora i integraciju sa spoljašnjim izvorima podataka, u cilju projektovanja potpuno decentralizovane poslovne logike sistema elektronske trgovine na javnoj blokčejn mreži.}
+
+\end{frame}
+
+% =========================================================
+% SLIDE 5.2
+% =========================================================
+
+\begin{frame}{Dodatak}
+
+\metodologijaProblem{Centralizovana infrastruktura prezentacionog i skladišnog sloja ograničava stepen decentralizacije aplikacije.}
+
+\blueColor{Sadržajno zasnovano adresiranje} identifikuje podatke na osnovu njihovog sadržaja.
+
+Sadržaj se može kriptografski verifikovati, dok se njegova adresa u obliku heša može zapisati direktno u pametni ugovor, čime se smanjuje zavisnost od centralizovanih posrednika.
+
+Decentralizovani prezentacioni sloj posreduje u komunikaciji između korisnika i pametnih ugovora, uz \blueColor{očuvanje suvereniteta} korisnika nad kriptografskim identitetom.
+
+\metodologijaCilj{Ispitivanje IPFS mreže kao decentralizovanog sloja za skladištenje podataka i prezentacionog sloja radi ostvarivanje potpune decentralizacije aplikacije.}
 
 \end{frame}
 
