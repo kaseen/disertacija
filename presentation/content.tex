@@ -62,6 +62,67 @@
 \end{frame}
 
 % =========================================================
+% METODOLOSKI PRISTUP
+% =========================================================
+
+\begin{frame}{Metodološki pristup}
+
+\begin{center}
+
+\vspace{-0.5cm}
+
+\blueColor{\textbf{1. Teorijsko-analitički pristup}}
+    
+Formalizacija referentnog modela elektronske trgovine i analitičkog okvira za evaluaciju informacionih sistema radi identifikacije njihovih svojstava i ograničenja.
+
+$\downarrow$
+
+\blueColor{\textbf{2. Konstruktivni pristup}}
+
+Projektovanje optimizovanih modela reprezentacije i obrade podataka u pametnim ugovorima i modularnog dizajna za proširenje poslovne logike elektronske trgovine na Eterijum blokčejnu.
+
+$\downarrow$
+
+\blueColor{\textbf{3. Eksperimentalni pristup}}
+
+Kvantitativna evaluacija troškova izvršavanja osnovnih operacija nad entitetima sa jedinstvenim identifikatorima kroz analizu troškovnog modela Eterijum platforme.
+
+\end{center}
+
+\end{frame}
+
+% =========================================================
+% HIPOTEZE ISTRAZIVANJA
+% =========================================================
+
+\begin{frame}{Hipoteze istraživanja}
+
+\vspace{-0.3cm}
+
+\blueColor{\textbf{Opšta hipoteza}}
+\vspace{-0.1cm}
+
+\emph{Moguće je projektovati distribuiranu platformu e-trgovine na javnoj blokčejn mreži uz značajno smanjenje transakcionih troškova primenom optimizovanih modela skladištenja i obrade podataka, uz očuvanje funkcionalnih i bezbednosnih svojstava.}
+
+\blueColor{\textbf{Posebne hipoteze}}
+\vspace{-0.2cm}
+\begin{itemize}
+    \item svojstva i primenljivost javnih blokčejn sistema,
+    \item decentralizacija i dodatna složenost,
+    \item kvantifikacija računarskog napora,
+    \item optimizacija reprezentacije i implicitno vlasništvo,
+    \item proširenje funkcionalnosti,
+    \item decentralizacija skladišnog i prezentacionog sloja.
+\end{itemize}
+
+\blueColor{\textbf{Eksperimentalne hipoteze}}
+\vspace{-0.1cm}
+
+Kvantitativna analiza troškova izvršavanja osnovnih operacija kreiranja, prenosa i uništavanja reprezentovanih entiteta primenom standarda ERC-721, ERC-721A i ERC-721Psi.
+
+\end{frame}
+
+% =========================================================
 % =========================================================
 % SECTION: Savremeni informacioni istemi
 % =========================================================
@@ -110,7 +171,7 @@ To smanjuje autonomiju korisnika i stvara asimetriju moći, koja se ogleda u: \r
 
 \begin{frame}{Savremeni informacioni sistemi}
 
-\vspace{-0.35cm}
+\vspace{-0.2cm}
 
 Decentralizacija zahteva \blueColor{otvoren sistem} bez \redColor{centralne kontrole} ili jedne tačke otkaza.
 
@@ -118,7 +179,7 @@ Savremeni informacioni sistemi se horizontalno skaliraju tj. proširuju kapacite
 
 \metodologijaCilj{Uvođenje i formalizacija pojma \blueColor{decentralizacije} kao proširenja klasične sociotehničke paradigme informacionih sistema.}
 
-\vspace{-0.7cm}
+\vspace{-0.55cm}
 
 \begin{figure}[ht]
 \centering
@@ -163,7 +224,7 @@ Visok stepen koordinacije u distribuiranim sistemima postiže se \blueColor{kons
 
 \metodologijaCilj{Definisanje analitičkog okvira za evaluaciju informacionih sistema, koji uključuje metrike za procenu tehničkih atributa infrastrukture, performansi i operativnih svojstava sistema.}
 
-\vspace{-0.55cm}
+\vspace{-0.3cm}
 
 \begin{figure}[ht]
     \centering
@@ -191,7 +252,7 @@ Visok stepen koordinacije u distribuiranim sistemima postiže se \blueColor{kons
 
 \begin{frame}{Blokčejn kao infrastrukturni sloj}
 
-\vspace{-0.2cm}
+\vspace{-0.1cm}
     
 \metodologijaProblem{BFT modeli pretpostavljaju poznat skup učesnika i \redColor{ne mogu biti otvoreni}.}
                         
@@ -199,7 +260,7 @@ Pojava \blueColor{\emph{Bitcoin}-a} uvodi model informacionog sistema zasnovan n
 
 Sistem se zasniva na javno dostupnoj evidenciji transakcija i njihovom redosledu kroz \blueColor{javnu distribuiranu knjigu evidencije}, koju održava decentralizovana mreža čvorova.
 
-\vspace{-0.3cm}
+\vspace{-0.15cm}
 
 \begin{figure}[ht]
     \centering
@@ -756,14 +817,14 @@ Za analizu potrošnje gasa korišćen je \blueColor{\emph{Foundry}}, skup alata 
 
 \sectionframe
     {05}
-    {Dodatak}
+    {Proširenje predloženog pristupa}
     {Proširenje funkcionalnosti pametnih ugovora · Skladišni i prezentacioni sloj}
 
 % =========================================================
 % SLIDE 5.1
 % =========================================================
 
-\begin{frame}{Dodatak}
+\begin{frame}{Proširenje predloženog pristupa}
 
 Tjuringova potpunost dopušta proširenje pametnih ugovora izvan osnovnih operacija.
 
@@ -783,7 +844,7 @@ Za privatne korisničke podatke, \blueColor{\emph{zkTLS}} omogućava verifikabil
 % SLIDE 5.2
 % =========================================================
 
-\begin{frame}{Dodatak}
+\begin{frame}{Proširenje predloženog pristupa}
 
 \metodologijaProblem{Centralizovana infrastruktura prezentacionog i skladišnog sloja ograničava stepen decentralizacije aplikacije.}
 
@@ -794,6 +855,91 @@ Sadržaj se može kriptografski verifikovati, dok se njegova adresa u obliku he�
 Decentralizovani prezentacioni sloj posreduje u komunikaciji između korisnika i pametnih ugovora, uz \blueColor{očuvanje suvereniteta} korisnika nad kriptografskim identitetom.
 
 \metodologijaCilj{Ispitivanje IPFS mreže kao decentralizovanog sloja za skladištenje podataka i prezentacionog sloja radi ostvarivanje potpune decentralizacije aplikacije.}
+
+\end{frame}
+
+% =========================================================
+% =========================================================
+% SECTION: Ograničenja predložene metodologije
+% =========================================================
+% =========================================================
+
+\sectionframe
+    {06}
+    {Ograničenja predložene metodologije}
+    {}
+
+% =========================================================
+% SLIDE 6.1
+% =========================================================
+
+\begin{frame}{Ograničenja predložene metodologije}
+
+\begin{enumerate}
+\item Fokus je na reprezentaciji proizvoda i usluga sa jedinstvenim identifikatorom, grupni i implicitni identifikatori nisu razmatrani.
+\item Efikasnost optimizacije enkodirane reprezentacije entiteta direktno zavisi od modela obračuna gasa i odnosa troškova operacija \texttt{SSTORE}, \texttt{SLOAD} i aritmetičkih operacija.
+\item Zbog dinamičnog razvoja Eterijum tehnologije, nije garantovano da će veličina adrese ostati 160 bita.
+\item Upotreba implicitnog vlasništva ograničava fleksibilnost reprezentacije entiteta pri grupnom kreiranju.
+\item Analiza je fokusirana na statičke modele proizvoda i usluga, poslovni modeli sa dinamičkim podacima nisu obuhvaćeni.
+\item Proširenja funkcionalnosti standarda za nezamenljive tokene utiču na potrošnju gasa, ali zbog složenosti sistema nisu eksplicitno analizirana u okviru predložene metodologije.
+\end{enumerate}
+
+\end{frame}
+
+% =========================================================
+% SLIDE 6.2
+% =========================================================
+
+\begin{frame}{Ograničenja predložene metodologije}
+
+\begin{enumerate}
+\setcounter{enumi}{6}
+\item Bezbednost integracije blokčejn sistema sa spoljašnjim izvorima podataka i njen uticaj na performanse nisu analizirani.
+\item Predloženi prezentacioni i skladišni sloj nisu implementirani.
+\item Za prezentacioni i skladišni sloj nisu sprovedena eksperimentalna merenja performansi pristupa sadržaju i vremena odaziva, iako direktno utiču na korisničko iskustvo.
+\item Analizirani su blokčejn sistemi sa arhitekturom zasnovanom na linearnom hronološkom nizu blokova, paradigme zasnovane na DAG strukturi nisu obuhvaćene.
+\item Izabrani blokčejn sistem pretpostavlja postojanje mape vlasništva u okviru jednog pametnog ugovora, što omogućava primenu identične NFT logike.
+\end{enumerate}
+
+\end{frame}
+
+% =========================================================
+% =========================================================
+% SECTION: Naučni doprinos
+% =========================================================
+% =========================================================
+
+\sectionframe
+    {07}
+    {Naučni doprinos}
+    {}
+
+% =========================================================
+% SLIDE 7.1
+% =========================================================
+
+\begin{frame}{Naučni doprinos}
+
+\begin{enumerate}
+\item Definisanje referentnog modela elektronske trgovine u kontekstu javnih blokčejn sistema, čime se uspostavlja jasan teorijski okvir za analizu i poređenje različitih arhitektonskih pristupa.
+\item Definisanje analitičkog okvira za evaluaciju blokčejn sistema kao posebne klase distribuiranih informacionih sistema, kojim se omogućava strukturisano razmatranje odnosa između decentralizacije, sigurnosti i performansi, kao i njihovog uticaja na složenost i operativna svojstva sistema.
+\item Formalizacija optimizovanog modela reprezentacije entiteta elektronske trgovine sa jedinstvenim identifikatorima unutar jedne skladišne jedinice, zasnovanog na standardima za nezamenljive tokene, čime se smanjuje broj pristupa skladištu kao dominantnog faktora troškova.
+\item Formalna analiza i modelovanje mehanizama implicitnog vlasništva u standardima za nezamenljive tokene, uključujući izvođenje aproksimativnih funkcija troška eksplicitnog razrešavanja vlasništva u zavisnosti od udaljenosti od početnog elementa grupe.
+\end{enumerate}
+
+\end{frame}
+
+% =========================================================
+% SLIDE 7.2
+% =========================================================
+
+\begin{frame}{Naučni doprinos}
+
+\begin{enumerate}
+\setcounter{enumi}{4}
+\item Komparativna analiza troškovne efikasnosti osnovnih operacija standarda ERC-721, ERC-721A i ERC-721Psi u različitim operativnim scenarijima, zasnovana na eksperimentalnim merenjima potrošnje gasa.
+\item Predlog arhitektonskog modela decentralizovane platforme za elektronsku trgovinu zasnovane na javnoj blokčejn mreži i IPFS mreži, koji integriše optimizovane modele skladištenja podataka, modularni dizajn pametnih ugovora, kao i sloj za skladištenje podataka i prezentacioni sloj zasnovani na sadržajnom adresiranju, uz očuvanje suvereniteta korisnika nad kriptografskim identitetom.
+\end{enumerate}
 
 \end{frame}
 
