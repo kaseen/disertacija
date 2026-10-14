@@ -19,6 +19,10 @@
 \apptocmd{\frame}{}{\justifying}{}
 \setlength{\emergencystretch}{2em}
 \setlength{\parskip}{0.2cm}
+\AtBeginEnvironment{enumerate}{%
+    \let\olditem\item
+    \renewcommand{\item}{\olditem\justifying}%
+}
 
 \usepackage{subfig}
 \captionsetup[subfloat]{labelformat=simple}

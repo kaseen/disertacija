@@ -173,9 +173,9 @@ To smanjuje autonomiju korisnika i stvara asimetriju moći, koja se ogleda u: \r
 
 \vspace{-0.2cm}
 
-Decentralizacija zahteva \blueColor{otvoren sistem} bez \redColor{centralne kontrole} ili jedne tačke otkaza.
-
 Savremeni informacioni sistemi se horizontalno skaliraju tj. proširuju kapacitet \blueColor{dodavanjem instanci} i raspodelom opterećenja.
+
+Decentralizacija zahteva \blueColor{otvoren sistem} bez \redColor{centralne kontrole} ili jedne tačke otkaza.
 
 \metodologijaCilj{Uvođenje i formalizacija pojma \blueColor{decentralizacije} kao proširenja klasične sociotehničke paradigme informacionih sistema.}
 
@@ -206,7 +206,7 @@ Potrebno je uvesti model komunikacije zasnovan na \blueColor{mreži ravnopravnih
 
 \metodologijaProblem{Uklanjanje centralizovanog autoriteta uvodi mogućnost neispravnog ili \redColor{malicioznog ponašanja pojedinih učesnika}, pri čemu sistem mora očuvati konzistentnost.}
 
-Visok stepen koordinacije u distribuiranim sistemima postiže se \blueColor{konsenzusom}, pri čemu se u otvorenim sistemima koriste algoritmi koji pripadaju \blueColor{BFT klasi}, zasnovani na razmeni poruka i glasanju između čvorova \blueColor{($n \ge 3f + 1$)}.
+Visok stepen koordinacije u distribuiranim sistemima postiže se \blueColor{konsenzusom}, pri čemu se u klasičnom BFT modelu koriste algoritmi zasnovani na razmeni poruka i glasanju između čvorova, uz uslov \blueColor{$n \ge 3f + 1$}.
 
 \metodologijaProblem{Performanse opadaju sa porastom broja čvorova usled povećanja komunikacionog opterećenja.}
 
@@ -925,10 +925,12 @@ Decentralizovani prezentacioni sloj posreduje u komunikaciji između korisnika i
 \begin{frame}{Naučni doprinos}
 
 \begin{enumerate}
-\item Definisanje referentnog modela elektronske trgovine u kontekstu javnih blokčejn sistema, čime se uspostavlja jasan teorijski okvir za analizu i poređenje različitih arhitektonskih pristupa.
-\item Definisanje analitičkog okvira za evaluaciju blokčejn sistema kao posebne klase distribuiranih informacionih sistema, kojim se omogućava strukturisano razmatranje odnosa između decentralizacije, sigurnosti i performansi, kao i njihovog uticaja na složenost i operativna svojstva sistema.
-\item Formalizacija optimizovanog modela reprezentacije entiteta elektronske trgovine sa jedinstvenim identifikatorima unutar jedne skladišne jedinice, zasnovanog na standardima za nezamenljive tokene, čime se smanjuje broj pristupa skladištu kao dominantnog faktora troškova.
-\item Formalna analiza i modelovanje mehanizama implicitnog vlasništva u standardima za nezamenljive tokene, uključujući izvođenje aproksimativnih funkcija troška eksplicitnog razrešavanja vlasništva u zavisnosti od udaljenosti od početnog elementa grupe.
+\item \blueColor{\textbf{Referentni model elektronske trgovine:}} Model elektronske trgovine prilagođen kontekstu javnih blokčejn sistema.
+\item \blueColor{\textbf{Analitički okvir javnih blokčejn sistema:}} Okvir za analizu decentralizacije, bezbednosti i performansi, kao i njihovog uticaja na operativna svojstva sistema.
+\item \blueColor{\textbf{Optimizovana reprezentacija entiteta:}} Model reprezentacije entiteta sa jedinstvenim identifikatorima unutar jedne skladišne jedinice, zasnovan na standardima za nezamenljive tokene.
+\item \blueColor{\textbf{Model implicitnog vlasništva:}} Formalna analiza mehanizama implicitnog vlasništva i izvođenje aproksimativnih funkcija troška razrešavanja vlasništva.
+\item \blueColor{\textbf{Komparativna analiza troškova:}} Eksperimentalno poređenje potrošnje gasa pri izvršavanju osnovnih operacija standarda ERC-721, ERC-721A i ERC-721Psi.
+\item \blueColor{\textbf{Arhitektonski model decentralizovane platforme:}} Model platforme elektronske trgovine koji integriše modularne pametne ugovore na javnoj blokčejn mreži i IPFS mrežu.
 \end{enumerate}
 
 \end{frame}
@@ -936,16 +938,6 @@ Decentralizovani prezentacioni sloj posreduje u komunikaciji između korisnika i
 % =========================================================
 % SLIDE 7.2
 % =========================================================
-
-\begin{frame}{Naučni doprinos}
-
-\begin{enumerate}
-\setcounter{enumi}{4}
-\item Komparativna analiza troškovne efikasnosti osnovnih operacija standarda ERC-721, ERC-721A i ERC-721Psi u različitim operativnim scenarijima, zasnovana na eksperimentalnim merenjima potrošnje gasa.
-\item Predlog arhitektonskog modela decentralizovane platforme za elektronsku trgovinu zasnovane na javnoj blokčejn mreži i IPFS mreži, koji integriše optimizovane modele skladištenja podataka, modularni dizajn pametnih ugovora, kao i sloj za skladištenje podataka i prezentacioni sloj zasnovani na sadržajnom adresiranju, uz očuvanje suvereniteta korisnika nad kriptografskim identitetom.
-\end{enumerate}
-
-\end{frame}
 
 \begin{frame}{}
 
