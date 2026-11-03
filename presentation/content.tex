@@ -202,13 +202,13 @@ Decentralizacija zahteva \blueColor{otvoren sistem} bez \redColor{centralne kont
 
 Iako je infrastrukturno distribuiran, sistem zadržava centralizovan model upravljanja kroz \redColor{klijent-server komunikaciju} zasnovanu na \redColor{lokacijskom adresiranju}.
 
-Potrebno je uvesti model komunikacije zasnovan na \blueColor{mreži ravnopravnih čvorova} \eng{peer-to-peer}, koji sistem čini otvorenim za učešće.
+Potrebno je uvesti model komunikacije zasnovan na \blueColor{mreži ravnopravnih čvorova} \eng{peer-to-peer}, koji predstavlja neophodan, \redColor{ali ne i dovoljan uslov} za otvoreno učešće čvorova u distribuiranom sistemu.
 
 \metodologijaProblem{Uklanjanje centralizovanog autoriteta uvodi mogućnost neispravnog ili \redColor{malicioznog ponašanja pojedinih učesnika}, pri čemu sistem mora očuvati konzistentnost.}
 
 Visok stepen koordinacije u distribuiranim sistemima postiže se \blueColor{konsenzusom}, pri čemu se u klasičnom BFT modelu koriste algoritmi zasnovani na razmeni poruka i glasanju između čvorova, uz uslov \blueColor{$n \ge 3f + 1$}.
 
-\metodologijaProblem{Performanse opadaju sa porastom broja čvorova usled povećanja komunikacionog opterećenja.}
+\metodologijaProblem{BFT modeli pretpostavljaju poznat skup učesnika i \redColor{ne mogu biti otvoreni}.}
 
 \end{frame}
 
@@ -252,15 +252,15 @@ Visok stepen koordinacije u distribuiranim sistemima postiže se \blueColor{kons
 
 \begin{frame}{Blokčejn kao infrastrukturni sloj}
 
-\vspace{-0.1cm}
-    
-\metodologijaProblem{BFT modeli pretpostavljaju poznat skup učesnika i \redColor{ne mogu biti otvoreni}.}
+\vspace{-0.2cm}
                         
 Pojava \blueColor{\emph{Bitcoin}-a} uvodi model informacionog sistema zasnovan na \blueColor{kriptografskom dokazu} umesto \redColor{poverenja} u centralni autoritet.
 
 Sistem se zasniva na javno dostupnoj evidenciji transakcija i njihovom redosledu kroz \blueColor{javnu distribuiranu knjigu evidencije}, koju održava decentralizovana mreža čvorova.
 
-\vspace{-0.15cm}
+Javni blokčejn sistemi imaju uspostavljenu globalnu infrastrukturu koju održava veliki broj nezavisnih učesnika, čime se \blueColor{eliminišu troškovi} održavanja sopstvene infrastrukture.
+
+\vspace{-0.2cm}
 
 \begin{figure}[ht]
     \centering
@@ -277,13 +277,9 @@ Sistem se zasniva na javno dostupnoj evidenciji transakcija i njihovom redosledu
 
 \begin{frame}{Blokčejn kao infrastrukturni sloj}
 
-\vspace{-0.25cm}
-
 Nakamoto konsenzus uvodi \blueColor{oskudan resurs}, čijim dokazivanjem učesnici mreže stiču pravo da učestvuju u određivanju narednog stanja sistema.
 
 Sistem je \blueColor{otvoren} i svaki učesnik može predložiti naredno stanje, dok kriptografske mehanizme dopunjuju \blueColor{ekonomski podsticaji}, čime nastaje kriptoekonomija.
-
-Javni blokčejn sistemi imaju uspostavljenu globalnu infrastrukturu koju održava veliki broj nezavisnih učesnika, čime se \blueColor{eliminišu troškovi} održavanja sopstvene infrastrukture.
 
 \metodologijaProblem{Da li javni blokčejn sistemi zadovoljavaju operativna svojstva savremenih informacionih sistema?}
 
